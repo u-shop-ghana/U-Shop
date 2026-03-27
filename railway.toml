@@ -1,6 +1,6 @@
 [build]
 builder = "NIXPACKS"
-nixpacksConfigPath = "apps/api/nixpacks.toml"
+nixpacksInstallCmd = "npm i -g pnpm && pnpm install --frozen-lockfile"
 buildCommand = "cd apps/api && pnpm db:generate && pnpm build"
 watchPatterns = ["apps/api/**", "packages/shared/**"]
 
