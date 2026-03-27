@@ -4,7 +4,7 @@ buildCommand = "pnpm install && pnpm db:generate && pnpm build"
 watchPatterns = ["src/**", "prisma/**"]
 
 [deploy]
-startCommand = "node dist/index.js"
+startCommand = "node dist/index.ts"
 healthcheckPath = "/health"
 healthcheckTimeout = 300
 restartPolicyType = "ON_FAILURE"
