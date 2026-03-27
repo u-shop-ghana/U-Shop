@@ -10,7 +10,7 @@ import { notFound } from './middleware/not-found.js';
 // Load environment variables
 dotenv.config();
 
-const app = express();
+const app: express.Application = express();
 const PORT = process.env.PORT || 4000;
 
 // ─── Security Middleware ─────────────────────────────────────────
