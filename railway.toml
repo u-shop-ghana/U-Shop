@@ -1,18 +1,13 @@
 [build]
-builder = "NIXPACKS"
-nixpacksInstallCmd = "pnpm install --no-frozen-lockfile"
-buildCommand = "cd apps/api && pnpm db:generate && pnpm build"
+builder = "DOCKER"
 watchPatterns = ["apps/api/**", "packages/shared/**"]
 
 [deploy]
-startCommand = "cd apps/api && node dist/index.js"
+startCommand = "pnpm run start"
 healthcheckPath = "/health"
 healthcheckTimeout = 300
 restartPolicyType = "ON_FAILURE"
 restartPolicyMaxRetries = 10
-
-# Root directory — must be the MONOREPO root so pnpm workspaces resolve
-rootDir = "development"
 
 [env]
 NODE_ENV = "production"
