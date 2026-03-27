@@ -1,0 +1,1066 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>U-Shop · Trust, Safety & Security Matrix v1.0</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;1,9..144,300&display=swap" rel="stylesheet">
+<style>
+:root {
+  --red:       #E8000B;
+  --black:     #0A0A0A;
+  --purple:    #6B1FA8;
+  --magenta:   #D4009B;
+  --grad:      linear-gradient(90deg,#6B1FA8,#D4009B);
+  --supa:      #3ecf8e;
+  --paystack:  #00c3f7;
+  --bg:        #0d0e11;
+  --bg2:       #13151a;
+  --bg3:       #1a1d25;
+  --surface:   #1e2130;
+  --line:      rgba(255,255,255,0.07);
+  --line2:     rgba(255,255,255,0.13);
+  --text:      #e8e8f0;
+  --muted:     #7a7d8e;
+  --soft:      #b0b3c4;
+  --green:     #22c55e;
+  --amber:     #f59e0b;
+  --blue:      #3b82f6;
+  --rose:      #f43f5e;
+  --orange:    #fb923c;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:'Fraunces',Georgia,serif;background:var(--bg);color:var(--text);font-size:15px;line-height:1.8;}
+
+/* ── SIDEBAR ── */
+.nav{position:fixed;top:0;left:0;bottom:0;width:240px;background:var(--bg2);border-right:1px solid var(--line);display:flex;flex-direction:column;z-index:200;overflow-y:auto;}
+.nav-logo{padding:22px 20px 18px;border-bottom:1px solid var(--line);display:flex;align-items:center;flex-shrink:0;}
+.nl-u{background:var(--red);width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-size:16px;font-weight:800;color:#fff;}
+.nl-sh{font-family:'Syne',sans-serif;font-size:16px;font-weight:800;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;padding:0 8px;line-height:28px;}
+.nl-badge{margin-left:auto;font-family:'IBM Plex Mono',monospace;font-size:8px;background:rgba(244,63,94,0.15);color:var(--rose);border:1px solid rgba(244,63,94,0.25);padding:2px 6px;border-radius:3px;letter-spacing:0.08em;}
+.nav-section{font-family:'IBM Plex Mono',monospace;font-size:8px;letter-spacing:0.22em;text-transform:uppercase;color:rgba(255,255,255,0.2);padding:14px 20px 6px;}
+.nav a{display:flex;align-items:flex-start;gap:9px;padding:7px 20px;color:var(--muted);text-decoration:none;font-family:'IBM Plex Mono',monospace;font-size:11px;transition:all 0.12s;line-height:1.5;}
+.nav a:hover{color:var(--text);background:rgba(255,255,255,0.03);}
+.nav a .n{color:var(--rose);min-width:16px;font-size:9px;padding-top:2px;}
+.nav-footer{padding:16px 20px;margin-top:auto;border-top:1px solid var(--line);font-family:'IBM Plex Mono',monospace;font-size:8px;color:rgba(255,255,255,0.15);letter-spacing:0.1em;flex-shrink:0;}
+
+/* ── LAYOUT ── */
+.main{margin-left:240px;}
+.body{padding:0 72px 120px;max-width:980px;}
+.section{padding-top:80px;}
+.sec-label{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:0.24em;text-transform:uppercase;color:var(--rose);margin-bottom:14px;display:flex;align-items:center;gap:10px;}
+.sec-label::after{content:'';flex:1;height:1px;background:var(--rose);opacity:0.2;}
+h1{font-family:'Syne',sans-serif;font-size:30px;font-weight:800;margin-bottom:16px;letter-spacing:-0.02em;line-height:1.15;}
+h2{font-family:'Syne',sans-serif;font-size:19px;font-weight:700;margin:44px 0 14px;letter-spacing:-0.01em;}
+h3{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;margin-bottom:10px;}
+p{color:var(--soft);margin-bottom:12px;line-height:1.8;}
+strong{color:var(--text);}
+code{font-family:'IBM Plex Mono',monospace;font-size:12px;background:var(--surface);padding:2px 8px;border-radius:3px;color:#a5d6ff;}
+.divider{border:none;border-top:1px solid var(--line);margin:72px 0 0;}
+
+/* ── COVER ── */
+.cover{background:var(--black);min-height:100vh;padding:64px 72px;display:grid;grid-template-rows:1fr auto;position:relative;overflow:hidden;}
+.cover::before{content:'';position:absolute;left:0;top:0;bottom:0;width:5px;background:var(--red);}
+.cover-mesh{position:absolute;inset:0;background:
+  radial-gradient(ellipse 55% 50% at 80% 30%,rgba(244,63,94,0.1) 0%,transparent 65%),
+  radial-gradient(ellipse 35% 40% at 10% 75%,rgba(232,0,11,0.08) 0%,transparent 55%),
+  radial-gradient(ellipse 30% 30% at 50% 88%,rgba(107,31,168,0.08) 0%,transparent 50%);
+  pointer-events:none;}
+.cover-grid{position:absolute;inset:0;opacity:0.02;background-image:linear-gradient(rgba(255,255,255,0.8) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.8) 1px,transparent 1px);background-size:44px 44px;pointer-events:none;}
+.cover-content{position:relative;z-index:2;}
+.cover-eyebrow{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.22em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:52px;display:flex;align-items:center;gap:12px;}
+.cover-eyebrow .dot{width:5px;height:5px;border-radius:50%;background:var(--rose);}
+.cover-logo{display:flex;align-items:center;margin-bottom:36px;}
+.cl-u{background:var(--red);width:72px;height:72px;display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-size:46px;font-weight:800;color:#fff;line-height:1;flex-shrink:0;}
+.cl-sh{font-family:'Syne',sans-serif;font-size:46px;font-weight:800;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;padding:0 14px;line-height:72px;}
+.cover-h1{font-family:'Syne',sans-serif;font-size:26px;font-weight:700;color:rgba(255,255,255,0.85);margin-bottom:14px;letter-spacing:-0.01em;}
+.cover-sub{font-size:15px;color:rgba(255,255,255,0.38);max-width:600px;font-weight:300;line-height:1.75;margin-bottom:32px;font-style:italic;}
+.cover-tags{display:flex;flex-wrap:wrap;gap:10px;}
+.ctag{font-family:'IBM Plex Mono',monospace;font-size:10px;padding:5px 12px;border-radius:3px;border:1px solid;display:flex;align-items:center;gap:7px;}
+.ctag-red{color:var(--rose);border-color:rgba(244,63,94,0.3);background:rgba(244,63,94,0.08);}
+.ctag-amber{color:var(--amber);border-color:rgba(245,158,11,0.3);background:rgba(245,158,11,0.06);}
+.ctag-blue{color:#60a5fa;border-color:rgba(96,165,250,0.3);background:rgba(96,165,250,0.06);}
+.ctag-green{color:var(--green);border-color:rgba(34,197,94,0.3);background:rgba(34,197,94,0.06);}
+.ctag-dot{width:6px;height:6px;border-radius:50%;}
+.cover-meta{position:relative;z-index:2;display:grid;grid-template-columns:repeat(5,1fr);gap:16px;border-top:1px solid rgba(255,255,255,0.07);padding-top:24px;}
+.cm .cm-l{font-family:'IBM Plex Mono',monospace;font-size:8px;letter-spacing:0.18em;text-transform:uppercase;color:rgba(255,255,255,0.22);display:block;margin-bottom:4px;}
+.cm .cm-v{font-size:13px;color:rgba(255,255,255,0.6);font-family:'IBM Plex Mono',monospace;}
+
+/* ── THREAT CARDS ── */
+.threat-grid{display:flex;flex-direction:column;gap:24px;margin:24px 0;}
+.threat-card{background:var(--bg3);border:1px solid var(--line2);border-radius:10px;overflow:hidden;}
+.threat-header{padding:20px 24px 16px;border-bottom:1px solid var(--line2);display:flex;gap:16px;align-items:flex-start;}
+.threat-num{font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600;padding:4px 10px;border-radius:4px;flex-shrink:0;margin-top:2px;}
+.tn-crit{background:rgba(244,63,94,0.2);color:var(--rose);border:1px solid rgba(244,63,94,0.35);}
+.tn-high{background:rgba(245,158,11,0.2);color:var(--amber);border:1px solid rgba(245,158,11,0.35);}
+.tn-med{background:rgba(59,130,246,0.2);color:#60a5fa;border:1px solid rgba(59,130,246,0.35);}
+.threat-title-block h3{font-size:16px;margin-bottom:4px;color:var(--text);}
+.threat-title-block p{font-size:13px;color:var(--muted);margin:0;}
+.threat-body{display:grid;grid-template-columns:1fr 1fr;gap:0;}
+.threat-col{padding:20px 24px;}
+.threat-col+.threat-col{border-left:1px solid var(--line2);}
+.threat-col-label{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:0.16em;text-transform:uppercase;margin-bottom:12px;display:flex;align-items:center;gap:8px;}
+.tcl-attack{color:var(--rose);}
+.tcl-defend{color:var(--green);}
+.threat-col ul{list-style:none;}
+.threat-col ul li{font-size:13px;color:var(--soft);padding:5px 0;border-bottom:1px solid var(--line);display:flex;gap:10px;align-items:flex-start;line-height:1.6;}
+.threat-col ul li:last-child{border-bottom:none;}
+.li-bullet{flex-shrink:0;width:16px;height:16px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;margin-top:2px;}
+.lb-attack{background:rgba(244,63,94,0.15);color:var(--rose);}
+.lb-defend{background:rgba(34,197,94,0.15);color:var(--green);}
+.threat-code{background:var(--bg);border-top:1px solid var(--line2);padding:20px 24px;}
+.threat-code-label{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:0.14em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;}
+pre.tc{font-family:'IBM Plex Mono',monospace;font-size:12px;background:var(--bg);border:none;border-radius:6px;line-height:1.7;color:#cdd6f4;overflow-x:auto;padding:0;}
+pre.tc .cm{color:#636674;font-style:italic;}
+pre.tc .kw{color:#cba6f7;}
+pre.tc .str{color:#a6e3a1;}
+pre.tc .fn{color:#89dceb;}
+pre.tc .num{color:#fab387;}
+pre.tc .var{color:#cdd6f4;}
+
+/* ── CALLOUTS ── */
+.callout{border-left:3px solid;padding:16px 20px;border-radius:0 6px 6px 0;margin:20px 0;}
+.callout p{margin:0;font-size:13.5px;}
+.callout-red{border-color:var(--rose);background:rgba(244,63,94,0.07);}
+.callout-green{border-color:var(--green);background:rgba(34,197,94,0.06);}
+.callout-amber{border-color:var(--amber);background:rgba(245,158,11,0.07);}
+.callout-blue{border-color:var(--blue);background:rgba(59,130,246,0.07);}
+.callout strong{display:block;margin-bottom:6px;font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.08em;text-transform:uppercase;}
+.callout-red strong{color:var(--rose);}
+.callout-green strong{color:var(--green);}
+.callout-amber strong{color:var(--amber);}
+.callout-blue strong{color:var(--blue);}
+
+/* ── ESCROW TIMELINE ── */
+.escrow-timeline{margin:28px 0;position:relative;}
+.et-track{position:absolute;left:24px;top:36px;bottom:20px;width:2px;background:linear-gradient(to bottom,var(--rose),var(--amber),var(--green));opacity:0.4;}
+.et-event{display:flex;gap:20px;margin-bottom:6px;position:relative;}
+.et-dot{width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:600;color:#fff;flex-shrink:0;z-index:2;}
+.et-body{background:var(--bg3);border:1px solid var(--line2);border-radius:8px;padding:14px 18px;flex:1;margin-bottom:8px;}
+.et-body h4{font-family:'Syne',sans-serif;font-size:14px;font-weight:700;margin-bottom:4px;}
+.et-body p{font-size:13px;color:var(--muted);margin:0;line-height:1.6;}
+.et-body .et-time{font-family:'IBM Plex Mono',monospace;font-size:10px;margin-top:6px;padding-top:6px;border-top:1px solid var(--line);display:flex;align-items:center;gap:6px;}
+.et-time-badge{padding:2px 8px;border-radius:3px;font-size:9px;font-weight:600;}
+.etb-day0{background:rgba(59,130,246,0.2);color:#60a5fa;}
+.etb-day3{background:rgba(245,158,11,0.2);color:var(--amber);}
+.etb-day5{background:rgba(251,146,60,0.2);color:var(--orange);}
+.etb-day7{background:rgba(244,63,94,0.2);color:var(--rose);}
+.etb-auto{background:rgba(34,197,94,0.2);color:var(--green);}
+.etb-done{background:rgba(34,197,94,0.2);color:var(--green);}
+.et-alert{background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.2);border-radius:6px;padding:10px 14px;margin-top:8px;font-size:12px;color:rgba(245,158,11,0.85);font-family:'IBM Plex Mono',monospace;}
+
+/* ── ESCROW RULES TABLE ── */
+.rules-table{width:100%;border-collapse:collapse;margin:16px 0;font-size:13px;}
+.rules-table th{text-align:left;font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:0.14em;text-transform:uppercase;color:var(--muted);padding:10px 14px;border-bottom:2px solid var(--line2);background:var(--bg3);}
+.rules-table td{padding:11px 14px;border-bottom:1px solid var(--line);vertical-align:top;color:var(--soft);}
+.rules-table tr:last-child td{border-bottom:none;}
+.rules-table td:first-child{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--text);font-weight:500;white-space:nowrap;}
+.rules-table td code{font-size:11px;}
+.rb{font-family:'IBM Plex Mono',monospace;font-size:9px;padding:2px 7px;border-radius:2px;}
+.rb-yes{background:rgba(34,197,94,0.15);color:var(--green);}
+.rb-no{background:rgba(244,63,94,0.15);color:var(--rose);}
+.rb-cond{background:rgba(245,158,11,0.15);color:var(--amber);}
+
+/* ── DISPUTE PLAYBOOK ── */
+.playbook{margin:24px 0;}
+.pb-step{display:flex;gap:16px;margin-bottom:4px;position:relative;}
+.pb-step:not(:last-child)::after{content:'';position:absolute;left:22px;top:46px;bottom:-4px;width:2px;background:var(--line2);}
+.pb-num{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:600;flex-shrink:0;}
+.pbn-red{background:var(--red);color:#fff;}
+.pbn-amber{background:var(--amber);color:var(--black);}
+.pbn-blue{background:var(--blue);color:#fff;}
+.pbn-green{background:var(--green);color:var(--black);}
+.pbn-purple{background:var(--purple);color:#fff;}
+.pb-body{background:var(--bg3);border:1px solid var(--line2);border-radius:8px;padding:16px 20px;flex:1;margin-bottom:10px;}
+.pb-body h4{font-family:'Syne',sans-serif;font-size:14px;font-weight:700;margin-bottom:6px;}
+.pb-body p{font-size:13px;color:var(--muted);margin:0;line-height:1.65;}
+.pb-body .pb-sla{display:inline-flex;align-items:center;gap:6px;font-family:'IBM Plex Mono',monospace;font-size:10px;margin-top:8px;padding:3px 8px;border-radius:3px;}
+.pb-sla-red{background:rgba(244,63,94,0.15);color:var(--rose);}
+.pb-sla-amber{background:rgba(245,158,11,0.15);color:var(--amber);}
+.pb-sla-green{background:rgba(34,197,94,0.15);color:var(--green);}
+
+/* ── POLICY HIERARCHY ── */
+.policy-pyramid{margin:24px 0;}
+.pp-tier{border-radius:8px;padding:18px 22px;margin-bottom:6px;position:relative;border:1px solid;}
+.pp-tier-num{position:absolute;right:18px;top:50%;transform:translateY(-50%);font-family:'IBM Plex Mono',monospace;font-size:32px;font-weight:600;opacity:0.08;}
+.pp1{background:rgba(244,63,94,0.08);border-color:rgba(244,63,94,0.25);}
+.pp2{background:rgba(245,158,11,0.07);border-color:rgba(245,158,11,0.22);}
+.pp3{background:rgba(59,130,246,0.07);border-color:rgba(59,130,246,0.22);}
+.pp-tier h3{margin-bottom:4px;}
+.pp1 h3{color:var(--rose);}
+.pp2 h3{color:var(--amber);}
+.pp3 h3{color:#60a5fa;}
+.pp-tier p{margin:0;font-size:13px;}
+.pp-tier ul{list-style:none;margin-top:8px;}
+.pp-tier ul li{font-size:13px;color:var(--soft);padding:3px 0;display:flex;gap:8px;}
+.pp-tier ul li::before{content:'→';opacity:0.4;flex-shrink:0;}
+
+/* ── CASE STUDY ── */
+.case-study{background:var(--bg3);border:1px solid var(--line2);border-radius:10px;overflow:hidden;margin:24px 0;}
+.cs-header{background:linear-gradient(90deg,rgba(244,63,94,0.15),rgba(107,31,168,0.1));border-bottom:1px solid var(--line2);padding:16px 24px;display:flex;align-items:center;gap:14px;}
+.cs-icon{width:36px;height:36px;background:var(--rose);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
+.cs-header-text h3{font-size:15px;margin-bottom:2px;}
+.cs-header-text p{font-size:12px;color:var(--muted);margin:0;}
+.cs-body{padding:24px;}
+.cs-step{background:var(--surface);border-radius:6px;padding:14px 16px;margin-bottom:8px;}
+.cs-step:last-child{margin-bottom:0;}
+.cs-step-label{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:0.14em;text-transform:uppercase;margin-bottom:4px;}
+.csl-admin{color:var(--paystack);}
+.csl-system{color:var(--supa);}
+.csl-outcome{color:var(--green);}
+.csl-warning{color:var(--rose);}
+.cs-step p{font-size:13px;color:var(--soft);margin:0;line-height:1.6;}
+.cs-ruling{background:rgba(34,197,94,0.08);border:1px solid rgba(34,197,94,0.2);border-radius:6px;padding:14px 16px;margin-top:12px;}
+.cs-ruling strong{display:block;font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:var(--green);margin-bottom:4px;}
+.cs-ruling p{font-size:13px;color:var(--soft);margin:0;}
+
+/* ── INSIGHT ── */
+.insight{background:var(--black);border:1px solid var(--line2);border-left:4px solid var(--red);border-radius:0 8px 8px 0;padding:18px 22px;margin:20px 0;}
+.insight .ins-l{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:0.18em;text-transform:uppercase;color:var(--red);margin-bottom:8px;}
+.insight p{color:rgba(255,255,255,0.5);margin:0;font-size:13px;line-height:1.7;}
+.insight strong{color:rgba(255,255,255,0.8);}
+
+/* ── FOOTER ── */
+.footer{background:var(--bg2);border-top:1px solid var(--line);padding:20px 72px;display:flex;align-items:center;justify-content:space-between;}
+.ft-logo{display:flex;align-items:center;}
+.ft-u{background:var(--red);width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-size:12px;font-weight:800;color:#fff;}
+.ft-sh{font-family:'Syne',sans-serif;font-size:12px;font-weight:700;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;padding:0 6px;}
+.ft-r{font-family:'IBM Plex Mono',monospace;font-size:9px;color:rgba(255,255,255,0.2);letter-spacing:0.1em;}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<nav class="nav">
+  <div class="nav-logo">
+    <div class="nl-u">U</div><div class="nl-sh">shop</div>
+    <span class="nl-badge">Security</span>
+  </div>
+  <div class="nav-section">Document Sections</div>
+  <a href="#threat"><span class="n">01</span>Threat Model & Mitigations</a>
+  <a href="#xss"><span class="n">↳</span>XSS / Policy Injection</a>
+  <a href="#fraud"><span class="n">↳</span>Fake Listings & Brick-in-Box</a>
+  <a href="#webhook"><span class="n">↳</span>Webhook Manipulation</a>
+  <a href="#inventory"><span class="n">↳</span>Inventory Race Conditions</a>
+  <a href="#stolen"><span class="n">↳</span>Stolen Device Laundering</a>
+  <a href="#escrow"><span class="n">02</span>Escrow Lifecycle Rules</a>
+  <a href="#timeline"><span class="n">↳</span>7-Day Countdown Timeline</a>
+  <a href="#ops-rules"><span class="n">↳</span>Operational Rules Table</a>
+  <a href="#dispute"><span class="n">03</span>Dispute Resolution Playbook</a>
+  <a href="#hierarchy"><span class="n">↳</span>Policy Hierarchy</a>
+  <a href="#case-study"><span class="n">↳</span>Case: Broken Laptop / No Returns</a>
+  <a href="#edge-cases"><span class="n">↳</span>Edge Case Matrix</a>
+  <div class="nav-footer">Trust & Safety Matrix v1.0<br>Lead Platform Security Ed.</div>
+</nav>
+
+<div class="main">
+
+<!-- ── COVER ── -->
+<div class="cover">
+  <div class="cover-mesh"></div>
+  <div class="cover-grid"></div>
+  <div class="cover-content">
+    <div class="cover-eyebrow"><span class="dot"></span>Trust, Safety & Security Matrix · Lead Platform Security Engineer Edition</div>
+    <div class="cover-logo">
+      <div class="cl-u">U</div><div class="cl-sh">shop</div>
+    </div>
+    <div class="cover-h1">Trust, Safety & Security Matrix</div>
+    <p class="cover-sub">A rigorous, operational-grade framework covering the top five platform vulnerabilities, the exact escrow lifecycle rules, and a complete dispute resolution playbook for Ghana's student tech marketplace.</p>
+    <div class="cover-tags">
+      <span class="ctag ctag-red"><span class="ctag-dot" style="background:var(--rose)"></span>Threat Modelling</span>
+      <span class="ctag ctag-amber"><span class="ctag-dot" style="background:var(--amber)"></span>Escrow Lifecycle</span>
+      <span class="ctag ctag-blue"><span class="ctag-dot" style="background:#60a5fa"></span>Dispute Playbook</span>
+      <span class="ctag ctag-green"><span class="ctag-dot" style="background:var(--green)"></span>Policy Hierarchy</span>
+    </div>
+  </div>
+  <div class="cover-meta">
+    <div class="cm"><span class="cm-l">Document</span><span class="cm-v">T&S v1.0</span></div>
+    <div class="cm"><span class="cm-l">Threats</span><span class="cm-v">5 modelled</span></div>
+    <div class="cm"><span class="cm-l">Escrow Rules</span><span class="cm-v">14 rules</span></div>
+    <div class="cm"><span class="cm-l">Dispute Steps</span><span class="cm-v">8-step SLA</span></div>
+    <div class="cm"><span class="cm-l">Status</span><span class="cm-v">Draft · Review</span></div>
+  </div>
+</div>
+
+<div class="body">
+
+<!-- ════════════════════════════════════════════════
+     01 — THREAT MODEL
+════════════════════════════════════════════════ -->
+<div class="section" id="threat">
+  <div class="sec-label">01 — Threat Model & Mitigation</div>
+  <h1>Platform Threat Model</h1>
+  <p>The five threats below were selected because they are <strong>specific to U-Shop's architecture</strong> — the combination of user-generated policy text, Paystack's collect-and-transfer escrow, high-value tech inventory, and a student user base creates a distinct attack surface. Generic OWASP checklists do not fully address this surface.</p>
+
+  <div class="insight">
+    <div class="ins-l">Security Philosophy</div>
+    <p>The biggest risk to U-Shop is not a technical breach — it is a <strong>trust failure that goes viral on campus</strong>. One widely-shared story of a GH₵ 2,000 laptop scam that the platform failed to resolve will cause months of growth stagnation. These mitigations are therefore <em>brand protection</em> as much as they are <em>technical controls</em>.</p>
+  </div>
+
+  <!-- ─── THREAT 1: XSS ─── -->
+  <h2 id="xss">Threat 1 — XSS via Custom Policy &amp; Store Content</h2>
+  <div class="threat-grid">
+    <div class="threat-card">
+      <div class="threat-header">
+        <span class="threat-num tn-crit">CRITICAL</span>
+        <div class="threat-title-block">
+          <h3>Cross-Site Scripting (XSS) via User-Generated Policy Text</h3>
+          <p>A malicious seller injects JavaScript into their custom store name, bio, return policy text, or warranty notes. When other users load the store page, the script executes in their browser session — potentially stealing session tokens, redirecting buyers to phishing payment pages, or silently modifying checkout totals.</p>
+        </div>
+      </div>
+      <div class="threat-body">
+        <div class="threat-col">
+          <div class="threat-col-label tcl-attack">⚠ Attack Surface</div>
+          <ul>
+            <li><span class="li-bullet lb-attack">!</span><strong>Store bio field</strong> — rendered on the public store page, SSR'd into HTML for SEO. A single unescaped <code>&lt;script&gt;</code> tag here executes for every visitor.</li>
+            <li><span class="li-bullet lb-attack">!</span><strong>Custom return policy text</strong> — free-text up to 500 chars. Rendered in the listing sidebar and checkout summary. High-impact target.</li>
+            <li><span class="li-bullet lb-attack">!</span><strong>Product description</strong> — supports markdown-like formatting, widening the injection surface significantly if not sanitised.</li>
+            <li><span class="li-bullet lb-attack">!</span><strong>Store name / handle</strong> — rendered in OG images, email notifications, and admin dashboard. An XSS payload in an email's HTML is a separate attack vector.</li>
+            <li><span class="li-bullet lb-attack">!</span><strong>Dispute evidence descriptions</strong> — rendered in the admin panel. Admin panels are high-value XSS targets because admins have elevated session privileges.</li>
+          </ul>
+        </div>
+        <div class="threat-col">
+          <div class="threat-col-label tcl-defend">✓ Mitigations (Layered)</div>
+          <ul>
+            <li><span class="li-bullet lb-defend">✓</span><strong>Layer 1 — Input Sanitisation (Express):</strong> All free-text inputs are sanitised server-side using <code>isomorphic-dompurify</code> before being written to the database. Strip all HTML tags from store name, bio, and handle. For policy text and descriptions: strip all tags except a defined allowlist (<code>b</code>, <code>i</code>, <code>br</code>, <code>ul</code>, <code>li</code>). No <code>script</code>, <code>style</code>, <code>a</code>, <code>img</code>, <code>iframe</code> — ever.</li>
+            <li><span class="li-bullet lb-defend">✓</span><strong>Layer 2 — Output Escaping (React/Next.js):</strong> React escapes all string values rendered via JSX by default. Never use <code>dangerouslySetInnerHTML</code> with user-generated content. If markdown rendering is needed, use a sanitising renderer (e.g. <code>react-markdown</code> with the <code>rehype-sanitize</code> plugin).</li>
+            <li><span class="li-bullet lb-defend">✓</span><strong>Layer 3 — Content Security Policy (CSP):</strong> Set a strict CSP header on all responses. <code>script-src 'self'</code> means even if a script tag is somehow rendered, the browser refuses to execute it unless it originates from your own domain.</li>
+            <li><span class="li-bullet lb-defend">✓</span><strong>Layer 4 — Zod Schema Validation:</strong> All API inputs validated with Zod before sanitisation runs. Fields with maximum length constraints (500 chars for policy text) are enforced here first.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="threat-code">
+        <div class="threat-code-label">Implementation — Express Sanitisation Middleware</div>
+<pre class="tc">
+<span class="cm">// apps/api/src/middleware/sanitize.ts
+// Run this on ALL user-generated text before it touches the database.
+// DOMPurify strips malicious content; Zod has already enforced length limits.</span>
+
+<span class="kw">import</span> DOMPurify <span class="kw">from</span> <span class="str">'isomorphic-dompurify'</span>;
+
+<span class="cm">// No HTML allowed in these fields — strip everything</span>
+<span class="kw">export function</span> <span class="fn">sanitizePlainText</span>(input: <span class="kw">string</span>): <span class="kw">string</span> {
+  <span class="kw">return</span> DOMPurify.sanitize(input, { ALLOWED_TAGS: [], ALLOWED_ATTR: [] })
+    .trim()
+    .replace(<span class="str">/\s+/g</span>, <span class="str">' '</span>); <span class="cm">// Collapse multiple spaces</span>
+}
+
+<span class="cm">// Limited formatting allowed in policy text and descriptions</span>
+<span class="kw">export function</span> <span class="fn">sanitizeRichText</span>(input: <span class="kw">string</span>): <span class="kw">string</span> {
+  <span class="kw">return</span> DOMPurify.sanitize(input, {
+    ALLOWED_TAGS: [<span class="str">'b'</span>, <span class="str">'i'</span>, <span class="str">'em'</span>, <span class="str">'strong'</span>, <span class="str">'br'</span>, <span class="str">'ul'</span>, <span class="str">'ol'</span>, <span class="str">'li'</span>, <span class="str">'p'</span>],
+    ALLOWED_ATTR: [],  <span class="cm">// No attributes — blocks onclick, style, href, etc.</span>
+    FORBID_TAGS: [<span class="str">'script'</span>, <span class="str">'style'</span>, <span class="str">'iframe'</span>, <span class="str">'form'</span>, <span class="str">'input'</span>],
+    FORBID_ATTR: [<span class="str">'onerror'</span>, <span class="str">'onload'</span>, <span class="str">'onclick'</span>, <span class="str">'style'</span>],
+  });
+}
+
+<span class="cm">// Content-Security-Policy header — set in Express via helmet</span>
+<span class="cm">// app.use(helmet.contentSecurityPolicy({ directives: {</span>
+<span class="cm">//   defaultSrc: ["'self'"],</span>
+<span class="cm">//   scriptSrc:  ["'self'"],          // No inline scripts, no external CDNs</span>
+<span class="cm">//   styleSrc:   ["'self'", "'unsafe-inline'"],</span>
+<span class="cm">//   imgSrc:     ["'self'", "data:", "*.supabase.co"],</span>
+<span class="cm">//   connectSrc: ["'self'", "*.supabase.co", "api.paystack.co"],</span>
+<span class="cm">// }}));</span>
+</pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── THREAT 2: FAKE LISTINGS ─── -->
+  <h2 id="fraud">Threat 2 — Fake Listings &amp; "Brick in a Box" Fraud</h2>
+  <div class="threat-grid">
+    <div class="threat-card">
+      <div class="threat-header">
+        <span class="threat-num tn-crit">CRITICAL</span>
+        <div class="threat-title-block">
+          <h3>Fraudulent Product Listings — Counterfeit, Stolen, and Misrepresented Devices</h3>
+          <p>A seller lists a MacBook Pro at below-market price. The buyer pays via MoMo. The seller ships a box of bricks, a non-functional device, or a device that is stolen and IMEI-blocked. Alternatively, the seller lists as "Excellent" condition what is functionally broken. These are the highest-frequency fraud scenarios on any second-hand tech marketplace.</p>
+        </div>
+      </div>
+      <div class="threat-body">
+        <div class="threat-col">
+          <div class="threat-col-label tcl-attack">⚠ Attack Variants</div>
+          <ul>
+            <li><span class="li-bullet lb-attack">!</span><strong>Brick-in-Box:</strong> Buyer pays, receives a box containing bricks or junk. Seller claims delivery was made. Escrow auto-releases after 7 days if buyer doesn't dispute in time.</li>
+            <li><span class="li-bullet lb-attack">!</span><strong>Condition Fraud:</strong> Device listed as "Used — Good" arrives in "For Parts" condition. Battery health screenshot is faked using a photo editor.</li>
+            <li><span class="li-bullet lb-attack">!</span><strong>Stolen Device:</strong> Seller lists a laptop or phone with a fraudulent or blocked IMEI/serial number. Buyer later discovers the device is blacklisted and non-functional on networks.</li>
+            <li><span class="li-bullet lb-attack">!</span><strong>Counterfeit:</strong> Replica iPhone or laptop sold as genuine. Particularly high risk at Tier 2/3 price points where deals "seem too good".</li>
+            <li><span class="li-bullet lb-attack">!</span><strong>Account Takeover Listing:</strong> Fraudster gains access to a high-rated seller account and posts fraudulent listings using its reputation to avoid suspicion.</li>
+          </ul>
+        </div>
+        <div class="threat-col">
+          <div class="threat-col-label tcl-defend">✓ Mitigations (Layered)</div>
+          <ul>
+            <li><span class="li-bullet lb-defend">✓</span><strong>Mandatory IMEI/Serial Disclosure:</strong> All phone listings require IMEI input. All laptop listings above GH₵ 500 require serial number. These are stored on the listing record and displayed to buyers before purchase.</li>
+            <li><span class="li-bullet lb-defend">✓</span><strong>Illustrated Condition Grade Guide:</strong> Each of the 6 condition tiers is defined with photos, specific criteria (battery %, scratch tolerance, port functionality). Sellers must select a grade that triggers required evidence — e.g., "Used — Good" mandates a battery health screenshot. Per PRD: this single measure is estimated to halve dispute volume.</li>
+            <li><span class="li-bullet lb-defend">✓</span><strong>Mandatory Photo Requirements per Condition:</strong> "Used — Good" and below require photos of all four corners, ports, and the screen. These are uploaded before the listing can be activated.</li>
+            <li><span class="li-bullet lb-defend">✓</span><strong>Escrow Protects the Buyer:</strong> Funds are never released until buyer confirms delivery. The 48-hour dispute window (opening from confirmed delivery or from the moment the buyer clicks Received) is the buyer's final safety net.</li>
+            <li><span class="li-bullet lb-defend">✓</span><strong>Seller Reputation System:</strong> Verified student sellers, established review ratings, and transaction history are surfaced prominently. New sellers with zero reviews are visually flagged.</li>
+            <li><span class="li-bullet lb-defend">✓</span><strong>Report Stolen Device Button:</strong> Visible on every listing. Links to a Ghana Police Service IMEI check integration (Phase 2). Any reported listing triggers an immediate escrow freeze on active orders.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="threat-code">
+        <div class="threat-code-label">Implementation — Listing Activation Guard (Express)</div>
+<pre class="tc">
+<span class="cm">// apps/api/src/services/listing.service.ts
+// Called before a listing can transition from DRAFT → ACTIVE.
+// A listing that does not meet these requirements simply cannot go live.</span>
+
+<span class="kw">async function</span> <span class="fn">validateListingForActivation</span>(listing: Listing): Promise&lt;void&gt; {
+  <span class="kw">const</span> errors: <span class="kw">string</span>[] = [];
+
+  <span class="cm">// Rule 1: At least 2 photos required for any used item</span>
+  <span class="kw">if</span> (listing.condition !== <span class="str">'NEW'</span> && listing.imagePaths.length < <span class="num">2</span>) {
+    errors.push(<span class="str">'Used items require at least 2 photos'</span>);
+  }
+
+  <span class="cm">// Rule 2: Battery screenshot required for phones/laptops in Used conditions</span>
+  <span class="kw">const</span> BATTERY_REQUIRED_CONDITIONS = [<span class="str">'USED_GOOD'</span>, <span class="str">'USED_FAIR'</span>, <span class="str">'USED_EXCELLENT'</span>];
+  <span class="kw">if</span> (BATTERY_REQUIRED_CONDITIONS.includes(listing.condition) &&
+      listing.category.slug === <span class="str">'phones'</span> || listing.category.slug === <span class="str">'laptops'</span>) {
+    <span class="kw">if</span> (!listing.batteryScreenshotPath) {
+      errors.push(<span class="str">'Battery health screenshot required for this condition grade'</span>);
+    }
+  }
+
+  <span class="cm">// Rule 3: IMEI required for all phones</span>
+  <span class="kw">if</span> (listing.category.slug === <span class="str">'phones'</span> && !listing.imei) {
+    errors.push(<span class="str">'IMEI number is mandatory for all phone listings'</span>);
+  }
+
+  <span class="cm">// Rule 4: Serial number required for high-value laptops</span>
+  <span class="kw">if</span> (listing.category.slug === <span class="str">'laptops'</span> &&
+      listing.price >= <span class="num">500</span> && !listing.serialNumber) {
+    errors.push(<span class="str">'Serial number required for laptop listings above GH₵ 500'</span>);
+  }
+
+  <span class="kw">if</span> (errors.length > <span class="num">0</span>) {
+    <span class="kw">throw new</span> <span class="fn">ValidationError</span>(errors.join(<span class="str">' | '</span>));
+  }
+}
+</pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── THREAT 3: WEBHOOK MANIPULATION ─── -->
+  <h2 id="webhook">Threat 3 — Paystack Webhook Manipulation &amp; Replay Attacks</h2>
+  <div class="threat-grid">
+    <div class="threat-card">
+      <div class="threat-header">
+        <span class="threat-num tn-crit">CRITICAL</span>
+        <div class="threat-title-block">
+          <h3>Forged or Replayed Paystack Webhooks</h3>
+          <p>An attacker discovers your webhook URL (it is often predictable) and sends a forged <code>charge.success</code> event to your Express server. If your server doesn't verify the HMAC signature, it will process the fake payment, mark the order as paid, create an escrow record — and the attacker gets free goods. A replay attack sends a genuine past webhook a second time to trigger a double-escrow-release.</p>
+        </div>
+      </div>
+      <div class="threat-body">
+        <div class="threat-col">
+          <div class="threat-col-label tcl-attack">⚠ Attack Variants</div>
+          <ul>
+            <li><span class="li-bullet lb-attack">!</span><strong>Webhook Forgery:</strong> Attacker crafts a fake <code>charge.success</code> payload and POSTs it to <code>/webhooks/paystack</code>. Without HMAC verification, the server accepts it as legitimate payment.</li>
+            <li><span class="li-bullet lb-attack">!</span><strong>Replay Attack:</strong> Attacker captures a real webhook (from a sniffed connection or by placing a real order) and replays it. Without idempotency checks, this triggers a second escrow creation or second release.</li>
+            <li><span class="li-bullet lb-attack">!</span><strong>Redirect Exploitation:</strong> Attacker manually visits the callback URL (<code>/checkout/complete?reference=abc123</code>) without paying. If the server trusts the redirect alone, the order is marked paid.</li>
+            <li><span class="li-bullet lb-attack">!</span><strong>Race Between Redirect and Webhook:</strong> The payment page arrives before the webhook is processed. A naive implementation might trust the redirect and mark the order paid before verification.</li>
+          </ul>
+        </div>
+        <div class="threat-col">
+          <div class="threat-col-label tcl-defend">✓ Mitigations (Implemented)</div>
+          <ul>
+            <li><span class="li-bullet lb-defend">✓</span><strong>HMAC-SHA512 Signature Verification (Layer 1):</strong> Every webhook is verified by computing <code>HMAC-SHA512(rawBody, PAYSTACK_SECRET_KEY)</code> and comparing it to <code>x-paystack-signature</code> using <code>crypto.timingSafeEqual()</code>. Failure → 401, logged immediately. This is the primary authentication mechanism. The webhook URL itself is not a secret.</li>
+            <li><span class="li-bullet lb-defend">✓</span><strong>Idempotency via WebhookEvent Table (Layer 2):</strong> Every event is stored with Paystack's unique event ID as <code>externalId</code> (unique constraint in DB). Before processing any event: check if it already exists. If processed = true, return 200 immediately without side effects. This stops replay attacks cold.</li>
+            <li><span class="li-bullet lb-defend">✓</span><strong>Raw Body Parsing (Layer 3):</strong> The webhook route is registered before <code>express.json()</code> and uses <code>express.raw()</code> to preserve the raw buffer. HMAC is computed on the exact bytes Paystack sent — not a re-serialized JSON object. This is the most common implementation mistake and is specifically guarded against.</li>
+            <li><span class="li-bullet lb-defend">✓</span><strong>Redirect Never Trusted (Layer 4):</strong> The checkout callback page (<code>/checkout/complete</code>) calls the Express API to fetch the order's current status. It never marks orders as paid directly. The webhook is the source of truth. If the webhook hasn't fired yet, the page polls every 2 seconds for up to 30 seconds.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="threat-code">
+        <div class="threat-code-label">Timing-Safe Signature Comparison (the correct way)</div>
+<pre class="tc">
+<span class="cm">// crypto.timingSafeEqual prevents timing attacks.
+// A naive comparison (hash === signature) leaks information about
+// how many characters matched via the time it takes to return false.
+// timingSafeEqual always takes the same time regardless of match position.</span>
+
+<span class="kw">const</span> signature = req.headers[<span class="str">'x-paystack-signature'</span>] <span class="kw">as</span> <span class="kw">string</span>;
+
+<span class="kw">if</span> (!signature) {
+  <span class="kw">return</span> res.status(<span class="num">401</span>).send(<span class="str">'Missing signature'</span>);
+}
+
+<span class="kw">const</span> expectedHash = crypto
+  .createHmac(<span class="str">'sha512'</span>, process.env.PAYSTACK_SECRET_KEY!)
+  .update(req.body) <span class="cm">// req.body = raw Buffer — NOT JSON.parse()'d</span>
+  .digest(<span class="str">'hex'</span>);
+
+<span class="cm">// Both buffers must be the same length before comparison</span>
+<span class="kw">const</span> sigBuffer  = Buffer.from(signature, <span class="str">'hex'</span>);
+<span class="kw">const</span> hashBuffer = Buffer.from(expectedHash, <span class="str">'hex'</span>);
+
+<span class="kw">if</span> (sigBuffer.length !== hashBuffer.length ||
+    !crypto.timingSafeEqual(sigBuffer, hashBuffer)) {
+  console.warn(<span class="str">'⚠ Paystack webhook signature FAILED — potential forgery attempt'</span>);
+  <span class="kw">return</span> res.status(<span class="num">401</span>).send(<span class="str">'Invalid signature'</span>);
+}
+
+<span class="cm">// Only parse the body AFTER verification passes</span>
+<span class="kw">const</span> event = JSON.parse(req.body.toString()) <span class="kw">as</span> PaystackEvent;
+</pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── THREAT 4: INVENTORY RACE CONDITION ─── -->
+  <h2 id="inventory">Threat 4 — Inventory Race Conditions at Checkout</h2>
+  <div class="threat-grid">
+    <div class="threat-card">
+      <div class="threat-header">
+        <span class="threat-num tn-high">HIGH</span>
+        <div class="threat-title-block">
+          <h3>Concurrent Checkout — Overselling the Same Item to Multiple Buyers</h3>
+          <p>Two buyers both see "1 unit in stock" and both click "Buy Now" within milliseconds of each other. Both API requests pass the stock-check validation simultaneously. Both orders are created and sent to Paystack. Both buyers pay. One item. Two confirmed orders. The seller cannot fulfil both; one buyer will be defrauded by the platform's own checkout flow.</p>
+        </div>
+      </div>
+      <div class="threat-body">
+        <div class="threat-col">
+          <div class="threat-col-label tcl-attack">⚠ Why This Happens</div>
+          <ul>
+            <li><span class="li-bullet lb-attack">!</span>Two requests hit Express simultaneously. Both call <code>listing.findUnique()</code> and read stock = 1. Both pass the stock validation (<code>if stock &lt; 1, throw error</code>).</li>
+            <li><span class="li-bullet lb-attack">!</span>Both proceed to create an Order and call Paystack to initialise a transaction. Both buyers get sent to the payment page.</li>
+            <li><span class="li-bullet lb-attack">!</span>Both buyers complete payment. Both <code>charge.success</code> webhooks arrive. Both orders are marked <code>PAYMENT_RECEIVED</code>. Stock is now at -1.</li>
+            <li><span class="li-bullet lb-attack">!</span>The same race condition can occur at the escrow release stage: a buyer double-clicks "Confirm Receipt", firing two simultaneous release requests.</li>
+          </ul>
+        </div>
+        <div class="threat-col">
+          <div class="threat-col-label tcl-defend">✓ Mitigation — Atomic Database Operations</div>
+          <ul>
+            <li><span class="li-bullet lb-defend">✓</span><strong>Atomic Stock Decrement with Conditional WHERE:</strong> Instead of read-then-update (the race condition), use a single atomic SQL statement: <code>UPDATE listings SET stock = stock - 1 WHERE id = $1 AND stock &gt;= 1</code>. PostgreSQL executes this atomically. If two concurrent requests reach the DB, one will find stock = 1 and decrement successfully; the second will find stock = 0 and update 0 rows — detectable as a failure.</li>
+            <li><span class="li-bullet lb-defend">✓</span><strong>Optimistic Locking for Escrow Release:</strong> The escrow release query includes a <code>WHERE status = 'HOLDING'</code> condition. The first request updates the escrow to <code>RELEASING</code>; the second finds no rows in <code>HOLDING</code> state and fails gracefully with a 409 Conflict.</li>
+            <li><span class="li-bullet lb-defend">✓</span><strong>Prisma Transaction Wrapping:</strong> All stock decrement + order creation logic runs inside a single <code>prisma.$transaction()</code>. If any part fails, the entire operation rolls back — preventing partial states (order created, stock not decremented).</li>
+            <li><span class="li-bullet lb-defend">✓</span><strong>Frontend Debounce:</strong> The "Buy Now" button is disabled immediately on click and shows a loading state. This stops accidental double-clicks at the UI layer before they hit the API.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="threat-code">
+        <div class="threat-code-label">Atomic Stock Reservation — The Correct Pattern</div>
+<pre class="tc">
+<span class="cm">// The WRONG way (read then write — race condition):
+// const listing = await prisma.listing.findUnique({ where: { id } })
+// if (listing.stock < quantity) throw new Error('Out of stock')    ← TOCTOU bug
+// await prisma.listing.update({ data: { stock: { decrement: quantity } } })
+
+// The RIGHT way — single atomic conditional UPDATE:
+// Prisma $executeRaw returns the number of rows affected.</span>
+
+<span class="kw">const</span> rowsAffected = <span class="kw">await</span> prisma.$executeRaw<span class="fn">`
+  UPDATE listings
+  SET    stock = stock - ${quantity}
+  WHERE  id    = ${listingId}
+  AND    stock >= ${quantity}
+  AND    status = 'ACTIVE'
+`</span>;
+
+<span class="cm">// 0 rows affected = stock was already 0 when we tried to decrement.
+// The operation failed safely. No partial state exists.</span>
+<span class="kw">if</span> (rowsAffected === <span class="num">0</span>) {
+  <span class="kw">throw new</span> <span class="fn">ConflictError</span>(<span class="str">'This item just sold out. Please choose another listing.'</span>);
+}
+
+<span class="cm">// After stock is reserved, THEN create the Order and call Paystack.
+// All inside prisma.$transaction() for rollback safety.</span>
+</pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── THREAT 5: STOLEN DEVICES ─── -->
+  <h2 id="stolen">Threat 5 — Stolen Device Laundering</h2>
+  <div class="threat-grid">
+    <div class="threat-card">
+      <div class="threat-header">
+        <span class="threat-num tn-high">HIGH</span>
+        <div class="threat-title-block">
+          <h3>Stolen or Blacklisted Tech Devices Listed for Sale</h3>
+          <p>A thief steals a laptop or phone, lists it on U-Shop at an attractive price, receives payment via escrow, and disappears. The buyer later discovers the device's IMEI is blacklisted by the network (for phones) or that the laptop's serial number is registered to someone else via manufacturer theft databases. U-Shop faces legal liability and severe reputational damage.</p>
+        </div>
+      </div>
+      <div class="threat-body">
+        <div class="threat-col">
+          <div class="threat-col-label tcl-attack">⚠ Platform Risk</div>
+          <ul>
+            <li><span class="li-bullet lb-attack">!</span>Ghana Police Service can hold a platform liable for knowingly facilitating the sale of stolen goods if no verification process exists.</li>
+            <li><span class="li-bullet lb-attack">!</span>A buyer who purchases a blacklisted phone (SIM card rejected by all networks) has received a worthless item. Platform escrow has already released funds.</li>
+            <li><span class="li-bullet lb-attack">!</span>University campus context amplifies reputational risk — students talk. One stolen laptop story circulates immediately via WhatsApp groups and destroys trust rapidly.</li>
+            <li><span class="li-bullet lb-attack">!</span>Repeat offenders: fraudsters will create multiple accounts after being banned unless identity verification ties accounts to real identities.</li>
+          </ul>
+        </div>
+        <div class="threat-col">
+          <div class="threat-col-label tcl-defend">✓ Mitigations</div>
+          <ul>
+            <li><span class="li-bullet lb-defend">✓</span><strong>IMEI Mandatory for All Phone Listings:</strong> Stored at listing creation. Displayed prominently to buyers with a "Check IMEI" button that links to a free IMEI checker tool. In Phase 2: integrate with a paid IMEI blacklist API for automatic verification.</li>
+            <li><span class="li-bullet lb-defend">✓</span><strong>Serial Number Required for High-Value Laptops:</strong> All laptops above GH₵ 500 require the serial number. Admin can cross-reference against manufacturer theft databases manually or via API (Phase 2).</li>
+            <li><span class="li-bullet lb-defend">✓</span><strong>"Report Stolen Device" Button:</strong> Visible on every active listing. Opens a form linked to the buyer's account. Any report triggers an automatic escrow freeze on active orders for that listing, pending admin review within 24 hours.</li>
+            <li><span class="li-bullet lb-defend">✓</span><strong>Account Suspension on Confirmed Fraud:</strong> Any seller account confirmed to have listed a stolen device is permanently banned. Their Paystack payout is blocked pending police coordination. Their verified identity (student ID or Ghana Card for non-students) is flagged in our system.</li>
+            <li><span class="li-bullet lb-defend">✓</span><strong>Seller Identity Requirements:</strong> All sellers must verify with a Ghana Card or student ID before activating a store. This creates a real-world identity link that deters casual thieves.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /section threat -->
+<div class="divider"></div>
+
+<!-- ════════════════════════════════════════════════
+     02 — ESCROW LIFECYCLE
+════════════════════════════════════════════════ -->
+<div class="section" id="escrow">
+  <div class="sec-label">02 — Escrow &amp; Payment Lifecycle</div>
+  <h1>Escrow Lifecycle — Operational Rules</h1>
+  <p>The escrow system is not a feature — it is the foundational trust mechanism of U-Shop. Every operational rule below was derived from the PRD's blind spots section and the escrow technical specification. <strong>These rules are non-negotiable and must be implemented in code exactly as written here.</strong></p>
+
+  <div class="callout callout-blue">
+    <strong>The Core Principle</strong>
+    <p>Escrow in U-Shop is <em>virtual</em>. Money flows: buyer pays → 100% lands in U-Shop's Paystack account balance → our database ledger tracks what belongs to whom → on release, we call Paystack Transfer API to send the seller's cut to their MoMo. <strong>The database is the escrow system. Paystack is the payment rails.</strong></p>
+  </div>
+
+  <!-- TIMELINE -->
+  <h2 id="timeline">The 7-Day Countdown — Notification Timeline</h2>
+  <p>The auto-release timer is a <strong>financial safety feature</strong>, not just UX. A buyer who misses the dispute window because they were never notified is a platform liability. The notification schedule below is therefore mandatory — not optional — to implement before launch.</p>
+
+  <div class="escrow-timeline">
+    <div class="et-track"></div>
+
+    <div class="et-event">
+      <div class="et-dot" style="background:var(--blue);">0</div>
+      <div class="et-body">
+        <h4>Payment Confirmed — Escrow Created</h4>
+        <p>Paystack fires <code>charge.success</code> webhook. Express verifies HMAC, creates Escrow record (<code>HELD</code>), sets <code>escrow_release_at = paid_at + 7 days</code>. Seller notified immediately: "You have a new order. Arrange delivery within 48 hours." Buyer notified: "Payment received. Your funds are secure in escrow."</p>
+        <div class="et-time"><span class="et-time-badge etb-day0">Day 0 — T=0</span>BullMQ jobs scheduled for Day 3, 5, 6, and 6.5 reminders</div>
+      </div>
+    </div>
+
+    <div class="et-event">
+      <div class="et-dot" style="background:var(--blue);">→</div>
+      <div class="et-body">
+        <h4>Seller Arranges Delivery / Meetup</h4>
+        <p>Seller updates order status to <code>IN_TRANSIT</code> or arranges a campus meetup via the in-app message thread. The message thread is the permanent record of all delivery commitments. <strong>Sellers are advised: any delivery promise made in this thread can be used as evidence in a dispute.</strong></p>
+        <div class="et-time"><span class="et-time-badge etb-day0">Day 0–2</span>No notifications sent. Platform assumes delivery is in progress.</div>
+      </div>
+    </div>
+
+    <div class="et-event">
+      <div class="et-dot" style="background:var(--amber);">3</div>
+      <div class="et-body">
+        <h4>Day 3 — First Reminder to Buyer</h4>
+        <p>Email + in-app notification to buyer: <em>"Your order from [Store Name] should have arrived or be arriving soon. Once you receive and inspect the item, please confirm delivery. If there is a problem, open a dispute now — don't wait."</em></p>
+        <div class="et-time"><span class="et-time-badge etb-day3">Day 3 — T+72h</span>Tone: friendly, informational. No urgency language yet.</div>
+        <div class="et-alert">⚠ If the buyer still hasn't received the item, this is the correct moment to open a dispute. The Day 3 reminder should prominently feature the "Open Dispute" button alongside "Confirm Delivery".</div>
+      </div>
+    </div>
+
+    <div class="et-event">
+      <div class="et-dot" style="background:var(--orange);">5</div>
+      <div class="et-body">
+        <h4>Day 5 — Second Reminder (Urgency Introduced)</h4>
+        <p>Email + in-app + push notification: <em>"Have you received your item? Payment to the seller will be automatically released in 48 hours if you do not confirm delivery. If there is ANY problem with your order, open a dispute before then."</em></p>
+        <div class="et-time"><span class="et-time-badge etb-day5">Day 5 — T+120h</span>Tone: urgent. Two clear buttons: <strong>Confirm Delivery</strong> and <strong>Open Dispute</strong> — equal prominence.</div>
+      </div>
+    </div>
+
+    <div class="et-event">
+      <div class="et-dot" style="background:var(--red);">6</div>
+      <div class="et-body">
+        <h4>Day 6 — Final Warning (24 Hours Remaining)</h4>
+        <p>Email + in-app + push notification: <em>"🔴 FINAL NOTICE: Payment to the seller releases automatically in 24 hours. If you have NOT received the item, or if the item is damaged, broken, or not as described — open a dispute NOW. This is your last opportunity to protect your payment."</em></p>
+        <div class="et-time"><span class="et-time-badge etb-day7">Day 6 — T+144h</span>Tone: maximum urgency. Dispute button is the primary CTA at this stage.</div>
+      </div>
+    </div>
+
+    <div class="et-event">
+      <div class="et-dot" style="background:var(--red);">6½</div>
+      <div class="et-body">
+        <h4>Day 6.5 — Last Chance (6 Hours Remaining)</h4>
+        <p>Final notification, 6 hours before auto-release: <em>"⚠ Payment releases in 6 hours. If you have any concerns about your order, this is your absolute last chance to open a dispute. After release, platform intervention requires a post-release dispute which has more limited remedies."</em></p>
+        <div class="et-time"><span class="et-time-badge etb-day7">Day 6.5 — T+156h</span>SMS sent if phone number is on file, in addition to email and in-app.</div>
+      </div>
+    </div>
+
+    <div class="et-event">
+      <div class="et-dot" style="background:var(--green);">7</div>
+      <div class="et-body">
+        <h4>Day 7 — Auto-Release Fires</h4>
+        <p>The hourly cron job (<code>escrow-release.job.ts</code>) detects the order: <code>status = PAYMENT_RECEIVED</code> and <code>escrow_release_at &lt;= NOW()</code>. It calls <code>EscrowService.releaseToSeller(orderId, 'AUTO_7DAY')</code> — the same code path as a buyer-triggered release. Seller's wallet is credited. Seller receives an email: "Great news — your payment has been released. GH₵ X is now available in your wallet."</p>
+        <div class="et-time"><span class="et-time-badge etb-auto">Auto-Release — T+168h</span><code>release_trigger = 'AUTO_7DAY'</code> stored on EscrowLedger for audit trail.</div>
+        <div class="et-alert">⚠ Auto-release does NOT close the dispute window. Buyers may still open a post-release dispute (with more limited remedies) within 24 hours of the auto-release if they can demonstrate the notification schedule was not delivered to them.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- OPERATIONAL RULES TABLE -->
+  <h2 id="ops-rules">Operational Rules — The Escrow Rulebook</h2>
+  <p>These 14 rules govern every decision the escrow system makes. They are written as implementation contracts — if your code does not satisfy all of them, it is not production-ready.</p>
+
+  <table class="rules-table">
+    <thead>
+      <tr><th>#</th><th>Rule</th><th>Rationale</th><th>Enforced By</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>R-01</td>
+        <td>Escrow is created only after a verified <code>charge.success</code> webhook — never on redirect callback alone</td>
+        <td>The redirect can be manually triggered by anyone without paying. The webhook is cryptographically signed proof of payment.</td>
+        <td>Webhook HMAC verification + business logic gate</td>
+      </tr>
+      <tr>
+        <td>R-02</td>
+        <td>The escrow auto-release timer is set to exactly 7 days from <code>paid_at</code>, not from order creation</td>
+        <td><code>paid_at</code> is when the buyer's funds were confirmed. Creating the order might precede payment by minutes. Using order creation would shortchange the buyer.</td>
+        <td><code>escrow_release_at = paidAt + 7 days</code> in <code>handleChargeSuccess</code></td>
+      </tr>
+      <tr>
+        <td>R-03</td>
+        <td>Escrow can only be released if its current status is <code>HELD</code></td>
+        <td>Prevents double-release. Two concurrent release calls cannot both succeed — the second finds no row in <code>HELD</code> state.</td>
+        <td>Atomic DB update: <code>WHERE status = 'HELD'</code></td>
+      </tr>
+      <tr>
+        <td>R-04</td>
+        <td>Only the buyer of the specific order can manually trigger escrow release</td>
+        <td>Prevents sellers from releasing their own escrow. Prevents one buyer from releasing another buyer's order.</td>
+        <td>Ownership check: <code>order.buyerId === req.user.id</code></td>
+      </tr>
+      <tr>
+        <td>R-05</td>
+        <td>Opening a dispute immediately freezes escrow — auto-release is suspended</td>
+        <td>A disputed order must not auto-release while evidence is being reviewed. The buyer's protection window must not expire during arbitration.</td>
+        <td><code>order.status = 'DISPUTED'</code> prevents escrow cron from processing it</td>
+      </tr>
+      <tr>
+        <td>R-06</td>
+        <td>A buyer can open a dispute while the order is in <code>PAYMENT_RECEIVED</code>, <code>PROCESSING</code>, or <code>IN_TRANSIT</code> status</td>
+        <td>Buyers must not have to wait for the seller to update the order status before they can protect themselves.</td>
+        <td>Dispute creation validates against the allowed status set</td>
+      </tr>
+      <tr>
+        <td>R-07</td>
+        <td>After a buyer manually confirms delivery, a 48-hour dispute window remains open</td>
+        <td>The buyer may have confirmed delivery before fully inspecting the device (e.g., confirmed at handoff, discovered damage later). 48 hours is the minimum fair inspection period.</td>
+        <td><code>dispute_window_closes_at = deliveredAt + 48h</code>; dispute endpoint checks this</td>
+      </tr>
+      <tr>
+        <td>R-08</td>
+        <td>Wallet crediting is atomic with escrow status update — both succeed or both roll back</td>
+        <td>Money can never be "released" without being credited to the wallet. A failed wallet credit with a successful escrow update would strand funds.</td>
+        <td>Prisma <code>$transaction()</code> wrapping both operations</td>
+      </tr>
+      <tr>
+        <td>R-09</td>
+        <td>If a Paystack transfer fails, the wallet debit is reversed immediately</td>
+        <td>The seller's wallet is debited when the payout is initiated. A failed transfer must refund the wallet balance — the seller should not lose access to their money.</td>
+        <td><code>transfer.failed</code> webhook handler re-credits the wallet</td>
+      </tr>
+      <tr>
+        <td>R-10</td>
+        <td>The <code>release_trigger</code> field on EscrowLedger is always populated</td>
+        <td>Audit trail: <em>why</em> was this escrow released? Values: <code>BUYER_CONFIRMED</code>, <code>AUTO_7DAY</code>, <code>ADMIN_RELEASE</code>, <code>ADMIN_REFUND</code>. Required for dispute investigation and financial reconciliation.</td>
+        <td>All release code paths set this field explicitly</td>
+      </tr>
+      <tr>
+        <td>R-11</td>
+        <td>A seller cannot withdraw wallet funds while a related dispute is <code>OPEN</code> or <code>UNDER_REVIEW</code></td>
+        <td>Prevents the seller from withdrawing disputed funds before the dispute is resolved, making refunds impossible.</td>
+        <td>Payout request endpoint checks for open disputes related to the wallet's orders</td>
+      </tr>
+      <tr>
+        <td>R-12</td>
+        <td>Minimum payout amount is GH₵ 20</td>
+        <td>Per PRD specification. Prevents microwithdrawal spam that generates excessive Paystack transfer fees.</td>
+        <td>Payout Zod schema: <code>amount: z.number().min(20)</code></td>
+      </tr>
+      <tr>
+        <td>R-13</td>
+        <td>The platform fee is never returned to the seller, even on full refunds</td>
+        <td>Refunds credit the buyer from the <code>held_amount</code> (the seller's cut). The <code>platform_fee</code> portion is U-Shop's earned revenue and is retained. Sellers are informed of this in the Terms of Service.</td>
+        <td>Refund amount = <code>escrow.held_amount</code>, not <code>order.total_amount</code></td>
+      </tr>
+      <tr>
+        <td>R-14</td>
+        <td>All webhook events are stored in <code>webhook_events</code> before any processing</td>
+        <td>If processing fails mid-way, the raw event is preserved. A reconciliation cron can replay unprocessed events. No payment event is ever permanently lost.</td>
+        <td>Webhook handler: persist event first, respond 200, then process</td>
+      </tr>
+    </tbody>
+  </table>
+
+</div><!-- /section escrow -->
+<div class="divider"></div>
+
+<!-- ════════════════════════════════════════════════
+     03 — DISPUTE RESOLUTION PLAYBOOK
+════════════════════════════════════════════════ -->
+<div class="section" id="dispute">
+  <div class="sec-label">03 — Dispute Resolution Playbook</div>
+  <h1>Dispute Resolution — Operational Playbook</h1>
+  <p>Disputes are the moment of truth for platform trust. A dispute resolved quickly, fairly, and transparently turns a negative experience into a story about a platform that works. A dispute handled poorly becomes the WhatsApp story that kills the platform.</p>
+
+  <!-- POLICY HIERARCHY -->
+  <h2 id="hierarchy">The Policy Hierarchy — What Overrides What</h2>
+  <p>U-Shop has a <strong>three-tier policy hierarchy</strong>. The most important rule: <em>higher tiers always supersede lower tiers, without exception</em>. A seller's "No Returns" policy cannot override the platform's minimum buyer protections. This hierarchy must be disclosed to sellers at store creation and agreed to in the Seller Terms of Service.</p>
+
+  <div class="policy-pyramid">
+    <div class="pp-tier pp1">
+      <span class="pp-tier-num">1</span>
+      <h3>Tier 1 — Platform Minimum Buyer Protections (Cannot be waived)</h3>
+      <p>These apply to <em>every transaction</em> regardless of seller policy. They are the floor — sellers cannot go below these protections in their custom policies.</p>
+      <ul>
+        <li>Funds are always held in escrow for a minimum of 24 hours after confirmed delivery before any release</li>
+        <li>Buyers can always open a fraud or DOA (Dead on Arrival) dispute within <strong>48 hours</strong> of delivery confirmation, regardless of seller's stated return window</li>
+        <li>Confirmed counterfeit, materially misrepresented, or stolen items always qualify for a full refund of the <code>held_amount</code>, irrespective of any seller policy</li>
+        <li>Items that are not as described in a material way (e.g., listed as "Functional" but device will not power on) qualify for dispute, regardless of seller's "No Returns" policy</li>
+        <li>A seller's "No Returns" policy can <strong>never</strong> be used to deny a buyer the right to <em>open a dispute</em> — it can only limit the grounds for accepting a return for change-of-mind</li>
+      </ul>
+    </div>
+    <div class="pp-tier pp2">
+      <span class="pp-tier-num">2</span>
+      <h3>Tier 2 — Seller Custom Policy (Within platform limits)</h3>
+      <p>Sellers configure their return window, warranty terms, and refund method through the structured policy builder. These govern change-of-mind returns and general warranty claims — but are always subject to Tier 1 overrides.</p>
+      <ul>
+        <li>Return window settings (No Returns / 24H / 3D / 7D / 14D / 30D) govern <strong>change-of-mind</strong> returns only</li>
+        <li>Warranty coverage settings apply to hardware defects beyond the DOA window</li>
+        <li>Policy is <strong>immutably snapshotted</strong> at checkout — a seller changing their policy post-sale has zero effect on existing orders</li>
+        <li>Platform ToS explicitly states: seller policy is binding on the seller, but Tier 1 protections supersede it whenever there is conflict</li>
+      </ul>
+    </div>
+    <div class="pp-tier pp3">
+      <span class="pp-tier-num">3</span>
+      <h3>Tier 3 — Buyer-Seller Negotiated Resolution</h3>
+      <p>Before admin intervention, parties are encouraged to resolve disputes directly through the in-app order message thread. A buyer-seller agreement (e.g., partial refund, exchange) can be executed by admin without formal arbitration. This preserves both parties' reputation and reduces admin workload.</p>
+      <ul>
+        <li>Agreement must be stated explicitly in the order message thread</li>
+        <li>Admin implements the agreed resolution (credit the wallet, issue partial refund)</li>
+        <li>Both parties confirm resolution — dispute is marked <code>CLOSED</code></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- 8-STEP DISPUTE FLOW -->
+  <h2>The Standard 8-Step Dispute Protocol</h2>
+  <p>Every dispute — regardless of category — follows this protocol. SLAs are measured from the moment the dispute is created. Missing SLAs must be escalated to the next admin tier.</p>
+
+  <div class="playbook">
+    <div class="pb-step">
+      <div class="pb-num pbn-red">1</div>
+      <div class="pb-body">
+        <h4>Buyer Opens Dispute — Escrow Frozen</h4>
+        <p>Buyer selects a reason (<code>ITEM_NOT_RECEIVED</code>, <code>NOT_AS_DESCRIBED</code>, <code>DAMAGED_IN_TRANSIT</code>, <code>WRONG_ITEM_SENT</code>, <code>DOA</code>, <code>COUNTERFEIT</code>) and submits a written description (min 20 chars) with optional photo/video evidence (up to 5 files). Express atomically sets <code>order.status = 'DISPUTED'</code> and creates a <code>Dispute</code> record. <strong>Escrow auto-release is immediately suspended.</strong> Both buyer and seller are notified. Buyer is told: "Your dispute has been received. Payment to the seller is frozen pending review."</p>
+        <span class="pb-sla pb-sla-red">⏱ T+0 — Immediate, automated</span>
+      </div>
+    </div>
+    <div class="pb-step">
+      <div class="pb-num pbn-amber">2</div>
+      <div class="pb-body">
+        <h4>Seller Notified — Response Window Opens</h4>
+        <p>Seller receives email + in-app alert: "A buyer has opened a dispute on Order #[ID]. Please respond with your evidence within 24 hours. Failure to respond will result in the dispute being decided in the buyer's favour." The seller can upload counter-evidence (photos of item before dispatch, proof of delivery, tracking confirmation) via the admin-facing dispute panel.</p>
+        <span class="pb-sla pb-sla-amber">⏱ Seller response deadline: T+24h</span>
+      </div>
+    </div>
+    <div class="pb-step">
+      <div class="pb-num pbn-amber">3</div>
+      <div class="pb-body">
+        <h4>Admin Acknowledges &amp; Reviews Evidence</h4>
+        <p>An admin picks up the dispute from the queue. Status updated to <code>UNDER_REVIEW</code>. Admin reviews: (a) the order's message thread, (b) buyer's submitted photos/video, (c) seller's counter-evidence, (d) the listing photos at time of sale, (e) the <strong>immutable policy snapshot</strong> from the order record. Admin sends an acknowledgement to both parties: "We are reviewing your dispute. We aim to reach a decision within 72 hours."</p>
+        <span class="pb-sla pb-sla-amber">⏱ First admin contact: T+24h from dispute creation</span>
+      </div>
+    </div>
+    <div class="pb-step">
+      <div class="pb-num pbn-amber">4</div>
+      <div class="pb-body">
+        <h4>Admin May Request Additional Evidence</h4>
+        <p>If evidence is insufficient, admin can request: additional photos from either party, a video unboxing (if the buyer has the item), or a third-party inspection report (for high-value disputes above GH₵ 1,000). Each request resets the SLA clock for that party by 24 hours. Maximum of one additional evidence request per party before forcing a decision.</p>
+        <span class="pb-sla pb-sla-amber">⏱ Evidence response window: 24h per request</span>
+      </div>
+    </div>
+    <div class="pb-step">
+      <div class="pb-num pbn-blue">5</div>
+      <div class="pb-body">
+        <h4>Admin Consults the Policy Hierarchy</h4>
+        <p>Before ruling, admin explicitly documents which tier of the hierarchy governs the decision. The internal admin note must state: which tier applies, why the seller's custom policy does or does not apply, and the specific evidence that supports the ruling. This documentation is the legal shield if either party escalates to Ghana's Data Protection Commission or court.</p>
+        <span class="pb-sla pb-sla-amber">⏱ Decision deadline: T+72h from dispute creation (T+48h from admin acknowledgement)</span>
+      </div>
+    </div>
+    <div class="pb-step">
+      <div class="pb-num pbn-blue">6</div>
+      <div class="pb-body">
+        <h4>Admin Issues Ruling</h4>
+        <p><strong>Ruling in Buyer's Favour:</strong> Escrow status → <code>REFUNDED</code>. Platform issues a refund of <code>escrow.held_amount</code> to the buyer's original payment method (card) or U-Shop wallet credit (MoMo). The seller receives nothing. Platform retains the <code>platform_fee</code>. Seller's reputation score is penalised (affects their listing visibility ranking).</p>
+        <p style="margin-top:8px;"><strong>Ruling in Seller's Favour:</strong> Escrow status → <code>RELEASED</code>. Funds credited to seller's wallet. Buyer's dispute is marked <code>RESOLVED_SELLER</code>. If the buyer filed a false dispute (multiple instances), account is flagged for review.</p>
+        <span class="pb-sla pb-sla-green">⏱ Ruling issued: T+72h maximum from dispute open</span>
+      </div>
+    </div>
+    <div class="pb-step">
+      <div class="pb-num pbn-green">7</div>
+      <div class="pb-body">
+        <h4>Executing the Resolution</h4>
+        <p>Admin executes the ruling via the admin panel: <code>POST /api/admin/disputes/:id/resolve</code> with <code>{ outcome: 'BUYER' | 'SELLER', adminNotes: '...', partialRefundAmount?: number }</code>. The system atomically updates all affected records: Dispute, EscrowLedger, Order, and (if applicable) WalletTransaction. Both parties are notified with the resolution reason and next steps.</p>
+        <span class="pb-sla pb-sla-green">⏱ Execution: Immediate on admin action</span>
+      </div>
+    </div>
+    <div class="pb-step">
+      <div class="pb-num pbn-purple">8</div>
+      <div class="pb-body">
+        <h4>Post-Resolution Actions &amp; Account Management</h4>
+        <p>After resolution: (a) The losing party has 7 days to raise a formal appeal via email to the Trust & Safety team — this is a manual, human-only process. (b) If seller is found to have committed intentional fraud (counterfeit listing, brick-in-box), their account is permanently suspended, their remaining wallet balance is frozen pending police coordination, and the listing is removed with a public note. (c) If the buyer is found to have filed a false DOA claim (item was functional), this is recorded. A third false claim results in account suspension.</p>
+        <span class="pb-sla pb-sla-amber">⏱ Appeal window: 7 days from ruling notification</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- THE HARD CASE: BROKEN LAPTOP + NO RETURNS -->
+  <h2 id="case-study">The Core Conflict — Case Study: Broken Laptop + "No Returns / As Is" Policy</h2>
+  <p>This is the scenario that will happen within weeks of launch. Here is the exact ruling protocol.</p>
+
+  <div class="case-study">
+    <div class="cs-header">
+      <div class="cs-icon">⚖️</div>
+      <div class="cs-header-text">
+        <h3>Scenario: Buyer receives a non-functional laptop. Seller's policy: "No Returns — Sold As Is"</h3>
+        <p>Order value: GH₵ 1,800 · Condition listed: "Used — Good" · Listing stated: "All ports functional, battery above 80%"</p>
+      </div>
+    </div>
+    <div class="cs-body">
+
+      <div class="cs-step">
+        <div class="cs-step-label csl-admin">Fact-Finding</div>
+        <p>Admin pulls the order's immutable <code>policy_snapshot</code> from the database. Confirms: <code>returnWindow: "NO_RETURNS"</code>, <code>warrantyCoverage: "DOA_ONLY"</code>. Admin also pulls the listing's images at time of sale (stored in Supabase Storage under the <code>listings/{listingId}/</code> path — these are never deleted from completed orders). Admin reviews the order message thread for any pre-sale representations by the seller.</p>
+      </div>
+
+      <div class="cs-step">
+        <div class="cs-step-label csl-admin">Key Question: Does "No Returns / As Is" apply here?</div>
+        <p><strong>"No Returns / As Is"</strong> is a valid Tier 2 seller policy that governs change-of-mind returns. A buyer who simply decided they don't want the laptop anymore has no claim under a "No Returns" policy. However, <strong>"Not as described" is not a return — it is fraud protection</strong>, which falls under Tier 1. If the listing stated "All ports functional, battery above 80%" and the device arrived non-functional, the seller's listing was <em>materially misrepresented</em>, regardless of their return policy.</p>
+      </div>
+
+      <div class="cs-step">
+        <div class="cs-step-label csl-warning">The Critical Distinction</div>
+        <p>Admin must determine: Is this a <strong>change-of-mind return</strong> (buyer gets buyer's remorse → "No Returns" policy applies → seller wins) or a <strong>material misrepresentation</strong> (item is not what was sold → Tier 1 platform protection applies → buyer wins)? This distinction is determined by: (a) the exact wording of the listing description vs. the condition of the received item, and (b) the photographic evidence from both parties.</p>
+      </div>
+
+      <div class="cs-step">
+        <div class="cs-step-label csl-admin">Evidence Standard for DOA / Not As Described</div>
+        <p>To win a DOA / material misrepresentation dispute, the buyer must provide: (1) a video of the device failing to power on, or showing the specific defect claimed (not just a photo of the device — a photo proves nothing about functionality), AND (2) a photo of the device's serial number to prove it is the same device that was listed. Without these, the dispute cannot be resolved in the buyer's favour on functionality grounds alone.</p>
+      </div>
+
+      <div class="cs-step">
+        <div class="cs-step-label csl-admin">Ruling Matrix for This Scenario</div>
+        <p>
+          <strong>If listing said "functional" and device is DOA:</strong> Tier 1 applies. Full refund of <code>held_amount</code>. Seller's "No Returns" policy is irrelevant. Seller's account is flagged. <br><br>
+          <strong>If listing accurately described known faults AND buyer confirmed condition grade before purchase:</strong> "No Returns / As Is" policy applies. Ruling in seller's favour. The condition grade and the listing photos serve as evidence that the buyer knew what they were getting.<br><br>
+          <strong>If the evidence is ambiguous (no video proof of defect):</strong> Admin may order a partial refund (e.g., 50% of held_amount) as a compromise. Both parties must agree to this in writing via the dispute thread, or admin makes the final unilateral decision.
+        </p>
+      </div>
+
+      <div class="cs-ruling">
+        <strong>The Governing Principle — Written into the Platform ToS</strong>
+        <p>"A seller's custom return policy governs voluntary returns. It cannot and does not govern disputes arising from material misrepresentation, counterfeit goods, items damaged in transit, or items that do not match their listed description in a material way. In all such cases, U-Shop's Tier 1 Platform Minimum Buyer Protections apply, and U-Shop's decision is final and binding per the Seller Agreement signed at store creation."</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- EDGE CASE MATRIX -->
+  <h2 id="edge-cases">Dispute Edge Case Matrix</h2>
+  <table class="rules-table">
+    <thead>
+      <tr><th>Scenario</th><th>Governing Tier</th><th>Default Ruling</th><th>Key Evidence Required</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Buyer never received item. Seller has no delivery proof.</td>
+        <td>Tier 1 (Item not received)</td>
+        <td><span class="rb rb-yes">Buyer</span></td>
+        <td>Buyer declares non-receipt in writing. Seller must provide tracked delivery confirmation or meetup agreement in order thread.</td>
+      </tr>
+      <tr>
+        <td>Buyer never received item. Seller has proof of delivery (tracking/meetup confirmation in order thread).</td>
+        <td>Tier 2 (Delivery confirmed)</td>
+        <td><span class="rb rb-no">Seller</span></td>
+        <td>Seller's delivery proof in message thread. Buyer must show strong counter-evidence.</td>
+      </tr>
+      <tr>
+        <td>Item listed as "Used — Good" arrives clearly in "For Parts" condition. Video proof provided.</td>
+        <td>Tier 1 (Material misrepresentation)</td>
+        <td><span class="rb rb-yes">Buyer</span></td>
+        <td>Video of defect + photo of serial number. Listing photos used as baseline.</td>
+      </tr>
+      <tr>
+        <td>Buyer claims DOA but cannot provide video evidence and device condition matches listing photos.</td>
+        <td>Tier 2 (Insufficient DOA evidence)</td>
+        <td><span class="rb rb-no">Seller</span></td>
+        <td>Listing photos + battery screenshot at listing time. Burden of proof on buyer.</td>
+      </tr>
+      <tr>
+        <td>Item arrived, buyer is satisfied, clicks "Confirm Receipt", then claims DOA 50 hours later.</td>
+        <td>Tier 1 (Within 48h post-delivery window)</td>
+        <td><span class="rb rb-cond">Case-by-case</span></td>
+        <td>Strong video evidence of defect required. Note: the irreversibility warning shown at confirmation is cited as context.</td>
+      </tr>
+      <tr>
+        <td>Item was stolen. IMEI blacklisted. Buyer reports post-purchase.</td>
+        <td>Tier 1 (Stolen goods — platform fraud)</td>
+        <td><span class="rb rb-yes">Buyer</span> + seller suspension</td>
+        <td>IMEI check from network. Ghana Police Service report if available.</td>
+      </tr>
+      <tr>
+        <td>Seller changes their return policy after sale. Buyer tries to use new, more favourable policy.</td>
+        <td>Tier 2 (Snapshotted policy applies)</td>
+        <td>Policy at checkout governs. New policy irrelevant.</td>
+        <td><code>order.policy_snapshot</code> from database — immutable record.</td>
+      </tr>
+      <tr>
+        <td>Seller's "90-day warranty" promise in listing, but seller closes account after sale.</td>
+        <td>Tier 2 / Platform limited</td>
+        <td><span class="rb rb-cond">Partial remedy</span></td>
+        <td>Listing text at time of sale. Platform does not guarantee seller-stated warranties beyond escrow window per ToS. Platform goodwill credit may be issued.</td>
+      </tr>
+      <tr>
+        <td>Auto-release fires because buyer forgot to confirm. Buyer then claims item was damaged.</td>
+        <td>Tier 1 — Post-Release Dispute</td>
+        <td><span class="rb rb-cond">Very high bar</span></td>
+        <td>Buyer must prove: (a) they did not receive the notification sequence, AND (b) strong video evidence of damage. Post-release disputes have 24h filing window and limited remedies.</td>
+      </tr>
+      <tr>
+        <td>Buyer files repeated false DOA claims across multiple orders (third offence).</td>
+        <td>Tier 1 — Platform abuse</td>
+        <td><span class="rb rb-no">Buyer account suspended</span></td>
+        <td>Dispute history record. Third confirmed false claim = account suspension per platform abuse policy.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="insight">
+    <div class="ins-l">Final Trust Note — From the PRD</div>
+    <p>The biggest risk to U-Shop is not a technical failure. It is a <strong>trust failure</strong>. One widely-shared story of a student being scammed, even if handled correctly by the platform, can set back growth by months. <strong>Over-invest in trust infrastructure, customer support responsiveness, and dispute resolution speed in the first 90 days. Revenue can wait. Trust cannot be recovered quickly once lost.</strong></p>
+  </div>
+
+</div><!-- /section dispute -->
+
+<!-- END MARKER -->
+<div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:0.14em;text-transform:uppercase;display:flex;align-items:center;gap:12px;margin:80px 0 0;">
+  <span style="flex:1;height:1px;background:var(--line);display:block;"></span>
+  End of Document · U-Shop Trust, Safety & Security Matrix v1.0 · Lead Platform Security Engineer Edition · Confidential
+  <span style="flex:1;height:1px;background:var(--line);display:block;"></span>
+</div>
+
+</div><!-- /body -->
+</div><!-- /main -->
+
+<div class="footer">
+  <div class="ft-logo"><div class="ft-u">U</div><div class="ft-sh">shop</div></div>
+  <div class="ft-r">T&S Matrix v1.0 · 5 Threats · 14 Escrow Rules · 8-Step Dispute SLA · Confidential</div>
+</div>
+
+</body>
+</html>

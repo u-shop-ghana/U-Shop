@@ -1,0 +1,1556 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>U-Shop · Escrow & Payout Flow — Technical Specification</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;1,9..144,300&display=swap" rel="stylesheet">
+<style>
+:root {
+  --red:      #E8000B;
+  --black:    #0A0A0A;
+  --purple:   #6B1FA8;
+  --magenta:  #D4009B;
+  --grad:     linear-gradient(90deg, #6B1FA8, #D4009B);
+  --next:     #0070f3;
+  --express:  #68a063;
+  --supa:     #3ecf8e;
+  --paystack: #00c3f7;
+
+  --bg:       #0d0e11;
+  --bg2:      #13151a;
+  --bg3:      #1a1d25;
+  --surface:  #1e2130;
+  --line:     rgba(255,255,255,0.07);
+  --line2:    rgba(255,255,255,0.12);
+  --text:     #e8e8f0;
+  --muted:    #7a7d8e;
+  --soft:     #b0b3c4;
+
+  --green:    #22c55e;
+  --amber:    #f59e0b;
+  --blue:     #3b82f6;
+  --cyan:     #06b6d4;
+  --rose:     #f43f5e;
+  --violet:   #8b5cf6;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Fraunces', Georgia, serif;
+  background: var(--bg);
+  color: var(--text);
+  font-size: 15px;
+  line-height: 1.8;
+}
+
+/* ══ SIDEBAR ══ */
+.nav {
+  position: fixed; top: 0; left: 0; bottom: 0; width: 244px;
+  background: var(--bg2); border-right: 1px solid var(--line);
+  display: flex; flex-direction: column; z-index: 200; overflow-y: auto;
+}
+.nav-logo {
+  padding: 22px 20px 18px; border-bottom: 1px solid var(--line);
+  display: flex; align-items: center; gap: 0; flex-shrink: 0;
+}
+.nl-u {
+  background: var(--red); width: 28px; height: 28px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 800; color: #fff;
+}
+.nl-sh {
+  font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 800;
+  background: var(--grad); -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent; background-clip: text;
+  padding: 0 8px; line-height: 28px;
+}
+.nl-badge {
+  margin-left: auto; font-family: 'IBM Plex Mono', monospace; font-size: 8px;
+  background: rgba(34,197,94,0.12); color: var(--green);
+  border: 1px solid rgba(34,197,94,0.25); padding: 2px 6px;
+  border-radius: 3px; letter-spacing: 0.08em;
+}
+.nav-section {
+  font-family: 'IBM Plex Mono', monospace; font-size: 8px;
+  letter-spacing: 0.22em; text-transform: uppercase;
+  color: rgba(255,255,255,0.2); padding: 14px 20px 6px;
+}
+.nav a {
+  display: flex; align-items: flex-start; gap: 9px;
+  padding: 7px 20px; color: var(--muted); text-decoration: none;
+  font-family: 'IBM Plex Mono', monospace; font-size: 11px;
+  transition: all 0.12s; line-height: 1.5;
+}
+.nav a:hover { color: var(--text); background: rgba(255,255,255,0.03); }
+.nav a .n { color: var(--red); min-width: 16px; font-size: 9px; padding-top: 2px; }
+.nav-footer {
+  padding: 16px 20px; margin-top: auto; border-top: 1px solid var(--line);
+  font-family: 'IBM Plex Mono', monospace; font-size: 8px;
+  color: rgba(255,255,255,0.15); letter-spacing: 0.1em; flex-shrink: 0;
+}
+
+/* ══ MAIN ══ */
+.main { margin-left: 244px; }
+
+/* ══ COVER ══ */
+.cover {
+  background: var(--black); min-height: 100vh;
+  padding: 64px 72px; display: grid; grid-template-rows: 1fr auto;
+  position: relative; overflow: hidden;
+}
+.cover::before {
+  content: ''; position: absolute; left: 0; top: 0; bottom: 0;
+  width: 5px; background: var(--red);
+}
+.cover-mesh {
+  position: absolute; inset: 0; pointer-events: none;
+  background:
+    radial-gradient(ellipse 55% 45% at 80% 35%, rgba(34,197,94,0.07) 0%, transparent 65%),
+    radial-gradient(ellipse 40% 35% at 15% 70%, rgba(232,0,11,0.07) 0%, transparent 55%),
+    radial-gradient(ellipse 35% 30% at 50% 90%, rgba(107,31,168,0.08) 0%, transparent 50%);
+}
+.cover-grid {
+  position: absolute; inset: 0; opacity: 0.025; pointer-events: none;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.5) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.5) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+.cover-content { position: relative; z-index: 2; }
+.cover-eyebrow {
+  font-family: 'IBM Plex Mono', monospace; font-size: 10px;
+  letter-spacing: 0.22em; text-transform: uppercase;
+  color: rgba(255,255,255,0.3); margin-bottom: 52px;
+  display: flex; align-items: center; gap: 12px;
+}
+.cover-eyebrow .dot { width: 5px; height: 5px; border-radius: 50%; background: var(--green); }
+.cover-logo { display: flex; align-items: center; margin-bottom: 36px; }
+.cl-u {
+  background: var(--red); width: 72px; height: 72px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Syne', sans-serif; font-size: 46px; font-weight: 800;
+  color: #fff; line-height: 1; flex-shrink: 0;
+}
+.cl-sh {
+  font-family: 'Syne', sans-serif; font-size: 46px; font-weight: 800;
+  background: var(--grad); -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent; background-clip: text;
+  padding: 0 14px; line-height: 72px;
+}
+.cover-h1 {
+  font-family: 'Syne', sans-serif; font-size: 26px; font-weight: 700;
+  color: rgba(255,255,255,0.85); margin-bottom: 14px; letter-spacing: -0.01em;
+}
+.cover-sub {
+  font-size: 15px; color: rgba(255,255,255,0.38); max-width: 620px;
+  font-weight: 300; line-height: 1.8; margin-bottom: 32px; font-style: italic;
+}
+.cover-chips { display: flex; flex-wrap: wrap; gap: 10px; }
+.chip {
+  display: flex; align-items: center; gap: 7px;
+  font-family: 'IBM Plex Mono', monospace; font-size: 10px;
+  padding: 6px 12px; border-radius: 4px; border: 1px solid;
+}
+.chip-dot { width: 6px; height: 6px; border-radius: 50%; }
+.chip-green { color: var(--green); border-color: rgba(34,197,94,0.3); background: rgba(34,197,94,0.07); }
+.chip-blue  { color: var(--blue);  border-color: rgba(59,130,246,0.3); background: rgba(59,130,246,0.07); }
+.chip-pay   { color: var(--paystack); border-color: rgba(0,195,247,0.3); background: rgba(0,195,247,0.07); }
+.chip-rose  { color: var(--rose);  border-color: rgba(244,63,94,0.3);  background: rgba(244,63,94,0.07); }
+.chip-amber { color: var(--amber); border-color: rgba(245,158,11,0.3); background: rgba(245,158,11,0.07); }
+.cover-meta {
+  position: relative; z-index: 2;
+  display: grid; grid-template-columns: repeat(5,1fr); gap: 16px;
+  border-top: 1px solid rgba(255,255,255,0.07); padding-top: 24px;
+}
+.cm .cm-l {
+  font-family: 'IBM Plex Mono', monospace; font-size: 8px; letter-spacing: 0.18em;
+  text-transform: uppercase; color: rgba(255,255,255,0.22); display: block; margin-bottom: 4px;
+}
+.cm .cm-v { font-size: 13px; color: rgba(255,255,255,0.6); font-family: 'IBM Plex Mono', monospace; }
+
+/* ══ BODY ══ */
+.body { padding: 0 72px 120px; max-width: 980px; }
+.section { padding-top: 80px; }
+.sec-label {
+  font-family: 'IBM Plex Mono', monospace; font-size: 9px;
+  letter-spacing: 0.24em; text-transform: uppercase;
+  color: var(--red); margin-bottom: 14px;
+  display: flex; align-items: center; gap: 10px;
+}
+.sec-label::after { content: ''; flex: 1; height: 1px; background: var(--red); opacity: 0.15; }
+h1 {
+  font-family: 'Syne', sans-serif; font-size: 30px; font-weight: 800;
+  margin-bottom: 16px; letter-spacing: -0.02em; line-height: 1.15;
+}
+h2 {
+  font-family: 'Syne', sans-serif; font-size: 20px; font-weight: 700;
+  margin: 44px 0 14px; letter-spacing: -0.01em;
+}
+h3 {
+  font-family: 'Syne', sans-serif; font-size: 15px; font-weight: 700;
+  margin: 28px 0 10px;
+}
+p { color: var(--soft); margin-bottom: 14px; line-height: 1.8; }
+strong { color: var(--text); }
+code, .mono {
+  font-family: 'IBM Plex Mono', monospace; font-size: 12px;
+  background: var(--surface); padding: 2px 8px; border-radius: 3px; color: #a5d6ff;
+}
+
+/* ══ CODE BLOCKS ══ */
+pre {
+  font-family: 'IBM Plex Mono', monospace; font-size: 12.5px;
+  background: var(--bg3); border: 1px solid var(--line2);
+  border-radius: 8px; padding: 22px 24px; overflow-x: auto;
+  line-height: 1.8; color: #cdd6f4; margin: 16px 0; tab-size: 2;
+}
+.pre-header {
+  font-family: 'IBM Plex Mono', monospace; font-size: 9px;
+  letter-spacing: 0.16em; text-transform: uppercase;
+  background: var(--surface); border: 1px solid var(--line2);
+  border-bottom: none; border-radius: 8px 8px 0 0;
+  padding: 10px 24px; color: var(--muted);
+  display: flex; align-items: center; gap: 10px; margin-top: 16px;
+}
+.pre-header .ph-dot { width: 6px; height: 6px; border-radius: 50%; }
+.pre-header + pre { margin-top: 0; border-radius: 0 0 8px 8px; }
+
+pre .cm  { color: #636674; font-style: italic; }
+pre .kw  { color: #cba6f7; }
+pre .str { color: #a6e3a1; }
+pre .fn  { color: #89dceb; }
+pre .num { color: #fab387; }
+pre .var { color: #cdd6f4; }
+pre .ty  { color: #f5c2e7; }
+pre .fi  { color: #89b4fa; }
+pre .op  { color: #94e2d5; }
+pre .en  { color: #f9e2af; }
+pre .re  { color: #f43f5e; }
+
+/* ══ CALLOUTS ══ */
+.callout {
+  border-radius: 8px; padding: 16px 20px;
+  margin: 20px 0; display: flex; gap: 14px;
+}
+.callout-icon { font-size: 16px; flex-shrink: 0; margin-top: 2px; }
+.callout.warn  { background: rgba(245,158,11,0.08); border: 1px solid rgba(245,158,11,0.25); }
+.callout.warn p { color: rgba(251,191,36,0.9); }
+.callout.crit  { background: rgba(244,63,94,0.08);  border: 1px solid rgba(244,63,94,0.25); }
+.callout.crit p { color: rgba(253,164,175,0.9); }
+.callout.info  { background: rgba(59,130,246,0.08); border: 1px solid rgba(59,130,246,0.25); }
+.callout.info p { color: rgba(147,197,253,0.9); }
+.callout.ok    { background: rgba(34,197,94,0.08);  border: 1px solid rgba(34,197,94,0.25); }
+.callout.ok p  { color: rgba(134,239,172,0.9); }
+.callout.pay   { background: rgba(0,195,247,0.07);  border: 1px solid rgba(0,195,247,0.22); }
+.callout.pay p { color: rgba(103,232,249,0.9); }
+.callout.mentor { background: rgba(139,92,246,0.08); border: 1px solid rgba(139,92,246,0.25); }
+.callout.mentor p { color: rgba(196,181,253,0.9); }
+.callout p { margin: 0; font-size: 14px; line-height: 1.7; }
+.callout strong { color: inherit; }
+
+/* ══ STATE MACHINE ══ */
+.state-machine { margin: 28px 0; }
+.sm-row {
+  display: flex; align-items: stretch; gap: 0;
+  margin-bottom: 0;
+}
+.sm-state {
+  flex: 1; background: var(--bg2); border: 1px solid var(--line2);
+  border-radius: 8px; padding: 16px 18px; position: relative;
+}
+.sm-arrow {
+  display: flex; align-items: center; padding: 0 8px;
+  color: var(--muted); font-size: 18px; flex-shrink: 0;
+  font-family: 'IBM Plex Mono', monospace;
+}
+.sm-tag {
+  font-family: 'IBM Plex Mono', monospace; font-size: 9px;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  padding: 3px 8px; border-radius: 10px; margin-bottom: 8px;
+  display: inline-block;
+}
+.st-pending  { background: rgba(107,31,168,0.2); color: #d8b4fe; border: 1px solid rgba(107,31,168,0.35); }
+.st-holding  { background: rgba(245,158,11,0.15); color: var(--amber); border: 1px solid rgba(245,158,11,0.3); }
+.st-transit  { background: rgba(59,130,246,0.15); color: #93c5fd; border: 1px solid rgba(59,130,246,0.3); }
+.st-release  { background: rgba(0,195,247,0.12); color: var(--paystack); border: 1px solid rgba(0,195,247,0.25); }
+.st-done     { background: rgba(34,197,94,0.12); color: var(--green); border: 1px solid rgba(34,197,94,0.25); }
+.st-dispute  { background: rgba(244,63,94,0.12); color: var(--rose); border: 1px solid rgba(244,63,94,0.25); }
+.sm-state h4 { font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 700; margin-bottom: 4px; }
+.sm-state p  { font-size: 12px; color: var(--muted); margin: 0; line-height: 1.5; }
+.sm-trigger {
+  font-family: 'IBM Plex Mono', monospace; font-size: 9px;
+  color: var(--muted); text-align: center; padding: 4px 0;
+  letter-spacing: 0.06em;
+}
+
+/* ══ VERTICAL FLOW ══ */
+.v-flow { margin: 24px 0; }
+.vf-step {
+  display: flex; gap: 20px; margin-bottom: 4px;
+  position: relative;
+}
+.vf-step:not(:last-child)::after {
+  content: ''; position: absolute;
+  left: 17px; top: 36px; bottom: -4px;
+  width: 2px; background: var(--line2);
+}
+.vf-num {
+  width: 36px; height: 36px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'IBM Plex Mono', monospace; font-size: 12px;
+  font-weight: 600; color: #fff; flex-shrink: 0;
+}
+.vf-num.red    { background: var(--red); }
+.vf-num.blue   { background: var(--blue); }
+.vf-num.green  { background: #16a34a; }
+.vf-num.amber  { background: #b45309; }
+.vf-num.purple { background: var(--purple); }
+.vf-num.pay    { background: var(--paystack); color: var(--black); }
+.vf-num.rose   { background: var(--rose); }
+.vf-body { padding-top: 6px; padding-bottom: 20px; flex: 1; }
+.vf-body h4 { font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 700; margin-bottom: 4px; }
+.vf-body p  { font-size: 13px; color: var(--soft); margin: 0; line-height: 1.65; }
+.vf-body code { font-size: 11px; }
+.why-box {
+  background: rgba(139,92,246,0.07); border: 1px solid rgba(139,92,246,0.2);
+  border-radius: 6px; padding: 10px 14px; margin-top: 8px;
+}
+.why-label {
+  font-family: 'IBM Plex Mono', monospace; font-size: 8px;
+  letter-spacing: 0.18em; text-transform: uppercase;
+  color: #a78bfa; margin-bottom: 4px;
+}
+.why-box p { font-size: 12.5px; color: #c4b5fd; margin: 0; }
+
+/* ══ GUARD CHECKLIST ══ */
+.guard-list { margin: 16px 0; }
+.guard-item {
+  display: flex; gap: 14px; padding: 14px 18px;
+  border-bottom: 1px solid var(--line);
+  background: var(--bg2);
+}
+.guard-item:first-child { border-radius: 8px 8px 0 0; border: 1px solid var(--line2); border-bottom: 1px solid var(--line); }
+.guard-item:last-child  { border-radius: 0 0 8px 8px; border: 1px solid var(--line2); border-top: none; }
+.guard-item:not(:first-child):not(:last-child) { border: 1px solid var(--line2); border-top: none; }
+.guard-num {
+  font-family: 'IBM Plex Mono', monospace; font-size: 11px;
+  font-weight: 600; color: var(--rose); flex-shrink: 0; padding-top: 2px;
+  min-width: 24px;
+}
+.guard-body h4 { font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 700; margin-bottom: 4px; }
+.guard-body p  { font-size: 13px; color: var(--soft); margin: 0; }
+.guard-body code { font-size: 11px; }
+.err-code {
+  font-family: 'IBM Plex Mono', monospace; font-size: 9px;
+  padding: 2px 7px; border-radius: 3px;
+  background: rgba(244,63,94,0.12); color: var(--rose);
+  border: 1px solid rgba(244,63,94,0.25); margin-left: 6px;
+}
+
+/* ══ FAILURE PLAYBOOK ══ */
+.failure-card {
+  background: var(--bg2); border: 1px solid rgba(244,63,94,0.25);
+  border-radius: 10px; margin: 20px 0; overflow: hidden;
+}
+.fc-head {
+  background: rgba(244,63,94,0.08); padding: 14px 22px;
+  border-bottom: 1px solid rgba(244,63,94,0.15);
+  display: flex; align-items: center; gap: 12px;
+}
+.fc-icon { font-size: 18px; }
+.fc-head h3 { font-family: 'Syne', sans-serif; font-size: 15px; font-weight: 700; margin: 0; }
+.fc-head .fc-tag {
+  font-family: 'IBM Plex Mono', monospace; font-size: 9px;
+  padding: 2px 8px; border-radius: 10px; margin-left: auto;
+  background: rgba(244,63,94,0.15); color: var(--rose);
+  border: 1px solid rgba(244,63,94,0.3);
+}
+.fc-body { padding: 20px 22px; }
+.fc-body p { font-size: 14px; }
+.fc-label {
+  font-family: 'IBM Plex Mono', monospace; font-size: 8px;
+  letter-spacing: 0.2em; text-transform: uppercase;
+  color: var(--muted); margin-bottom: 8px; margin-top: 16px;
+}
+
+/* ══ TWO-COL ══ */
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 16px 0; }
+.col-label {
+  font-family: 'IBM Plex Mono', monospace; font-size: 8px;
+  letter-spacing: 0.2em; text-transform: uppercase;
+  color: var(--muted); margin-bottom: 8px;
+}
+
+/* ══ TABLES ══ */
+.ctable { width: 100%; border-collapse: collapse; font-size: 13px; margin: 16px 0; }
+.ctable th {
+  font-family: 'IBM Plex Mono', monospace; font-size: 8px;
+  letter-spacing: 0.18em; text-transform: uppercase;
+  color: var(--muted); padding: 10px 14px;
+  border-bottom: 1px solid var(--line2); text-align: left;
+  background: var(--surface);
+}
+.ctable td { padding: 12px 14px; border-bottom: 1px solid var(--line); color: var(--soft); vertical-align: top; }
+.ctable tr:last-child td { border-bottom: none; }
+.ctable td:first-child { color: var(--text); font-family: 'IBM Plex Mono', monospace; font-size: 12px; }
+
+/* ══ INSIGHT BOX ══ */
+.insight {
+  background: var(--surface); border-left: 3px solid var(--green);
+  border-radius: 0 8px 8px 0; padding: 20px 24px; margin: 24px 0;
+}
+.ins-l {
+  font-family: 'IBM Plex Mono', monospace; font-size: 8px;
+  letter-spacing: 0.2em; text-transform: uppercase;
+  color: var(--green); margin-bottom: 8px;
+}
+.insight p { color: var(--soft); font-size: 14px; margin: 0; }
+
+.insight.red   { border-left-color: var(--rose); }
+.insight.red .ins-l { color: var(--rose); }
+.insight.amber { border-left-color: var(--amber); }
+.insight.amber .ins-l { color: var(--amber); }
+.insight.pay   { border-left-color: var(--paystack); }
+.insight.pay   .ins-l { color: var(--paystack); }
+
+/* ══ MENTOR NOTE ══ */
+.mentor-note {
+  background: rgba(139,92,246,0.07); border: 1px solid rgba(139,92,246,0.25);
+  border-radius: 8px; padding: 18px 22px; margin: 20px 0;
+}
+.mn-label {
+  font-family: 'IBM Plex Mono', monospace; font-size: 8px;
+  letter-spacing: 0.2em; text-transform: uppercase;
+  color: #a78bfa; margin-bottom: 8px; display: flex; align-items: center; gap: 8px;
+}
+.mn-label::before { content: '💡'; }
+.mentor-note p { color: #c4b5fd; font-size: 14px; margin: 0; line-height: 1.7; }
+.mentor-note strong { color: #ddd6fe; }
+
+/* ══ FOOTER ══ */
+.footer {
+  background: var(--bg2); border-top: 1px solid var(--line);
+  padding: 20px 72px; display: flex; align-items: center; justify-content: space-between;
+}
+.ft-logo { display: flex; align-items: center; }
+.ft-u {
+  background: var(--red); width: 20px; height: 20px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 800; color: #fff;
+}
+.ft-sh {
+  font-family: 'Syne', sans-serif; font-size: 12px; font-weight: 800;
+  background: var(--grad); -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent; background-clip: text; padding: 0 6px;
+}
+.ft-r {
+  font-family: 'IBM Plex Mono', monospace; font-size: 9px;
+  color: rgba(255,255,255,0.15); letter-spacing: 0.1em;
+}
+
+/* ══ UI COMPONENT MOCK ══ */
+.ui-mock {
+  background: var(--bg3); border: 1px solid var(--line2);
+  border-radius: 10px; padding: 24px; margin: 20px 0;
+}
+.ui-mock-label {
+  font-family: 'IBM Plex Mono', monospace; font-size: 8px;
+  letter-spacing: 0.2em; text-transform: uppercase;
+  color: var(--paystack); margin-bottom: 16px;
+}
+.ui-order-card {
+  background: var(--bg2); border: 1px solid var(--line2);
+  border-radius: 8px; overflow: hidden; max-width: 480px;
+}
+.uoc-head { background: var(--surface); padding: 14px 18px; border-bottom: 1px solid var(--line); }
+.uoc-head-row { display: flex; align-items: center; justify-content: space-between; }
+.uoc-id { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--muted); }
+.uoc-status {
+  font-family: 'IBM Plex Mono', monospace; font-size: 9px; padding: 3px 9px;
+  border-radius: 10px; background: rgba(245,158,11,0.15);
+  color: var(--amber); border: 1px solid rgba(245,158,11,0.3);
+}
+.uoc-title { font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 700; margin-top: 6px; }
+.uoc-body { padding: 18px; }
+.uoc-row { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 13px; }
+.uoc-label-s { color: var(--muted); }
+.uoc-val { color: var(--text); font-family: 'IBM Plex Mono', monospace; font-size: 13px; }
+.uoc-divider { border: none; border-top: 1px solid var(--line); margin: 16px 0; }
+.uoc-btn {
+  width: 100%; padding: 14px; border-radius: 6px; border: none; cursor: pointer;
+  font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 700;
+  background: var(--green); color: #fff; margin-bottom: 10px;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+}
+.uoc-btn.loading { background: #15803d; opacity: 0.8; }
+.uoc-btn-dis {
+  width: 100%; padding: 12px; border-radius: 6px; border: none; cursor: pointer;
+  font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 600;
+  background: transparent; color: var(--rose); border: 1px solid rgba(244,63,94,0.3);
+}
+.uoc-warning {
+  background: rgba(245,158,11,0.07); border: 1px solid rgba(245,158,11,0.2);
+  border-radius: 6px; padding: 10px 14px; font-size: 12px; color: rgba(251,191,36,0.8);
+  margin-bottom: 14px; line-height: 1.5;
+}
+
+/* ══ STATUS FLOW ══ */
+.state-row {
+  display: flex; flex-direction: column; gap: 0; margin: 20px 0;
+}
+.state-item {
+  display: flex; gap: 0; align-items: stretch;
+}
+.state-item:not(:last-child) .si-line { border-bottom: 1px solid var(--line); }
+.si-num {
+  width: 48px; padding: 16px 0; display: flex; justify-content: center;
+  font-family: 'IBM Plex Mono', monospace; font-size: 11px;
+  color: var(--muted); border-right: 1px solid var(--line2); flex-shrink: 0;
+}
+.si-content { flex: 1; padding: 16px 20px; }
+.si-head { display: flex; align-items: center; gap: 12px; margin-bottom: 6px; }
+.si-tag {
+  font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.1em;
+  text-transform: uppercase; padding: 3px 10px; border-radius: 10px;
+}
+.si-trigger { font-size: 12px; color: var(--muted); font-style: italic; }
+.si-desc { font-size: 13.5px; color: var(--soft); line-height: 1.65; margin: 0; }
+.si-line { display: none; }
+.state-border { border: 1px solid var(--line2); border-radius: 8px; overflow: hidden; }
+</style>
+</head>
+<body>
+
+<!-- ══════════ SIDEBAR ══════════ -->
+<nav class="nav">
+  <div class="nav-logo">
+    <div class="nl-u">U</div>
+    <div class="nl-sh">shop</div>
+    <div class="nl-badge">Tech Spec</div>
+  </div>
+
+  <div class="nav-section">Navigation</div>
+  <a href="#cover"><span class="n">00</span>Cover</a>
+
+  <div class="nav-section">Section 1</div>
+  <a href="#s1"><span class="n">01</span>Feature Overview</a>
+  <a href="#s1-why"><span class="n">↳</span>Why Escrow Exists</a>
+  <a href="#s1-sm"><span class="n">↳</span>Order State Machine</a>
+
+  <div class="nav-section">Section 2</div>
+  <a href="#s2"><span class="n">02</span>Frontend (Next.js)</a>
+  <a href="#s2-comp"><span class="n">↳</span>UI Components</a>
+  <a href="#s2-logic"><span class="n">↳</span>Release Call Logic</a>
+  <a href="#s2-states"><span class="n">↳</span>Loading &amp; Error States</a>
+
+  <div class="nav-section">Section 3</div>
+  <a href="#s3"><span class="n">03</span>Backend (Express)</a>
+  <a href="#s3-guards"><span class="n">↳</span>Security Guards</a>
+  <a href="#s3-tx"><span class="n">↳</span>Prisma Transaction</a>
+  <a href="#s3-paystack"><span class="n">↳</span>Paystack Transfer</a>
+  <a href="#s3-webhook"><span class="n">↳</span>Webhook Handler</a>
+
+  <div class="nav-section">Section 4</div>
+  <a href="#s4"><span class="n">04</span>Security &amp; Failure Playbook</a>
+  <a href="#s4-idem"><span class="n">↳</span>Idempotency</a>
+  <a href="#s4-auth"><span class="n">↳</span>Ownership Verification</a>
+  <a href="#s4-fail"><span class="n">↳</span>Paystack Down</a>
+  <a href="#s4-autorelease"><span class="n">↳</span>7-Day Auto-Release</a>
+
+  <div class="nav-footer">Tech Spec v1.0 · Escrow &amp; Payout</div>
+</nav>
+
+<!-- ══════════ MAIN ══════════ -->
+<div class="main">
+
+<!-- ══════════ COVER ══════════ -->
+<div class="cover" id="cover">
+  <div class="cover-mesh"></div>
+  <div class="cover-grid"></div>
+  <div class="cover-content">
+    <div class="cover-eyebrow">
+      <span class="dot"></span>
+      U-Shop Internal Engineering · Technical Specification
+    </div>
+    <div class="cover-logo">
+      <div class="cl-u">U</div>
+      <div class="cl-sh">shop</div>
+    </div>
+    <div class="cover-h1">Custom Escrow &amp; Payout Flow — Technical Specification</div>
+    <div class="cover-sub">
+      A complete, step-by-step implementation guide for the most critical feature of the platform.
+      Covers the full lifecycle from payment collection through fund holding, buyer confirmation,
+      Paystack payout, and every failure scenario in between. Written so a frontend and backend
+      engineer can build this feature independently, and understand the <em>why</em> behind every decision.
+    </div>
+    <div class="cover-chips">
+      <div class="chip chip-green"><div class="chip-dot" style="background:var(--green)"></div>Next.js 14 · Frontend</div>
+      <div class="chip chip-blue"><div class="chip-dot" style="background:var(--blue)"></div>Express.js · Backend</div>
+      <div class="chip chip-pay"><div class="chip-dot" style="background:var(--paystack)"></div>Paystack · Transfers API</div>
+      <div class="chip chip-green"><div class="chip-dot" style="background:#16a34a"></div>Prisma · Transactions</div>
+      <div class="chip chip-rose"><div class="chip-dot" style="background:var(--rose)"></div>Failure Playbook</div>
+    </div>
+  </div>
+  <div class="cover-meta">
+    <div class="cm"><span class="cm-l">Document</span><span class="cm-v">Tech Spec</span></div>
+    <div class="cm"><span class="cm-l">Feature</span><span class="cm-v">Escrow &amp; Payout</span></div>
+    <div class="cm"><span class="cm-l">Version</span><span class="cm-v">v1.0</span></div>
+    <div class="cm"><span class="cm-l">Complexity</span><span class="cm-v">Critical</span></div>
+    <div class="cm"><span class="cm-l">Audience</span><span class="cm-v">Eng · Internal</span></div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+     SECTION 1 — FEATURE OVERVIEW & STATE MACHINE
+════════════════════════════════════════════════════════════ -->
+<div class="body">
+<div class="section" id="s1">
+  <div class="sec-label">Section 01</div>
+  <h1>Feature Overview &amp; State Machine</h1>
+
+  <h2 id="s1-why">1.1 What Is This Feature &amp; Why Does It Exist?</h2>
+
+  <p>Imagine you're a first-time buyer on U-Shop. You find a great laptop listed by a seller you've never met. You pay GHS 1,500 — and then what? Do you just <em>hope</em> the seller sends it? That's the trust problem every marketplace in the world has to solve, and it's why escrow exists.</p>
+
+  <p>Escrow is a <strong>holding pattern for money</strong>. Instead of sending your GHS 1,500 directly to the seller the moment you pay, the platform holds it in a secure middle ground. The seller knows the money is real and committed. The buyer knows the seller won't vanish with it. Only after the buyer says "yes, I received the item and I'm satisfied" does the money move to the seller.</p>
+
+  <div class="mentor-note">
+    <div class="mn-label">Why Not Just Use a Payment Gateway's Built-in Escrow?</div>
+    <p>Paystack doesn't offer native escrow as a product feature in Ghana. This is why we build it ourselves — not by holding cash in a vault, but by using <strong>Paystack as a "float account"</strong>. When a buyer pays, 100% of the funds land in your platform's Paystack balance. Our database <em>tracks</em> what belongs to whom through a ledger. When it's time to pay the seller, we initiate a Paystack Transfer from our balance to their MoMo. <strong>The database is the escrow system. Paystack is just the payment rails.</strong></p>
+  </div>
+
+  <h2 id="s1-sm">1.2 The Order State Machine</h2>
+
+  <p>A "state machine" is just a formal way of saying: <strong>an order can only be in one defined state at a time, and can only move to the next state in a valid direction.</strong> You can't go from <code>PENDING_PAYMENT</code> directly to <code>COMPLETED</code>. There's a strict path. This prevents bugs and financial inconsistencies.</p>
+
+  <div class="state-border">
+    <div class="state-row">
+
+      <div class="state-item">
+        <div class="si-num">01</div>
+        <div class="si-content">
+          <div class="si-head">
+            <span class="si-tag st-pending">PENDING_PAYMENT</span>
+            <span class="si-trigger">Trigger: Buyer clicks "Buy Now"</span>
+          </div>
+          <p class="si-desc">The order record exists in our database, but no money has moved. Express has called Paystack's <code>/transaction/initialize</code> and received a checkout URL. The buyer has been redirected to Paystack's payment page but has not completed payment yet. <strong>This order will be garbage-collected</strong> if payment never comes (via a cleanup cron job).</p>
+        </div>
+      </div>
+
+      <div class="state-item">
+        <div class="si-num">02</div>
+        <div class="si-content">
+          <div class="si-head">
+            <span class="si-tag st-holding">PAYMENT_RECEIVED</span>
+            <span class="si-trigger">Trigger: Paystack fires the charge.success webhook</span>
+          </div>
+          <p class="si-desc">The buyer's MoMo or card payment was successful. GHS 1,500 has landed in the platform's Paystack account balance. The <code>Escrow</code> record is created in our database with <code>status: HOLDING</code>. The listing is marked <code>SOLD</code>. The 7-day auto-release timer starts here. This is the "money in the vault" moment.</p>
+        </div>
+      </div>
+
+      <div class="state-item">
+        <div class="si-num">03</div>
+        <div class="si-content">
+          <div class="si-head">
+            <span class="si-tag st-transit">PROCESSING / IN_TRANSIT</span>
+            <span class="si-trigger">Trigger: Seller updates the order manually</span>
+          </div>
+          <p class="si-desc">The seller has acknowledged the order and is preparing it (<code>PROCESSING</code>), or has handed it off / arranged a meetup (<code>IN_TRANSIT</code>). These are informational states for buyer visibility — they do not affect the escrow funds. The money is still locked.</p>
+        </div>
+      </div>
+
+      <div class="state-item">
+        <div class="si-num">04</div>
+        <div class="si-content">
+          <div class="si-head">
+            <span class="si-tag st-release">RELEASING_FUNDS</span>
+            <span class="si-trigger">Trigger: Buyer clicks "I've Received My Item" OR 7-day timer fires</span>
+          </div>
+          <p class="si-desc">This is a critical <strong>intermediate state</strong> we set immediately when the buyer confirms receipt. It acts as a distributed lock — it tells the system "a payout is in flight, don't touch this escrow." We set this state <em>before</em> calling Paystack's API. If the server crashes mid-transfer, this state tells us exactly what happened when we investigate.</p>
+        </div>
+      </div>
+
+      <div class="state-item">
+        <div class="si-num">05</div>
+        <div class="si-content">
+          <div class="si-head">
+            <span class="si-tag st-done">COMPLETED</span>
+            <span class="si-trigger">Trigger: Paystack fires the transfer.success webhook</span>
+          </div>
+          <p class="si-desc">The Paystack transfer to the seller's MoMo landed successfully. The <code>Escrow</code> record is set to <code>RELEASED</code>. The seller's in-platform wallet balance is credited. The order is fully done. This state is <strong>terminal</strong> — nothing can change it.</p>
+        </div>
+      </div>
+
+      <div class="state-item">
+        <div class="si-num">⚠</div>
+        <div class="si-content">
+          <div class="si-head">
+            <span class="si-tag st-dispute">DISPUTED</span>
+            <span class="si-trigger">Trigger: Buyer clicks "Open a Dispute" before confirming receipt</span>
+          </div>
+          <p class="si-desc">The buyer has a problem — the item never arrived, is damaged, or isn't as described. The escrow is <strong>frozen</strong> — no auto-release can fire while a dispute is <code>OPEN</code> or <code>UNDER_REVIEW</code>. An admin must resolve it before any money moves. This is the buyer's safety valve and the most important escape hatch in the flow.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="mentor-note" style="margin-top:24px;">
+    <div class="mn-label">The Golden Rule of State Machines</div>
+    <p>Every state transition should be a <strong>reaction to an external event</strong>, not something Express decides to do on its own schedule. The events that drive this machine are: <em>buyer pays</em> (Paystack webhook), <em>buyer confirms</em> (API call), <em>transfer lands</em> (Paystack webhook), <em>buyer disputes</em> (API call). Your Express code is an event handler, not a scheduler. <strong>This mental model will save you from dozens of race condition bugs.</strong></p>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     SECTION 2 — FRONTEND IMPLEMENTATION
+════════════════════════════════════════════════════════════ -->
+<div class="section" id="s2">
+  <div class="sec-label">Section 02</div>
+  <h1>Frontend Implementation (Next.js 14)</h1>
+
+  <h2 id="s2-comp">2.1 UI Components Needed</h2>
+  <p>The buyer interacts with the escrow flow from a single page: the Order Detail page. Here's what it needs to contain and the reasoning behind each element.</p>
+
+  <div class="ui-mock">
+    <div class="ui-mock-label">📱 Order Detail Page — UI Mock (Order in PAYMENT_RECEIVED state)</div>
+    <div class="ui-order-card">
+      <div class="uoc-head">
+        <div class="uoc-head-row">
+          <div class="uoc-id">Order #ORD-2024-00142</div>
+          <div class="uoc-status">⏳ Awaiting Delivery</div>
+        </div>
+        <div class="uoc-title">Apple MacBook Air M2 (2022)</div>
+      </div>
+      <div class="uoc-body">
+        <div class="uoc-row">
+          <span class="uoc-label-s">Seller</span>
+          <span class="uoc-val">janes-tech-store</span>
+        </div>
+        <div class="uoc-row">
+          <span class="uoc-label-s">Amount Paid</span>
+          <span class="uoc-val" style="color:var(--green)">GHS 1,500.00</span>
+        </div>
+        <div class="uoc-row">
+          <span class="uoc-label-s">Escrow Status</span>
+          <span class="uoc-val" style="color:var(--amber)">🔒 Held — Funds Protected</span>
+        </div>
+        <div class="uoc-row">
+          <span class="uoc-label-s">Auto-Release In</span>
+          <span class="uoc-val" style="color:var(--rose)">4 days, 6 hours</span>
+        </div>
+        <hr class="uoc-divider">
+        <div class="uoc-warning">
+          ⚠ Only click "Item Received" once you have physically inspected the item and are satisfied. This action is <strong>irreversible</strong> and will immediately initiate payment to the seller.
+        </div>
+        <button class="uoc-btn">✓ &nbsp;I've Received My Item — Release Payment</button>
+        <button class="uoc-btn-dis">⚑ &nbsp;There's a Problem — Open a Dispute</button>
+      </div>
+    </div>
+  </div>
+
+  <p>Three things are deliberately designed into this UI:</p>
+  <p><strong>1. The auto-release countdown.</strong> The buyer must feel urgency. If they forget to confirm for 7 days, the seller gets paid anyway. Showing the timer creates accountability and prevents "I forgot to confirm" disputes.</p>
+  <p><strong>2. The irreversibility warning.</strong> This is not just user experience — it is legal protection. If a buyer clicks "received" and then claims they didn't, this warning (plus your server logs) shows they were explicitly informed of the consequence.</p>
+  <p><strong>3. The dispute button is equal prominence, not hidden.</strong> If a buyer wants to open a dispute they should find it easily. Hiding it makes them more likely to call their bank and initiate a chargeback — which is far worse for the platform.</p>
+
+  <h2 id="s2-logic">2.2 The "Confirm Receipt" — Exact React Logic</h2>
+
+  <div class="pre-header"><div class="ph-dot" style="background:var(--next)"></div>app/orders/[orderId]/page.tsx — The Confirm Receipt logic (annotated)</div>
+<pre><span class="cm">// This is a CLIENT component because it has interactive state (loading, errors).</span>
+<span class="cm">// The page itself can be a Server Component that passes the order as a prop.</span>
+<span class="kw">'use client'</span>
+
+<span class="kw">import</span> <span class="var">{ useState }</span> <span class="kw">from</span> <span class="str">'react'</span>
+<span class="kw">import</span> <span class="var">{ useRouter }</span> <span class="kw">from</span> <span class="str">'next/navigation'</span>
+<span class="kw">import</span> <span class="var">{ createBrowserClient }</span> <span class="kw">from</span> <span class="str">'@supabase/ssr'</span>
+
+<span class="cm">// ─── Types ───────────────────────────────────────────────────────────────────</span>
+<span class="kw">type</span> <span class="ty">ConfirmState</span> = <span class="str">'idle'</span> | <span class="str">'confirming'</span> | <span class="str">'releasing'</span> | <span class="str">'done'</span> | <span class="str">'error'</span>
+
+<span class="kw">interface</span> <span class="ty">Props</span> <span class="var">{</span>
+  <span class="fi">order</span><span class="var">: {</span>
+    <span class="fi">id</span><span class="var">: string</span>
+    <span class="fi">status</span><span class="var">: string</span>
+    <span class="fi">amount</span><span class="var">: string</span>
+    <span class="fi">sellerName</span><span class="var">: string</span>
+    <span class="fi">listingTitle</span><span class="var">: string</span>
+    <span class="fi">autoReleaseAt</span><span class="var">: string</span>
+  <span class="var">}</span>
+<span class="var">}</span>
+
+<span class="kw">export function</span> <span class="fn">ConfirmReceiptSection</span><span class="var">({ order }: Props) {</span>
+  <span class="cm">// ── Local state ───────────────────────────────────────────────────────────</span>
+  <span class="cm">// 'idle'        — nothing happening, show the button</span>
+  <span class="cm">// 'confirming'  — we're showing the "are you sure?" dialog</span>
+  <span class="cm">// 'releasing'   — API call in flight, button is disabled and shows spinner</span>
+  <span class="cm">// 'done'        — API call succeeded, show success state</span>
+  <span class="cm">// 'error'       — API call failed, show error message and allow retry</span>
+  <span class="kw">const</span> <span class="var">[state, setState] = useState&lt;ConfirmState&gt;(</span><span class="str">'idle'</span><span class="var">)</span>
+  <span class="kw">const</span> <span class="var">[errorMessage, setErrorMessage] = useState&lt;string | null&gt;(null)</span>
+  <span class="kw">const</span> <span class="var">[showConfirmDialog, setShowConfirmDialog] = useState(</span><span class="kw">false</span><span class="var">)</span>
+  <span class="kw">const</span> <span class="var">router = useRouter()</span>
+
+  <span class="cm">// ── Step 1: First click — show confirmation dialog ────────────────────────</span>
+  <span class="cm">// We do NOT call the API on first click. We make the user confirm twice.</span>
+  <span class="cm">// This prevents rage-clicks and accidental releases.</span>
+  <span class="kw">function</span> <span class="fn">handleInitialClick</span><span class="var">() {</span>
+    <span class="var">setShowConfirmDialog(</span><span class="kw">true</span><span class="var">)</span>
+    <span class="var">setState(</span><span class="str">'confirming'</span><span class="var">)</span>
+  <span class="var">}</span>
+
+  <span class="cm">// ── Step 2: User confirms in the dialog — NOW we call the API ─────────────</span>
+  <span class="kw">async function</span> <span class="fn">handleConfirmedRelease</span><span class="var">() {</span>
+    <span class="var">setShowConfirmDialog(</span><span class="kw">false</span><span class="var">)</span>
+    <span class="var">setState(</span><span class="str">'releasing'</span><span class="var">)</span>
+    <span class="var">setErrorMessage(null)</span>
+
+    <span class="kw">try</span> <span class="var">{</span>
+      <span class="cm">// ── Get the current Supabase session token ─────────────────────────────</span>
+      <span class="cm">// IMPORTANT: We fetch this fresh at call time, not once at component mount.</span>
+      <span class="cm">// Tokens expire after 1 hour. A user who's been on the page for a long time</span>
+      <span class="cm">// could have an expired token if we cached it. This prevents a 401 error.</span>
+      <span class="kw">const</span> <span class="var">supabase = createBrowserClient(</span>
+        <span class="var">process.env.NEXT_PUBLIC_SUPABASE_URL!,</span>
+        <span class="var">process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,</span>
+      <span class="var">)</span>
+      <span class="kw">const</span> <span class="var">{ data: { session } } =</span> <span class="kw">await</span> <span class="var">supabase.auth.getSession()</span>
+
+      <span class="kw">if</span> <span class="var">(!session) {</span>
+        <span class="cm">// User got logged out while on the page — send them to login</span>
+        <span class="var">router.push(</span><span class="str">`/login?redirect=/orders/${order.id}`</span><span class="var">)</span>
+        <span class="kw">return</span>
+      <span class="var">}</span>
+
+      <span class="cm">// ── Call the Express release-escrow endpoint ───────────────────────────</span>
+      <span class="kw">const</span> <span class="var">response =</span> <span class="kw">await</span> <span class="fn">fetch</span><span class="var">(</span>
+        <span class="str">`${process.env.NEXT_PUBLIC_API_URL}/orders/${order.id}/release-escrow`</span><span class="var">,</span>
+        <span class="var">{</span>
+          <span class="fi">method</span><span class="var">:</span> <span class="str">'POST'</span><span class="var">,</span>
+          <span class="fi">headers</span><span class="var">: {</span>
+            <span class="str">'Content-Type'</span><span class="var">:</span> <span class="str">'application/json'</span><span class="var">,</span>
+            <span class="cm">// This is the Supabase JWT — Express will verify it server-side</span>
+            <span class="str">'Authorization'</span><span class="var">: `Bearer ${session.access_token}`,</span>
+          <span class="var">},</span>
+          <span class="cm">// Optional: send a rating with the confirm action</span>
+          <span class="fi">body</span><span class="var">: JSON.stringify({ buyerRating:</span> <span class="num">5</span> <span class="var">}),</span>
+        <span class="var">}</span>
+      <span class="var">)</span>
+
+      <span class="kw">const</span> <span class="var">result =</span> <span class="kw">await</span> <span class="var">response.json()</span>
+
+      <span class="cm">// ── Handle non-2xx responses ───────────────────────────────────────────</span>
+      <span class="kw">if</span> <span class="var">(!response.ok) {</span>
+        <span class="cm">// The Express server returns structured errors: { success: false, error: { code, message } }</span>
+        <span class="cm">// We map specific error codes to user-friendly messages</span>
+        <span class="kw">const</span> <span class="var">code = result.error?.code</span>
+
+        <span class="kw">if</span> <span class="var">(code ===</span> <span class="str">'ESCROW_ALREADY_RELEASED'</span><span class="var">) {</span>
+          <span class="cm">// This can happen if the user somehow clicked twice (idempotency guard)</span>
+          <span class="cm">// Refresh the page to show the completed state</span>
+          <span class="var">router.refresh()</span>
+          <span class="kw">return</span>
+        <span class="var">}</span>
+
+        <span class="kw">if</span> <span class="var">(code ===</span> <span class="str">'NO_PAYOUT_ACCOUNT'</span><span class="var">) {</span>
+          <span class="var">setErrorMessage(</span>
+            <span class="str">'The seller has not yet registered a payout account. '</span> +
+            <span class="str">'Your funds are safe. Please contact support.'</span>
+          <span class="var">)</span>
+        <span class="var">} else {</span>
+          <span class="cm">// Generic error — use the message from Express</span>
+          <span class="var">setErrorMessage(result.error?.message ??</span> <span class="str">'Something went wrong. Please try again.'</span><span class="var">)</span>
+        <span class="var">}</span>
+
+        <span class="var">setState(</span><span class="str">'error'</span><span class="var">)</span>
+        <span class="kw">return</span>
+      <span class="var">}</span>
+
+      <span class="cm">// ── Success ────────────────────────────────────────────────────────────</span>
+      <span class="cm">// The transfer is INITIATED (not yet landed — that takes seconds to minutes).</span>
+      <span class="cm">// We show a success state and refresh the page data.</span>
+      <span class="var">setState(</span><span class="str">'done'</span><span class="var">)</span>
+      <span class="cm">// router.refresh() forces Next.js to re-fetch the server component data</span>
+      <span class="cm">// so the order status updates to COMPLETED on screen.</span>
+      <span class="var">router.refresh()</span>
+
+    <span class="var">}</span> <span class="kw">catch</span> <span class="var">(networkError) {</span>
+      <span class="cm">// Network-level failure (fetch itself threw) — the user has no internet</span>
+      <span class="cm">// or the Express server is completely unreachable.</span>
+      <span class="cm">// IMPORTANT: We do NOT know if the server processed the request.</span>
+      <span class="cm">// We tell the user to check their order status before retrying.</span>
+      <span class="var">setState(</span><span class="str">'error'</span><span class="var">)</span>
+      <span class="var">setErrorMessage(</span>
+        <span class="str">'Network error. Please check your connection and refresh the page '</span> +
+        <span class="str">'before trying again to avoid a duplicate release.'</span>
+      <span class="var">)</span>
+    <span class="var">}</span>
+  <span class="var">}</span>
+
+  <span class="cm">// ── Render ────────────────────────────────────────────────────────────────</span>
+  <span class="kw">if</span> <span class="var">(state ===</span> <span class="str">'done'</span><span class="var">) {</span>
+    <span class="kw">return</span> <span class="var">&lt;SuccessBanner message=</span><span class="str">"Payment released! The seller is being paid now."</span> <span class="var">/&gt;</span>
+  <span class="var">}</span>
+
+  <span class="kw">return</span> <span class="var">(</span>
+    <span class="var">&lt;div&gt;</span>
+      <span class="var">{errorMessage &amp;&amp; &lt;ErrorBanner message={errorMessage} onDismiss={() =&gt; setState(</span><span class="str">'idle'</span><span class="var">)} /&gt;}</span>
+
+      <span class="var">{showConfirmDialog &amp;&amp; (</span>
+        <span class="var">&lt;ConfirmDialog</span>
+          <span class="fi">title</span><span class="var">=</span><span class="str">"Are you sure you received this item?"</span>
+          <span class="fi">body</span><span class="var">=</span><span class="str">"This will immediately release GHS {order.amount} to {order.sellerName}. This cannot be undone."</span>
+          <span class="fi">confirmLabel</span><span class="var">=</span><span class="str">"Yes, I've received it — Release Payment"</span>
+          <span class="fi">cancelLabel</span><span class="var">=</span><span class="str">"No, Go Back"</span>
+          <span class="fi">onConfirm</span><span class="var">={handleConfirmedRelease}</span>
+          <span class="fi">onCancel</span><span class="var">={() =&gt; { setShowConfirmDialog(</span><span class="kw">false</span><span class="var">); setState(</span><span class="str">'idle'</span><span class="var">) }}</span>
+        <span class="var">/&gt;</span>
+      <span class="var">)}</span>
+
+      <span class="var">&lt;button</span>
+        <span class="fi">onClick</span><span class="var">={handleInitialClick}</span>
+        <span class="fi">disabled</span><span class="var">={state ===</span> <span class="str">'releasing'</span><span class="var">}</span>
+        <span class="cm">// Disable button while release is in flight — prevents double submission</span>
+      <span class="var">&gt;</span>
+        <span class="var">{state ===</span> <span class="str">'releasing'</span>
+          <span class="var">?</span> <span class="str">'⏳ Releasing funds…'</span>
+          <span class="var">:</span> <span class="str">'✓ I\'ve Received My Item — Release Payment'</span>
+        <span class="var">}</span>
+      <span class="var">&lt;/button&gt;</span>
+    <span class="var">&lt;/div&gt;</span>
+  <span class="var">)</span>
+<span class="var">}</span></pre>
+
+  <h2 id="s2-states">2.3 Why We Use a Confirmation Dialog (Double-Click Protection)</h2>
+  <p>Notice the two-step interaction: first click opens a dialog, second click fires the API. This is not over-engineering — it is essential. The escrow release is <strong>one-directional and immediate</strong>. There is no "undo" button. A buyer who accidentally clicks the button and instantly initiates a transfer to a seller has no recourse without manual admin intervention. The confirmation dialog is the cheapest possible insurance policy.</p>
+
+  <div class="callout info">
+    <div class="callout-icon">ℹ️</div>
+    <p><strong>Why <code>router.refresh()</code> and not <code>router.push()</code>?</strong> In Next.js App Router, <code>router.refresh()</code> tells the server to re-run all Server Components on the current page and send fresh data — without losing the user's scroll position or client state. It's the correct way to "sync" the page after a mutation in the App Router paradigm.</p>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     SECTION 3 — BACKEND IMPLEMENTATION
+════════════════════════════════════════════════════════════ -->
+<div class="section" id="s3">
+  <div class="sec-label">Section 03</div>
+  <h1>Backend Implementation (Express.js &amp; Prisma)</h1>
+
+  <p>This is the most consequential code in the entire platform. It touches real money. Every line needs to be intentional. We'll build it in layers: security guards first, then the database transaction, then the Paystack API call.</p>
+
+  <div class="mentor-note">
+    <div class="mn-label">The Core Design Principle for this Endpoint</div>
+    <p>Think of this handler as a <strong>three-door lock</strong>. Door 1: Is the person who they claim to be? Door 2: Are they allowed to do this specific thing? Door 3: Is the system in the right state to do it? Only after all three doors open do we touch the database, and only after the database is committed do we talk to Paystack. <strong>Never call an external API inside a database transaction that you can't roll back.</strong></p>
+  </div>
+
+  <h2 id="s3-guards">3.1 Security Guards — The Four Checks Before Any Action</h2>
+
+  <div class="guard-list">
+    <div class="guard-item">
+      <div class="guard-num">G1</div>
+      <div class="guard-body">
+        <h4>Is the caller authenticated? <span class="err-code">→ 401 MISSING_TOKEN</span></h4>
+        <p>The <code>authenticate</code> middleware runs first. It reads the <code>Authorization: Bearer &lt;token&gt;</code> header, verifies it with Supabase's service role SDK, and attaches <code>req.user</code>. If anything is wrong — no header, expired token, tampered token — the request is dead before it reaches the route handler. No route logic runs.</p>
+      </div>
+    </div>
+    <div class="guard-item">
+      <div class="guard-num">G2</div>
+      <div class="guard-body">
+        <h4>Does the order exist? <span class="err-code">→ 404 ORDER_NOT_FOUND</span></h4>
+        <p>We fetch the order from the database using the <code>:orderId</code> path parameter. If it doesn't exist, return 404. This also protects against probing attacks where a malicious user guesses order IDs — they just get 404s.</p>
+      </div>
+    </div>
+    <div class="guard-item">
+      <div class="guard-num">G3</div>
+      <div class="guard-body">
+        <h4>Is the caller the buyer of THIS order? <span class="err-code">→ 403 NOT_YOUR_ORDER</span></h4>
+        <p>Compare <code>order.buyerId</code> (from the database) against <code>req.user.id</code> (from the verified JWT). If they don't match, return 403. A seller cannot release their own escrow. Another buyer cannot release someone else's order. This check is the most critical — without it, any authenticated user could release any escrow.</p>
+      </div>
+    </div>
+    <div class="guard-item">
+      <div class="guard-num">G4</div>
+      <div class="guard-body">
+        <h4>Is the order in a releasable state? <span class="err-code">→ 400 INVALID_ORDER_STATE</span></h4>
+        <p>The order's <code>status</code> must be one of <code>PAYMENT_RECEIVED</code>, <code>PROCESSING</code>, or <code>IN_TRANSIT</code>. If it's already <code>COMPLETED</code>, <code>RELEASED</code>, or <code>DISPUTED</code>, we return an appropriate error. This is the idempotency guard at the business logic level — the Prisma transaction is the idempotency guard at the database level (belt-and-suspenders).</p>
+      </div>
+    </div>
+  </div>
+
+  <h2 id="s3-tx">3.2 The Prisma Transaction — The Most Important Code Block</h2>
+
+  <p>Here is the most important concept in this entire spec. Read it carefully.</p>
+
+  <p>Imagine two operations need to happen: <strong>(A)</strong> update the database to say the escrow is releasing, and <strong>(B)</strong> call Paystack to initiate the transfer. What happens if A succeeds but B fails? The database says "released" but the seller never got paid. The money is lost — or rather, it's stranded in your Paystack balance with no record of what it was for.</p>
+
+  <p>The solution is: <strong>do A inside a transaction, do B outside it, and use an intermediate state to bridge the gap.</strong></p>
+
+  <div class="pre-header"><div class="ph-dot" style="background:var(--express)"></div>routes/orders.ts — POST /api/orders/:orderId/release-escrow (fully annotated)</div>
+<pre><span class="kw">import</span> <span class="var">{ Router }</span> <span class="kw">from</span> <span class="str">'express'</span>
+<span class="kw">import</span> <span class="var">{ Decimal }</span> <span class="kw">from</span> <span class="str">'@prisma/client/runtime/library'</span>
+<span class="kw">import</span> <span class="var">{ authenticate }</span> <span class="kw">from</span> <span class="str">'../middleware/authenticate'</span>
+<span class="kw">import</span> <span class="var">{ PaystackService }</span> <span class="kw">from</span> <span class="str">'../services/paystack'</span>
+<span class="kw">import</span> <span class="var">{ buildSuccess, buildError }</span> <span class="kw">from</span> <span class="str">'../utils/response'</span>
+<span class="kw">import</span> <span class="var">{ prisma }</span> <span class="kw">from</span> <span class="str">'../lib/prisma'</span>
+
+<span class="kw">const</span> <span class="var">router = Router()</span>
+<span class="kw">const</span> <span class="var">PLATFORM_FEE_RATE =</span> <span class="kw">new</span> <span class="fn">Decimal</span><span class="var">(</span><span class="str">'0.05'</span><span class="var">)</span>  <span class="cm">// 5% platform cut</span>
+
+<span class="cm">// All order routes require authentication</span>
+<span class="var">router.use(authenticate)</span>
+
+<span class="var">router.post(</span><span class="str">'/:orderId/release-escrow'</span><span class="var">,</span> <span class="kw">async</span> <span class="var">(req, res, next) => {</span>
+  <span class="kw">try</span> <span class="var">{</span>
+    <span class="kw">const</span> <span class="var">{ orderId } = req.params</span>
+    <span class="kw">const</span> <span class="var">callerId = req.user!.id</span>  <span class="cm">// Set by authenticate middleware</span>
+
+    <span class="cm">// ═══════════════════════════════════════════════════════════════════════</span>
+    <span class="cm">// PHASE 1: SECURITY GUARDS — All checks before ANY database writes</span>
+    <span class="cm">// ═══════════════════════════════════════════════════════════════════════</span>
+
+    <span class="cm">// Fetch the order with everything we need for validation</span>
+    <span class="kw">const</span> <span class="var">order =</span> <span class="kw">await</span> <span class="var">prisma.order.findUnique({</span>
+      <span class="fi">where</span><span class="var">: { id: orderId },</span>
+      <span class="fi">include</span><span class="var">: {</span>
+        <span class="fi">escrow</span><span class="var">: true,</span>
+        <span class="fi">seller</span><span class="var">: {</span>
+          <span class="fi">include</span><span class="var">: { payoutRecipient:</span> <span class="kw">true</span> <span class="var">}</span>
+        <span class="var">}</span>
+      <span class="var">}</span>
+    <span class="var">})</span>
+
+    <span class="cm">// Guard 2: Order must exist</span>
+    <span class="kw">if</span> <span class="var">(!order) {</span>
+      <span class="kw">return</span> <span class="var">res.status(</span><span class="num">404</span><span class="var">).json(</span><span class="fn">buildError</span><span class="var">(</span><span class="str">'ORDER_NOT_FOUND'</span><span class="var">,</span> <span class="str">'Order does not exist'</span><span class="var">))</span>
+    <span class="var">}</span>
+
+    <span class="cm">// Guard 3: The person calling MUST be the buyer of THIS specific order</span>
+    <span class="cm">// We compare the DB record's buyerId against the JWT-verified user ID.</span>
+    <span class="cm">// This cannot be faked because req.user.id comes from a Supabase-verified token.</span>
+    <span class="kw">if</span> <span class="var">(order.buyerId !== callerId) {</span>
+      <span class="kw">return</span> <span class="var">res.status(</span><span class="num">403</span><span class="var">).json(</span><span class="fn">buildError</span><span class="var">(</span><span class="str">'NOT_YOUR_ORDER'</span><span class="var">,</span>
+        <span class="str">'You do not have permission to release this escrow'</span><span class="var">))</span>
+    <span class="var">}</span>
+
+    <span class="cm">// Guard 4a: Order must be in a releasable state</span>
+    <span class="kw">const</span> <span class="var">releasableStates = [</span><span class="str">'PAYMENT_RECEIVED'</span><span class="var">,</span> <span class="str">'PROCESSING'</span><span class="var">,</span> <span class="str">'IN_TRANSIT'</span><span class="var">]</span>
+    <span class="kw">if</span> <span class="var">(!releasableStates.includes(order.status)) {</span>
+      <span class="cm">// Handle the special case: already released (idempotency for client UI)</span>
+      <span class="kw">if</span> <span class="var">(order.status ===</span> <span class="str">'COMPLETED'</span><span class="var">) {</span>
+        <span class="kw">return</span> <span class="var">res.status(</span><span class="num">409</span><span class="var">).json(</span><span class="fn">buildError</span><span class="var">(</span><span class="str">'ESCROW_ALREADY_RELEASED'</span><span class="var">,</span>
+          <span class="str">'Payment has already been released for this order'</span><span class="var">))</span>
+      <span class="var">}</span>
+      <span class="kw">if</span> <span class="var">(order.status ===</span> <span class="str">'DISPUTED'</span><span class="var">) {</span>
+        <span class="kw">return</span> <span class="var">res.status(</span><span class="num">409</span><span class="var">).json(</span><span class="fn">buildError</span><span class="var">(</span><span class="str">'ORDER_DISPUTED'</span><span class="var">,</span>
+          <span class="str">'This order has an active dispute. Funds are frozen.'</span><span class="var">))</span>
+      <span class="var">}</span>
+      <span class="kw">return</span> <span class="var">res.status(</span><span class="num">400</span><span class="var">).json(</span><span class="fn">buildError</span><span class="var">(</span><span class="str">'INVALID_ORDER_STATE'</span><span class="var">,</span>
+        <span class="str">`Order cannot be released in its current state: ${order.status}`</span><span class="var">))</span>
+    <span class="var">}</span>
+
+    <span class="cm">// Guard 4b: Escrow must exist and be in HOLDING state</span>
+    <span class="kw">if</span> <span class="var">(!order.escrow || order.escrow.status !==</span> <span class="str">'HOLDING'</span><span class="var">) {</span>
+      <span class="kw">return</span> <span class="var">res.status(</span><span class="num">400</span><span class="var">).json(</span><span class="fn">buildError</span><span class="var">(</span><span class="str">'ESCROW_NOT_HOLDING'</span><span class="var">,</span>
+        <span class="str">'Escrow funds are not in a releasable state'</span><span class="var">))</span>
+    <span class="var">}</span>
+
+    <span class="cm">// Guard 4c: Seller must have a registered payout account</span>
+    <span class="kw">if</span> <span class="var">(!order.seller.payoutRecipient?.recipientCode) {</span>
+      <span class="kw">return</span> <span class="var">res.status(</span><span class="num">400</span><span class="var">).json(</span><span class="fn">buildError</span><span class="var">(</span><span class="str">'NO_PAYOUT_ACCOUNT'</span><span class="var">,</span>
+        <span class="str">'Seller has not registered a payout account. Please contact support.'</span><span class="var">))</span>
+    <span class="var">}</span>
+
+    <span class="cm">// ═══════════════════════════════════════════════════════════════════════</span>
+    <span class="cm">// PHASE 2: PRISMA TRANSACTION — Atomically claim the escrow</span>
+    <span class="cm">// ═══════════════════════════════════════════════════════════════════════</span>
+    <span class="cm">// Why a transaction? We need to update MULTIPLE tables together.</span>
+    <span class="cm">// If any one update fails, ALL of them roll back automatically.</span>
+    <span class="cm">// This prevents partial state: e.g., order marked COMPLETED but</span>
+    <span class="cm">// escrow still showing HOLDING, or Payout record never created.</span>
+    <span class="cm">//</span>
+    <span class="cm">// WHY set escrow to RELEASING (not RELEASED) here?</span>
+    <span class="cm">// Because the Paystack transfer hasn't happened yet. RELEASING is</span>
+    <span class="cm">// a "claim" — it tells any other concurrent request "this is taken,</span>
+    <span class="cm">// back off." The WHERE clause { status: 'HOLDING' } is the atomic lock.</span>
+    <span class="cm">// If two requests hit this endpoint at the same time, only ONE will</span>
+    <span class="cm">// find the escrow in HOLDING state. The second will throw, and we</span>
+    <span class="cm">// catch it below and return a 409.</span>
+
+    <span class="kw">const</span> <span class="var">gross =</span> <span class="kw">new</span> <span class="fn">Decimal</span><span class="var">(order.escrow.amount)</span>
+    <span class="kw">const</span> <span class="var">platformFee = gross.mul(PLATFORM_FEE_RATE).toDecimalPlaces(</span><span class="num">2</span><span class="var">)</span>
+    <span class="kw">const</span> <span class="var">sellerNet = gross.sub(platformFee)</span>
+    <span class="cm">// Paystack requires amounts in kobo (smallest currency unit). GHS 450.00 = 45000 kobo.</span>
+    <span class="kw">const</span> <span class="var">koboAmount = sellerNet.mul(</span><span class="num">100</span><span class="var">).toDecimalPlaces(</span><span class="num">0</span><span class="var">).toNumber()</span>
+
+    <span class="kw">let</span> <span class="var">newPayoutId: string</span>
+
+    <span class="kw">try</span> <span class="var">{</span>
+      <span class="kw">const</span> <span class="var">result =</span> <span class="kw">await</span> <span class="var">prisma.$transaction(</span><span class="kw">async</span> <span class="var">(tx) => {</span>
+
+        <span class="cm">// 1. Atomically flip escrow from HOLDING → RELEASING</span>
+        <span class="cm">// The { where: { status: 'HOLDING' } } clause is the race condition guard.</span>
+        <span class="cm">// Prisma throws P2025 (record not found) if the escrow is NOT in HOLDING state,</span>
+        <span class="cm">// which rolls back the entire transaction automatically.</span>
+        <span class="kw">const</span> <span class="var">claimedEscrow =</span> <span class="kw">await</span> <span class="var">tx.escrow.update({</span>
+          <span class="fi">where</span><span class="var">: {</span>
+            <span class="fi">orderId</span><span class="var">: orderId,</span>
+            <span class="fi">status</span><span class="var">:</span> <span class="str">'HOLDING'</span>   <span class="cm">// ← This is the atomic lock. Fail if not HOLDING.</span>
+          <span class="var">},</span>
+          <span class="fi">data</span><span class="var">: { status:</span> <span class="str">'RELEASING'</span> <span class="var">}</span>
+        <span class="var">})</span>
+
+        <span class="cm">// 2. Update order status to show buyer has confirmed</span>
+        <span class="kw">await</span> <span class="var">tx.order.update({</span>
+          <span class="fi">where</span><span class="var">: { id: orderId },</span>
+          <span class="fi">data</span><span class="var">: {</span>
+            <span class="fi">status</span><span class="var">:</span> <span class="str">'RELEASING_FUNDS'</span><span class="var">,</span>
+            <span class="fi">confirmedAt</span><span class="var">:</span> <span class="kw">new</span> <span class="fn">Date</span><span class="var">(),</span>
+            <span class="fi">buyerRating</span><span class="var">: req.body.buyerRating ?? null,</span>
+          <span class="var">}</span>
+        <span class="var">})</span>
+
+        <span class="cm">// 3. Create a Payout record BEFORE calling Paystack</span>
+        <span class="cm">// This is our audit trail. Even if Paystack fails, we have a record</span>
+        <span class="cm">// of the attempt with PENDING status. We'll store the transferCode here</span>
+        <span class="cm">// once Paystack responds.</span>
+        <span class="kw">const</span> <span class="var">payout =</span> <span class="kw">await</span> <span class="var">tx.payout.create({</span>
+          <span class="fi">data</span><span class="var">: {</span>
+            <span class="fi">sellerId</span><span class="var">: order.sellerId,</span>
+            <span class="fi">orderId</span><span class="var">: orderId,</span>
+            <span class="fi">amount</span><span class="var">: sellerNet,</span>
+            <span class="fi">platformFee</span><span class="var">: platformFee,</span>
+            <span class="fi">status</span><span class="var">:</span> <span class="str">'PENDING'</span><span class="var">,</span>  <span class="cm">// Will become PROCESSING after Paystack call</span>
+          <span class="var">}</span>
+        <span class="var">})</span>
+
+        <span class="kw">return</span> <span class="var">{ claimedEscrow, payout }</span>
+      <span class="var">})</span>
+
+      <span class="var">newPayoutId = result.payout.id</span>
+
+    <span class="var">}</span> <span class="kw">catch</span> <span class="var">(txError: any) {</span>
+      <span class="cm">// P2025 = Prisma "record to update not found"</span>
+      <span class="cm">// This means the escrow was NOT in HOLDING state (already released, or race condition)</span>
+      <span class="kw">if</span> <span class="var">(txError.code ===</span> <span class="str">'P2025'</span><span class="var">) {</span>
+        <span class="kw">return</span> <span class="var">res.status(</span><span class="num">409</span><span class="var">).json(</span><span class="fn">buildError</span><span class="var">(</span><span class="str">'ESCROW_ALREADY_RELEASED'</span><span class="var">,</span>
+          <span class="str">'This escrow has already been released or is currently being processed'</span><span class="var">))</span>
+      <span class="var">}</span>
+      <span class="kw">throw</span> <span class="var">txError</span>  <span class="cm">// Re-throw unknown errors to the global handler</span>
+    <span class="var">}</span>
+
+    <span class="cm">// ═══════════════════════════════════════════════════════════════════════</span>
+    <span class="cm">// PHASE 3: PAYSTACK TRANSFER — Called AFTER the DB transaction commits</span>
+    <span class="cm">// ═══════════════════════════════════════════════════════════════════════</span>
+    <span class="cm">// We are NOW outside the Prisma transaction. The transaction committed above.</span>
+    <span class="cm">// The escrow is RELEASING. The Payout record exists with status PENDING.</span>
+    <span class="cm">// NOW we call Paystack. If THIS call fails, the system is in a recoverable</span>
+    <span class="cm">// state: a cron job can find all Payout records with status PENDING and retry.</span>
+
+    <span class="kw">let</span> <span class="var">transferCode: string</span>
+
+    <span class="kw">try</span> <span class="var">{</span>
+      <span class="kw">const</span> <span class="var">transfer =</span> <span class="kw">await</span> <span class="var">PaystackService.initiateTransfer({</span>
+        <span class="fi">source</span><span class="var">:</span> <span class="str">'balance'</span><span class="var">,</span>
+        <span class="fi">amount</span><span class="var">: koboAmount,</span>
+        <span class="fi">recipient</span><span class="var">: order.seller.payoutRecipient!.recipientCode,</span>
+        <span class="fi">reason</span><span class="var">: `U-Shop payout - Order ${orderId}`,</span>
+        <span class="fi">reference</span><span class="var">: `payout_${newPayoutId}`,</span>  <span class="cm">// Idempotency key for Paystack</span>
+      <span class="var">})</span>
+
+      <span class="var">transferCode = transfer.transfer_code</span>
+
+      <span class="cm">// Store the transferCode on the Payout record.</span>
+      <span class="cm">// This is CRITICAL. When Paystack fires transfer.success/failed webhooks,</span>
+      <span class="cm">// they include transfer_code. Without storing this now, we can't match</span>
+      <span class="cm">// the webhook event back to the correct Payout record.</span>
+      <span class="kw">await</span> <span class="var">prisma.payout.update({</span>
+        <span class="fi">where</span><span class="var">: { id: newPayoutId },</span>
+        <span class="fi">data</span><span class="var">: { transferCode, status:</span> <span class="str">'PROCESSING'</span> <span class="var">}</span>
+      <span class="var">})</span>
+
+    <span class="var">}</span> <span class="kw">catch</span> <span class="var">(paystackError) {</span>
+      <span class="cm">// ─────────────────────────────────────────────────────────────────────</span>
+      <span class="cm">// PAYSTACK CALL FAILED. The database is in RELEASING state.</span>
+      <span class="cm">// The money is NOT lost. It's still in the platform's Paystack balance.</span>
+      <span class="cm">// The Payout record has status PENDING — this is our recovery breadcrumb.</span>
+      <span class="cm">// A cron job will find this PENDING payout and retry the transfer.</span>
+      <span class="cm">// See Section 4.3 for the full recovery playbook.</span>
+      <span class="cm">// ─────────────────────────────────────────────────────────────────────</span>
+      <span class="var">console.error(</span><span class="str">'[PAYSTACK TRANSFER FAILED]'</span><span class="var">, paystackError)</span>
+
+      <span class="cm">// Log to Sentry for immediate alerting</span>
+      <span class="var">Sentry.captureException(paystackError, { extra: { orderId, newPayoutId } })</span>
+
+      <span class="cm">// We still return a 200 to the client — from THEIR perspective, they</span>
+      <span class="cm">// confirmed receipt successfully. The payment will arrive once the retry fires.</span>
+      <span class="cm">// Do NOT return a 500 here — that would confuse the buyer and potentially</span>
+      <span class="cm">// cause them to click the button again.</span>
+      <span class="kw">return</span> <span class="var">res.status(</span><span class="num">200</span><span class="var">).json(</span><span class="fn">buildSuccess</span><span class="var">({</span>
+        <span class="fi">orderId</span><span class="var">,</span>
+        <span class="fi">message</span><span class="var">:</span> <span class="str">'Receipt confirmed. Payment to seller is being processed and may take a few minutes.'</span><span class="var">,</span>
+        <span class="fi">status</span><span class="var">:</span> <span class="str">'RELEASING_FUNDS'</span>
+      <span class="var">}))</span>
+    <span class="var">}</span>
+
+    <span class="cm">// ─── All good — transfer initiated ────────────────────────────────────────</span>
+    <span class="kw">return</span> <span class="var">res.status(</span><span class="num">200</span><span class="var">).json(</span><span class="fn">buildSuccess</span><span class="var">({</span>
+      <span class="fi">orderId</span><span class="var">,</span>
+      <span class="fi">orderStatus</span><span class="var">:</span> <span class="str">'RELEASING_FUNDS'</span><span class="var">,</span>
+      <span class="fi">escrowStatus</span><span class="var">:</span> <span class="str">'RELEASING'</span><span class="var">,</span>
+      <span class="fi">transferCode</span><span class="var">,</span>
+      <span class="fi">sellerNet</span><span class="var">: sellerNet.toString(),</span>
+      <span class="fi">platformFee</span><span class="var">: platformFee.toString(),</span>
+      <span class="fi">message</span><span class="var">:</span> <span class="str">'Transfer initiated. Seller will receive payment shortly.'</span><span class="var">,</span>
+    <span class="var">}))</span>
+
+  <span class="var">}</span> <span class="kw">catch</span> <span class="var">(err) {</span>
+    <span class="fn">next</span><span class="var">(err)</span>  <span class="cm">// Hand to global error handler</span>
+  <span class="var">}</span>
+<span class="var">})</span>
+
+<span class="kw">export const</span> <span class="var">ordersRouter = router</span></pre>
+
+  <h2 id="s3-paystack">3.3 The Paystack Transfer Service</h2>
+  <p>Keeping the Paystack API call in its own service module is important for testability and reusability. The retry cron job will call this same function.</p>
+
+  <div class="pre-header"><div class="ph-dot" style="background:var(--paystack)"></div>services/paystack.ts — initiateTransfer method</div>
+<pre><span class="kw">const</span> <span class="var">PAYSTACK_BASE =</span> <span class="str">'https://api.paystack.co'</span>
+<span class="kw">const</span> <span class="var">PAYSTACK_SECRET = process.env.PAYSTACK_SECRET_KEY!</span>  <span class="cm">// Express env only, NEVER frontend</span>
+
+<span class="kw">interface</span> <span class="ty">TransferParams</span> <span class="var">{</span>
+  <span class="fi">source</span><span class="var">:</span> <span class="str">'balance'</span>     <span class="cm">// Always 'balance' — meaning "from our Paystack account"</span>
+  <span class="fi">amount</span><span class="var">: number</span>        <span class="cm">// In KOBO (integer). GHS 100 = 10000 kobo.</span>
+  <span class="fi">recipient</span><span class="var">: string</span>    <span class="cm">// The seller's Paystack recipient_code (e.g. "RCP_hx66...")</span>
+  <span class="fi">reason</span><span class="var">: string</span>        <span class="cm">// Shows on seller's MoMo statement</span>
+  <span class="fi">reference</span><span class="var">: string</span>    <span class="cm">// Our unique reference — Paystack uses this for idempotency</span>
+<span class="var">}</span>
+
+<span class="kw">export const</span> <span class="var">PaystackService = {</span>
+
+  <span class="kw">async</span> <span class="fn">initiateTransfer</span><span class="var">(params: TransferParams) {</span>
+    <span class="kw">const</span> <span class="var">response =</span> <span class="kw">await</span> <span class="fn">fetch</span><span class="var">(`${PAYSTACK_BASE}/transfer`, {</span>
+      <span class="fi">method</span><span class="var">:</span> <span class="str">'POST'</span><span class="var">,</span>
+      <span class="fi">headers</span><span class="var">: {</span>
+        <span class="str">'Authorization'</span><span class="var">: `Bearer ${PAYSTACK_SECRET}`,</span>
+        <span class="str">'Content-Type'</span><span class="var">:</span> <span class="str">'application/json'</span><span class="var">,</span>
+      <span class="var">},</span>
+      <span class="fi">body</span><span class="var">: JSON.stringify({</span>
+        <span class="fi">source</span><span class="var">: params.source,</span>
+        <span class="fi">amount</span><span class="var">: params.amount,</span>
+        <span class="fi">recipient</span><span class="var">: params.recipient,</span>
+        <span class="fi">reason</span><span class="var">: params.reason,</span>
+        <span class="fi">reference</span><span class="var">: params.reference,</span>
+        <span class="fi">currency</span><span class="var">:</span> <span class="str">'GHS'</span><span class="var">,</span>
+      <span class="var">}),</span>
+    <span class="var">})</span>
+
+    <span class="kw">const</span> <span class="var">data =</span> <span class="kw">await</span> <span class="var">response.json()</span>
+
+    <span class="kw">if</span> <span class="var">(!response.ok || !data.status) {</span>
+      <span class="cm">// Paystack returned an error response — throw so the caller can handle it</span>
+      <span class="kw">throw new</span> <span class="fn">Error</span><span class="var">(`Paystack transfer failed: ${data.message ?? JSON.stringify(data)}`)</span>
+    <span class="var">}</span>
+
+    <span class="cm">// Returns { transfer_code: "TRF_xxx", status: "pending", amount: 45000, ... }</span>
+    <span class="kw">return</span> <span class="var">data.data</span>
+  <span class="var">},</span>
+
+  <span class="kw">async</span> <span class="fn">verifyTransaction</span><span class="var">(reference: string) {</span>
+    <span class="kw">const</span> <span class="var">response =</span> <span class="kw">await</span> <span class="fn">fetch</span><span class="var">(</span>
+      <span class="str">`${PAYSTACK_BASE}/transaction/verify/${reference}`</span><span class="var">,</span>
+      <span class="var">{ headers: { Authorization: `Bearer ${PAYSTACK_SECRET}` } }</span>
+    <span class="var">)</span>
+    <span class="kw">const</span> <span class="var">data =</span> <span class="kw">await</span> <span class="var">response.json()</span>
+    <span class="kw">return</span> <span class="var">data.data</span>
+  <span class="var">}</span>
+<span class="var">}</span></pre>
+
+  <h2 id="s3-webhook">3.4 The Webhook Handler — The Final Chapter of the Payout</h2>
+  <p>When you call Paystack's Transfer API, the transfer does not complete instantly. Paystack processes it and then fires a webhook to your server when it's done. This is how you know to mark the order as truly <code>COMPLETED</code>.</p>
+
+  <div class="pre-header"><div class="ph-dot" style="background:var(--paystack)"></div>routes/webhooks.ts — handleTransferSuccess (called from the verified webhook handler)</div>
+<pre><span class="cm">// This function is called from the main webhook handler AFTER signature verification</span>
+<span class="kw">async function</span> <span class="fn">handleTransferSuccess</span><span class="var">(data: PaystackTransferData) {</span>
+  <span class="cm">// 1. Find the Payout record using the transfer_code Paystack sent us</span>
+  <span class="cm">// This is why storing transferCode after initiating was critical.</span>
+  <span class="kw">const</span> <span class="var">payout =</span> <span class="kw">await</span> <span class="var">prisma.payout.findUniqueOrThrow({</span>
+    <span class="fi">where</span><span class="var">: { transferCode: data.transfer_code },</span>
+    <span class="fi">include</span><span class="var">: { order: { select: { id:</span> <span class="kw">true</span><span class="var">, sellerId:</span> <span class="kw">true</span> <span class="var">} } }</span>
+  <span class="var">})</span>
+
+  <span class="kw">await</span> <span class="var">prisma.$transaction(</span><span class="kw">async</span> <span class="var">(tx) => {</span>
+    <span class="cm">// 2. Mark the escrow as RELEASED — funds have left the platform</span>
+    <span class="kw">await</span> <span class="var">tx.escrow.update({</span>
+      <span class="fi">where</span><span class="var">: { orderId: payout.orderId },</span>
+      <span class="fi">data</span><span class="var">: { status:</span> <span class="str">'RELEASED'</span><span class="var">, releasedAt:</span> <span class="kw">new</span> <span class="fn">Date</span><span class="var">() }</span>
+    <span class="var">})</span>
+
+    <span class="cm">// 3. Mark the Payout as COMPLETED</span>
+    <span class="kw">await</span> <span class="var">tx.payout.update({</span>
+      <span class="fi">where</span><span class="var">: { id: payout.id },</span>
+      <span class="fi">data</span><span class="var">: { status:</span> <span class="str">'COMPLETED'</span><span class="var">, completedAt:</span> <span class="kw">new</span> <span class="fn">Date</span><span class="var">() }</span>
+    <span class="var">})</span>
+
+    <span class="cm">// 4. Mark the Order as fully COMPLETED</span>
+    <span class="kw">await</span> <span class="var">tx.order.update({</span>
+      <span class="fi">where</span><span class="var">: { id: payout.orderId },</span>
+      <span class="fi">data</span><span class="var">: { status:</span> <span class="str">'COMPLETED'</span> <span class="var">}</span>
+    <span class="var">})</span>
+
+    <span class="cm">// 5. Credit the seller's in-platform wallet for record-keeping</span>
+    <span class="cm">// (The real payout happened via MoMo — this is the ledger entry)</span>
+    <span class="kw">const</span> <span class="var">amountGHS =</span> <span class="kw">new</span> <span class="fn">Decimal</span><span class="var">(data.amount).div(</span><span class="num">100</span><span class="var">)</span>
+    <span class="kw">await</span> <span class="var">tx.wallet.update({</span>
+      <span class="fi">where</span><span class="var">: { userId: payout.order.sellerId },</span>
+      <span class="fi">data</span><span class="var">: { lifetimeEarnings: { increment: amountGHS } }</span>
+    <span class="var">})</span>
+  <span class="var">})</span>
+
+  <span class="cm">// 6. Notify seller that they've been paid</span>
+  <span class="kw">await</span> <span class="fn">sendSellerPaidNotification</span><span class="var">(payout.orderId)</span>
+<span class="var">}</span></pre>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     SECTION 4 — SECURITY & FAILURE PLAYBOOK
+════════════════════════════════════════════════════════════ -->
+<div class="section" id="s4">
+  <div class="sec-label">Section 04</div>
+  <h1>Security &amp; The Failure Playbook</h1>
+
+  <p>This section answers the hardest questions: what happens when things go wrong? A system that works perfectly in the happy path but fails dangerously in edge cases is not production-ready. Let's address each failure mode.</p>
+
+  <!-- 4.1 IDEMPOTENCY -->
+  <h2 id="s4-idem">4.1 Idempotency — Preventing Double-Release</h2>
+
+  <p><strong>The problem:</strong> A user clicks "Confirm Receipt." The API call fires. The network is slow. They click again. Now two requests are racing to release the same escrow. If the second one succeeds, GHS 1,500 goes to the seller <em>twice</em> from your Paystack balance.</p>
+
+  <p><strong>The solution</strong> is a three-layer defense:</p>
+
+  <div class="v-flow">
+    <div class="vf-step">
+      <div class="vf-num blue">L1</div>
+      <div class="vf-body">
+        <h4>Frontend: Disable the button while in-flight</h4>
+        <p>The React component sets <code>state = 'releasing'</code> immediately on first click, which disables the button. This stops accidental double-clicks before any network request is even made. It's fast and costs nothing — but it's only a UI guard. A determined user (or a script) can still bypass it.</p>
+        <div class="why-box">
+          <div class="why-label">Why this alone isn't enough</div>
+          <p>The frontend can always be bypassed. A user can open the browser devtools and fire the fetch manually, or an attacker can call the endpoint directly with curl. Frontend guards are UX, not security.</p>
+        </div>
+      </div>
+    </div>
+    <div class="vf-step">
+      <div class="vf-num amber">L2</div>
+      <div class="vf-body">
+        <h4>Backend: State guard check before the transaction</h4>
+        <p>Express checks <code>order.status</code> before doing anything. If it's already <code>RELEASING_FUNDS</code>, <code>COMPLETED</code>, or the escrow is not in <code>HOLDING</code> state, we return a <code>409</code> immediately. This stops the second request that arrives <em>after</em> the first transaction commits.</p>
+      </div>
+    </div>
+    <div class="vf-step">
+      <div class="vf-num red">L3</div>
+      <div class="vf-body">
+        <h4>Database: Atomic WHERE clause in the Prisma update</h4>
+        <p>This is the bulletproof layer. The Prisma transaction does: <code>escrow.update({ where: { orderId, status: 'HOLDING' } })</code>. If two requests arrive at the <em>exact same millisecond</em> (a true race condition that layers 1 and 2 cannot catch), the database will serialize them. Only one will find the escrow in <code>HOLDING</code> state. The other will get a <code>P2025</code> error, the transaction rolls back, and we return a <code>409</code>. This is a <strong>database-level lock</strong> — it cannot be beaten.</p>
+        <div class="why-box">
+          <div class="why-label">Why we also send a reference to Paystack</div>
+          <p>We pass <code>reference: payout_${newPayoutId}</code> to Paystack's transfer API. Paystack's own system uses this to deduplicate — if the same reference arrives twice, Paystack only processes it once. This is Paystack's idempotency layer, which protects against our server calling the API twice (e.g., from a retry cron job and the original request both succeeding).</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4.2 OWNERSHIP -->
+  <h2 id="s4-auth">4.2 Ownership Verification — Stopping Unauthorized Releases</h2>
+
+  <p><strong>The threat:</strong> User A (who owns Order #001) tries to release User B's escrow (Order #002) by sending <code>POST /orders/order-002-id/release-escrow</code> with their own valid JWT.</p>
+
+  <div class="mentor-note">
+    <div class="mn-label">Why This Is Critical</div>
+    <p>A Supabase JWT only proves that the person is who they say they are. It does NOT prove they are allowed to perform an action on a specific resource. <strong>Authentication (who are you?) and authorization (are you allowed to do this?) are two completely separate concepts.</strong> Your middleware handles authentication. Your route handler must handle authorization.</p>
+  </div>
+
+  <div class="pre-header"><div class="ph-dot" style="background:var(--rose)"></div>The ownership check — the most critical guard in the route</div>
+<pre><span class="cm">// req.user.id comes from Supabase's server-verified JWT — this cannot be faked</span>
+<span class="cm">// order.buyerId comes from YOUR database — this is the ground truth</span>
+<span class="cm">// If they don't match, the request is unauthorized. No exceptions.</span>
+
+<span class="kw">if</span> <span class="var">(order.buyerId !== req.user!.id) {</span>
+  <span class="cm">// Important: Return 403 (Forbidden), NOT 404 (Not Found).</span>
+  <span class="cm">// Some APIs return 404 to hide that the resource exists at all (security through obscurity).</span>
+  <span class="cm">// For an escrow endpoint, a 403 is more honest and traceable in your logs.</span>
+  <span class="cm">// The attacker already knows the order exists — they guessed the ID.</span>
+  <span class="kw">return</span> <span class="var">res.status(</span><span class="num">403</span><span class="var">).json(</span><span class="fn">buildError</span><span class="var">(</span>
+    <span class="str">'NOT_YOUR_ORDER'</span><span class="var">,</span>
+    <span class="str">'You do not have permission to release this escrow'</span>
+  <span class="var">))</span>
+<span class="var">}</span>
+
+<span class="cm">// Also: Make sure we check the BUYER, not just any authenticated user.</span>
+<span class="cm">// The SELLER should NOT be able to release their own escrow.</span>
+<span class="cm">// (A seller releasing their own escrow would be paying themselves before delivery.)</span>
+<span class="cm">// Since we check order.buyerId === req.user.id, and the seller is order.sellerId,</span>
+<span class="cm">// a seller calling this endpoint will fail this check automatically. ✓</span></pre>
+
+  <!-- 4.3 PAYSTACK FAILURE -->
+  <h2 id="s4-fail">4.3 The Paystack Failure Playbook — When the Transfer API is Down</h2>
+
+  <p><strong>The scenario:</strong> The buyer clicks "Confirm Receipt." Our Prisma transaction commits perfectly — the escrow is in <code>RELEASING</code> state, the Payout record exists with <code>PENDING</code> status. Then we call Paystack's Transfer API... and it times out. Paystack is having an incident.</p>
+
+  <div class="failure-card">
+    <div class="fc-head">
+      <div class="fc-icon">🔴</div>
+      <h3>Failure: Paystack Transfer API Returns Error / Times Out</h3>
+      <div class="fc-tag">Recoverable</div>
+    </div>
+    <div class="fc-body">
+      <div class="fc-label">What happens immediately</div>
+      <p>The <code>catch(paystackError)</code> block fires. We log the error to Sentry (which alerts the team). We return a friendly <code>200</code> to the buyer: <em>"Payment to seller is being processed and may take a few minutes."</em> We do NOT return a 500 — that would confuse the buyer and might make them click again.</p>
+
+      <div class="fc-label">System state at this point</div>
+      <table class="ctable">
+        <thead><tr><th>Table / Field</th><th>Value</th><th>Meaning</th></tr></thead>
+        <tbody>
+          <tr><td>Order.status</td><td>RELEASING_FUNDS</td><td>Buyer confirmed. Transfer in flight (or failed).</td></tr>
+          <tr><td>Escrow.status</td><td>RELEASING</td><td>Claimed. Will not be double-released.</td></tr>
+          <tr><td>Payout.status</td><td>PENDING</td><td>Transfer was never successfully initiated. Needs retry.</td></tr>
+          <tr><td>Payout.transferCode</td><td>null</td><td>We never got a code from Paystack. Retry needed.</td></tr>
+        </tbody>
+      </table>
+
+      <div class="fc-label">How the system recovers</div>
+      <p>A <strong>cron job runs every 5 minutes</strong> and queries for any <code>Payout</code> records with status <code>PENDING</code> that are more than 2 minutes old. For each one, it retries the Paystack transfer call. It passes the same <code>reference: payout_${payoutId}</code> — so if Paystack somehow received the first call but failed to respond, the duplicate will be rejected by Paystack's idempotency and won't double-pay the seller.</p>
+
+      <div class="pre-header"><div class="ph-dot" style="background:var(--amber)"></div>jobs/retryPendingPayouts.ts — the recovery cron job</div>
+<pre><span class="cm">// Run this every 5 minutes via node-cron or BullMQ</span>
+<span class="kw">export async function</span> <span class="fn">retryPendingPayouts</span><span class="var">() {</span>
+  <span class="kw">const</span> <span class="var">stuckPayouts =</span> <span class="kw">await</span> <span class="var">prisma.payout.findMany({</span>
+    <span class="fi">where</span><span class="var">: {</span>
+      <span class="fi">status</span><span class="var">:</span> <span class="str">'PENDING'</span><span class="var">,</span>
+      <span class="fi">createdAt</span><span class="var">: { lte:</span> <span class="kw">new</span> <span class="fn">Date</span><span class="var">(Date.now() -</span> <span class="num">2</span> <span class="var">*</span> <span class="num">60</span> <span class="var">*</span> <span class="num">1000</span><span class="var">) }</span>  <span class="cm">// > 2 mins old</span>
+    <span class="var">},</span>
+    <span class="fi">include</span><span class="var">: {</span>
+      <span class="fi">seller</span><span class="var">: { include: { payoutRecipient:</span> <span class="kw">true</span> <span class="var">} }</span>
+    <span class="var">}</span>
+  <span class="var">})</span>
+
+  <span class="kw">for</span> <span class="var">(const payout of stuckPayouts) {</span>
+    <span class="kw">try</span> <span class="var">{</span>
+      <span class="cm">// The reference is the same as before — Paystack deduplicates it</span>
+      <span class="kw">const</span> <span class="var">transfer =</span> <span class="kw">await</span> <span class="var">PaystackService.initiateTransfer({</span>
+        <span class="fi">source</span><span class="var">:</span> <span class="str">'balance'</span><span class="var">,</span>
+        <span class="fi">amount</span><span class="var">: payout.amount.mul(</span><span class="num">100</span><span class="var">).toDecimalPlaces(</span><span class="num">0</span><span class="var">).toNumber(),</span>
+        <span class="fi">recipient</span><span class="var">: payout.seller.payoutRecipient!.recipientCode,</span>
+        <span class="fi">reason</span><span class="var">: `U-Shop payout retry - Order ${payout.orderId}`,</span>
+        <span class="fi">reference</span><span class="var">: `payout_${payout.id}`,</span>  <span class="cm">// Same reference as original attempt</span>
+      <span class="var">})</span>
+
+      <span class="kw">await</span> <span class="var">prisma.payout.update({</span>
+        <span class="fi">where</span><span class="var">: { id: payout.id },</span>
+        <span class="fi">data</span><span class="var">: { transferCode: transfer.transfer_code, status:</span> <span class="str">'PROCESSING'</span> <span class="var">}</span>
+      <span class="var">})</span>
+
+      <span class="var">console.log(`[RETRY SUCCESS] Payout ${payout.id} initiated`)</span>
+
+    <span class="var">}</span> <span class="kw">catch</span> <span class="var">(err) {</span>
+      <span class="cm">// Still failing — log and try again on the next cron run</span>
+      <span class="var">console.error(`[RETRY FAILED] Payout ${payout.id}:`, err)</span>
+      <span class="var">Sentry.captureException(err, { extra: { payoutId: payout.id } })</span>
+    <span class="var">}</span>
+  <span class="var">}</span>
+<span class="var">}</span></pre>
+    </div>
+  </div>
+
+  <div class="failure-card">
+    <div class="fc-head">
+      <div class="fc-icon">🟡</div>
+      <h3>Failure: transfer.failed Webhook — Transfer Bounced at MoMo Level</h3>
+      <div class="fc-tag">Requires Admin</div>
+    </div>
+    <div class="fc-body">
+      <p>This happens when Paystack accepted the transfer, gave us a <code>transfer_code</code>, but the underlying MoMo network rejected it (e.g., the seller's number is not registered on the network they claimed, or the account is inactive). Paystack fires a <code>transfer.failed</code> webhook.</p>
+
+      <div class="fc-label">Recovery action</div>
+      <p>In the <code>handleTransferFailed</code> webhook handler: set the Payout status to <code>FAILED</code>, revert the Escrow status back to <code>HOLDING</code>, and set the Order status back to <code>RELEASING_FUNDS</code> (or a new <code>PAYOUT_FAILED</code> state if you add it). Send an alert to your admin dashboard. An admin must contact the seller to update their payout account, then manually trigger a retry from the admin panel via <code>POST /api/admin/payouts/:id/retry</code>.</p>
+    </div>
+  </div>
+
+  <!-- 4.4 AUTO-RELEASE -->
+  <h2 id="s4-autorelease">4.4 The 7-Day Auto-Release — The Buyer Who Never Responds</h2>
+
+  <p>What happens if a buyer receives their item, is happy with it, but simply never clicks "Confirm Receipt"? The seller is stuck waiting indefinitely. This is unfair to honest sellers. The solution is an auto-release timer.</p>
+
+  <div class="callout warn">
+    <div class="callout-icon">⚠️</div>
+    <p><strong>The Auto-Release Paradox:</strong> The auto-release protects sellers from non-responsive buyers. But it also means a buyer who genuinely hasn't received their item has a 7-day window to open a dispute before the money goes to the seller. <strong>This makes aggressive notification (Day 3, Day 5, Day 6, Day 6.5 reminders) a financial safety feature, not just UX polish.</strong> A buyer who misses the window due to lack of notification is a platform liability.</p>
+  </div>
+
+  <div class="pre-header"><div class="ph-dot" style="background:var(--amber)"></div>jobs/autoReleaseEscrow.ts — the 7-day auto-release cron job</div>
+<pre><span class="cm">// Run this ONCE per hour (not every minute — it's not time-critical to the second)</span>
+<span class="kw">export async function</span> <span class="fn">processAutoReleases</span><span class="var">() {</span>
+  <span class="cm">// Find all escrows where the auto-release timer has passed</span>
+  <span class="cm">// AND the order hasn't been resolved by the buyer yet</span>
+  <span class="kw">const</span> <span class="var">expiredEscrows =</span> <span class="kw">await</span> <span class="var">prisma.escrow.findMany({</span>
+    <span class="fi">where</span><span class="var">: {</span>
+      <span class="fi">status</span><span class="var">:</span> <span class="str">'HOLDING'</span><span class="var">,</span>                                    <span class="cm">// Still held</span>
+      <span class="fi">autoReleaseAt</span><span class="var">: { lte:</span> <span class="kw">new</span> <span class="fn">Date</span><span class="var">() },</span>                   <span class="cm">// Timer has elapsed</span>
+      <span class="fi">order</span><span class="var">: { status: { notIn: [</span><span class="str">'DISPUTED'</span><span class="var">,</span> <span class="str">'CANCELLED'</span><span class="var">] } }</span>  <span class="cm">// Not under dispute</span>
+    <span class="var">},</span>
+    <span class="fi">include</span><span class="var">: { order: { include: { seller: { include: { payoutRecipient:</span> <span class="kw">true</span> <span class="var">} } } } }</span>
+  <span class="var">})</span>
+
+  <span class="var">console.log(`[AUTO-RELEASE] Processing ${expiredEscrows.length} expired escrows`)</span>
+
+  <span class="kw">for</span> <span class="var">(const escrow of expiredEscrows) {</span>
+    <span class="kw">try</span> <span class="var">{</span>
+      <span class="cm">// Reuse the same release logic as the manual endpoint</span>
+      <span class="cm">// This ensures identical behavior whether triggered by buyer or timer</span>
+      <span class="kw">await</span> <span class="fn">releaseEscrowForOrder</span><span class="var">(escrow.orderId, { trigger:</span> <span class="str">'AUTO_RELEASE'</span> <span class="var">})</span>
+      <span class="var">console.log(`[AUTO-RELEASE] Released escrow for order ${escrow.orderId}`)</span>
+    <span class="var">}</span> <span class="kw">catch</span> <span class="var">(err) {</span>
+      <span class="var">console.error(`[AUTO-RELEASE] Failed for order ${escrow.orderId}:`, err)</span>
+      <span class="var">Sentry.captureException(err, { extra: { orderId: escrow.orderId } })</span>
+    <span class="var">}</span>
+  <span class="var">}</span>
+<span class="var">}</span>
+
+<span class="cm">// Shared release logic — called by both the API route and the cron job</span>
+<span class="kw">async function</span> <span class="fn">releaseEscrowForOrder</span><span class="var">(orderId: string, meta: { trigger: string }) {</span>
+  <span class="cm">// Same transaction + Paystack call as in the route handler</span>
+  <span class="cm">// Extract this to a shared service function so both callers use identical logic</span>
+  <span class="kw">await</span> <span class="fn">EscrowService.release</span><span class="var">(orderId, { ...meta })</span>
+<span class="var">}</span></pre>
+
+  <div class="insight pay">
+    <div class="ins-l">Principal Engineer's Summary — The Four Guarantees of This System</div>
+    <p>A well-built escrow system makes four guarantees. <strong>(1) Money can never disappear</strong> — it's either in Paystack's balance (platform float) or in the seller's account. The database ledger tracks which. <strong>(2) The escrow can only be released once</strong> — the atomic <code>WHERE status = 'HOLDING'</code> Prisma update is a database-level lock. <strong>(3) Only the buyer of the specific order can release it</strong> — the ownership check against the JWT-verified user ID enforces this. <strong>(4) Paystack failures are recoverable</strong> — the PENDING Payout record is a breadcrumb that the retry cron job follows. If you implement these four guarantees, this feature is production-safe.</p>
+  </div>
+
+</div>
+
+<!-- END MARKER -->
+<div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:rgba(255,255,255,0.1);letter-spacing:0.14em;text-transform:uppercase;display:flex;align-items:center;gap:12px;margin:64px 0 0;">
+  <span style="flex:1;height:1px;background:rgba(255,255,255,0.05);display:block;"></span>
+  End of Document · U-Shop Escrow &amp; Payout Tech Spec v1.0 · Express + Next.js + Prisma + Paystack · Internal
+  <span style="flex:1;height:1px;background:rgba(255,255,255,0.05);display:block;"></span>
+</div>
+
+</div><!-- .body -->
+</div><!-- .body -->
+</div><!-- .body -->
+</div><!-- .body -->
+
+<div class="footer">
+  <div class="ft-logo">
+    <div class="ft-u">U</div>
+    <div class="ft-sh">shop</div>
+  </div>
+  <div class="ft-r">Escrow &amp; Payout Tech Spec v1.0 · Internal Engineering · Next.js 14 + Express + Prisma + Paystack</div>
+</div>
+
+</div><!-- .main -->
+</body>
+</html>

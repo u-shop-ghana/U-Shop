@@ -1,0 +1,436 @@
+// This is your Prisma schema file
+// Learn more: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// ─── ENUMS ───────────────────────────────────────────────────────
+
+enum UserRole {
+  BUYER
+  SELLER
+  BOTH
+  ADMIN
+}
+
+enum VerificationStatus {
+  UNVERIFIED
+  PENDING
+  VERIFIED
+  REJECTED
+  EXPIRED
+}
+
+enum ListingStatus {
+  DRAFT
+  ACTIVE
+  PAUSED
+  SOLD
+}
+
+enum ListingCondition {
+  NEW             // Factory sealed, never opened
+  LIKE_NEW        // Opened but unused, no visible wear
+  EXCELLENT       // Minimal signs of use, fully functional
+  GOOD            // Normal wear, fully functional
+  FAIR            // Noticeable wear, functional with cosmetic issues
+  FOR_PARTS       // Not fully functional, sold as-is
+}
+
+enum OrderStatus {
+  PENDING_PAYMENT
+  PAYMENT_RECEIVED
+  DISPATCHED
+  DELIVERED
+  COMPLETED
+  CANCELLED
+  REFUNDED
+}
+
+enum EscrowStatus {
+  HOLDING
+  RELEASED
+  REFUNDED
+  DISPUTED
+  FROZEN
+}
+
+enum DisputeStatus {
+  OPEN
+  SELLER_RESPONDED
+  IN_MEDIATION
+  RESOLVED_BUYER
+  RESOLVED_SELLER
+  DISMISSED
+}
+
+enum DisputeReason {
+  ITEM_NOT_RECEIVED
+  NOT_AS_DESCRIBED
+  COUNTERFEIT
+  WRONG_ITEM
+  DAMAGED_IN_TRANSIT
+  OTHER
+}
+
+enum PayoutStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
+}
+
+enum WalletTransactionType {
+  ESCROW_RELEASE
+  PAYOUT
+  REFUND_DEBIT
+  ADJUSTMENT
+}
+
+enum DeliveryMode {
+  CAMPUS_MEETUP
+  SELF_SHIPPING
+}
+
+enum WebhookEventType {
+  CHARGE_SUCCESS
+  TRANSFER_SUCCESS
+  TRANSFER_FAILED
+  TRANSFER_REVERSED
+}
+
+// ─── MODELS ──────────────────────────────────────────────────────
+
+model User {
+  id                 String             @id @default(cuid())
+  supabaseId         String             @unique
+  email              String             @unique
+  fullName           String?
+  avatarUrl          String?
+  role               UserRole           @default(BUYER)
+  verificationStatus VerificationStatus @default(UNVERIFIED)
+  studentIdImagePath String?            // Supabase Storage path
+  universityName     String?
+  verifiedAt         DateTime?
+  rejectionReason    String?
+  isSuspended        Boolean            @default(false)
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
+
+  // Relations
+  store              Store?
+  orders             Order[]            @relation("BuyerOrders")
+  reviews            Review[]           @relation("ReviewAuthor")
+  sentMessages       Message[]          @relation("MessageSender")
+  receivedMessages   Message[]          @relation("MessageReceiver")
+  disputes           Dispute[]          @relation("DisputeOpener")
+
+  @@index([supabaseId])
+  @@index([email])
+  @@index([verificationStatus])
+}
+
+model Store {
+  id                String    @id @default(cuid())
+  userId            String    @unique
+  handle            String    @unique  // URL slug: /store/{handle}
+  previousHandle    String?            // For 301 redirect
+  handleChangedAt   DateTime?
+  name              String
+  bio               String?   @db.VarChar(280)
+  logoUrl           String?
+  bannerUrl         String?
+  isActive          Boolean   @default(true)
+
+  // Return & Warranty Policy (structured JSON)
+  returnWindow      String    @default("NO_RETURNS")   // NO_RETURNS, 24H, 3D, 7D, 14D, 30D
+  returnCondition   String    @default("SAME_CONDITION") // UNOPENED, SAME_CONDITION, ANY
+  returnShippingCost String   @default("BUYER_PAYS")    // BUYER_PAYS, SELLER_PAYS, SHARED
+  warrantyPeriod    String    @default("NONE")          // NONE, 7D, 30D, 90D, MANUFACTURER
+  warrantyCoverage  String    @default("DOA")           // DOA, HARDWARE, ALL_FAULTS
+  refundMethod      String    @default("WALLET_CREDIT") // WALLET_CREDIT, ORIGINAL_PAYMENT
+  policyNotes       String?   @db.VarChar(500)
+
+  // Aggregate stats (pre-computed)
+  averageRating     Float     @default(0)
+  reviewCount       Int       @default(0)
+  totalSales        Int       @default(0)
+
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  // Relations
+  user              User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  listings          Listing[]
+  reviews           Review[]
+
+  @@index([handle])
+  @@index([isActive])
+}
+
+model Category {
+  id       String    @id @default(cuid())
+  name     String    @unique
+  slug     String    @unique
+  iconUrl  String?
+  order    Int       @default(0)
+
+  listings Listing[]
+
+  @@index([slug])
+}
+
+model Listing {
+  id            String           @id @default(cuid())
+  storeId       String
+  categoryId    String
+  title         String
+  description   String           @db.Text
+  price         Decimal          @db.Decimal(10, 2)
+  condition     ListingCondition
+  status        ListingStatus    @default(DRAFT)
+  stock         Int              @default(1)
+  images        String[]         // Array of Supabase Storage URLs
+
+  // Full-text search vector
+  searchVector  Unsupported("tsvector")?
+
+  createdAt     DateTime         @default(now())
+  updatedAt     DateTime         @updatedAt
+
+  // Relations
+  store         Store            @relation(fields: [storeId], references: [id], onDelete: Cascade)
+  category      Category         @relation(fields: [categoryId], references: [id])
+  orderItems    OrderItem[]
+  messageThreads MessageThread[]
+
+  @@index([storeId, status])
+  @@index([categoryId, status])
+  @@index([status])
+  @@index([price])
+}
+
+model Order {
+  id                String        @id @default(cuid())
+  orderNumber       String        @unique @default(cuid()) // Human-readable
+  buyerId           String
+  storeId           String
+  status            OrderStatus   @default(PENDING_PAYMENT)
+  totalAmount       Decimal       @db.Decimal(10, 2)
+  platformFee       Decimal       @db.Decimal(10, 2)
+  sellerAmount      Decimal       @db.Decimal(10, 2)
+  feePercentage     Decimal       @db.Decimal(4, 2)  // 5.00 or 8.00
+
+  // Delivery
+  deliveryMode      DeliveryMode  @default(CAMPUS_MEETUP)
+  shippingAddress   String?       @db.Text
+  trackingNumber    String?
+  meetupCode        String?       // 6-digit confirmation code
+  meetupConfirmedAt DateTime?
+  dispatchedAt      DateTime?
+  deliveredAt       DateTime?
+
+  // Payment
+  paystackRef       String?       @unique
+  paidAt            DateTime?
+
+  // Policy snapshot (immutable copy of store policy at time of purchase)
+  policySnapshot    Json?
+
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+
+  // Relations
+  buyer             User          @relation("BuyerOrders", fields: [buyerId], references: [id])
+  items             OrderItem[]
+  escrow            Escrow?
+  dispute           Dispute?
+
+  @@index([buyerId])
+  @@index([storeId])
+  @@index([status])
+  @@index([paystackRef])
+}
+
+model OrderItem {
+  id         String  @id @default(cuid())
+  orderId    String
+  listingId  String
+  quantity   Int
+  unitPrice  Decimal @db.Decimal(10, 2)
+  totalPrice Decimal @db.Decimal(10, 2)
+
+  // Relations
+  order      Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  listing    Listing @relation(fields: [listingId], references: [id])
+
+  @@index([orderId])
+}
+
+model Escrow {
+  id          String       @id @default(cuid())
+  orderId     String       @unique
+  amount      Decimal      @db.Decimal(10, 2)
+  status      EscrowStatus @default(HOLDING)
+  releaseAt   DateTime     // Auto-release date (7 days from payment)
+  releasedAt  DateTime?
+  frozenAt    DateTime?
+
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  // Relations
+  order       Order        @relation(fields: [orderId], references: [id])
+
+  @@index([status])
+  @@index([releaseAt])
+}
+
+model Wallet {
+  id               String              @id @default(cuid())
+  userId           String              @unique
+  availableBalance Decimal             @db.Decimal(10, 2) @default(0)
+  totalEarned      Decimal             @db.Decimal(10, 2) @default(0)
+  createdAt        DateTime            @default(now())
+  updatedAt        DateTime            @updatedAt
+
+  // Relations
+  transactions     WalletTransaction[]
+  payouts          Payout[]
+}
+
+model WalletTransaction {
+  id          String                 @id @default(cuid())
+  walletId    String
+  type        WalletTransactionType
+  amount      Decimal                @db.Decimal(10, 2)
+  description String?
+  referenceId String?                // e.g., orderId, payoutId
+  createdAt   DateTime               @default(now())
+
+  // Relations
+  wallet      Wallet                 @relation(fields: [walletId], references: [id])
+
+  @@index([walletId])
+  @@index([createdAt])
+}
+
+model Payout {
+  id               String       @id @default(cuid())
+  walletId         String
+  amount           Decimal      @db.Decimal(10, 2)
+  status           PayoutStatus @default(PENDING)
+  paystackTransferId String?
+  recipientCode    String?      // Paystack transfer recipient
+  bankName         String?
+  accountNumber    String?
+  accountName      String?
+  failureReason    String?
+
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
+
+  // Relations
+  wallet           Wallet       @relation(fields: [walletId], references: [id])
+
+  @@index([walletId])
+  @@index([status])
+}
+
+model MessageThread {
+  id         String    @id @default(cuid())
+  listingId  String?
+  orderId    String?
+  buyerId    String
+  sellerId   String
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+  // Relations
+  listing    Listing?  @relation(fields: [listingId], references: [id])
+  messages   Message[]
+
+  @@unique([listingId, buyerId])
+  @@index([buyerId])
+  @@index([sellerId])
+}
+
+model Message {
+  id         String        @id @default(cuid())
+  threadId   String
+  senderId   String
+  receiverId String
+  content    String        @db.Text
+  isRead     Boolean       @default(false)
+  createdAt  DateTime      @default(now())
+
+  // Relations
+  thread     MessageThread @relation(fields: [threadId], references: [id], onDelete: Cascade)
+  sender     User          @relation("MessageSender", fields: [senderId], references: [id])
+  receiver   User          @relation("MessageReceiver", fields: [receiverId], references: [id])
+
+  @@index([threadId, createdAt])
+  @@index([receiverId, isRead])
+}
+
+model Review {
+  id        String   @id @default(cuid())
+  storeId   String
+  authorId  String
+  orderId   String
+  rating    Int      // 1-5
+  comment   String?  @db.Text
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  store     Store    @relation(fields: [storeId], references: [id], onDelete: Cascade)
+  author    User     @relation("ReviewAuthor", fields: [authorId], references: [id])
+
+  @@unique([authorId, orderId])  // One review per transaction
+  @@index([storeId])
+}
+
+model Dispute {
+  id               String        @id @default(cuid())
+  orderId          String        @unique
+  openedById       String
+  reason           DisputeReason
+  description      String        @db.Text
+  evidenceUrls     String[]      // Supabase Storage paths
+  status           DisputeStatus @default(OPEN)
+  sellerResponse   String?       @db.Text
+  adminNotes       String?       @db.Text
+  resolvedAt       DateTime?
+  resolution       String?       // FULL_REFUND, PARTIAL_REFUND, DISMISSED
+
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+
+  // Relations
+  order            Order         @relation(fields: [orderId], references: [id])
+  openedBy         User          @relation("DisputeOpener", fields: [openedById], references: [id])
+
+  @@index([status])
+}
+
+model WebhookEvent {
+  id          String           @id @default(cuid())
+  externalId  String           @unique // Paystack event ID for idempotency
+  eventType   WebhookEventType
+  payload     Json
+  processed   Boolean          @default(false)
+  processedAt DateTime?
+  error       String?
+  createdAt   DateTime         @default(now())
+
+  @@index([externalId])
+  @@index([processed])
+}

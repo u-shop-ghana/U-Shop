@@ -1,0 +1,15 @@
+# API build output
+dist/
+
+# Dependencies
+node_modules/
+
+# Environment
+.env
+.env.local
+
+# Prisma
+prisma/migrations/*.sql.bak
+
+# Logs
+*.log

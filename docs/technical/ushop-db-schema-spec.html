@@ -1,0 +1,2225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>U-Shop · Database Schema Specification v1.0</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;1,9..144,300&display=swap" rel="stylesheet">
+<style>
+:root {
+  --red:       #E8000B;
+  --black:     #0A0A0A;
+  --purple:    #6B1FA8;
+  --magenta:   #D4009B;
+  --grad:      linear-gradient(90deg,#6B1FA8,#D4009B);
+  --next:      #0070f3;
+  --express:   #68a063;
+  --supa:      #3ecf8e;
+  --paystack:  #00c3f7;
+  --redis:     #dc382d;
+  --bg:        #0d0e11;
+  --bg2:       #13151a;
+  --bg3:       #1a1d25;
+  --surface:   #1e2130;
+  --line:      rgba(255,255,255,0.07);
+  --line2:     rgba(255,255,255,0.12);
+  --text:      #e8e8f0;
+  --muted:     #7a7d8e;
+  --soft:      #b0b3c4;
+  --green:     #22c55e;
+  --amber:     #f59e0b;
+  --blue:      #3b82f6;
+  --cyan:      #06b6d4;
+  --rose:      #f43f5e;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:'Fraunces',Georgia,serif;background:var(--bg);color:var(--text);font-size:15px;line-height:1.75;}
+
+/* ── SIDEBAR ── */
+.nav{position:fixed;top:0;left:0;bottom:0;width:236px;background:var(--bg2);border-right:1px solid var(--line);display:flex;flex-direction:column;z-index:200;overflow-y:auto;}
+.nav-logo{padding:22px 20px 18px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:0;flex-shrink:0;}
+.nl-u{background:var(--red);width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-size:16px;font-weight:800;color:#fff;}
+.nl-sh{font-family:'Syne',sans-serif;font-size:16px;font-weight:800;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;padding:0 8px;line-height:28px;}
+.nl-badge{margin-left:auto;font-family:'IBM Plex Mono',monospace;font-size:8px;background:rgba(62,207,142,0.15);color:var(--supa);border:1px solid rgba(62,207,142,0.3);padding:2px 6px;border-radius:3px;letter-spacing:0.08em;}
+.nav-section{font-family:'IBM Plex Mono',monospace;font-size:8px;letter-spacing:0.22em;text-transform:uppercase;color:rgba(255,255,255,0.2);padding:14px 20px 6px;}
+.nav a{display:flex;align-items:flex-start;gap:9px;padding:7px 20px;color:var(--muted);text-decoration:none;font-family:'IBM Plex Mono',monospace;font-size:11px;transition:all 0.12s;}
+.nav a:hover{color:var(--text);background:rgba(255,255,255,0.03);}
+.nav a .n{color:var(--red);min-width:16px;font-size:9px;padding-top:2px;}
+.nav-footer{padding:16px 20px;margin-top:auto;border-top:1px solid var(--line);font-family:'IBM Plex Mono',monospace;font-size:8px;color:rgba(255,255,255,0.15);letter-spacing:0.1em;flex-shrink:0;}
+
+/* ── MAIN ── */
+.main{margin-left:236px;}
+.body{padding:0 72px 120px;max-width:980px;}
+.section{padding-top:80px;}
+.sec-label{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:0.24em;text-transform:uppercase;color:var(--red);margin-bottom:14px;display:flex;align-items:center;gap:10px;}
+.sec-label::after{content:'';flex:1;height:1px;background:var(--red);opacity:0.15;}
+h1{font-family:'Syne',sans-serif;font-size:30px;font-weight:800;margin-bottom:16px;letter-spacing:-0.02em;line-height:1.15;}
+h2{font-family:'Syne',sans-serif;font-size:19px;font-weight:700;margin:40px 0 14px;letter-spacing:-0.01em;}
+h3{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;margin-bottom:8px;}
+p{color:var(--soft);margin-bottom:12px;line-height:1.75;}
+strong{color:var(--text);}
+code,.mono{font-family:'IBM Plex Mono',monospace;font-size:12px;background:var(--surface);padding:2px 8px;border-radius:3px;color:#a5d6ff;}
+.divider{border:none;border-top:1px solid var(--line);margin:64px 0 0;}
+
+/* ── COVER ── */
+.cover{background:var(--black);min-height:100vh;padding:64px 72px;display:grid;grid-template-rows:1fr auto;position:relative;overflow:hidden;}
+.cover::before{content:'';position:absolute;left:0;top:0;bottom:0;width:5px;background:var(--red);}
+.cover-mesh{position:absolute;inset:0;background:radial-gradient(ellipse 55% 50% at 75% 35%,rgba(62,207,142,0.09) 0%,transparent 65%),radial-gradient(ellipse 40% 35% at 15% 70%,rgba(232,0,11,0.07) 0%,transparent 55%),radial-gradient(ellipse 30% 30% at 50% 90%,rgba(107,31,168,0.08) 0%,transparent 50%);pointer-events:none;}
+.cover-circuit{position:absolute;inset:0;opacity:0.025;background-image:linear-gradient(rgba(255,255,255,0.6) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.6) 1px,transparent 1px);background-size:44px 44px;pointer-events:none;}
+.cover-content{position:relative;z-index:2;}
+.cover-eyebrow{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.22em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:52px;display:flex;align-items:center;gap:12px;}
+.cover-eyebrow .dot{width:5px;height:5px;border-radius:50%;background:var(--supa);}
+.cover-logo{display:flex;align-items:center;margin-bottom:36px;}
+.cl-u{background:var(--red);width:72px;height:72px;display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-size:46px;font-weight:800;color:#fff;line-height:1;flex-shrink:0;}
+.cl-sh{font-family:'Syne',sans-serif;font-size:46px;font-weight:800;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;padding:0 14px;line-height:72px;}
+.cover-h1{font-family:'Syne',sans-serif;font-size:26px;font-weight:700;color:rgba(255,255,255,0.8);margin-bottom:14px;letter-spacing:-0.01em;}
+.cover-sub{font-size:15px;color:rgba(255,255,255,0.38);max-width:600px;font-weight:300;line-height:1.75;margin-bottom:32px;font-style:italic;}
+.cover-stack{display:flex;flex-wrap:wrap;gap:10px;}
+.sc{display:flex;align-items:center;gap:7px;font-family:'IBM Plex Mono',monospace;font-size:10px;padding:6px 12px;border-radius:4px;border:1px solid;}
+.sc-supa{color:var(--supa);border-color:rgba(62,207,142,0.3);background:rgba(62,207,142,0.08);}
+.sc-prisma{color:#5a67d8;border-color:rgba(90,103,216,0.3);background:rgba(90,103,216,0.08);}
+.sc-paystack{color:var(--paystack);border-color:rgba(0,195,247,0.3);background:rgba(0,195,247,0.08);}
+.sc-rls{color:var(--amber);border-color:rgba(245,158,11,0.3);background:rgba(245,158,11,0.06);}
+.chip-dot{width:6px;height:6px;border-radius:50%;}
+.cover-meta{position:relative;z-index:2;display:grid;grid-template-columns:repeat(5,1fr);gap:16px;border-top:1px solid rgba(255,255,255,0.07);padding-top:24px;}
+.cm .cm-l{font-family:'IBM Plex Mono',monospace;font-size:8px;letter-spacing:0.18em;text-transform:uppercase;color:rgba(255,255,255,0.22);display:block;margin-bottom:4px;}
+.cm .cm-v{font-size:13px;color:rgba(255,255,255,0.6);font-family:'IBM Plex Mono',monospace;}
+
+/* ── CODE BLOCKS ── */
+pre{font-family:'IBM Plex Mono',monospace;font-size:12.5px;background:var(--bg3);border:1px solid var(--line2);border-radius:8px;padding:22px 24px;overflow-x:auto;line-height:1.75;color:#cdd6f4;margin:16px 0;tab-size:2;}
+pre .cm{color:#636674;font-style:italic;}
+pre .kw{color:#cba6f7;}
+pre .str{color:#a6e3a1;}
+pre .fn{color:#89dceb;}
+pre .num{color:#fab387;}
+pre .var{color:#cdd6f4;}
+pre .type{color:#f5c2e7;}
+pre .field{color:#89b4fa;}
+pre .op{color:#94e2d5;}
+pre .en{color:#f9e2af;}
+pre .comment-block{color:#636674;font-style:italic;display:block;}
+
+/* ── MERMAID / ERD DIAGRAM ── */
+.erd-container{background:var(--bg3);border:1px solid var(--line2);border-radius:10px;padding:28px 24px;margin:24px 0;overflow-x:auto;}
+.erd-container pre{background:transparent;border:none;padding:0;margin:0;font-size:11.5px;line-height:1.6;}
+
+/* ── CALLOUTS ── */
+.callout{border-left:3px solid;padding:16px 20px;border-radius:0 6px 6px 0;margin:18px 0;}
+.callout p{margin:0;}
+.callout-red{border-color:var(--rose);background:rgba(244,63,94,0.06);}
+.callout-green{border-color:var(--green);background:rgba(34,197,94,0.05);}
+.callout-blue{border-color:var(--blue);background:rgba(59,130,246,0.06);}
+.callout-amber{border-color:var(--amber);background:rgba(245,158,11,0.06);}
+.callout-paystack{border-color:var(--paystack);background:rgba(0,195,247,0.06);}
+.callout-supa{border-color:var(--supa);background:rgba(62,207,142,0.06);}
+.callout strong{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.06em;text-transform:uppercase;display:block;margin-bottom:6px;}
+.callout-red strong{color:var(--rose);}
+.callout-green strong{color:var(--green);}
+.callout-blue strong{color:var(--blue);}
+.callout-amber strong{color:var(--amber);}
+.callout-paystack strong{color:var(--paystack);}
+.callout-supa strong{color:var(--supa);}
+
+/* ── TABLES ── */
+.ctable{width:100%;border-collapse:collapse;margin:16px 0;font-size:13px;}
+.ctable th{text-align:left;font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:0.14em;text-transform:uppercase;color:var(--muted);padding:10px 14px;border-bottom:2px solid var(--line2);background:var(--bg3);}
+.ctable td{padding:11px 14px;border-bottom:1px solid var(--line);vertical-align:top;color:var(--soft);}
+.ctable tr:last-child td{border-bottom:none;}
+.ctable tr:hover td{background:rgba(255,255,255,0.02);}
+.ctable td:first-child{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--text);font-weight:500;}
+.ctable td code{font-size:11px;}
+
+/* ── INSIGHT / WARNING BOXES ── */
+.insight{background:var(--black);border:1px solid var(--line2);border-left:4px solid var(--red);border-radius:0 8px 8px 0;padding:18px 22px;margin:18px 0;}
+.insight .ins-l{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:0.18em;text-transform:uppercase;color:var(--red);margin-bottom:8px;}
+.insight p{color:rgba(255,255,255,0.5);margin:0;font-size:13px;line-height:1.7;}
+.insight strong{color:rgba(255,255,255,0.8);}
+
+.warn-box{background:rgba(245,158,11,0.07);border:1px solid rgba(245,158,11,0.2);border-radius:8px;padding:16px 20px;margin:16px 0;}
+.warn-box p{margin:0;color:rgba(245,158,11,0.85);font-size:13px;}
+.warn-box strong{color:var(--amber);}
+
+/* ── ENTITY RELATIONSHIP CARD GRID ── */
+.rel-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:20px 0;}
+.rel-card{background:var(--bg3);border:1px solid var(--line2);border-radius:8px;padding:18px 20px;border-top:3px solid;}
+.rel-card.user{border-top-color:var(--supa);}
+.rel-card.store{border-top-color:var(--purple);}
+.rel-card.listing{border-top-color:var(--blue);}
+.rel-card.order{border-top-color:var(--amber);}
+.rel-card.escrow{border-top-color:var(--paystack);}
+.rel-card.wallet{border-top-color:var(--green);}
+.rel-card h3{font-size:13px;margin-bottom:12px;font-family:'IBM Plex Mono',monospace;display:flex;align-items:center;gap:8px;}
+.entity-tag{font-family:'IBM Plex Mono',monospace;font-size:8px;padding:2px 7px;border-radius:2px;font-weight:600;}
+.et-user{background:rgba(62,207,142,0.15);color:var(--supa);}
+.et-store{background:rgba(107,31,168,0.2);color:#c084fc;}
+.et-listing{background:rgba(59,130,246,0.15);color:var(--blue);}
+.et-order{background:rgba(245,158,11,0.15);color:var(--amber);}
+.et-escrow{background:rgba(0,195,247,0.15);color:var(--paystack);}
+.et-wallet{background:rgba(34,197,94,0.15);color:var(--green);}
+.rel-card ul{list-style:none;}
+.rel-card ul li{font-size:12px;color:var(--muted);padding:4px 0;border-bottom:1px solid var(--line);display:flex;gap:8px;align-items:flex-start;}
+.rel-card ul li:last-child{border-bottom:none;}
+.rel-card ul li .rel-type{font-family:'IBM Plex Mono',monospace;font-size:9px;padding:1px 5px;border-radius:2px;background:var(--surface);color:var(--text);white-space:nowrap;flex-shrink:0;margin-top:2px;}
+
+/* ── RLS POLICY CARDS ── */
+.rls-block{background:var(--bg3);border:1px solid var(--line2);border-radius:8px;margin:16px 0;overflow:hidden;}
+.rls-header{background:rgba(62,207,142,0.08);border-bottom:1px solid rgba(62,207,142,0.15);padding:12px 18px;display:flex;align-items:center;gap:10px;}
+.rls-table-name{font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:600;color:var(--supa);}
+.rls-note{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--muted);}
+.rls-block pre{border:none;border-radius:0;margin:0;background:var(--bg3);}
+
+/* ── INDEX TABLE ── */
+.idx-table{width:100%;border-collapse:collapse;margin:16px 0;font-size:12.5px;}
+.idx-table th{text-align:left;font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:0.14em;text-transform:uppercase;color:var(--muted);padding:10px 14px;border-bottom:2px solid var(--line2);background:var(--bg3);}
+.idx-table td{padding:10px 14px;border-bottom:1px solid var(--line);vertical-align:top;color:var(--soft);}
+.idx-table tr:last-child td{border-bottom:none;}
+.idx-table td:first-child{font-family:'IBM Plex Mono',monospace;font-size:11px;color:#a5d6ff;white-space:nowrap;}
+.idx-table td:nth-child(2){font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--amber);}
+.crit-badge{font-family:'IBM Plex Mono',monospace;font-size:8px;padding:2px 7px;border-radius:2px;white-space:nowrap;}
+.cb-crit{background:rgba(244,63,94,0.15);color:var(--rose);border:1px solid rgba(244,63,94,0.25);}
+.cb-high{background:rgba(245,158,11,0.15);color:var(--amber);border:1px solid rgba(245,158,11,0.25);}
+.cb-med{background:rgba(59,130,246,0.15);color:var(--blue);border:1px solid rgba(59,130,246,0.25);}
+
+/* ── PERSONA ROLE MAP ── */
+.role-matrix{display:grid;grid-template-columns:1fr 1fr;gap:2px;margin:20px 0;border:1px solid var(--line2);border-radius:8px;overflow:hidden;}
+.rm-header{background:var(--bg3);padding:12px 16px;font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.1em;color:var(--muted);text-transform:uppercase;border-bottom:1px solid var(--line2);}
+.rm-cell{background:var(--surface);padding:14px 16px;border:1px solid var(--line);}
+.rm-cell h4{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--text);margin-bottom:6px;}
+.rm-cell p{font-size:12px;color:var(--muted);margin:0;}
+.rm-cell code{font-size:10px;}
+
+/* ── FOOTER ── */
+.footer{background:var(--bg2);border-top:1px solid var(--line);padding:20px 72px;display:flex;align-items:center;justify-content:space-between;}
+.ft-logo{display:flex;align-items:center;}
+.ft-u{background:var(--red);width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-size:12px;font-weight:800;color:#fff;}
+.ft-sh{font-family:'Syne',sans-serif;font-size:12px;font-weight:700;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;padding:0 6px;}
+.ft-r{font-family:'IBM Plex Mono',monospace;font-size:9px;color:rgba(255,255,255,0.2);letter-spacing:0.1em;}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-logo">
+    <div class="nl-u">U</div><div class="nl-sh">shop</div>
+    <span class="nl-badge">Schema v1</span>
+  </div>
+  <div class="nav-section">Sections</div>
+  <a href="#erd"><span class="n">01</span>ERD Overview</a>
+  <a href="#schema"><span class="n">02</span>Prisma Schema</a>
+  <a href="#enums"><span class="n">02a</span>— Enums</a>
+  <a href="#user-model"><span class="n">02b</span>— User Model</a>
+  <a href="#store-model"><span class="n">02c</span>— Store &amp; Policy</a>
+  <a href="#listing-model"><span class="n">02d</span>— Listing &amp; Category</a>
+  <a href="#order-model"><span class="n">02e</span>— Order &amp; OrderItem</a>
+  <a href="#escrow-model"><span class="n">02f</span>— EscrowLedger</a>
+  <a href="#wallet-model"><span class="n">02g</span>— Wallet &amp; Payouts</a>
+  <a href="#support-models"><span class="n">02h</span>— Support Models</a>
+  <a href="#custom-url"><span class="n">03</span>Custom URL Challenge</a>
+  <a href="#rls"><span class="n">04</span>Auth &amp; RLS Policies</a>
+  <a href="#indexes"><span class="n">05</span>Indexing &amp; Performance</a>
+  <div class="nav-footer">DB Schema Spec v1.0<br>Principal Data Architect Ed.</div>
+</nav>
+
+<div class="main">
+
+<!-- ── COVER ── -->
+<div class="cover">
+  <div class="cover-mesh"></div>
+  <div class="cover-circuit"></div>
+  <div class="cover-content">
+    <div class="cover-eyebrow"><span class="dot"></span>Database Schema Specification · Principal Data Architect Edition</div>
+    <div class="cover-logo">
+      <div class="cl-u">U</div><div class="cl-sh">shop</div>
+    </div>
+    <div class="cover-h1">Complete Database Schema — ERD, ORM Code &amp; RLS Policies</div>
+    <p class="cover-sub">A ground-truth reference for every table, column, relationship, and constraint in U-Shop's PostgreSQL database. Every design decision is explained in plain English. Written to be read, not just referenced.</p>
+    <div class="cover-stack">
+      <span class="sc sc-supa"><span class="chip-dot" style="background:var(--supa)"></span>Supabase · PostgreSQL 15</span>
+      <span class="sc sc-prisma"><span class="chip-dot" style="background:#5a67d8"></span>Prisma ORM · TypeScript</span>
+      <span class="sc sc-paystack"><span class="chip-dot" style="background:var(--paystack)"></span>Paystack Escrow Architecture</span>
+      <span class="sc sc-rls"><span class="chip-dot" style="background:var(--amber)"></span>Row Level Security (RLS)</span>
+    </div>
+  </div>
+  <div class="cover-meta">
+    <div class="cm"><span class="cm-l">Document</span><span class="cm-v">Schema v1.0</span></div>
+    <div class="cm"><span class="cm-l">Tables</span><span class="cm-v">15 models</span></div>
+    <div class="cm"><span class="cm-l">Enums</span><span class="cm-v">9 enums</span></div>
+    <div class="cm"><span class="cm-l">RLS Policies</span><span class="cm-v">14 policies</span></div>
+    <div class="cm"><span class="cm-l">Status</span><span class="cm-v">Draft · Review</span></div>
+  </div>
+</div>
+
+<div class="body">
+
+<!-- ════════════════════════════════════════════════
+     01 — ERD OVERVIEW
+════════════════════════════════════════════════ -->
+<div class="section" id="erd">
+  <div class="sec-label">01 — Entity-Relationship Overview</div>
+  <h1>Entity-Relationship Diagram</h1>
+  <p>This section maps every entity and its relationship to every other entity. Read this first — it is the mental model you need before looking at the code. <strong>Every design decision in the schema flows directly from these relationships.</strong></p>
+
+  <h2>1.1 Mermaid ERD Diagram</h2>
+  <p>Copy this into any Mermaid renderer (mermaid.live, or VS Code with a Mermaid extension) to see it rendered visually.</p>
+
+  <div class="erd-container">
+<pre>
+erDiagram
+
+  %% ── Core Entities ──────────────────────────────────────────
+
+  USER {
+    string  id              PK
+    string  supabase_id     UK  "Links to auth.users"
+    string  email           UK
+    string  name
+    enum    role                "BUYER | SELLER | BOTH | ADMIN"
+    enum    verification_status "UNVERIFIED | PENDING | VERIFIED | REJECTED"
+    string  paystack_recipient_code "For MoMo/bank payouts"
+    string  student_id_image_path
+    datetime verified_at
+  }
+
+  STORE {
+    string  id              PK
+    string  handle          UK  "e.g. janes-tech → /store/janes-tech"
+    string  name
+    string  bio
+    string  logo_path
+    string  banner_path
+    json    return_policy       "Structured policy builder data"
+    string  warranty_policy_text "Custom warranty notes"
+    string  previous_handle     "For 301 redirects after rename"
+    bool    is_active
+    string  owner_id        FK  "→ USER"
+  }
+
+  CATEGORY {
+    string  id              PK
+    string  name            UK
+    string  slug            UK
+    string  icon_url
+  }
+
+  LISTING {
+    string   id             PK
+    string   title
+    text     description
+    decimal  price              "NEVER Float — monetary value"
+    int      stock
+    enum     status             "DRAFT|ACTIVE|PAUSED|SOLD"
+    enum     condition          "NEW|LIKE_NEW|USED_EXCELLENT|..."
+    string[] image_paths        "Array of storage paths"
+    json     policy_snapshot    "Immutable copy of store policy at listing time"
+    tsvector search_vector      "Auto-updated by trigger"
+    int      view_count
+    string   store_id       FK  "→ STORE"
+    string   category_id    FK  "→ CATEGORY"
+  }
+
+  ORDER {
+    string   id             PK
+    decimal  total_amount
+    decimal  platform_fee       "5% student | 8% reseller"
+    decimal  seller_amount      "total_amount − platform_fee"
+    enum     status             "PENDING_PAYMENT → COMPLETED"
+    string   paystack_ref   UK  "Paystack transaction reference"
+    json     shipping_address   "Snapshot at time of order"
+    json     policy_snapshot    "Seller policy immutable at checkout"
+    datetime escrow_release_at  "7 days from payment = auto-release"
+    datetime paid_at
+    datetime completed_at
+    string   buyer_id       FK  "→ USER"
+    string   store_id       FK  "→ STORE"
+  }
+
+  ORDER_ITEM {
+    string  id              PK
+    int     quantity
+    decimal unit_price          "Price snapshot at purchase"
+    string  order_id        FK  "→ ORDER"
+    string  listing_id      FK  "→ LISTING"
+  }
+
+  ESCROW_LEDGER {
+    string   id             PK
+    decimal  held_amount        "= order.seller_amount"
+    decimal  platform_fee       "= order.platform_fee"
+    string   paystack_charge_ref "charge.success reference"
+    string   paystack_transfer_ref "transfer reference (on release)"
+    string   seller_recipient_code "Paystack recipient code"
+    enum     status             "HELD | RELEASED | REFUNDED"
+    datetime held_at
+    datetime released_at
+    datetime refunded_at
+    string   release_trigger    "BUYER_CONFIRMED | AUTO_7DAY | ADMIN"
+    string   order_id       UK  "→ ORDER (1-to-1)"
+  }
+
+  WALLET {
+    string  id              PK
+    decimal available_balance
+    decimal total_earned        "Lifetime total"
+    decimal total_withdrawn     "Lifetime withdrawals"
+    string  user_id         UK  "→ USER (1-to-1)"
+  }
+
+  WALLET_TRANSACTION {
+    string   id             PK
+    decimal  amount             "+ credit / − debit"
+    string   description
+    string   reference_type     "ORDER | PAYOUT | REFUND | ADJUSTMENT"
+    string   reference_id       "orderId or payoutId"
+    string   wallet_id      FK  "→ WALLET"
+    datetime created_at
+  }
+
+  PAYOUT {
+    string   id             PK
+    decimal  amount
+    enum     status             "PENDING|PROCESSING|COMPLETED|FAILED|REVERSED"
+    string   recipient_type     "mobile_money | bank"
+    json     recipient_details  "account number, network, name"
+    string   paystack_transfer_code "Returned by Paystack"
+    string   failure_reason
+    datetime processed_at
+    string   wallet_id      FK  "→ WALLET"
+  }
+
+  MESSAGE {
+    string   id             PK
+    text     content
+    bool     is_read
+    enum     sender_role        "BUYER | SELLER | SYSTEM"
+    string   sender_id      FK  "→ USER"
+    string   listing_id     FK  "→ LISTING (nullable)"
+    string   order_id       FK  "→ ORDER   (nullable)"
+    datetime created_at
+  }
+
+  REVIEW {
+    string   id             PK
+    int      rating             "1–5"
+    text     comment
+    string   author_id      FK  "→ USER"
+    string   order_id       FK  "→ ORDER"
+    datetime created_at
+  }
+
+  DISPUTE {
+    string   id             PK
+    string   reason
+    text     description
+    enum     status             "OPEN|UNDER_REVIEW|RESOLVED_BUYER|RESOLVED_SELLER"
+    string[] evidence_paths
+    string   admin_notes
+    datetime resolved_at
+    string   buyer_id       FK  "→ USER"
+    string   order_id       UK  "→ ORDER (1-to-1)"
+  }
+
+  WEBHOOK_EVENT {
+    string   id             PK
+    string   source             "paystack"
+    string   event_type         "charge.success | transfer.success ..."
+    json     payload            "Full raw event body"
+    string   external_id    UK  "Paystack event ID — idempotency key"
+    bool     processed
+    datetime processed_at
+    string   error
+    datetime created_at
+  }
+
+  %% ── Relationships ───────────────────────────────────────────
+
+  USER         ||--o|  STORE           : "owns (0 or 1)"
+  USER         ||--o|  WALLET          : "has (0 or 1)"
+  USER         ||--o{  ORDER           : "places (buyer)"
+  USER         ||--o{  MESSAGE         : "sends"
+  USER         ||--o{  REVIEW          : "writes"
+  USER         ||--o{  DISPUTE         : "opens"
+  STORE        ||--|{  LISTING         : "has (1 or many)"
+  STORE        ||--o{  ORDER           : "receives"
+  LISTING      ||--o{  ORDER_ITEM      : "appears in"
+  LISTING      ||--o{  MESSAGE         : "has thread"
+  CATEGORY     ||--o{  LISTING         : "contains"
+  ORDER        ||--|{  ORDER_ITEM      : "contains"
+  ORDER        ||--||  ESCROW_LEDGER   : "has exactly 1"
+  ORDER        ||--o|  DISPUTE         : "may have 1"
+  ORDER        ||--o{  MESSAGE         : "has thread"
+  ORDER        ||--o{  REVIEW          : "receives"
+  WALLET       ||--o{  WALLET_TRANSACTION : "records"
+  WALLET       ||--o{  PAYOUT          : "funds"
+</pre>
+  </div>
+
+  <h2>1.2 Plain-English Relationship Summary</h2>
+
+  <div class="rel-grid">
+    <div class="rel-card user">
+      <h3><span class="entity-tag et-user">USER</span> relationships</h3>
+      <ul>
+        <li><span class="rel-type">1:0–1</span>A user <em>optionally</em> owns one Store. Buyers may never create a store. Sellers have exactly one.</li>
+        <li><span class="rel-type">1:0–1</span>A user <em>optionally</em> has one Wallet. Only created when a user first earns from a sale.</li>
+        <li><span class="rel-type">1:many</span>A user can place many Orders as a buyer.</li>
+        <li><span class="rel-type">note</span>The "4 personas" (Student Buyer, Normal Buyer, Student Seller, Reseller) are NOT separate tables. They're derived from <code>role</code> + <code>verificationStatus</code>. See Section 2b for the full reasoning.</li>
+      </ul>
+    </div>
+    <div class="rel-card store">
+      <h3><span class="entity-tag et-store">STORE</span> relationships</h3>
+      <ul>
+        <li><span class="rel-type">1:many</span>A store has many Listings. A listing belongs to exactly one store.</li>
+        <li><span class="rel-type">1:many</span>A store receives many Orders (orders involving its listings).</li>
+        <li><span class="rel-type">note</span>The store's <code>return_policy</code> JSON is the <em>current</em> policy. Listings and Orders each carry their own immutable snapshot of the policy at creation/checkout time.</li>
+      </ul>
+    </div>
+    <div class="rel-card listing">
+      <h3><span class="entity-tag et-listing">LISTING</span> relationships</h3>
+      <ul>
+        <li><span class="rel-type">many:1</span>A listing belongs to one store and one category.</li>
+        <li><span class="rel-type">1:many</span>A listing can appear in many OrderItems (historical purchases).</li>
+        <li><span class="rel-type">1:many</span>A listing has a message thread (Q&amp;A before purchase).</li>
+        <li><span class="rel-type">note</span><code>price</code> and <code>unit_price</code> on OrderItem are SEPARATE. If the seller changes the price, old orders are unaffected.</li>
+      </ul>
+    </div>
+    <div class="rel-card order">
+      <h3><span class="entity-tag et-order">ORDER</span> relationships</h3>
+      <ul>
+        <li><span class="rel-type">1:many</span>An order contains many OrderItems (currently 1 item/order, but schema supports carts).</li>
+        <li><span class="rel-type">1:1</span>An order has exactly one EscrowLedger. Created when payment is confirmed.</li>
+        <li><span class="rel-type">1:0–1</span>An order may have at most one Dispute.</li>
+        <li><span class="rel-type">1:many</span>An order has a message thread (post-purchase buyer-seller chat).</li>
+      </ul>
+    </div>
+    <div class="rel-card escrow">
+      <h3><span class="entity-tag et-escrow">ESCROW LEDGER</span> relationships</h3>
+      <ul>
+        <li><span class="rel-type">1:1</span>Strictly one-to-one with Order. <code>order_id</code> is a unique foreign key.</li>
+        <li><span class="rel-type">note</span>This table is the financial source of truth. It stores both the Paystack charge reference AND the transfer reference, giving you a complete audit trail from money-in to money-out in a single row.</li>
+      </ul>
+    </div>
+    <div class="rel-card wallet">
+      <h3><span class="entity-tag et-wallet">WALLET</span> relationships</h3>
+      <ul>
+        <li><span class="rel-type">1:1</span>One wallet per user. Created lazily on first sale.</li>
+        <li><span class="rel-type">1:many</span>A wallet has many WalletTransactions (the immutable ledger of every credit and debit).</li>
+        <li><span class="rel-type">1:many</span>A wallet funds many Payouts (each withdrawal request is a separate Payout record).</li>
+        <li><span class="rel-type">note</span><code>available_balance</code> should always equal the sum of all WalletTransactions. Periodically reconcile these to catch bugs.</li>
+      </ul>
+    </div>
+  </div>
+
+</div><!-- /section -->
+<div class="divider"></div>
+
+<!-- ════════════════════════════════════════════════
+     02 — PRISMA SCHEMA
+════════════════════════════════════════════════ -->
+<div class="section" id="schema">
+  <div class="sec-label">02 — ORM Schema Code (Fully Commented)</div>
+  <h1>The Complete Prisma Schema</h1>
+  <p>This is the single source of truth for your entire database. Save it at <code>apps/api/prisma/schema.prisma</code>. Every model is commented with plain-English reasoning for every significant decision. Read it sequentially — later models reference patterns established in earlier ones.</p>
+
+  <div class="callout callout-supa">
+    <strong>File location</strong>
+    <p>Save this file at <code>apps/api/prisma/schema.prisma</code>. Run <code>npx prisma migrate dev --name init</code> to generate and apply the first migration. Run <code>npx prisma generate</code> to regenerate the TypeScript client after any schema change.</p>
+  </div>
+
+  <!-- GENERATOR / DATASOURCE -->
+  <h2 id="enums">2.1 Generator, Datasource &amp; Enums</h2>
+  <p>Enums are fixed sets of allowed values enforced at the <em>database level</em>. This means if your application code ever tries to insert a typo like <code>"stuudent"</code>, PostgreSQL will reject it outright — no silent bad data ever enters the system.</p>
+
+<pre>
+<span class="comment-block">// ═══════════════════════════════════════════════════════════════════════════════
+// FILE: apps/api/prisma/schema.prisma
+// PURPOSE: Defines every table, column, data type, and relationship in the
+//          U-Shop PostgreSQL database. Prisma reads this file and:
+//          1. Generates migration SQL files (the actual changes to the real DB)
+//          2. Generates a fully type-safe TypeScript client (prisma.user.findMany etc.)
+// ═══════════════════════════════════════════════════════════════════════════════</span>
+
+<span class="comment-block">// ── GENERATOR ─────────────────────────────────────────────────────────────────
+// "prisma-client-js" tells Prisma to generate a JavaScript/TypeScript client.
+// The generated client lives in node_modules/@prisma/client and is what you
+// import in your application code: import { prisma } from './lib/prisma'</span>
+<span class="kw">generator</span> client {
+  provider = <span class="str">"prisma-client-js"</span>
+  <span class="comment-block">  // previewFeatures = ["fullTextSearch"]
+  // Uncomment if you need Prisma's built-in FTS helpers.
+  // For U-Shop we use raw SQL for tsvector search, so this is optional.</span>
+}
+
+<span class="comment-block">// ── DATASOURCE ────────────────────────────────────────────────────────────────
+// "postgresql" tells Prisma we're connecting to a PostgreSQL database (Supabase).
+//
+// CRITICAL: Two separate URLs are required for Supabase + Prisma:
+//
+//   DATABASE_URL  → Port 6543 (PgBouncer pooler) — used for ALL application queries.
+//                   PgBouncer multiplexes thousands of app connections through ~20
+//                   real DB connections. Without it, you'll hit connection limits fast.
+//                   The "?pgbouncer=true" flag disables Prisma's prepared statements,
+//                   which PgBouncer's transaction mode does not support.
+//
+//   DIRECT_URL    → Port 5432 (direct connection) — used ONLY by "prisma migrate".
+//                   Migrations run DDL statements (CREATE TABLE, ALTER TABLE) that
+//                   cannot go through PgBouncer's transaction mode pooling.
+//                   This URL is NEVER used by application queries.</span>
+<span class="kw">datasource</span> db {
+  provider  = <span class="str">"postgresql"</span>
+  url       = <span class="fn">env</span>(<span class="str">"DATABASE_URL"</span>)   <span class="comment-block">// Port 6543 — pooled, for queries</span>
+  directUrl = <span class="fn">env</span>(<span class="str">"DIRECT_URL"</span>)    <span class="comment-block">// Port 5432 — direct, for migrations only</span>
+}
+
+
+<span class="comment-block">// ═══════════════════════════════════════════════════════════════════════════════
+// SECTION A — ENUMS
+// ═══════════════════════════════════════════════════════════════════════════════
+//
+// Enums live in PostgreSQL as constraint types. If any application code attempts
+// to write a value not in the enum, the database will raise a constraint error.
+// This makes them your lowest-level, hardest-to-bypass data integrity guarantee.</span>
+
+
+<span class="comment-block">// ── UserRole ──────────────────────────────────────────────────────────────────
+// Why not four enums for the four personas?
+//
+// The PRD describes four user PERSONAS: Student Buyer, Normal Buyer,
+// Student Seller, Reseller. But these personas are the INTERSECTION of two
+// orthogonal properties: (1) what the user CAN DO (role) and (2) whether they
+// are a verified student (verificationStatus).
+//
+// Modeling them as four enum values would mean:
+//   - You'd have to update the role every time a user gets verified
+//   - You'd need logic like "is STUDENT_BUYER or STUDENT_SELLER?" instead of
+//     just checking verificationStatus === 'VERIFIED'
+//   - Adding a 5th persona later (e.g., "Admin Seller") means a migration
+//
+// Two-field model:
+//   role = BUYER + verificationStatus = VERIFIED  → "Student Buyer" persona
+//   role = BUYER + verificationStatus = UNVERIFIED → "Normal Buyer" persona
+//   role = SELLER + verificationStatus = VERIFIED  → "Student Seller" (5% fee)
+//   role = SELLER + verificationStatus = UNVERIFIED → "Reseller" (8% fee)
+//   role = BOTH  → User is currently both buying and selling
+//
+// This is cleaner, more flexible, and maps naturally to fee calculations.</span>
+<span class="kw">enum</span> UserRole {
+  BUYER   <span class="comment-block">// Can only purchase, cannot create a store</span>
+  SELLER  <span class="comment-block">// Has a store, can list and sell items</span>
+  BOTH    <span class="comment-block">// Active as both buyer and seller simultaneously</span>
+  ADMIN   <span class="comment-block">// Platform staff: can moderate, resolve disputes, manage users</span>
+}
+
+<span class="comment-block">// ── VerificationStatus ────────────────────────────────────────────────────────
+// This is what distinguishes a "Student Seller" from a "Reseller".
+// UNVERIFIED is the default for ALL new users, including buyers.
+// A verified student seller pays 5% commission; unverified (Reseller) pays 8%.</span>
+<span class="kw">enum</span> VerificationStatus {
+  UNVERIFIED  <span class="comment-block">// Default state. No special privileges or discounts.</span>
+  PENDING     <span class="comment-block">// Student uploaded their ID; admin has not yet reviewed it.</span>
+  VERIFIED    <span class="comment-block">// Confirmed student. Gets student fee rate and trust badge.</span>
+  REJECTED    <span class="comment-block">// Admin reviewed the ID and determined it was invalid.</span>
+              <span class="comment-block">// User should be notified with a reason and given a chance to resubmit.</span>
+}
+
+<span class="comment-block">// ── ListingStatus ─────────────────────────────────────────────────────────────
+// Controls visibility and purchasability of a listing.</span>
+<span class="kw">enum</span> ListingStatus {
+  DRAFT   <span class="comment-block">// Seller is still writing the listing. Hidden from all buyers.</span>
+  ACTIVE  <span class="comment-block">// Live and purchasable. Visible in search and store page.</span>
+  PAUSED  <span class="comment-block">// Seller temporarily took it down (e.g., item not available right now).</span>
+  SOLD    <span class="comment-block">// Stock = 0 after a purchase. Auto-set when stock hits zero.</span>
+}
+
+<span class="comment-block">// ── ConditionGrade ────────────────────────────────────────────────────────────
+// 6-tier system from the PRD. These MUST match the illustrated condition guide
+// shown on the listing creation form. Vague condition grading is the #1 source
+// of disputes on second-hand tech marketplaces. Make each tier's criteria
+// crystal clear with example photos in the UI.</span>
+<span class="kw">enum</span> ConditionGrade {
+  NEW             <span class="comment-block">// Sealed box, never opened. Original packaging intact.</span>
+  LIKE_NEW        <span class="comment-block">// Opened but used 0-3 times. No marks, all accessories present.</span>
+  USED_EXCELLENT  <span class="comment-block">// Light use. Barely visible wear. All functions perfect. Battery > 90%.</span>
+  USED_GOOD       <span class="comment-block">// Normal use. Minor scratches under direct light. Battery > 80%.</span>
+  USED_FAIR       <span class="comment-block">// Noticeable wear. Functional. Cosmetic damage. Battery 60-80%.</span>
+  FOR_PARTS       <span class="comment-block">// Not fully functional. Sold for components/repair only.</span>
+}
+
+<span class="comment-block">// ── OrderStatus ───────────────────────────────────────────────────────────────
+// This is the lifecycle of an order from creation to completion.
+// Think of it as a state machine — each status can only transition
+// to certain other statuses. Never jump states arbitrarily.
+//
+// Valid transitions:
+//   PENDING_PAYMENT → PAYMENT_RECEIVED (via Paystack charge.success webhook)
+//   PAYMENT_RECEIVED → PROCESSING      (seller acknowledges the order)
+//   PROCESSING → IN_TRANSIT            (seller marks as shipped / meetup arranged)
+//   IN_TRANSIT → DELIVERED             (buyer clicks Confirm Delivery, OR 7-day auto-release)
+//   DELIVERED → COMPLETED              (escrow released to seller's wallet)
+//   Any status → DISPUTED              (buyer opens a dispute — freezes everything)
+//   DISPUTED → COMPLETED or REFUNDED   (admin resolves dispute)
+//   PENDING_PAYMENT → CANCELLED        (buyer cancels before paying, or payment timed out)</span>
+<span class="kw">enum</span> OrderStatus {
+  PENDING_PAYMENT   <span class="comment-block">// Order record created, Paystack link generated. Not paid yet.</span>
+  PAYMENT_RECEIVED  <span class="comment-block">// Paystack confirmed payment. Escrow record created. Seller notified.</span>
+  PROCESSING        <span class="comment-block">// Seller acknowledged the order in their dashboard.</span>
+  IN_TRANSIT        <span class="comment-block">// Seller marked shipped / meetup scheduled.</span>
+  DELIVERED         <span class="comment-block">// Buyer confirmed receipt. Escrow release triggered.</span>
+  COMPLETED         <span class="comment-block">// Escrow released to seller wallet. Review request sent.</span>
+  DISPUTED          <span class="comment-block">// Buyer opened a formal dispute. Escrow frozen until resolved.</span>
+  CANCELLED         <span class="comment-block">// Order cancelled. If paid, refund issued.</span>
+  REFUNDED          <span class="comment-block">// Buyer received full refund. Inventory restored.</span>
+}
+
+<span class="comment-block">// ── EscrowStatus ─────────────────────────────────────────────────────────────
+// The financial state of the funds held on behalf of a specific order.</span>
+<span class="kw">enum</span> EscrowStatus {
+  HELD      <span class="comment-block">// Funds sitting in U-Shop's Paystack balance. Seller cannot access yet.</span>
+  RELEASED  <span class="comment-block">// Transfer to seller initiated. Wallet credited. Money on its way.</span>
+  REFUNDED  <span class="comment-block">// Buyer was refunded. Seller receives nothing for this order.</span>
+}
+
+<span class="comment-block">// ── PayoutStatus ─────────────────────────────────────────────────────────────
+// Tracks an individual withdrawal from a seller's wallet to their MoMo/bank.</span>
+<span class="kw">enum</span> PayoutStatus {
+  PENDING     <span class="comment-block">// Seller requested payout. Wallet debited. Waiting to call Paystack.</span>
+  PROCESSING  <span class="comment-block">// Paystack transfer initiated. transfer_code stored on record.</span>
+  COMPLETED   <span class="comment-block">// Paystack fired transfer.success webhook. Money arrived.</span>
+  FAILED      <span class="comment-block">// Paystack fired transfer.failed. Wallet RE-CREDITED. Seller notified.</span>
+  REVERSED    <span class="comment-block">// Bank reversed a completed transfer. Wallet RE-DEBITED. Rare but must handle.</span>
+}
+
+<span class="comment-block">// ── DisputeStatus ─────────────────────────────────────────────────────────────</span>
+<span class="kw">enum</span> DisputeStatus {
+  OPEN            <span class="comment-block">// Buyer just filed. Admin not yet involved.</span>
+  UNDER_REVIEW    <span class="comment-block">// Admin is investigating. SLA: 72h first response (per PRD).</span>
+  RESOLVED_BUYER  <span class="comment-block">// Admin ruled in buyer's favor. Escrow refunded to buyer.</span>
+  RESOLVED_SELLER <span class="comment-block">// Admin ruled in seller's favor. Escrow released to seller.</span>
+  CLOSED          <span class="comment-block">// Buyer withdrew the dispute. No action taken.</span>
+}
+
+<span class="comment-block">// ── MessageSenderRole ────────────────────────────────────────────────────────</span>
+<span class="kw">enum</span> MessageSenderRole {
+  BUYER   <span class="comment-block">// Message sent by the buyer in this transaction</span>
+  SELLER  <span class="comment-block">// Message sent by the seller in this transaction</span>
+  SYSTEM  <span class="comment-block">// Automated message: order status updates, reminders</span>
+}
+</pre>
+
+  <!-- USER MODEL -->
+  <h2 id="user-model">2.2 The User Model</h2>
+  <p>The User model is the center of gravity for the entire schema. It is the one entity that almost every other table references. Its design — specifically the two-field approach to roles — is the most important architectural decision in this schema.</p>
+
+  <div class="role-matrix">
+    <div class="rm-header" style="grid-column:1/-1;">How the 4 PRD personas map to the schema's 2-field model</div>
+    <div class="rm-cell">
+      <h4>Student Buyer</h4>
+      <p><code>role = BUYER</code><br><code>verificationStatus = VERIFIED</code></p>
+      <p>Can browse and purchase. Gets a "Verified Student" badge on messages. Pays 0 commission.</p>
+    </div>
+    <div class="rm-cell">
+      <h4>Normal Buyer</h4>
+      <p><code>role = BUYER</code><br><code>verificationStatus = UNVERIFIED</code></p>
+      <p>Can browse and purchase. No badge. Pays 0 commission.</p>
+    </div>
+    <div class="rm-cell">
+      <h4>Student Seller</h4>
+      <p><code>role = SELLER</code> (or <code>BOTH</code>)<br><code>verificationStatus = VERIFIED</code></p>
+      <p>Has a storefront. Platform fee: <strong>5%</strong>. Shows "Verified Student Seller" badge on listings.</p>
+    </div>
+    <div class="rm-cell">
+      <h4>Reseller</h4>
+      <p><code>role = SELLER</code> (or <code>BOTH</code>)<br><code>verificationStatus = UNVERIFIED</code></p>
+      <p>Has a storefront. Platform fee: <strong>8%</strong>. No badge. Can apply for verification.</p>
+    </div>
+  </div>
+
+<pre>
+<span class="kw">model</span> User {
+  <span class="comment-block">  // ── Primary Key ──────────────────────────────────────────────────────────
+  // We use CUID (Collision-Resistant Unique Identifiers) instead of auto-
+  // incrementing integers. Why? Two reasons:
+  //   1. Sequential integers are ENUMERABLE. An attacker can discover all
+  //      user IDs by iterating /api/users/1, /api/users/2, /api/users/3...
+  //   2. CUIDs are safe to expose in public URLs and API responses.
+  // Prisma's @default(cuid()) generates a new CUID on every insert automatically.</span>
+  id                    String             <span class="kw">@id @default</span>(cuid())
+
+  <span class="comment-block">  // ── Supabase Auth Link ────────────────────────────────────────────────────
+  // supabaseId stores the UUID that Supabase Auth assigns to this user when
+  // they sign up. It is the BRIDGE between two separate systems:
+  //
+  //   Supabase Auth (auth.users table) ──[supabaseId]──► Our users table
+  //
+  // When a user signs in, Supabase gives us a JWT token. That token contains
+  // the user's Supabase UUID (auth.uid()). We look up supabaseId in OUR users
+  // table to get our rich user record (role, verificationStatus, storeId, etc.).
+  //
+  // @unique: Two users can NEVER share the same Supabase account.
+  // This column MUST match exactly what Supabase calls auth.users.id.</span>
+  supabaseId            String             <span class="kw">@unique</span>
+
+  email                 String             <span class="kw">@unique</span>
+  name                  String?            <span class="comment-block">// Optional until user completes profile</span>
+  avatarUrl             String?            <span class="comment-block">// URL to avatar in Supabase Storage</span>
+  phone                 String?            <span class="comment-block">// For MoMo notification SMS</span>
+
+  <span class="comment-block">  // ── Role & Verification ───────────────────────────────────────────────────
+  // See the role matrix table above for how these two fields combine to
+  // produce the 4 user personas described in the PRD.
+  // @default(BUYER): All new users start as buyers. They can upgrade to SELLER
+  // by creating a store. ADMIN is only set manually by existing admins.</span>
+  role                  UserRole           <span class="kw">@default</span>(BUYER)
+  verificationStatus    VerificationStatus <span class="kw">@default</span>(UNVERIFIED)
+
+  <span class="comment-block">  // ── Student Verification Fields ───────────────────────────────────────────
+  // These fields track the verification evidence and its outcome.
+  // studentIdImagePath: The storage PATH (not full URL) of the uploaded student
+  //   ID photo. We store paths so we can generate time-limited signed URLs when
+  //   admins need to view them. After approval, schedule deletion per Ghana DPA.
+  // studentEmail: The .edu.gh email they used (if auto-verified by domain).
+  // verifiedAt/verifiedBy: Audit trail — who approved it and when.
+  //   If verifiedBy = 'system:auto-domain', it was automatically approved.
+  //   If verifiedBy = a user ID string, a human admin approved it.</span>
+  studentIdImagePath    String?
+  studentEmail          String?
+  verifiedAt            DateTime?
+  verifiedBy            String?            <span class="comment-block">// Admin userId or 'system:auto-domain'</span>
+
+  <span class="comment-block">  // ── Paystack Recipient Code ───────────────────────────────────────────────
+  // This is the most important field for seller payouts.
+  //
+  // Background: Paystack's Transfer API doesn't transfer money to an "account
+  // number" directly. You must first call POST /transferrecipient to register
+  // a recipient (a MoMo number or bank account). Paystack validates it and
+  // returns a "recipient_code" (e.g., "RCP_1a2b3c4d5e6f7g8h").
+  //
+  // You then use this recipient_code in POST /transfer to send money.
+  // The recipient_code never expires — store it here so you only register
+  // each seller's account ONCE, not on every payout.
+  //
+  // This field is NULL for buyers and unverified sellers who haven't added
+  // their payout details yet. A seller cannot withdraw funds without it.</span>
+  paystackRecipientCode String?            <span class="comment-block">// e.g., "RCP_1a2b3c..." — set during seller onboarding</span>
+  paystackRecipientType String?            <span class="comment-block">// "mobile_money" or "ghipss" (bank)</span>
+
+  <span class="comment-block">  // ── Timestamps ───────────────────────────────────────────────────────────
+  // Always include these. You WILL use them for debugging, analytics, and
+  // compliance (Ghana Data Protection Act requires knowing when data was collected).
+  // @updatedAt is maintained automatically by Prisma — no manual updates needed.</span>
+  createdAt             DateTime           <span class="kw">@default</span>(now())
+  updatedAt             DateTime           <span class="kw">@updatedAt</span>
+
+  <span class="comment-block">  // ── Relations (Virtual — not stored in the database) ─────────────────────
+  // These fields are NOT columns. They're Prisma "relation fields" — Prisma
+  // uses them to know how to JOIN tables when you use `include: { store: true }`.
+  // The actual foreign keys live on the OTHER models (e.g., Store has owner_id).</span>
+  store                 Store?             <span class="comment-block">// A user owns 0 or 1 store</span>
+  wallet                Wallet?            <span class="comment-block">// A user has 0 or 1 wallet</span>
+  ordersAsBuyer         Order[]            <span class="comment-block">// Orders placed by this user as buyer</span>
+  sentMessages          Message[]          <span class="comment-block">// All messages this user has sent</span>
+  reviewsWritten        Review[]           <span class="comment-block">// Reviews authored by this user</span>
+  disputesOpened        Dispute[]          <span class="comment-block">// Disputes filed by this user as buyer</span>
+
+  <span class="comment-block">  // @@map: Tells Prisma the actual PostgreSQL table is named "users" (lowercase).
+  // Convention: plural snake_case for table names.</span>
+  <span class="kw">@@map</span>(<span class="str">"users"</span>)
+}
+</pre>
+
+  <!-- STORE MODEL -->
+  <h2 id="store-model">2.3 The Store Model &amp; Policy System</h2>
+  <p>The Store model is where custom branding and seller policy configuration live. The most architecturally significant decision here is how the return/warranty policy is stored — as structured JSON rather than free text — so it remains queryable and enforceable.</p>
+
+<pre>
+<span class="kw">model</span> Store {
+  id                String    <span class="kw">@id @default</span>(cuid())
+
+  <span class="comment-block">  // ── Custom Store Handle (URL Slug) ────────────────────────────────────────
+  // The handle is the unique text identifier for the store's public URL.
+  // "janes-tech" → accessible at /store/janes-tech
+  //
+  // @unique creates a database-level uniqueness constraint.
+  // This means: even if two concurrent requests both try to register
+  // "janes-tech" at the exact same millisecond, PostgreSQL will reject the
+  // second one with a unique constraint violation error. The database is the
+  // final arbiter of uniqueness — application-level checks alone are NOT safe.
+  //
+  // Enforced rules (at application layer — validated before INSERT):
+  //   - Lowercase only: stored and compared as lowercase always
+  //   - 3–24 characters
+  //   - Only alphanumeric + hyphens: /^[a-z0-9-]+$/
+  //   - Cannot start or end with a hyphen
+  //   - Not on the reserved words list (~200 slugs: "admin", "api", "search"...)</span>
+  handle            String    <span class="kw">@unique</span>
+
+  name              String
+  bio               String?   <span class="comment-block">// Max 280 chars — enforced at app layer, not DB (flexibility)</span>
+  logoPath          String?   <span class="comment-block">// Storage PATH: "stores/{storeId}/logo.webp" — NOT a full URL</span>
+  bannerPath        String?   <span class="comment-block">// Storage PATH: "stores/{storeId}/banner.webp"</span>
+
+  <span class="comment-block">  // ── SEO Metadata ─────────────────────────────────────────────────────────
+  // Populated on store creation, overrideable by seller.
+  // Used by Next.js generateMetadata() to build <title> and <meta> tags.
+  // The OG (Open Graph) image is generated dynamically from handle + name.</span>
+  metaTitle         String?
+  metaDescription   String?
+
+  <span class="comment-block">  // ── Handle Edit History ───────────────────────────────────────────────────
+  // Per the PRD: handles are editable ONCE. After the first edit they are locked.
+  // We store the old handle so we can serve 301 redirects from /store/old-name
+  // to /store/new-name for 90 days (preserves SEO equity and bookmarks).
+  //
+  // Logic in the update handler:
+  //   1. If previousHandle is already set → reject the change ("already used your one edit")
+  //   2. If previousHandle is null → allow change, set previousHandle = old handle, handleChangedAt = now()</span>
+  previousHandle    String?
+  handleChangedAt   DateTime?
+
+  <span class="comment-block">  // ── Return Policy (Structured JSON) ──────────────────────────────────────
+  // WHY JSON instead of separate columns?
+  //
+  // Option A: Separate columns (return_window_days, warranty_period_days, etc.)
+  //   Pro: Queryable with standard SQL (WHERE return_window_days > 7)
+  //   Con: Schema migrations every time PRD adds a new policy option.
+  //
+  // Option B: JSON field
+  //   Pro: Flexible. Adding new policy fields doesn't require a DB migration.
+  //   Pro: Stored and retrieved as a single object — no JOINs.
+  //   Con: Can't query individual policy fields directly in SQL easily.
+  //
+  // For U-Shop: We choose JSON. We NEVER query "give me all stores with >7 day returns".
+  // We only ever display or snapshot the policy. JSON is the right call here.
+  //
+  // The JSON structure follows this TypeScript type:
+  //   {
+  //     returnWindow:      "NO_RETURNS" | "24H" | "3_DAYS" | "7_DAYS" | "14_DAYS" | "30_DAYS"
+  //     returnCondition:   "UNOPENED_ONLY" | "SAME_CONDITION" | "ANY_CONDITION"
+  //     returnShipping:    "BUYER_PAYS" | "SELLER_PAYS" | "SHARED"
+  //     warrantyPeriod:    "NONE" | "7_DAYS" | "30_DAYS" | "90_DAYS" | "MANUFACTURER"
+  //     warrantyCoverage:  "DOA_ONLY" | "HARDWARE_DEFECTS" | "ALL_FAULTS"
+  //     refundMethod:      "WALLET_CREDIT" | "ORIGINAL_METHOD"
+  //   }
+  //
+  // Define this as a TypeScript interface in your shared/types package and
+  // use it everywhere — in the DB layer, the API layer, and the frontend form.</span>
+  returnPolicy      Json?
+
+  <span class="comment-block">  // ── Custom Warranty Policy Text ───────────────────────────────────────────
+  // Free-text field (max 500 chars — enforced at app layer) for the seller's
+  // custom warranty notes, displayed below the structured policy on listings.
+  // Example: "Personal warranty backed by me — call me if there's any issue."
+  // This is SUPPLEMENTAL to returnPolicy, not a replacement for it.</span>
+  warrantyPolicyText String?
+
+  isActive          Boolean   <span class="kw">@default</span>(true)
+
+  <span class="comment-block">  // ── Owner (Foreign Key) ───────────────────────────────────────────────────
+  // @unique here enforces the 1:1 relationship at the database level.
+  // A user can own AT MOST one store. If you try to create a second store
+  // for the same user, PostgreSQL will reject it with a unique constraint error.
+  // onDelete: Cascade means if a User is deleted, their Store is also deleted.</span>
+  ownerId           String    <span class="kw">@unique</span>
+  owner             User      <span class="kw">@relation</span>(fields: [ownerId], references: [id], onDelete: Cascade)
+
+  listings          Listing[]
+  orders            Order[]
+
+  createdAt         DateTime  <span class="kw">@default</span>(now())
+  updatedAt         DateTime  <span class="kw">@updatedAt</span>
+
+  <span class="kw">@@map</span>(<span class="str">"stores"</span>)
+}
+</pre>
+
+  <!-- CATEGORY + LISTING MODEL -->
+  <h2 id="listing-model">2.4 Category &amp; Listing Models</h2>
+
+<pre>
+<span class="kw">model</span> Category {
+  id       String    <span class="kw">@id @default</span>(cuid())
+  name     String    <span class="kw">@unique</span>   <span class="comment-block">// "Laptops", "Phones", "Accessories", "Audio", "Cameras"</span>
+  slug     String    <span class="kw">@unique</span>   <span class="comment-block">// "laptops", "phones" — used in URL: /category/laptops</span>
+  iconUrl  String?
+
+  listings Listing[]
+
+  <span class="kw">@@map</span>(<span class="str">"categories"</span>)
+}
+
+
+<span class="kw">model</span> Listing {
+  id          String        <span class="kw">@id @default</span>(cuid())
+  title       String
+  description String        <span class="comment-block">// Full product description. Supports basic markdown.</span>
+
+  <span class="comment-block">  // ── Money: ALWAYS use Decimal, NEVER Float ────────────────────────────────
+  // Float is a binary floating-point type. It cannot represent every decimal
+  // value exactly. For example:
+  //   parseFloat("0.1") + parseFloat("0.2") = 0.30000000000000004 (in JavaScript)
+  //
+  // For financial values, this is unacceptable. A price of GH₵ 299.99 might
+  // be stored as 299.98999999... which rounds wrong and breaks totals.
+  //
+  // Prisma's Decimal maps to PostgreSQL's NUMERIC type, which stores exact
+  // decimal values. Always use Decimal for price, fees, amounts, balances.
+  //
+  // @db.Decimal(10, 2) means: up to 10 significant digits, 2 decimal places.
+  //   Max value: 99,999,999.99 — sufficient for GHS amounts at this scale.</span>
+  price       Decimal       <span class="kw">@db.Decimal</span>(10, 2)
+
+  stock       Int           <span class="kw">@default</span>(1)   <span class="comment-block">// How many units available. Decremented at checkout.</span>
+  status      ListingStatus <span class="kw">@default</span>(DRAFT)
+  condition   ConditionGrade
+
+  <span class="comment-block">  // ── Image Paths (Array) ───────────────────────────────────────────────────
+  // We store an ARRAY of storage PATHS, not full URLs.
+  //
+  // Why paths, not URLs?
+  //   Full URLs contain your Supabase project reference and may change if you
+  //   move storage providers. Paths like "listings/abc123/photo-1.webp" are
+  //   stable forever. Generate the public URL when needed:
+  //     supabase.storage.from('product-images').getPublicUrl(path)
+  //
+  // Why not a separate ListingImage table?
+  //   For U-Shop at MVP scale, an array column is simpler and fast enough.
+  //   You'd use a separate table if you needed to store metadata per image
+  //   (alt text, sort order, upload timestamp). That's a post-MVP concern.
+  //
+  // Limit of 6 images is enforced at the APPLICATION layer, not the database.
+  // The DB doesn't know or care about the array's length.</span>
+  imagePaths  String[]
+
+  <span class="comment-block">  // ── Policy Snapshot (On Listing Creation) ────────────────────────────────
+  // When a seller CREATES a listing, we copy their store's current return
+  // policy into this field. This is an IMMUTABLE snapshot.
+  //
+  // Why snapshot at listing creation AND again at checkout?
+  //   Listing snapshot: Ensures the policy shown on the listing card always
+  //     reflects what was in place when the listing went live.
+  //   Order snapshot: Ensures the policy the BUYER AGREED TO at checkout is
+  //     preserved forever, even if the seller changes it the next day.
+  //
+  // There are TWO snapshots in the system:
+  //   listing.policySnapshot → what was in effect when listing was published
+  //   order.policySnapshot   → what was in effect when buyer paid (more important)</span>
+  policySnapshot Json?
+
+  <span class="comment-block">  // ── Full-Text Search Vector ───────────────────────────────────────────────
+  // tsvector is a PostgreSQL-specific type for full-text search.
+  // It stores a pre-computed, stemmed, de-duped list of lexemes (word roots)
+  // from the title and description fields.
+  //
+  // Example: title = "Apple MacBook Pro M2 Laptop"
+  //   → tsvector stores: 'appl':1A 'macbook':2A 'm2':4A 'pro':3A 'laptop':5A
+  //   (note: "Apple" → "appl", weights A/B mark title vs description words)
+  //
+  // A GIN index on this column makes text search instantaneous even with
+  // 100,000+ listings. See Section 5 for the trigger and index SQL.
+  //
+  // Prisma doesn't natively support tsvector, so we use the Unsupported() escape
+  // hatch. The column is populated by a PostgreSQL trigger (not Prisma).</span>
+  searchVector Unsupported(<span class="str">"tsvector"</span>)?
+
+  viewCount   Int           <span class="kw">@default</span>(0)
+
+  storeId     String
+  store       Store         <span class="kw">@relation</span>(fields: [storeId], references: [id], onDelete: Cascade)
+
+  categoryId  String
+  category    Category      <span class="kw">@relation</span>(fields: [categoryId], references: [id])
+
+  orderItems  OrderItem[]
+  messages    Message[]
+
+  createdAt   DateTime      <span class="kw">@default</span>(now())
+  updatedAt   DateTime      <span class="kw">@updatedAt</span>
+
+  <span class="comment-block">  // ── Composite Indexes ─────────────────────────────────────────────────────
+  // @@index creates compound indexes for the most common query patterns.
+  // A compound index is like a table sorted by MULTIPLE columns simultaneously.
+  //
+  // Index 1: storeId + status + createdAt
+  //   Query it speeds up: "Give me all ACTIVE listings for store X, newest first"
+  //   (This is the store page query — runs on every store page load)
+  //
+  // Index 2: categoryId + status + price
+  //   Query it speeds up: "Give me ACTIVE listings in category Y, sorted by price"
+  //   (Category browse page with price sorting)
+  //
+  // The `where` clause creates PARTIAL indexes — the index only covers rows
+  // where status = 'ACTIVE'. This makes the index much smaller (less storage,
+  // faster reads) since the vast majority of search queries only want active listings.</span>
+  <span class="kw">@@index</span>([storeId, status, createdAt(sort: Desc)])
+  <span class="kw">@@index</span>([categoryId, status, price])
+  <span class="kw">@@index</span>([price])                            <span class="comment-block">// For price-range filter queries</span>
+  <span class="kw">@@map</span>(<span class="str">"listings"</span>)
+}
+</pre>
+
+  <!-- ORDER + ORDER ITEM MODEL -->
+  <h2 id="order-model">2.5 Order &amp; OrderItem Models</h2>
+
+<pre>
+<span class="kw">model</span> Order {
+  id             String      <span class="kw">@id @default</span>(cuid())
+
+  <span class="comment-block">  // ── The Money Fields ──────────────────────────────────────────────────────
+  // These three fields must always satisfy: sellerAmount = totalAmount - platformFee
+  // They are calculated at ORDER CREATION TIME based on the seller's verification
+  // status at that moment and NEVER change after the order is created.
+  //
+  // Why store platformFee and sellerAmount instead of computing them dynamically?
+  //   Because the fee rate might change in the future (e.g., from 8% to 7%).
+  //   If we compute on-the-fly, old orders would suddenly show different amounts.
+  //   Storing them preserves the exact financial terms the buyer and seller agreed to.</span>
+  totalAmount    Decimal     <span class="kw">@db.Decimal</span>(10, 2)   <span class="comment-block">// What the buyer paid (100%)</span>
+  platformFee    Decimal     <span class="kw">@db.Decimal</span>(10, 2)   <span class="comment-block">// U-Shop's cut (5% or 8%)</span>
+  sellerAmount   Decimal     <span class="kw">@db.Decimal</span>(10, 2)   <span class="comment-block">// What the seller earns after fee</span>
+
+  status         OrderStatus <span class="kw">@default</span>(PENDING_PAYMENT)
+
+  <span class="comment-block">  // ── Paystack Reference ───────────────────────────────────────────────────
+  // Generated by our backend BEFORE calling Paystack. Format:
+  //   "ushop_{timestamp}_{random8chars}" e.g. "ushop_1718000000_a1b2c3d4"
+  //
+  // @unique: Critical. This is the JOIN key between our database and Paystack's.
+  // When Paystack fires a charge.success webhook, it sends us this reference.
+  // We use it to find THIS order record and update its status.
+  //
+  // The prefix "ushop_" helps identify our transactions in the Paystack dashboard
+  // among potentially thousands of transactions if we ever use one Paystack
+  // account for multiple products.</span>
+  paystackRef    String      <span class="kw">@unique</span>
+
+  <span class="comment-block">  // ── Address & Policy Snapshots ───────────────────────────────────────────
+  // shippingAddress: Buyer's delivery address at checkout. Stored as JSON because:
+  //   - Address structure varies (some want delivery, some prefer meetup)
+  //   - If buyer later changes their profile address, this order isn't affected
+  //   - Easy to display in the order detail view without extra joins
+  //
+  // policySnapshot: THE MOST LEGALLY IMPORTANT FIELD IN THE SCHEMA.
+  //   This is a complete copy of the seller's return/warranty policy at the
+  //   exact moment the buyer completed checkout.
+  //   - Buyer agreed to THESE terms when they paid.
+  //   - Even if the seller changes their policy the next day, THIS order is
+  //     governed by this snapshot.
+  //   - Used in dispute resolution: "The policy at time of purchase said..."
+  //   - NOT NULL (Json, not Json?) because every order MUST have a policy record.</span>
+  shippingAddress Json?
+  policySnapshot  Json                              <span class="comment-block">// NOT nullable — must always exist</span>
+
+  <span class="comment-block">  // ── Escrow Auto-Release Timer ────────────────────────────────────────────
+  // Set to: paid_at + 7 days when payment is received.
+  // A cron job (escrow-release.job.ts) runs every hour, finds all orders where:
+  //   status = PAYMENT_RECEIVED AND escrowReleaseAt <= NOW()
+  // ...and triggers the release. Buyers receive increasingly urgent reminders
+  // at Day 3, 5, 6, and 6.5 before this fires (per PRD blind spots section).</span>
+  escrowReleaseAt DateTime?
+  paidAt          DateTime?
+  deliveredAt     DateTime?
+  completedAt     DateTime?
+
+  buyerId         String
+  buyer           User        <span class="kw">@relation</span>(fields: [buyerId], references: [id])
+
+  storeId         String
+  store           Store       <span class="kw">@relation</span>(fields: [storeId], references: [id])
+
+  items           OrderItem[]
+  escrowLedger    EscrowLedger?    <span class="comment-block">// Created when payment is confirmed</span>
+  dispute         Dispute?
+  messages        Message[]
+  reviews         Review[]
+
+  createdAt       DateTime    <span class="kw">@default</span>(now())
+  updatedAt       DateTime    <span class="kw">@updatedAt</span>
+
+  <span class="kw">@@index</span>([buyerId, status, createdAt(sort: Desc)])   <span class="comment-block">// Buyer's order history</span>
+  <span class="kw">@@index</span>([storeId, status, createdAt(sort: Desc)])   <span class="comment-block">// Seller's order management</span>
+  <span class="kw">@@index</span>([status, escrowReleaseAt])                  <span class="comment-block">// Escrow auto-release cron job</span>
+  <span class="kw">@@map</span>(<span class="str">"orders"</span>)
+}
+
+
+<span class="kw">model</span> OrderItem {
+  id        String  <span class="kw">@id @default</span>(cuid())
+  quantity  Int
+
+  <span class="comment-block">  // ── Price Snapshot ────────────────────────────────────────────────────────
+  // This is SEPARATE from listing.price. If a seller edits their listing's
+  // price after an order has been placed, this field is UNAFFECTED.
+  // "What did the buyer actually pay per unit?" → this field answers that.
+  // listing.price answers "What is the seller asking for it right now?"</span>
+  unitPrice Decimal <span class="kw">@db.Decimal</span>(10, 2)
+
+  orderId   String
+  order     Order   <span class="kw">@relation</span>(fields: [orderId], references: [id], onDelete: Cascade)
+
+  <span class="comment-block">  // onDelete: Restrict — we NEVER want to lose a listing record and have
+  // dangling order items with no listing reference. If a listing needs to be
+  // deleted, archive it (set status = SOLD) instead of hard-deleting it.</span>
+  listingId String
+  listing   Listing <span class="kw">@relation</span>(fields: [listingId], references: [id], onDelete: Restrict)
+
+  <span class="kw">@@map</span>(<span class="str">"order_items"</span>)
+}
+</pre>
+
+  <!-- ESCROW LEDGER MODEL -->
+  <h2 id="escrow-model">2.6 The EscrowLedger Model — Financial Source of Truth</h2>
+  <p>This is the most financially critical model in the schema. It records every Paystack reference ID and is the canonical record of where the money is at every point in the transaction lifecycle.</p>
+
+  <div class="callout callout-paystack">
+    <strong>Paystack "Collect and Transfer" Architecture</strong>
+    <p>U-Shop collects 100% of the buyer's payment into the U-Shop Paystack account (charge). Funds sit there during the escrow period. On release, we call Paystack's Transfer API to send the seller's cut (<code>sellerAmount</code>) to their registered MoMo or bank account using their <code>recipientCode</code>. The EscrowLedger stores references to BOTH the incoming charge AND the outgoing transfer, creating a complete financial audit trail in a single database row.</p>
+  </div>
+
+<pre>
+<span class="kw">model</span> EscrowLedger {
+  id                   String       <span class="kw">@id @default</span>(cuid())
+
+  <span class="comment-block">  // ── Amount Fields ─────────────────────────────────────────────────────────
+  // heldAmount: The amount being held in escrow for the SELLER.
+  //   = order.sellerAmount (total minus platform fee)
+  //   This is what will be transferred to the seller on release.
+  //
+  // platformFee: U-Shop's revenue for this transaction.
+  //   = order.platformFee
+  //   This stays in U-Shop's Paystack account permanently.
+  //   It is NOT transferred anywhere — it is U-Shop's earned revenue.
+  //
+  // Both stored here for convenience and audit clarity.
+  // They should always sum to order.totalAmount.</span>
+  heldAmount           Decimal      <span class="kw">@db.Decimal</span>(10, 2)
+  platformFee          Decimal      <span class="kw">@db.Decimal</span>(10, 2)
+
+  <span class="comment-block">  // ── Paystack Reference IDs ────────────────────────────────────────────────
+  // These are the two most important external reference strings.
+  //
+  // paystackChargeRef: The Paystack transaction reference from the original
+  //   payment. This is the same as order.paystackRef. We store it here again
+  //   for quick lookups: "For this escrow record, what was the original charge?"
+  //   You'll need this if you ever need to investigate a charge in the
+  //   Paystack dashboard or via their API.
+  //
+  // paystackTransferRef: The reference WE generate when calling POST /transfer
+  //   to pay the seller. We create this reference in our backend before calling
+  //   Paystack so we can find the related Payout/EscrowLedger record when
+  //   Paystack fires back the transfer.success or transfer.failed webhook.
+  //   Format: "ushop_payout_{orderId}_{timestamp}"
+  //   NULL until escrow is released (transfer hasn't happened yet).</span>
+  paystackChargeRef    String                                <span class="comment-block">// Always present after payment</span>
+  paystackTransferRef  String?                               <span class="comment-block">// Set when release is triggered</span>
+
+  <span class="comment-block">  // ── Seller Recipient Code ─────────────────────────────────────────────────
+  // A SNAPSHOT of the seller's Paystack recipient code at the time escrow was
+  // created. This is copied from user.paystackRecipientCode.
+  //
+  // Why snapshot it? If a seller later CHANGES their payout account (e.g.,
+  // switches from MTN MoMo to a bank account) and updates their recipient code,
+  // this escrow record should still know which account was being used at the
+  // time of the original transaction. This is critical for dispute investigation
+  // and refund reversals.</span>
+  sellerRecipientCode  String?                               <span class="comment-block">// Snapshot from user at escrow creation</span>
+
+  status               EscrowStatus <span class="kw">@default</span>(HELD)
+
+  heldAt               DateTime     <span class="kw">@default</span>(now())
+  releasedAt           DateTime?    <span class="comment-block">// When RELEASED or REFUNDED</span>
+  refundedAt           DateTime?    <span class="comment-block">// Separate from releasedAt for clarity</span>
+
+  <span class="comment-block">  // ── Release Trigger ───────────────────────────────────────────────────────
+  // Who or what triggered the escrow release? This is invaluable for debugging
+  // and for handling edge cases in dispute resolution.
+  // Values: "BUYER_CONFIRMED" | "AUTO_7DAY" | "ADMIN_RELEASE" | "ADMIN_REFUND"</span>
+  releaseTrigger       String?
+
+  <span class="comment-block">  // ── 1:1 with Order ───────────────────────────────────────────────────────
+  // @unique on orderId enforces the one-to-one relationship at the database level.
+  // You can NEVER have two EscrowLedger records for the same order.
+  // This prevents double-releasing funds — a catastrophic financial bug.</span>
+  orderId              String       <span class="kw">@unique</span>
+  order                Order        <span class="kw">@relation</span>(fields: [orderId], references: [id])
+
+  <span class="kw">@@map</span>(<span class="str">"escrow_ledger"</span>)
+}
+</pre>
+
+  <!-- WALLET MODELS -->
+  <h2 id="wallet-model">2.7 Wallet, WalletTransaction &amp; Payout Models</h2>
+  <p>The wallet system is a <strong>mini financial ledger</strong> built into your database. Every credit and debit is recorded as an immutable transaction. The <code>available_balance</code> is a running total that you update on every credit/debit — think of it as a cached sum that must always equal the sum of all WalletTransaction amounts.</p>
+
+<pre>
+<span class="kw">model</span> Wallet {
+  id                String   <span class="kw">@id @default</span>(cuid())
+
+  <span class="comment-block">  // ── Balance Fields ────────────────────────────────────────────────────────
+  // availableBalance: Current withdrawable balance. Updated on every credit/debit.
+  //   This is the number shown to the seller in their dashboard.
+  //   It must always equal: SUM of all wallet_transactions.amount for this wallet.
+  //   Run a reconciliation job periodically to verify this invariant.
+  //
+  // totalEarned / totalWithdrawn: Lifetime counters.
+  //   These NEVER decrease. Useful for analytics ("how much has this seller
+  //   earned in total?") and for the seller's tax records.</span>
+  availableBalance  Decimal  <span class="kw">@db.Decimal</span>(10, 2)  <span class="kw">@default</span>(0)
+  totalEarned       Decimal  <span class="kw">@db.Decimal</span>(10, 2)  <span class="kw">@default</span>(0)
+  totalWithdrawn    Decimal  <span class="kw">@db.Decimal</span>(10, 2)  <span class="kw">@default</span>(0)
+
+  <span class="comment-block">  // @unique enforces one wallet per user at the database level.</span>
+  userId            String   <span class="kw">@unique</span>
+  user              User     <span class="kw">@relation</span>(fields: [userId], references: [id], onDelete: Cascade)
+
+  transactions      WalletTransaction[]
+  payouts           Payout[]
+
+  createdAt         DateTime <span class="kw">@default</span>(now())
+  updatedAt         DateTime <span class="kw">@updatedAt</span>
+
+  <span class="kw">@@map</span>(<span class="str">"wallets"</span>)
+}
+
+
+<span class="kw">model</span> WalletTransaction {
+  id            String   <span class="kw">@id @default</span>(cuid())
+
+  <span class="comment-block">  // ── Signed Amount ─────────────────────────────────────────────────────────
+  // POSITIVE = credit (money coming IN to the wallet):
+  //   +850.00 → "Escrow released: Order #abc123"
+  //
+  // NEGATIVE = debit (money going OUT of the wallet):
+  //   -850.00 → "Payout to MTN MoMo 0551234567"
+  //   -42.50  → "Refund issued: Order #xyz789" (if admin forces partial refund)
+  //
+  // This convention (signed amounts) allows you to:
+  //   - Compute running balance: SELECT SUM(amount) FROM wallet_transactions
+  //   - Show a timeline of credits and debits in the seller's dashboard
+  //   - Verify the availableBalance by summing all transactions</span>
+  amount        Decimal  <span class="kw">@db.Decimal</span>(10, 2)
+
+  <span class="comment-block">  // Human-readable description for the seller's dashboard.
+  // Example: "Sale: MacBook Pro 2019 · Order #abcd1234"</span>
+  description   String
+
+  <span class="comment-block">  // referenceType + referenceId: Polymorphic reference to the source event.
+  // This lets you trace any wallet entry back to its cause:
+  //   referenceType = "ORDER",  referenceId = orderId    → escrow release
+  //   referenceType = "PAYOUT", referenceId = payoutId   → withdrawal
+  //   referenceType = "REFUND", referenceId = orderId    → dispute refund debit
+  //   referenceType = "ADJUSTMENT", referenceId = adminId → manual correction</span>
+  referenceType String?
+  referenceId   String?
+
+  walletId      String
+  wallet        Wallet   <span class="kw">@relation</span>(fields: [walletId], references: [id], onDelete: Cascade)
+
+  <span class="comment-block">  // No updatedAt — WalletTransaction records are IMMUTABLE once created.
+  // Never UPDATE a wallet transaction. If a correction is needed, INSERT
+  // a new offsetting transaction (accounting best practice).</span>
+  createdAt     DateTime <span class="kw">@default</span>(now())
+
+  <span class="kw">@@index</span>([walletId, createdAt(sort: Desc)])
+  <span class="kw">@@map</span>(<span class="str">"wallet_transactions"</span>)
+}
+
+
+<span class="kw">model</span> Payout {
+  id                   String       <span class="kw">@id @default</span>(cuid())
+
+  <span class="comment-block">  // Amount the seller is withdrawing. Must be <= wallet.availableBalance.
+  // The wallet is debited BEFORE calling Paystack (not after),
+  // so the balance is immediately "locked" even before the transfer completes.
+  // If the transfer fails, we RE-CREDIT the wallet in the transfer.failed handler.</span>
+  amount               Decimal      <span class="kw">@db.Decimal</span>(10, 2)
+
+  status               PayoutStatus <span class="kw">@default</span>(PENDING)
+
+  <span class="comment-block">  // recipientType: "mobile_money" or "ghipss" (Ghana Interbank Payment & Settlement)
+  // recipientDetails: JSON snapshot of the payout destination at time of request.
+  //   { "network": "MTN", "accountNumber": "0551234567", "accountName": "Jane Doe" }
+  //   Snapshot because the seller might change their details later.</span>
+  recipientType        String
+  recipientDetails     Json
+
+  <span class="comment-block">  // paystackTransferCode: Returned by Paystack's POST /transfer endpoint.
+  // Example: "TRF_abcdefghijklmno"
+  // Store it immediately after calling Paystack. You'll need it to:
+  //   - Track the transfer status in the Paystack dashboard
+  //   - Match against transfer.success / transfer.failed webhooks
+  //   (Paystack sends the transfer_code in webhook data)</span>
+  paystackTransferCode String?
+
+  failureReason        String?      <span class="comment-block">// From Paystack: "Invalid account number", etc.</span>
+  processedAt          DateTime?    <span class="comment-block">// When COMPLETED or FAILED was set</span>
+
+  walletId             String
+  wallet               Wallet       <span class="kw">@relation</span>(fields: [walletId], references: [id])
+
+  createdAt            DateTime     <span class="kw">@default</span>(now())
+  updatedAt            DateTime     <span class="kw">@updatedAt</span>
+
+  <span class="kw">@@index</span>([walletId, status])
+  <span class="kw">@@map</span>(<span class="str">"payouts"</span>)
+}
+</pre>
+
+  <!-- SUPPORT MODELS -->
+  <h2 id="support-models">2.8 Supporting Models: Message, Review, Dispute, WebhookEvent</h2>
+
+<pre>
+<span class="kw">model</span> Message {
+  id         String            <span class="kw">@id @default</span>(cuid())
+  content    String
+  isRead     Boolean           <span class="kw">@default</span>(false)
+  senderRole MessageSenderRole
+
+  senderId   String
+  sender     User              <span class="kw">@relation</span>(fields: [senderId], references: [id])
+
+  <span class="comment-block">  // ── Dual-Context Message (Pre vs. Post Purchase) ──────────────────────────
+  // A message belongs to EITHER a listing thread OR an order thread, never both.
+  // Both are nullable but exactly one must be set (enforced at app layer).
+  //
+  // listingId (pre-purchase Q&A): Buyer asks "Does this come with the charger?"
+  //   before they've committed to buying. This thread is visible to anyone
+  //   who loads the listing page (or just the participants — your design choice).
+  //
+  // orderId (post-purchase chat): Once an order is placed, communication moves
+  //   to the order thread. This is private to buyer, seller, and admins.
+  //   Critically, order threads are preserved as evidence in dispute resolution.
+  //   A seller saying "I'll ship it Thursday" is captured here forever.</span>
+  listingId  String?
+  listing    Listing?          <span class="kw">@relation</span>(fields: [listingId], references: [id])
+
+  orderId    String?
+  order      Order?            <span class="kw">@relation</span>(fields: [orderId], references: [id])
+
+  createdAt  DateTime          <span class="kw">@default</span>(now())
+
+  <span class="kw">@@index</span>([listingId, createdAt])
+  <span class="kw">@@index</span>([orderId, createdAt])
+  <span class="kw">@@map</span>(<span class="str">"messages"</span>)
+}
+
+
+<span class="kw">model</span> Review {
+  id        String  <span class="kw">@id @default</span>(cuid())
+
+  <span class="comment-block">  // rating: 1–5 integer. Enforced at application layer with Zod:
+  //   z.number().int().min(1).max(5)
+  // We don't use a DB CHECK constraint here because Prisma doesn't expose
+  // them natively — you'd need to add one in a raw SQL migration.
+  // For MVP, app-layer validation is sufficient.</span>
+  rating    Int
+
+  comment   String?
+
+  authorId  String
+  author    User    <span class="kw">@relation</span>(fields: [authorId], references: [id])
+
+  <span class="comment-block">  // ── Review Gates via Order ────────────────────────────────────────────────
+  // Reviews are LINKED TO ORDERS, not to users or stores directly.
+  // This enforces the "you must have bought it to review it" rule.
+  //
+  // @@unique([authorId, orderId]): One review per person per order.
+  // If a user tries to submit a second review for the same order, the database
+  // will reject it with a unique constraint violation.</span>
+  orderId   String
+  order     Order   <span class="kw">@relation</span>(fields: [orderId], references: [id])
+
+  createdAt DateTime <span class="kw">@default</span>(now())
+
+  <span class="kw">@@unique</span>([authorId, orderId])     <span class="comment-block">// One review per buyer per order</span>
+  <span class="kw">@@index</span>([orderId])
+  <span class="kw">@@map</span>(<span class="str">"reviews"</span>)
+}
+
+
+<span class="kw">model</span> Dispute {
+  id            String        <span class="kw">@id @default</span>(cuid())
+  reason        String        <span class="comment-block">// "Item not received" | "Not as described" | "DOA" | "Wrong item"</span>
+  description   String        <span class="comment-block">// Buyer's full explanation (2000 char max at app layer)</span>
+  status        DisputeStatus <span class="kw">@default</span>(OPEN)
+
+  <span class="comment-block">  // evidencePaths: Array of storage paths to photos/videos uploaded by the buyer.
+  // Example: ["disputes/abc123/evidence-1.jpg", "disputes/abc123/video-1.mp4"]
+  // These are served with time-limited signed URLs to the admin and the
+  // parties involved. Access is strictly controlled.</span>
+  evidencePaths String[]
+
+  adminNotes    String?       <span class="comment-block">// Internal notes from the reviewing admin. NOT shown to parties.</span>
+  resolvedAt    DateTime?
+  resolvedBy    String?       <span class="comment-block">// Admin userId who resolved it</span>
+
+  buyerId       String
+  buyer         User          <span class="kw">@relation</span>(fields: [buyerId], references: [id])
+
+  <span class="comment-block">  // @unique on orderId: At most ONE dispute per order.
+  // You cannot have two parallel disputes on the same order.
+  // If a buyer closes a dispute and wants to re-open, admin must manually
+  // re-open the existing record rather than creating a new one.</span>
+  orderId       String        <span class="kw">@unique</span>
+  order         Order         <span class="kw">@relation</span>(fields: [orderId], references: [id])
+
+  createdAt     DateTime      <span class="kw">@default</span>(now())
+  updatedAt     DateTime      <span class="kw">@updatedAt</span>
+
+  <span class="kw">@@index</span>([status, createdAt])    <span class="comment-block">// Admin dispute queue: OPEN disputes, oldest first</span>
+  <span class="kw">@@map</span>(<span class="str">"disputes"</span>)
+}
+
+
+<span class="kw">model</span> WebhookEvent {
+  id          String   <span class="kw">@id @default</span>(cuid())
+  source      String   <span class="comment-block">// "paystack" (extensible for future payment providers)</span>
+  eventType   String   <span class="comment-block">// "charge.success" | "transfer.success" | "transfer.failed" | ...</span>
+
+  <span class="comment-block">  // payload: The FULL raw webhook body stored verbatim.
+  // Never throw away the raw payload. Reasons:
+  //   1. If your processing logic has a bug and produces wrong results, you
+  //      can replay the event from the stored payload.
+  //   2. Paystack's webhook format evolves. Storing the full payload means
+  //      you can re-process historical events with updated logic.
+  //   3. Audit trail: "Exactly what did Paystack tell us and when?"</span>
+  payload     Json
+
+  <span class="comment-block">  // ── Idempotency Key (externalId) ─────────────────────────────────────────
+  // Paystack may send the SAME webhook multiple times if it doesn't receive
+  // a 200 response quickly enough (their timeout is ~20 seconds).
+  // Without idempotency protection, a single payment could:
+  //   - Release escrow TWICE → seller gets double-credited
+  //   - Send two confirmation emails to the buyer
+  //   - Create two EscrowLedger records for one order
+  //
+  // @unique on externalId prevents all of this.
+  // On receipt: upsert the WebhookEvent (create or do nothing on conflict).
+  //   Check if processed = true before doing any business logic.
+  //   If true, return 200 immediately without re-processing.
+  //
+  // Paystack's externalId is in event.id (an integer). Use it as a string.</span>
+  externalId  String?  <span class="kw">@unique</span>
+
+  processed   Boolean  <span class="kw">@default</span>(false)
+  processedAt DateTime?
+
+  <span class="comment-block">  // error: If processing failed, store the error message here.
+  // The reconciliation job finds records where processed = false AND error IS NOT NULL
+  // and retries them. This prevents any payment event from being permanently lost.</span>
+  error       String?
+
+  createdAt   DateTime <span class="kw">@default</span>(now())
+
+  <span class="kw">@@index</span>([processed, createdAt])   <span class="comment-block">// Reconciliation cron: unprocessed events</span>
+  <span class="kw">@@map</span>(<span class="str">"webhook_events"</span>)
+}
+</pre>
+
+</div><!-- /section -->
+<div class="divider"></div>
+
+<!-- ════════════════════════════════════════════════
+     03 — CUSTOM URL CHALLENGE
+════════════════════════════════════════════════ -->
+<div class="section" id="custom-url">
+  <div class="sec-label">03 — Handling the Custom URL Challenge</div>
+  <h1>Custom Store URL Uniqueness</h1>
+  <p>Two students cannot both claim <code>/store/tech-bros</code>. Here is the complete technical architecture for enforcing this, from the database constraint to the Express error handler.</p>
+
+  <h2>3.1 The Three Layers of Defense</h2>
+  <table class="ctable">
+    <thead><tr><th>Layer</th><th>What it does</th><th>Why it's needed</th></tr></thead>
+    <tbody>
+      <tr>
+        <td>Layer 1: DB Unique Constraint</td>
+        <td>PostgreSQL rejects any INSERT/UPDATE that would create a duplicate handle value</td>
+        <td>The <em>only</em> truly safe uniqueness guarantee. Application-level checks have race conditions.</td>
+      </tr>
+      <tr>
+        <td>Layer 2: Express Validation Middleware</td>
+        <td>Format check (regex, length, reserved words) + availability check before INSERT</td>
+        <td>Returns a user-friendly error message BEFORE hitting the DB. Better UX than catching a constraint error.</td>
+      </tr>
+      <tr>
+        <td>Layer 3: Real-time Frontend Check</td>
+        <td>Debounced API call as user types: <code>GET /api/v1/stores/check-handle?handle=tech-bros</code></td>
+        <td>Immediate feedback in the UI. Reduces form submissions with invalid handles by ~90%.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>3.2 The Handle Validation Service</h2>
+
+<pre>
+<span class="comment-block">// apps/api/src/services/store.service.ts
+// Handle validation and collision handling logic.</span>
+
+<span class="kw">import</span> { prisma } <span class="kw">from</span> <span class="str">'../lib/prisma'</span>;
+<span class="kw">import</span> { Prisma } <span class="kw">from</span> <span class="str">'@prisma/client'</span>;
+
+<span class="comment-block">// ── Reserved Handle List ──────────────────────────────────────────────────────
+// Any path segment that Next.js uses as a route MUST be reserved.
+// If "admin" isn't reserved, a seller could register it and their store would
+// collide with your /store/admin route.
+// Store this in a config file; add to it whenever you add new Next.js routes.</span>
+<span class="kw">const</span> RESERVED_HANDLES = <span class="kw">new</span> Set([
+  <span class="comment-block">// App routes</span>
+  <span class="str">'admin'</span>, <span class="str">'api'</span>, <span class="str">'auth'</span>, <span class="str">'login'</span>, <span class="str">'logout'</span>, <span class="str">'signup'</span>, <span class="str">'register'</span>,
+  <span class="str">'search'</span>, <span class="str">'checkout'</span>, <span class="str">'dashboard'</span>, <span class="str">'settings'</span>, <span class="str">'profile'</span>,
+  <span class="comment-block">// Store paths</span>
+  <span class="str">'store'</span>, <span class="str">'stores'</span>, <span class="str">'listing'</span>, <span class="str">'listings'</span>, <span class="str">'category'</span>,
+  <span class="comment-block">// Legal / info</span>
+  <span class="str">'about'</span>, <span class="str">'contact'</span>, <span class="str">'terms'</span>, <span class="str">'privacy'</span>, <span class="str">'help'</span>, <span class="str">'support'</span>,
+  <span class="comment-block">// Payment / financial</span>
+  <span class="str">'order'</span>, <span class="str">'orders'</span>, <span class="str">'wallet'</span>, <span class="str">'payout'</span>, <span class="str">'payment'</span>,
+  <span class="comment-block">// Trust / moderation</span>
+  <span class="str">'verify'</span>, <span class="str">'dispute'</span>, <span class="str">'review'</span>, <span class="str">'report'</span>, <span class="str">'flag'</span>,
+  <span class="comment-block">// Brand</span>
+  <span class="str">'ushop'</span>, <span class="str">'u-shop'</span>, <span class="str">'ushopgh'</span>,
+]);
+
+<span class="kw">export class</span> StoreService {
+
+  <span class="comment-block">  // ── Step 1: Validate handle format (before touching the DB) ─────────────</span>
+  <span class="kw">static</span> validateHandleFormat(handle: <span class="kw">string</span>): { valid: <span class="kw">boolean</span>; reason?: <span class="kw">string</span> } {
+    <span class="kw">const</span> normalized = handle.toLowerCase().trim();
+
+    <span class="kw">if</span> (normalized.length < <span class="num">3</span> || normalized.length > <span class="num">24</span>)
+      <span class="kw">return</span> { valid: <span class="kw">false</span>, reason: <span class="str">'Handle must be 3–24 characters'</span> };
+
+    <span class="kw">if</span> (!<span class="str">/^[a-z0-9-]+$/</span>.test(normalized))
+      <span class="kw">return</span> { valid: <span class="kw">false</span>, reason: <span class="str">'Only lowercase letters, numbers, and hyphens allowed'</span> };
+
+    <span class="kw">if</span> (normalized.startsWith(<span class="str">'-'</span>) || normalized.endsWith(<span class="str">'-'</span>))
+      <span class="kw">return</span> { valid: <span class="kw">false</span>, reason: <span class="str">'Handle cannot start or end with a hyphen'</span> };
+
+    <span class="kw">if</span> (<span class="str">/--/</span>.test(normalized))
+      <span class="kw">return</span> { valid: <span class="kw">false</span>, reason: <span class="str">'Handle cannot contain consecutive hyphens'</span> };
+
+    <span class="kw">if</span> (RESERVED_HANDLES.has(normalized))
+      <span class="kw">return</span> { valid: <span class="kw">false</span>, reason: <span class="str">'This handle is reserved'</span> };
+
+    <span class="kw">return</span> { valid: <span class="kw">true</span> };
+  }
+
+  <span class="comment-block">  // ── Step 2: Check DB availability (real-time check endpoint uses this) ──</span>
+  <span class="kw">static async</span> isHandleAvailable(handle: <span class="kw">string</span>): Promise&lt;<span class="kw">boolean</span>&gt; {
+    <span class="kw">const</span> normalized = handle.toLowerCase();
+    <span class="kw">if</span> (RESERVED_HANDLES.has(normalized)) <span class="kw">return false</span>;
+
+    <span class="kw">const</span> existing = <span class="kw">await</span> prisma.store.findUnique({
+      where: { handle: normalized },
+      select: { id: <span class="kw">true</span> },  <span class="comment-block">// Only fetch id — we don't need any other data</span>
+    });
+    <span class="kw">return</span> !existing;
+  }
+
+  <span class="comment-block">  // ── Step 3: Create store — catching the constraint error gracefully ──────
+  // Even after checking availability in Step 2, there is a tiny race condition:
+  //   T=0ms  User A checks: "cool-store" is available ✓
+  //   T=0ms  User B checks: "cool-store" is available ✓  (same millisecond!)
+  //   T=5ms  User A creates "cool-store" → SUCCESS
+  //   T=5ms  User B creates "cool-store" → PostgreSQL throws UniqueConstraintViolation!
+  //
+  // The database constraint ALWAYS wins. We catch the Prisma error and translate
+  // it into a user-friendly message instead of an unhandled 500 crash.</span>
+  <span class="kw">static async</span> createStore(ownerId: <span class="kw">string</span>, data: { handle: <span class="kw">string</span>; name: <span class="kw">string</span>; bio?: <span class="kw">string</span> }) {
+    <span class="kw">const</span> handle = data.handle.toLowerCase();
+
+    <span class="comment-block">    // Format check first (fast, no DB call)</span>
+    <span class="kw">const</span> formatCheck = StoreService.validateHandleFormat(handle);
+    <span class="kw">if</span> (!formatCheck.valid) <span class="kw">throw new</span> ValidationError(formatCheck.reason!);
+
+    <span class="comment-block">    // Availability pre-check (one DB read — catches most conflicts)</span>
+    <span class="kw">const</span> available = <span class="kw">await</span> StoreService.isHandleAvailable(handle);
+    <span class="kw">if</span> (!available) <span class="kw">throw new</span> ConflictError(<span class="str">`The handle "${handle}" is already taken`</span>);
+
+    <span class="kw">try</span> {
+      <span class="comment-block">      // The actual INSERT. This might still fail on unique constraint if another
+      // request slipped through between our check and this INSERT.</span>
+      <span class="kw">return await</span> prisma.$transaction(<span class="kw">async</span> (tx) => {
+        <span class="kw">const</span> store = <span class="kw">await</span> tx.store.create({ data: { handle, ...data, ownerId } });
+
+        <span class="comment-block">        // Upgrade user role to SELLER (or BOTH if they were already a buyer)</span>
+        <span class="kw">await</span> tx.user.update({
+          where: { id: ownerId },
+          data: { role: <span class="str">'BOTH'</span> }
+        });
+
+        <span class="kw">return</span> store;
+      });
+    } <span class="kw">catch</span> (error) {
+      <span class="comment-block">      // Prisma wraps unique constraint violations in PrismaClientKnownRequestError
+      // with error code 'P2002'. We catch it here and throw a friendly error.
+      // Any other error (P2003 = FK violation, etc.) re-throws as-is.</span>
+      <span class="kw">if</span> (error <span class="kw">instanceof</span> Prisma.PrismaClientKnownRequestError
+          && error.code === <span class="str">'P2002'</span>) {
+        <span class="kw">throw new</span> ConflictError(
+          <span class="str">`Someone just took "${handle}" — please try a different handle`</span>
+        );
+      }
+      <span class="kw">throw</span> error;  <span class="comment-block">// Re-throw unexpected errors</span>
+    }
+  }
+}
+</pre>
+
+  <h2>3.3 The 301 Redirect for Handle Changes</h2>
+
+<pre>
+<span class="comment-block">// apps/web/middleware.ts (Next.js middleware)
+// When a seller edits their handle (one-time privilege), old URLs must still work.
+// This Next.js middleware runs at the EDGE — before the page even renders.
+// It checks the URL, and if the path matches an old handle, redirects instantly.</span>
+
+<span class="kw">import</span> { NextResponse } <span class="kw">from</span> <span class="str">'next/server'</span>;
+<span class="kw">import type</span> { NextRequest } <span class="kw">from</span> <span class="str">'next/server'</span>;
+
+<span class="kw">export async function</span> middleware(request: NextRequest) {
+  <span class="kw">const</span> pathname = request.nextUrl.pathname;
+
+  <span class="comment-block">  // Check if this is a /store/{handle} route</span>
+  <span class="kw">const</span> storeMatch = pathname.match(<span class="str">/^\/store\/([a-z0-9-]+)$/</span>);
+  <span class="kw">if</span> (!storeMatch) <span class="kw">return</span> NextResponse.next();
+
+  <span class="kw">const</span> handle = storeMatch[<span class="num">1</span>];
+
+  <span class="comment-block">  // Check if this handle is a redirect (i.e., it was once a valid handle but
+  // was changed). Call your Express API which checks store.previousHandle.</span>
+  <span class="kw">const</span> res = <span class="kw">await</span> fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/stores/redirect/${handle}`);
+
+  <span class="kw">if</span> (res.ok) {
+    <span class="kw">const</span> { newHandle } = <span class="kw">await</span> res.json();
+    <span class="kw">if</span> (newHandle) {
+      <span class="comment-block">      // 301 Permanent Redirect. This tells Google to update its index.
+      // Cache it for 90 days (per PRD spec).</span>
+      <span class="kw">return</span> NextResponse.redirect(
+        <span class="kw">new</span> URL(`/store/${newHandle}`, request.url),
+        { status: <span class="num">301</span>, headers: { <span class="str">'Cache-Control'</span>: <span class="str">'max-age=7776000'</span> } }
+      );
+    }
+  }
+
+  <span class="kw">return</span> NextResponse.next();
+}
+</pre>
+
+</div><!-- /section -->
+<div class="divider"></div>
+
+<!-- ════════════════════════════════════════════════
+     04 — SUPABASE AUTH & RLS
+════════════════════════════════════════════════ -->
+<div class="section" id="rls">
+  <div class="sec-label">04 — Supabase Auth &amp; RLS Integration</div>
+  <h1>Supabase Auth &amp; Row Level Security</h1>
+
+  <h2>4.1 How the Schema Connects to Supabase Auth</h2>
+  <p>Supabase maintains its own <code>auth.users</code> table in a separate schema. You cannot add columns to it. Your <code>public.users</code> table is your application's user record, linked to Supabase's auth record via <code>supabaseId</code>.</p>
+
+<pre>
+<span class="comment-block">-- ── The Link Between auth.users and public.users ────────────────────────────
+--
+-- auth.users (Supabase managed) ──[id UUID]──► users.supabase_id
+--
+-- When a user signs up, Supabase creates a record in auth.users.
+-- Your Express backend (or a Supabase Database Trigger) creates the
+-- corresponding record in your public.users table.
+--
+-- RECOMMENDED: Use a Supabase PostgreSQL trigger to auto-create the user record.
+-- This way, even if your Express callback fails, the user record still gets created.</span>
+
+<span class="comment-block">-- Run this in your Supabase SQL Editor:</span>
+
+<span class="kw">CREATE OR REPLACE FUNCTION</span> public.handle_new_supabase_user()
+<span class="kw">RETURNS TRIGGER AS</span> $$
+<span class="kw">BEGIN</span>
+  <span class="comment-block">  -- NEW is the newly inserted row in auth.users.
+  -- We create a corresponding record in our public.users table.
+  -- The role defaults to BUYER, verificationStatus defaults to UNVERIFIED.
+  -- Both are set by the enum defaults in our schema.</span>
+  <span class="kw">INSERT INTO</span> public.users (id, supabase_id, email, created_at, updated_at)
+  <span class="kw">VALUES</span> (
+    gen_random_uuid(),    <span class="comment-block">-- Our own CUID-equivalent primary key</span>
+    NEW.id,               <span class="comment-block">-- auth.users.id (UUID) → our supabase_id column</span>
+    NEW.email,
+    NOW(),
+    NOW()
+  )
+  <span class="kw">ON CONFLICT</span> (supabase_id) <span class="kw">DO NOTHING</span>;  <span class="comment-block">-- Idempotent: safe if trigger fires twice</span>
+  <span class="kw">RETURN NEW</span>;
+<span class="kw">END</span>;
+$$ <span class="kw">LANGUAGE plpgsql SECURITY DEFINER</span>;
+
+<span class="comment-block">-- Attach the trigger to auth.users</span>
+<span class="kw">CREATE TRIGGER</span> on_auth_user_created
+  <span class="kw">AFTER INSERT ON</span> auth.users
+  <span class="kw">FOR EACH ROW EXECUTE FUNCTION</span> public.handle_new_supabase_user();
+
+<span class="comment-block">-- ── How Express looks up the user ────────────────────────────────────────────
+-- 1. Frontend signs in via Supabase JS. Gets back a JWT.
+-- 2. JWT is sent in the Authorization header of every API request.
+-- 3. Express authenticate middleware calls supabaseAdmin.auth.getUser(token)
+-- 4. Supabase returns the auth.users record, including auth.users.id (UUID)
+-- 5. Express queries: SELECT * FROM users WHERE supabase_id = $1
+-- 6. This gives Express our rich user record (role, verificationStatus, etc.)
+-- 7. The user is attached to req.user for all downstream route handlers.</span>
+</pre>
+
+  <h2>4.2 Row Level Security (RLS) Policies</h2>
+  <p>RLS policies are rules written in SQL that PostgreSQL enforces on every single query. <strong>The Supabase ANON key (used in the frontend) is subject to RLS. The SERVICE_ROLE key (used only in Express) bypasses RLS entirely.</strong> This means your Express API can do anything — you are responsible for enforcing business rules there. RLS is your backup protection for the frontend.</p>
+
+  <div class="callout callout-red">
+    <strong>Critical: Enable RLS before writing policies</strong>
+    <p>By default, PostgreSQL tables have RLS disabled — ALL rows are accessible to anyone with table access. Once you enable RLS on a table, ALL rows are DENIED until you add explicit allow policies. Enable RLS on every table before writing policies.</p>
+  </div>
+
+  <!-- USERS RLS -->
+  <div class="rls-block">
+    <div class="rls-header">
+      <span class="rls-table-name">public.users</span>
+      <span class="rls-note">— Read your own profile, update your own profile</span>
+    </div>
+<pre>
+<span class="comment-block">-- Enable RLS — DENY ALL until policies say otherwise</span>
+<span class="kw">ALTER TABLE</span> public.users <span class="kw">ENABLE ROW LEVEL SECURITY</span>;
+
+<span class="comment-block">-- Policy 1: Anyone can read basic user info (needed for reviews, store pages, etc.)
+-- auth.uid() is a Supabase function that returns the UUID of the currently
+-- authenticated user from their JWT token.</span>
+<span class="kw">CREATE POLICY</span> <span class="str">"Public profiles are viewable"</span>
+  <span class="kw">ON</span> public.users <span class="kw">FOR SELECT</span>
+  <span class="kw">USING</span> (true);  <span class="comment-block">-- USING(true) = allow all rows for SELECT operations</span>
+<span class="comment-block">-- Note: This allows reading all user rows. Use API-level field selection (Prisma's
+-- `select`) to ensure you NEVER return sensitive fields (studentIdImagePath,
+-- paystackRecipientCode, etc.) to other users.</span>
+
+<span class="comment-block">-- Policy 2: Users can only UPDATE their own row</span>
+<span class="kw">CREATE POLICY</span> <span class="str">"Users can update own profile"</span>
+  <span class="kw">ON</span> public.users <span class="kw">FOR UPDATE</span>
+  <span class="kw">USING</span> (supabase_id = auth.uid()::text)
+  <span class="kw">WITH CHECK</span> (supabase_id = auth.uid()::text);
+<span class="comment-block">-- USING: Which rows can be targeted for update?
+-- WITH CHECK: After the update, is the row still valid?
+-- Both must pass. This prevents changing supabase_id to someone else's.</span>
+
+<span class="comment-block">-- Policy 3: Only admins can UPDATE other users (for setting verificationStatus)</span>
+<span class="kw">CREATE POLICY</span> <span class="str">"Admins can update any user"</span>
+  <span class="kw">ON</span> public.users <span class="kw">FOR UPDATE</span>
+  <span class="kw">USING</span> (
+    <span class="kw">EXISTS</span> (
+      <span class="kw">SELECT</span> 1 <span class="kw">FROM</span> public.users
+      <span class="kw">WHERE</span> supabase_id = auth.uid()::text <span class="kw">AND</span> role = <span class="str">'ADMIN'</span>
+    )
+  );
+</pre>
+  </div>
+
+  <!-- STORES RLS -->
+  <div class="rls-block">
+    <div class="rls-header">
+      <span class="rls-table-name">public.stores</span>
+      <span class="rls-note">— Anyone can read, only owner can write</span>
+    </div>
+<pre>
+<span class="kw">ALTER TABLE</span> public.stores <span class="kw">ENABLE ROW LEVEL SECURITY</span>;
+
+<span class="comment-block">-- Anyone can read any store (store pages are publicly accessible, including to
+-- unauthenticated visitors browsing the marketplace)</span>
+<span class="kw">CREATE POLICY</span> <span class="str">"Stores are publicly readable"</span>
+  <span class="kw">ON</span> public.stores <span class="kw">FOR SELECT USING</span> (true);
+
+<span class="comment-block">-- Only the store owner can update their store details</span>
+<span class="kw">CREATE POLICY</span> <span class="str">"Only owner can update store"</span>
+  <span class="kw">ON</span> public.stores <span class="kw">FOR UPDATE</span>
+  <span class="kw">USING</span> (
+    owner_id = (<span class="kw">SELECT</span> id <span class="kw">FROM</span> public.users <span class="kw">WHERE</span> supabase_id = auth.uid()::text)
+  );
+</pre>
+  </div>
+
+  <!-- LISTINGS RLS -->
+  <div class="rls-block">
+    <div class="rls-header">
+      <span class="rls-table-name">public.listings</span>
+      <span class="rls-note">— Public reads for ACTIVE listings only; only store owner can write</span>
+    </div>
+<pre>
+<span class="kw">ALTER TABLE</span> public.listings <span class="kw">ENABLE ROW LEVEL SECURITY</span>;
+
+<span class="comment-block">-- Buyers can only see ACTIVE listings (not DRAFT or PAUSED)
+-- This is a PARTIAL visibility rule — the buyer sees less than the seller.</span>
+<span class="kw">CREATE POLICY</span> <span class="str">"Active listings are publicly visible"</span>
+  <span class="kw">ON</span> public.listings <span class="kw">FOR SELECT</span>
+  <span class="kw">USING</span> (status = <span class="str">'ACTIVE'</span>);
+
+<span class="comment-block">-- Sellers can see ALL their own listings (including DRAFT and PAUSED)</span>
+<span class="kw">CREATE POLICY</span> <span class="str">"Sellers can see all their own listings"</span>
+  <span class="kw">ON</span> public.listings <span class="kw">FOR SELECT</span>
+  <span class="kw">USING</span> (
+    store_id <span class="kw">IN</span> (
+      <span class="kw">SELECT</span> id <span class="kw">FROM</span> public.stores
+      <span class="kw">WHERE</span> owner_id = (<span class="kw">SELECT</span> id <span class="kw">FROM</span> public.users <span class="kw">WHERE</span> supabase_id = auth.uid()::text)
+    )
+  );
+
+<span class="comment-block">-- CRITICAL: Sellers can only INSERT listings for their OWN store.
+-- Without this, a malicious seller could create listings under another store's ID.</span>
+<span class="kw">CREATE POLICY</span> <span class="str">"Sellers can only create listings in their own store"</span>
+  <span class="kw">ON</span> public.listings <span class="kw">FOR INSERT</span>
+  <span class="kw">WITH CHECK</span> (
+    store_id <span class="kw">IN</span> (
+      <span class="kw">SELECT</span> id <span class="kw">FROM</span> public.stores
+      <span class="kw">WHERE</span> owner_id = (<span class="kw">SELECT</span> id <span class="kw">FROM</span> public.users <span class="kw">WHERE</span> supabase_id = auth.uid()::text)
+    )
+  );
+
+<span class="comment-block">-- Sellers can only UPDATE listings in their own store</span>
+<span class="kw">CREATE POLICY</span> <span class="str">"Sellers can only update their own listings"</span>
+  <span class="kw">ON</span> public.listings <span class="kw">FOR UPDATE</span>
+  <span class="kw">USING</span> (
+    store_id <span class="kw">IN</span> (
+      <span class="kw">SELECT</span> id <span class="kw">FROM</span> public.stores
+      <span class="kw">WHERE</span> owner_id = (<span class="kw">SELECT</span> id <span class="kw">FROM</span> public.users <span class="kw">WHERE</span> supabase_id = auth.uid()::text)
+    )
+  );
+</pre>
+  </div>
+
+  <!-- ORDERS RLS -->
+  <div class="rls-block">
+    <div class="rls-header">
+      <span class="rls-table-name">public.orders</span>
+      <span class="rls-note">— Only buyer and seller can see an order; no direct inserts from frontend</span>
+    </div>
+<pre>
+<span class="kw">ALTER TABLE</span> public.orders <span class="kw">ENABLE ROW LEVEL SECURITY</span>;
+
+<span class="comment-block">-- Buyers can see orders they placed</span>
+<span class="kw">CREATE POLICY</span> <span class="str">"Buyers can see their own orders"</span>
+  <span class="kw">ON</span> public.orders <span class="kw">FOR SELECT</span>
+  <span class="kw">USING</span> (
+    buyer_id = (<span class="kw">SELECT</span> id <span class="kw">FROM</span> public.users <span class="kw">WHERE</span> supabase_id = auth.uid()::text)
+  );
+
+<span class="comment-block">-- Sellers can see orders placed in their store</span>
+<span class="kw">CREATE POLICY</span> <span class="str">"Sellers can see orders for their store"</span>
+  <span class="kw">ON</span> public.orders <span class="kw">FOR SELECT</span>
+  <span class="kw">USING</span> (
+    store_id <span class="kw">IN</span> (
+      <span class="kw">SELECT</span> id <span class="kw">FROM</span> public.stores
+      <span class="kw">WHERE</span> owner_id = (<span class="kw">SELECT</span> id <span class="kw">FROM</span> public.users <span class="kw">WHERE</span> supabase_id = auth.uid()::text)
+    )
+  );
+
+<span class="comment-block">-- NO INSERT policy for orders from the frontend. Orders are ONLY created by
+-- Express via the SERVICE_ROLE key, which bypasses RLS.
+-- This prevents a malicious user from creating fake orders directly against the DB.</span>
+</pre>
+  </div>
+
+  <!-- WALLETS RLS -->
+  <div class="rls-block">
+    <div class="rls-header">
+      <span class="rls-table-name">public.wallets &amp; public.wallet_transactions</span>
+      <span class="rls-note">— Strictly private; only owner can read their own wallet</span>
+    </div>
+<pre>
+<span class="kw">ALTER TABLE</span> public.wallets <span class="kw">ENABLE ROW LEVEL SECURITY</span>;
+<span class="kw">ALTER TABLE</span> public.wallet_transactions <span class="kw">ENABLE ROW LEVEL SECURITY</span>;
+
+<span class="comment-block">-- Only the wallet owner can see their own wallet</span>
+<span class="kw">CREATE POLICY</span> <span class="str">"Users can only see their own wallet"</span>
+  <span class="kw">ON</span> public.wallets <span class="kw">FOR SELECT</span>
+  <span class="kw">USING</span> (
+    user_id = (<span class="kw">SELECT</span> id <span class="kw">FROM</span> public.users <span class="kw">WHERE</span> supabase_id = auth.uid()::text)
+  );
+
+<span class="comment-block">-- Only the wallet owner can see their transaction history</span>
+<span class="kw">CREATE POLICY</span> <span class="str">"Users can only see their own transactions"</span>
+  <span class="kw">ON</span> public.wallet_transactions <span class="kw">FOR SELECT</span>
+  <span class="kw">USING</span> (
+    wallet_id <span class="kw">IN</span> (
+      <span class="kw">SELECT</span> id <span class="kw">FROM</span> public.wallets
+      <span class="kw">WHERE</span> user_id = (<span class="kw">SELECT</span> id <span class="kw">FROM</span> public.users <span class="kw">WHERE</span> supabase_id = auth.uid()::text)
+    )
+  );
+
+<span class="comment-block">-- No UPDATE or INSERT from frontend. Wallets are ONLY modified by Express
+-- through the SERVICE_ROLE key during escrow release, refund, or payout operations.</span>
+</pre>
+  </div>
+
+  <!-- ESCROW / MESSAGES / DISPUTES RLS -->
+  <div class="rls-block">
+    <div class="rls-header">
+      <span class="rls-table-name">public.escrow_ledger, public.messages, public.disputes</span>
+      <span class="rls-note">— Parties and admins only</span>
+    </div>
+<pre>
+<span class="kw">ALTER TABLE</span> public.escrow_ledger <span class="kw">ENABLE ROW LEVEL SECURITY</span>;
+<span class="kw">ALTER TABLE</span> public.messages <span class="kw">ENABLE ROW LEVEL SECURITY</span>;
+<span class="kw">ALTER TABLE</span> public.disputes <span class="kw">ENABLE ROW LEVEL SECURITY</span>;
+
+<span class="comment-block">-- Escrow: only the buyer and seller of the related order can see it</span>
+<span class="kw">CREATE POLICY</span> <span class="str">"Order parties can view escrow"</span>
+  <span class="kw">ON</span> public.escrow_ledger <span class="kw">FOR SELECT</span>
+  <span class="kw">USING</span> (
+    order_id <span class="kw">IN</span> (
+      <span class="kw">SELECT</span> id <span class="kw">FROM</span> public.orders
+      <span class="kw">WHERE</span>
+        buyer_id = (<span class="kw">SELECT</span> id <span class="kw">FROM</span> public.users <span class="kw">WHERE</span> supabase_id = auth.uid()::text)
+        <span class="kw">OR</span>
+        store_id <span class="kw">IN</span> (<span class="kw">SELECT</span> id <span class="kw">FROM</span> public.stores
+          <span class="kw">WHERE</span> owner_id = (<span class="kw">SELECT</span> id <span class="kw">FROM</span> public.users <span class="kw">WHERE</span> supabase_id = auth.uid()::text))
+    )
+  );
+
+<span class="comment-block">-- Messages: sender can always see their own messages.
+-- For order threads: only buyer and seller of that order can see messages.
+-- For listing threads: any authenticated user can read them (pre-purchase Q&A is
+-- semi-public — this can be tightened if you want private Q&A).</span>
+<span class="kw">CREATE POLICY</span> <span class="str">"Message senders can read their messages"</span>
+  <span class="kw">ON</span> public.messages <span class="kw">FOR SELECT</span>
+  <span class="kw">USING</span> (
+    sender_id = (<span class="kw">SELECT</span> id <span class="kw">FROM</span> public.users <span class="kw">WHERE</span> supabase_id = auth.uid()::text)
+    <span class="kw">OR</span> order_id <span class="kw">IN</span> (
+      <span class="kw">SELECT</span> id <span class="kw">FROM</span> public.orders
+      <span class="kw">WHERE</span>
+        buyer_id = (<span class="kw">SELECT</span> id <span class="kw">FROM</span> public.users <span class="kw">WHERE</span> supabase_id = auth.uid()::text)
+        <span class="kw">OR</span> store_id <span class="kw">IN</span> (<span class="kw">SELECT</span> id <span class="kw">FROM</span> public.stores
+          <span class="kw">WHERE</span> owner_id = (<span class="kw">SELECT</span> id <span class="kw">FROM</span> public.users <span class="kw">WHERE</span> supabase_id = auth.uid()::text))
+    )
+  );
+
+<span class="comment-block">-- Disputes: only the buyer who filed it can read it (admins via SERVICE_ROLE)</span>
+<span class="kw">CREATE POLICY</span> <span class="str">"Dispute filer can read their dispute"</span>
+  <span class="kw">ON</span> public.disputes <span class="kw">FOR SELECT</span>
+  <span class="kw">USING</span> (
+    buyer_id = (<span class="kw">SELECT</span> id <span class="kw">FROM</span> public.users <span class="kw">WHERE</span> supabase_id = auth.uid()::text)
+  );
+</pre>
+  </div>
+
+</div><!-- /section -->
+<div class="divider"></div>
+
+<!-- ════════════════════════════════════════════════
+     05 — INDEXING & PERFORMANCE
+════════════════════════════════════════════════ -->
+<div class="section" id="indexes">
+  <div class="sec-label">05 — Indexing &amp; Performance</div>
+  <h1>Indexing Strategy</h1>
+  <p>An index is the difference between a query that completes in 2ms and one that takes 4 seconds and brings down your server. The indexes in the Prisma schema (Section 2) cover most cases, but the full-text search index and trigger must be applied manually via raw SQL in the Supabase SQL editor.</p>
+
+  <div class="callout callout-blue">
+    <strong>How a database index works (plain English)</strong>
+    <p>Imagine your <code>listings</code> table has 100,000 rows. A query like <code>WHERE store_id = 'abc'</code> without an index makes PostgreSQL read all 100,000 rows to find the matching ones. This is called a "full table scan." An index on <code>store_id</code> is like the index in the back of a book — instead of reading every page, you jump straight to the entries for 'abc'. The cost: a small amount of extra storage and slightly slower INSERT/UPDATE operations. The payoff: queries go from seconds to milliseconds.</p>
+  </div>
+
+  <h2>5.1 Index Reference Table</h2>
+  <table class="idx-table">
+    <thead>
+      <tr><th>Index / Column(s)</th><th>Table</th><th>Type</th><th>Priority</th><th>Query it serves</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>search_vector</td>
+        <td>listings</td>
+        <td>GIN</td>
+        <td><span class="crit-badge cb-crit">Critical</span></td>
+        <td>Full-text search: "give me listings matching 'macbook pro m2'" — without this, every search is a full table scan.</td>
+      </tr>
+      <tr>
+        <td>handle</td>
+        <td>stores</td>
+        <td>BTree (UNIQUE)</td>
+        <td><span class="crit-badge cb-crit">Critical</span></td>
+        <td>Store URL resolution: <code>/store/janes-tech</code> → find store by handle. Called on every store page load.</td>
+      </tr>
+      <tr>
+        <td>supabase_id</td>
+        <td>users</td>
+        <td>BTree (UNIQUE)</td>
+        <td><span class="crit-badge cb-crit">Critical</span></td>
+        <td>Auth middleware: called on EVERY authenticated API request to look up the user record from the JWT's Supabase UUID.</td>
+      </tr>
+      <tr>
+        <td>paystack_ref</td>
+        <td>orders</td>
+        <td>BTree (UNIQUE)</td>
+        <td><span class="crit-badge cb-crit">Critical</span></td>
+        <td>Webhook handler: find the order by Paystack reference. Called on every charge.success and transfer event.</td>
+      </tr>
+      <tr>
+        <td>external_id</td>
+        <td>webhook_events</td>
+        <td>BTree (UNIQUE)</td>
+        <td><span class="crit-badge cb-crit">Critical</span></td>
+        <td>Idempotency check: before processing any webhook, verify it hasn't been processed. Called on every webhook arrival.</td>
+      </tr>
+      <tr>
+        <td>(store_id, status, created_at)</td>
+        <td>listings</td>
+        <td>BTree (Composite)</td>
+        <td><span class="crit-badge cb-high">High</span></td>
+        <td>Store page: "show all ACTIVE listings for this store, newest first." This query runs on every store page load.</td>
+      </tr>
+      <tr>
+        <td>(category_id, status, price)</td>
+        <td>listings</td>
+        <td>BTree (Composite)</td>
+        <td><span class="crit-badge cb-high">High</span></td>
+        <td>Category browse: "show ACTIVE listings in Laptops, sorted by price." High-frequency query.</td>
+      </tr>
+      <tr>
+        <td>(buyer_id, status, created_at)</td>
+        <td>orders</td>
+        <td>BTree (Composite)</td>
+        <td><span class="crit-badge cb-high">High</span></td>
+        <td>Buyer dashboard: "show my orders, most recent first." Called on every dashboard load.</td>
+      </tr>
+      <tr>
+        <td>(store_id, status, created_at)</td>
+        <td>orders</td>
+        <td>BTree (Composite)</td>
+        <td><span class="crit-badge cb-high">High</span></td>
+        <td>Seller order management: "show all orders for my store, newest first."</td>
+      </tr>
+      <tr>
+        <td>(status, escrow_release_at)</td>
+        <td>orders</td>
+        <td>BTree (Composite)</td>
+        <td><span class="crit-badge cb-high">High</span></td>
+        <td>Escrow auto-release cron: "find all PAYMENT_RECEIVED orders where escrow_release_at &lt;= NOW()." Runs every hour.</td>
+      </tr>
+      <tr>
+        <td>(wallet_id, created_at)</td>
+        <td>wallet_transactions</td>
+        <td>BTree (Composite)</td>
+        <td><span class="crit-badge cb-high">High</span></td>
+        <td>Transaction history: "show all transactions for this wallet, newest first." Seller dashboard.</td>
+      </tr>
+      <tr>
+        <td>(status, created_at)</td>
+        <td>disputes</td>
+        <td>BTree (Composite)</td>
+        <td><span class="crit-badge cb-med">Medium</span></td>
+        <td>Admin dispute queue: "show all OPEN disputes, oldest first (FIFO triage)."</td>
+      </tr>
+      <tr>
+        <td>price</td>
+        <td>listings</td>
+        <td>BTree</td>
+        <td><span class="crit-badge cb-med">Medium</span></td>
+        <td>Price range filter: "show listings between GH₵ 200 and GH₵ 500."</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>5.2 Manual SQL for Full-Text Search (Run Once in Supabase SQL Editor)</h2>
+  <p>The tsvector-based search is the most performance-critical feature. The GIN index and trigger below cannot be expressed in Prisma's schema syntax — they must be applied manually after your first migration runs.</p>
+
+<pre>
+<span class="comment-block">-- ── Run in Supabase SQL Editor after first migration ─────────────────────────
+-- This entire block should be idempotent (safe to re-run using IF NOT EXISTS).</span>
+
+<span class="comment-block">-- Step 1: Add the search_vector column (if not added via migration already)
+-- Prisma uses Unsupported("tsvector") which creates the column, but
+-- double-check it exists before creating the trigger.</span>
+<span class="kw">ALTER TABLE</span> listings <span class="kw">ADD COLUMN IF NOT EXISTS</span> search_vector tsvector;
+
+<span class="comment-block">-- Step 2: Create the GIN index.
+-- GIN (Generalized Inverted Index) is specifically designed for tsvector.
+-- A regular BTree index on a tsvector column would be useless.
+-- This single index makes full-text search instant at any table size.</span>
+<span class="kw">CREATE INDEX IF NOT EXISTS</span> idx_listings_fts
+  <span class="kw">ON</span> listings <span class="kw">USING GIN</span>(search_vector);
+
+<span class="comment-block">-- Step 3: Create the trigger function.
+-- to_tsvector('english', ...) tokenizes and stems English text.
+--   "MacBooks" becomes the lexeme "macbook"
+--   "running" becomes "run"
+-- setweight assigns importance:
+--   Weight 'A' (title) ranks higher in results than Weight 'B' (description)
+-- coalesce(field, '') prevents null values from crashing the function.
+-- The || operator concatenates the two tsvectors into one.</span>
+<span class="kw">CREATE OR REPLACE FUNCTION</span> update_listing_search_vector()
+<span class="kw">RETURNS TRIGGER AS</span> $$
+<span class="kw">BEGIN</span>
+  NEW.search_vector :=
+    setweight(to_tsvector(<span class="str">'english'</span>, coalesce(NEW.title, <span class="str">''</span>)), <span class="str">'A'</span>) ||
+    setweight(to_tsvector(<span class="str">'english'</span>, coalesce(NEW.description, <span class="str">''</span>)), <span class="str">'B'</span>);
+  <span class="kw">RETURN NEW</span>;
+<span class="kw">END</span>;
+$$ <span class="kw">LANGUAGE plpgsql</span>;
+
+<span class="comment-block">-- Step 4: Attach the trigger.
+-- BEFORE INSERT OR UPDATE: runs the function BEFORE writing to disk.
+-- FOR EACH ROW: runs once per affected row (not once per statement).
+-- The function updates NEW.search_vector, which is then written to disk.</span>
+<span class="kw">DROP TRIGGER IF EXISTS</span> listings_search_vector_update <span class="kw">ON</span> listings;
+<span class="kw">CREATE TRIGGER</span> listings_search_vector_update
+  <span class="kw">BEFORE INSERT OR UPDATE ON</span> listings
+  <span class="kw">FOR EACH ROW EXECUTE FUNCTION</span> update_listing_search_vector();
+
+<span class="comment-block">-- Step 5: Backfill existing rows (run once).
+-- New rows are covered by the trigger. Old rows need a one-time backfill.
+-- This statement may take a few seconds if you already have many listings.</span>
+<span class="kw">UPDATE</span> listings <span class="kw">SET</span> search_vector = search_vector; <span class="comment-block">-- Triggers the trigger on every row</span>
+
+<span class="comment-block">-- Step 6: Partial indexes for high-frequency filtered queries.
+-- A partial index only indexes rows matching the WHERE condition.
+-- This makes the index smaller and faster — and PostgreSQL will use it
+-- automatically when your query includes the same WHERE condition.
+
+-- Only index ACTIVE listings (DRAFT/PAUSED/SOLD are rarely searched)</span>
+<span class="kw">CREATE INDEX IF NOT EXISTS</span> idx_listings_active_store
+  <span class="kw">ON</span> listings(store_id, created_at <span class="kw">DESC</span>)
+  <span class="kw">WHERE</span> status = <span class="str">'ACTIVE'</span>;
+
+<span class="kw">CREATE INDEX IF NOT EXISTS</span> idx_listings_active_category_price
+  <span class="kw">ON</span> listings(category_id, price)
+  <span class="kw">WHERE</span> status = <span class="str">'ACTIVE'</span>;
+
+<span class="comment-block">-- Only index orders pending escrow release (the 7-day cron uses this)</span>
+<span class="kw">CREATE INDEX IF NOT EXISTS</span> idx_orders_pending_escrow
+  <span class="kw">ON</span> orders(escrow_release_at)
+  <span class="kw">WHERE</span> status = <span class="str">'PAYMENT_RECEIVED'</span>;
+
+<span class="comment-block">-- Usage example — search query in Prisma service:
+-- const results = await prisma.$queryRaw`
+--   SELECT id, title, price, condition, store_id,
+--          ts_rank(search_vector, query) AS rank
+--   FROM listings, plainto_tsquery('english', ${searchTerm}) query
+--   WHERE search_vector @@ query
+--     AND status = 'ACTIVE'
+--   ORDER BY rank DESC
+--   LIMIT ${limit} OFFSET ${offset}
+-- `;</span>
+</pre>
+
+  <div class="insight">
+    <div class="ins-l">Performance Principle — A Final Word</div>
+    <p>Indexes make reads faster but writes slightly slower (PostgreSQL must update every index on INSERT/UPDATE). For U-Shop, this trade-off is overwhelmingly positive: reads (browsing, searching) happen 50–100× more often than writes (listing creation, order placement). <strong>The only tables where you should be cautious about over-indexing are <code>wallet_transactions</code> and <code>webhook_events</code></strong>, which receive very frequent INSERTs. Keep only the indexes listed above on those tables.</p>
+  </div>
+
+</div><!-- /section -->
+
+<!-- ── END MARKER ── -->
+<div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:0.14em;text-transform:uppercase;display:flex;align-items:center;gap:12px;margin:80px 0 0;">
+  <span style="flex:1;height:1px;background:var(--line);display:block;"></span>
+  End of Document · U-Shop DB Schema Spec v1.0 · Principal Data Architect Edition · Confidential
+  <span style="flex:1;height:1px;background:var(--line);display:block;"></span>
+</div>
+
+</div><!-- /body -->
+</div><!-- /main -->
+
+<div class="footer">
+  <div class="ft-logo"><div class="ft-u">U</div><div class="ft-sh">shop</div></div>
+  <div class="ft-r">DB Schema Spec v1.0 · 15 Models · 9 Enums · 14 RLS Policies · Confidential</div>
+</div>
+
+</body>
+</html>

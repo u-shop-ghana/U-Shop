@@ -1,0 +1,1264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>U-Shop · System Architecture Blueprint — Paystack Edition</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;1,9..144,300&display=swap" rel="stylesheet">
+<style>
+:root {
+  --red:       #E8000B;
+  --black:     #0A0A0A;
+  --purple:    #6B1FA8;
+  --magenta:   #D4009B;
+  --grad:      linear-gradient(90deg,#6B1FA8,#D4009B);
+
+  /* Service colours */
+  --next:      #0070f3;
+  --express:   #68a063;
+  --supa:      #3ecf8e;
+  --paystack:  #00c3f7;   /* Paystack brand teal */
+  --redis:     #dc382d;
+  --momo:      #ffcc00;   /* MTN MoMo yellow */
+
+  /* Dark doc palette */
+  --bg:        #0d0e11;
+  --bg2:       #13151a;
+  --bg3:       #1a1d25;
+  --surface:   #1e2130;
+  --line:      rgba(255,255,255,0.07);
+  --line2:     rgba(255,255,255,0.12);
+  --text:      #e8e8f0;
+  --muted:     #7a7d8e;
+  --soft:      #b0b3c4;
+
+  --green:   #22c55e;
+  --amber:   #f59e0b;
+  --blue:    #3b82f6;
+  --cyan:    #06b6d4;
+  --rose:    #f43f5e;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:'Fraunces',Georgia,serif;background:var(--bg);color:var(--text);font-size:15px;line-height:1.75;}
+
+/* ── SIDEBAR ── */
+.nav{position:fixed;top:0;left:0;bottom:0;width:232px;background:var(--bg2);border-right:1px solid var(--line);display:flex;flex-direction:column;z-index:200;overflow-y:auto;}
+.nav-logo{padding:22px 20px 18px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:0;flex-shrink:0;}
+.nl-u{background:var(--red);width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-size:16px;font-weight:800;color:#fff;}
+.nl-sh{font-family:'Syne',sans-serif;font-size:16px;font-weight:800;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;padding:0 8px;line-height:28px;}
+.nl-badge{margin-left:auto;font-family:'IBM Plex Mono',monospace;font-size:8px;background:rgba(0,195,247,0.15);color:var(--paystack);border:1px solid rgba(0,195,247,0.3);padding:2px 6px;border-radius:3px;letter-spacing:0.08em;}
+.nav-section{font-family:'IBM Plex Mono',monospace;font-size:8px;letter-spacing:0.22em;text-transform:uppercase;color:rgba(255,255,255,0.2);padding:14px 20px 6px;}
+.nav a{display:flex;align-items:flex-start;gap:9px;padding:7px 20px;color:var(--muted);text-decoration:none;font-family:'IBM Plex Mono',monospace;font-size:11px;transition:all 0.12s;}
+.nav a:hover{color:var(--text);background:rgba(255,255,255,0.03);}
+.nav a .n{color:var(--red);min-width:16px;font-size:9px;padding-top:2px;}
+.nav-footer{padding:16px 20px;margin-top:auto;border-top:1px solid var(--line);font-family:'IBM Plex Mono',monospace;font-size:8px;color:rgba(255,255,255,0.15);letter-spacing:0.1em;flex-shrink:0;}
+
+/* ── MAIN ── */
+.main{margin-left:232px;}
+
+/* ── COVER ── */
+.cover{background:var(--black);min-height:100vh;padding:64px 72px;display:grid;grid-template-rows:1fr auto;position:relative;overflow:hidden;}
+.cover::before{content:'';position:absolute;left:0;top:0;bottom:0;width:5px;background:var(--red);}
+.cover-mesh{position:absolute;inset:0;background:radial-gradient(ellipse 60% 50% at 80% 40%,rgba(0,195,247,0.08) 0%,transparent 65%),radial-gradient(ellipse 40% 35% at 10% 70%,rgba(232,0,11,0.07) 0%,transparent 55%),radial-gradient(ellipse 30% 30% at 55% 88%,rgba(107,31,168,0.07) 0%,transparent 50%);pointer-events:none;}
+.cover-circuit{position:absolute;inset:0;opacity:0.03;background-image:linear-gradient(rgba(255,255,255,0.6) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.6) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;}
+.cover-content{position:relative;z-index:2;}
+.cover-eyebrow{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.22em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:52px;display:flex;align-items:center;gap:12px;}
+.cover-eyebrow .dot{width:5px;height:5px;border-radius:50%;background:var(--red);}
+.cover-logo{display:flex;align-items:center;margin-bottom:36px;}
+.cl-u{background:var(--red);width:72px;height:72px;display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-size:46px;font-weight:800;color:#fff;line-height:1;flex-shrink:0;}
+.cl-sh{font-family:'Syne',sans-serif;font-size:46px;font-weight:800;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;padding:0 14px;line-height:72px;}
+.cover-h1{font-family:'Syne',sans-serif;font-size:26px;font-weight:700;color:rgba(255,255,255,0.8);margin-bottom:14px;letter-spacing:-0.01em;}
+.cover-sub{font-size:15px;color:rgba(255,255,255,0.38);max-width:600px;font-weight:300;line-height:1.75;margin-bottom:32px;font-style:italic;}
+.cover-stack{display:flex;flex-wrap:wrap;gap:10px;}
+.sc{display:flex;align-items:center;gap:7px;font-family:'IBM Plex Mono',monospace;font-size:10px;padding:6px 12px;border-radius:4px;border:1px solid;}
+.sc-next{color:var(--next);border-color:rgba(0,112,243,0.3);background:rgba(0,112,243,0.08);}
+.sc-express{color:var(--express);border-color:rgba(104,160,99,0.3);background:rgba(104,160,99,0.08);}
+.sc-supa{color:var(--supa);border-color:rgba(62,207,142,0.3);background:rgba(62,207,142,0.08);}
+.sc-paystack{color:var(--paystack);border-color:rgba(0,195,247,0.3);background:rgba(0,195,247,0.08);}
+.sc-redis{color:var(--redis);border-color:rgba(220,56,45,0.3);background:rgba(220,56,45,0.08);}
+.sc-momo{color:var(--momo);border-color:rgba(255,204,0,0.3);background:rgba(255,204,0,0.06);}
+.chip-dot{width:6px;height:6px;border-radius:50%;}
+.cover-meta{position:relative;z-index:2;display:grid;grid-template-columns:repeat(5,1fr);gap:16px;border-top:1px solid rgba(255,255,255,0.07);padding-top:24px;}
+.cm .cm-l{font-family:'IBM Plex Mono',monospace;font-size:8px;letter-spacing:0.18em;text-transform:uppercase;color:rgba(255,255,255,0.22);display:block;margin-bottom:4px;}
+.cm .cm-v{font-size:13px;color:rgba(255,255,255,0.6);font-family:'IBM Plex Mono',monospace;}
+
+/* ── BODY ── */
+.body{padding:0 72px 120px;}
+.section{padding-top:80px;}
+.sec-label{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:0.24em;text-transform:uppercase;color:var(--red);margin-bottom:14px;display:flex;align-items:center;gap:10px;}
+.sec-label::after{content:'';flex:1;height:1px;background:var(--red);opacity:0.15;}
+h1{font-family:'Syne',sans-serif;font-size:30px;font-weight:800;margin-bottom:16px;letter-spacing:-0.02em;line-height:1.15;}
+h2{font-family:'Syne',sans-serif;font-size:19px;font-weight:700;margin:40px 0 14px;letter-spacing:-0.01em;}
+h3{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;margin-bottom:8px;}
+h4{font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:600;margin-bottom:6px;color:var(--soft);text-transform:none;letter-spacing:0;}
+p{color:var(--soft);margin-bottom:12px;line-height:1.75;}
+strong{color:var(--text);}
+code,.mono{font-family:'IBM Plex Mono',monospace;font-size:12px;background:var(--surface);padding:2px 8px;border-radius:3px;color:#a5d6ff;}
+pre{font-family:'IBM Plex Mono',monospace;font-size:12.5px;background:var(--bg3);border:1px solid var(--line2);border-radius:8px;padding:22px 24px;overflow-x:auto;line-height:1.7;color:#cdd6f4;margin:16px 0;}
+pre .cm{color:var(--muted);font-style:italic;}
+pre .kw{color:#cba6f7;}
+pre .str{color:#a6e3a1;}
+pre .fn{color:#89dceb;}
+pre .num{color:#fab387;}
+pre .var{color:#cdd6f4;}
+pre .type{color:#f5c2e7;}
+.divider{border:none;border-top:1px solid var(--line);margin:64px 0 0;}
+
+/* ── CALLOUTS ── */
+.callout{border-left:3px solid;padding:16px 20px;border-radius:0 6px 6px 0;margin:18px 0;}
+.callout p{margin:0;}
+.callout-red{border-color:var(--rose);background:rgba(244,63,94,0.06);}
+.callout-green{border-color:var(--green);background:rgba(34,197,94,0.05);}
+.callout-blue{border-color:var(--blue);background:rgba(59,130,246,0.06);}
+.callout-amber{border-color:var(--amber);background:rgba(245,158,11,0.06);}
+.callout-paystack{border-color:var(--paystack);background:rgba(0,195,247,0.06);}
+.callout strong{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.06em;text-transform:uppercase;display:block;margin-bottom:6px;}
+.callout-red strong{color:var(--rose);}
+.callout-green strong{color:var(--green);}
+.callout-blue strong{color:var(--blue);}
+.callout-amber strong{color:var(--amber);}
+.callout-paystack strong{color:var(--paystack);}
+
+/* ── TOPOLOGY DIAGRAM ── */
+.arch-diagram{background:var(--bg3);border:1px solid var(--line2);border-radius:10px;padding:36px 24px 28px;margin:24px 0;position:relative;overflow:hidden;}
+.arch-diagram::before{content:'SYSTEM TOPOLOGY';position:absolute;top:14px;left:18px;font-family:'IBM Plex Mono',monospace;font-size:8px;letter-spacing:0.2em;color:rgba(255,255,255,0.12);}
+.arch-row{display:flex;gap:10px;justify-content:center;}
+.arch-row+.arch-row{margin-top:12px;}
+.arch-node{border-radius:8px;padding:14px 16px;min-width:120px;text-align:center;border:1px solid;position:relative;flex:1;max-width:170px;}
+.arch-node .nd-icon{font-size:18px;margin-bottom:5px;}
+.arch-node .nd-name{font-family:'Syne',sans-serif;font-size:13px;font-weight:700;margin-bottom:2px;}
+.arch-node .nd-sub{font-family:'IBM Plex Mono',monospace;font-size:8px;color:rgba(255,255,255,0.3);line-height:1.4;}
+.nd-browser{background:rgba(255,255,255,0.03);border-color:rgba(255,255,255,0.1);}
+.nd-next{background:rgba(0,112,243,0.1);border-color:rgba(0,112,243,0.3);}
+.nd-next .nd-name{color:var(--next);}
+.nd-express{background:rgba(104,160,99,0.1);border-color:rgba(104,160,99,0.3);}
+.nd-express .nd-name{color:var(--express);}
+.nd-supa{background:rgba(62,207,142,0.07);border-color:rgba(62,207,142,0.25);}
+.nd-supa .nd-name{color:var(--supa);}
+.nd-paystack{background:rgba(0,195,247,0.1);border-color:rgba(0,195,247,0.3);}
+.nd-paystack .nd-name{color:var(--paystack);}
+.nd-redis{background:rgba(220,56,45,0.08);border-color:rgba(220,56,45,0.25);}
+.nd-redis .nd-name{color:var(--redis);}
+.nd-momo{background:rgba(255,204,0,0.07);border-color:rgba(255,204,0,0.25);}
+.nd-momo .nd-name{color:var(--momo);}
+.arch-arrows{display:flex;justify-content:center;align-items:center;gap:10px;margin:6px 0;padding:0 20px;}
+.arch-arrow{flex:1;max-width:170px;text-align:center;font-family:'IBM Plex Mono',monospace;font-size:8px;color:rgba(255,255,255,0.18);display:flex;flex-direction:column;align-items:center;gap:3px;}
+.arch-arrow .arr-line{width:100%;height:1px;background:rgba(255,255,255,0.1);position:relative;}
+.arch-arrow .arr-line::after{content:'▼';position:absolute;bottom:-8px;left:50%;transform:translateX(-50%);font-size:7px;color:rgba(255,255,255,0.18);}
+.arch-arrow .arr-label{color:rgba(255,255,255,0.25);font-size:8px;}
+
+/* ── FLOW STEPS ── */
+.flow{margin:20px 0;}
+.flow-step{display:flex;gap:16px;margin-bottom:2px;position:relative;}
+.flow-step:not(:last-child)::after{content:'';position:absolute;left:17px;top:36px;bottom:-2px;width:2px;background:var(--line);}
+.flow-num{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:600;color:#fff;flex-shrink:0;}
+.fn-red{background:var(--red);}
+.fn-blue{background:var(--blue);}
+.fn-green{background:var(--green);}
+.fn-paystack{background:var(--paystack);color:var(--black) !important;}
+.fn-amber{background:var(--amber);color:var(--black) !important;}
+.fn-express{background:var(--express);}
+.fn-supa{background:var(--supa);color:var(--black) !important;}
+.flow-body{padding-top:6px;padding-bottom:18px;}
+.flow-body h4{font-size:14px;font-weight:600;color:var(--text);margin-bottom:4px;font-family:'Syne',sans-serif;text-transform:none;letter-spacing:0;}
+.flow-body p{font-size:13px;color:var(--muted);margin:0;}
+.flow-body code{font-size:11px;}
+
+/* ── TABLES ── */
+.ctable{width:100%;border-collapse:collapse;margin:16px 0;font-size:13px;}
+.ctable th{text-align:left;font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:0.14em;text-transform:uppercase;color:var(--muted);padding:10px 14px;border-bottom:2px solid var(--line2);background:var(--bg3);}
+.ctable td{padding:11px 14px;border-bottom:1px solid var(--line);vertical-align:top;color:var(--soft);}
+.ctable tr:last-child td{border-bottom:none;}
+.ctable tr:hover td{background:rgba(255,255,255,0.02);}
+.ctable td:first-child{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--text);font-weight:500;}
+
+/* ── FOLDER TREE ── */
+.ftree{background:var(--bg3);border:1px solid var(--line2);border-radius:8px;padding:22px 24px;font-family:'IBM Plex Mono',monospace;font-size:12px;line-height:1.9;margin:16px 0;}
+.ft-dir{color:#89dceb;}
+.ft-file{color:#cdd6f4;}
+.ft-cm{color:var(--muted);font-style:italic;}
+
+/* ── COMP GRID ── */
+.comp-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:16px 0;}
+.comp-card{background:var(--bg3);border:1px solid var(--line2);border-radius:8px;padding:18px 20px;}
+.comp-card h3{font-size:14px;margin-bottom:8px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+.ctag{font-family:'IBM Plex Mono',monospace;font-size:9px;padding:2px 7px;border-radius:2px;font-weight:500;}
+.tag-rsc{background:rgba(34,197,94,0.15);color:var(--green);border:1px solid rgba(34,197,94,0.25);}
+.tag-cc{background:rgba(59,130,246,0.15);color:var(--blue);border:1px solid rgba(59,130,246,0.25);}
+.tag-sa{background:rgba(245,158,11,0.15);color:var(--amber);border:1px solid rgba(245,158,11,0.25);}
+.tag-mw{background:rgba(244,63,94,0.15);color:var(--rose);border:1px solid rgba(244,63,94,0.25);}
+.comp-card ul{list-style:none;margin-top:4px;}
+.comp-card ul li{font-size:12px;color:var(--muted);padding:3px 0;display:flex;gap:8px;}
+.comp-card ul li::before{content:'·';color:var(--red);}
+
+/* ── STORAGE GRID ── */
+.storage-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:16px 0;}
+.sbucket{background:var(--bg3);border:1px solid rgba(62,207,142,0.18);border-radius:8px;padding:18px 20px;border-top:3px solid var(--supa);}
+.sbucket h3{color:var(--supa);font-size:12px;margin-bottom:10px;font-family:'IBM Plex Mono',monospace;font-weight:500;}
+.sbucket .sp{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--muted);padding:5px 0;border-bottom:1px solid var(--line);}
+.sbucket .sp:last-child{border-bottom:none;}
+.sbucket .sp .p-path{color:#a5d6ff;}
+.sbucket .sp .p-note{color:var(--muted);font-size:10px;display:block;margin-top:1px;}
+
+/* ── INSIGHT BOX ── */
+.insight{background:var(--black);border:1px solid var(--line2);border-left:4px solid var(--red);border-radius:0 8px 8px 0;padding:18px 22px;margin:18px 0;}
+.insight .ins-l{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:0.18em;text-transform:uppercase;color:var(--red);margin-bottom:8px;}
+.insight p{color:rgba(255,255,255,0.5);margin:0;font-size:13px;line-height:1.7;}
+.insight strong{color:rgba(255,255,255,0.8);}
+
+/* ── PAYSTACK MONEY FLOW BOX ── */
+.money-flow{background:var(--bg3);border:1px solid rgba(0,195,247,0.2);border-radius:10px;padding:24px 28px;margin:20px 0;font-family:'IBM Plex Mono',monospace;font-size:12.5px;line-height:2.1;}
+.mf-row{display:flex;align-items:center;gap:12px;padding:3px 0;}
+.mf-arrow{color:rgba(255,255,255,0.2);font-size:10px;}
+.mf-label{color:var(--muted);}
+.mf-amount{color:var(--paystack);font-weight:600;margin-left:auto;}
+.mf-note{color:var(--muted);font-size:10px;}
+.mf-divider{border-top:1px dashed rgba(255,255,255,0.08);margin:8px 0;}
+
+/* ── SEC LIST ── */
+.sec-list{list-style:none;margin:14px 0;}
+.sec-list li{display:flex;gap:12px;padding:10px 0;border-bottom:1px solid var(--line);font-size:13px;color:var(--soft);align-items:flex-start;}
+.sec-list li:last-child{border-bottom:none;}
+.si{font-family:'IBM Plex Mono',monospace;font-size:11px;flex-shrink:0;padding-top:1px;}
+.si.ok{color:var(--green);}
+.si.warn{color:var(--amber);}
+.si.crit{color:var(--rose);}
+
+/* ── BADGE ── */
+.badge{display:inline-flex;align-items:center;font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:0.08em;padding:3px 8px;border-radius:3px;}
+.bdg-green{background:rgba(34,197,94,0.1);color:var(--green);border:1px solid rgba(34,197,94,0.2);}
+.bdg-red{background:rgba(244,63,94,0.1);color:var(--rose);border:1px solid rgba(244,63,94,0.2);}
+.bdg-amber{background:rgba(245,158,11,0.1);color:var(--amber);border:1px solid rgba(245,158,11,0.2);}
+.bdg-paystack{background:rgba(0,195,247,0.1);color:var(--paystack);border:1px solid rgba(0,195,247,0.2);}
+
+/* ── TOC ── */
+.toc-panel{background:var(--black);border-radius:8px;padding:32px 36px;margin:48px 0 0;position:relative;overflow:hidden;}
+.toc-panel::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--grad);}
+.toc-logo{display:flex;align-items:center;margin-bottom:22px;}
+.tp-u{background:var(--red);width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-size:17px;font-weight:800;color:#fff;}
+.tp-sh{font-family:'Syne',sans-serif;font-size:17px;font-weight:800;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;padding:0 9px;line-height:28px;}
+.toc-heading{font-family:'IBM Plex Mono',monospace;font-size:8px;letter-spacing:0.2em;text-transform:uppercase;color:rgba(255,255,255,0.25);margin-bottom:16px;}
+.toc-grid{display:grid;grid-template-columns:1fr 1fr;gap:2px 36px;}
+.toc-grid a{display:flex;gap:10px;color:rgba(255,255,255,0.55);font-size:12.5px;text-decoration:none;padding:5px 0;font-family:'IBM Plex Mono',monospace;font-size:11px;}
+.toc-grid a:hover{color:#fff;}
+.toc-grid a span{color:var(--red);min-width:20px;font-size:10px;}
+
+/* ── FOOTER ── */
+.footer{background:var(--bg2);border-top:1px solid var(--line);padding:20px 72px;display:flex;align-items:center;justify-content:space-between;}
+.ft-logo{display:flex;align-items:center;}
+.ft-u{background:var(--red);width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-size:12px;font-weight:800;color:#fff;}
+.ft-sh{font-family:'Syne',sans-serif;font-size:12px;font-weight:700;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;padding:0 6px;}
+.ft-r{font-family:'IBM Plex Mono',monospace;font-size:9px;color:rgba(255,255,255,0.2);letter-spacing:0.1em;}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<nav class="nav">
+  <div class="nav-logo">
+    <div class="nl-u">U</div><div class="nl-sh">shop</div>
+    <span class="nl-badge">Paystack</span>
+  </div>
+  <div class="nav-section">Blueprint Sections</div>
+  <a href="#traffic"><span class="n">01</span>High-Level Traffic Flow</a>
+  <a href="#frontend"><span class="n">02</span>Frontend Architecture</a>
+  <a href="#backend"><span class="n">03</span>Backend Architecture</a>
+  <a href="#data"><span class="n">04</span>Data Layer</a>
+  <a href="#paystack"><span class="n">05</span>Paystack: Webhooks & Payouts</a>
+  <a href="#security"><span class="n">06</span>Security & Scaling</a>
+  <div class="nav-footer">Architecture Blueprint v1.0<br>Paystack Edition — Internal</div>
+</nav>
+
+<div class="main">
+
+<!-- COVER -->
+<div class="cover">
+  <div class="cover-mesh"></div>
+  <div class="cover-circuit"></div>
+  <div class="cover-content">
+    <div class="cover-eyebrow"><span class="dot"></span>System Architecture Blueprint · Principal Engineer Edition · Paystack</div>
+    <div class="cover-logo">
+      <div class="cl-u">U</div><div class="cl-sh">shop</div>
+    </div>
+    <div class="cover-h1">Multi-Vendor Tech Marketplace — System Architecture</div>
+    <p class="cover-sub">A plain-English, deeply technical blueprint explaining how every service connects, why each architectural decision was made, and exactly what happens when a request travels through the system — built entirely on Paystack for Ghana-first mobile money payments.</p>
+    <div class="cover-stack">
+      <span class="sc sc-next"><span class="chip-dot" style="background:var(--next)"></span>Next.js 14 · App Router</span>
+      <span class="sc sc-express"><span class="chip-dot" style="background:var(--express)"></span>Express.js · Containerized</span>
+      <span class="sc sc-supa"><span class="chip-dot" style="background:var(--supa)"></span>Supabase · Prisma ORM</span>
+      <span class="sc sc-paystack"><span class="chip-dot" style="background:var(--paystack)"></span>Paystack · Split + Transfers</span>
+      <span class="sc sc-redis"><span class="chip-dot" style="background:var(--redis)"></span>Upstash Redis</span>
+      <span class="sc sc-momo"><span class="chip-dot" style="background:var(--momo)"></span>MTN MoMo · Vodafone Cash</span>
+    </div>
+  </div>
+  <div class="cover-meta">
+    <div class="cm"><span class="cm-l">Document</span><span class="cm-v">Arch v1.0</span></div>
+    <div class="cm"><span class="cm-l">Payments</span><span class="cm-v">Paystack</span></div>
+    <div class="cm"><span class="cm-l">Status</span><span class="cm-v">Draft · Review</span></div>
+    <div class="cm"><span class="cm-l">ORM</span><span class="cm-v">Prisma</span></div>
+    <div class="cm"><span class="cm-l">Market</span><span class="cm-v">Ghana · West Africa</span></div>
+  </div>
+</div>
+
+<div class="body">
+
+  <!-- TOC -->
+  <div class="toc-panel">
+    <div class="toc-logo"><div class="tp-u">U</div><div class="tp-sh">shop</div></div>
+    <div class="toc-heading">Table of Contents</div>
+    <div class="toc-grid">
+      <a href="#traffic"><span>01</span>High-Level Traffic Flow</a>
+      <a href="#paystack"><span>05</span>Paystack Webhooks & Payouts</a>
+      <a href="#frontend"><span>02</span>Frontend Architecture (Next.js 14)</a>
+      <a href="#security"><span>06</span>Security & Scaling Strategy</a>
+      <a href="#backend"><span>03</span>Backend Architecture (Express.js)</a>
+      <a href="#escrow"><span>↳</span>Escrow & Payout Deep Dive</a>
+      <a href="#data"><span>04</span>Data Layer (Supabase + Prisma)</a>
+      <a href="#webhookevents"><span>↳</span>Paystack Event Reference</a>
+    </div>
+  </div>
+
+
+<!-- ════════════════════════════════════════════════════════
+     01 — TRAFFIC FLOW
+═════════════════════════════════════════════════════════ -->
+<div class="section" id="traffic">
+  <div class="sec-label">01 — High-Level Traffic Flow</div>
+  <h1>The Lifecycle of a Request</h1>
+  <p>When a buyer visits <code>ushop.com/store/janes-tech</code>, clicks "Buy", and checks out with MTN MoMo — data passes through five distinct layers. This section traces <em>exactly</em> what happens at each hop, and why each architectural boundary exists.</p>
+
+  <div class="arch-diagram">
+    <div style="height:16px"></div>
+    <div class="arch-row">
+      <div class="arch-node nd-browser"><div class="nd-icon">🌐</div><div class="nd-name" style="color:rgba(255,255,255,0.7)">Browser</div><div class="nd-sub">User's device · HTTPS</div></div>
+    </div>
+    <div class="arch-arrows">
+      <div class="arch-arrow"><div class="arr-label">SSR pages + authenticated API calls</div><div class="arr-line"></div></div>
+    </div>
+    <div class="arch-row">
+      <div class="arch-node nd-next"><div class="nd-icon">▲</div><div class="nd-name">Next.js 14</div><div class="nd-sub">Vercel Edge + Serverless · RSC + Client</div></div>
+      <div class="arch-node nd-express"><div class="nd-icon">⚡</div><div class="nd-name">Express API</div><div class="nd-sub">Render / Railway · Docker · Always-on</div></div>
+    </div>
+    <div class="arch-arrows">
+      <div class="arch-arrow"><div class="arr-label">Auth + Storage (Supabase SDK)</div><div class="arr-line"></div></div>
+      <div class="arch-arrow"><div class="arr-label">All data ops via Prisma ORM</div><div class="arr-line"></div></div>
+    </div>
+    <div class="arch-row">
+      <div class="arch-node nd-supa"><div class="nd-icon">🔷</div><div class="nd-name">Supabase</div><div class="nd-sub">PostgreSQL · Auth · Storage · Realtime</div></div>
+      <div class="arch-node nd-paystack"><div class="nd-icon">💳</div><div class="nd-name">Paystack</div><div class="nd-sub">Initialize · Verify · Transfers · Webhooks</div></div>
+      <div class="arch-node nd-redis"><div class="nd-icon">🔴</div><div class="nd-name">Upstash Redis</div><div class="nd-sub">Cache · Rate limits · BullMQ job queue</div></div>
+      <div class="arch-node nd-momo"><div class="nd-icon">📱</div><div class="nd-name">Mobile Money</div><div class="nd-sub">MTN · Vodafone · AirtelTigo</div></div>
+    </div>
+  </div>
+
+  <h2>1.1 Why Two Separate Apps (Next.js + Express)?</h2>
+  <p>This is the single most important architectural decision. Here is the honest reasoning:</p>
+
+  <div class="comp-grid">
+    <div class="comp-card">
+      <h3>Express handles what Next.js cannot</h3>
+      <ul>
+        <li><strong>Webhooks need to be always-on.</strong> Paystack expects a response within 20 seconds. Vercel serverless functions have cold starts and execution limits — they can fail silently. An always-running Express container on Render never cold-starts.</li>
+        <li><strong>Background jobs need persistence.</strong> The escrow auto-release cron (runs every minute), the 7-day reminder sequence, the reconciliation job — none of these can live in a serverless function. They need a persistent process and a Redis-backed job queue (BullMQ).</li>
+        <li><strong>Business logic needs isolation.</strong> All financial calculations — fee splits, escrow state machines, payout ledger — belong in one testable, auditable Express service layer, not scattered across Next.js API routes.</li>
+      </ul>
+    </div>
+    <div class="comp-card">
+      <h3>Next.js handles what Express should not</h3>
+      <ul>
+        <li><strong>Server-side rendering for SEO.</strong> Store pages at <code>/store/janes-tech</code> must be rendered as HTML so Google indexes them. Express returns JSON — it doesn't render React.</li>
+        <li><strong>Supabase Auth session management.</strong> The <code>@supabase/ssr</code> library integrates directly with Next.js cookies and middleware. Keep auth token handling in Next.js where Supabase designed it to live.</li>
+        <li><strong>Edge-layer routing.</strong> Custom store URL validation, auth redirects, and 301 redirects for changed handles all run on Vercel's Edge network — zero latency, no server involved.</li>
+      </ul>
+    </div>
+  </div>
+
+  <h2>1.2 The Full Request Journey: Store Visit → Paystack Checkout</h2>
+  <h3>Phase A — Visiting the Store Page</h3>
+  <div class="flow">
+    <div class="flow-step">
+      <div class="flow-num fn-blue">1</div>
+      <div class="flow-body">
+        <h4>Browser → Vercel Edge Network</h4>
+        <p>Browser sends <code>GET /store/janes-tech</code>. Before Next.js runs, the request hits Vercel's global CDN. If a cached HTML version of this store exists (TTL: 60s), it's returned from the nearest edge node instantly. Cache miss → route to Next.js server function.</p>
+      </div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-num fn-blue">2</div>
+      <div class="flow-body">
+        <h4>Next.js Middleware intercepts — zero database queries</h4>
+        <p>The <code>middleware.ts</code> file at the Edge validates the store handle format with a regex (<code>/^[a-z0-9][a-z0-9-]{1,22}[a-z0-9]$/</code>) and checks the user's Supabase session cookie. If the handle is malformed → immediate 404 redirect. No database query wasted.</p>
+      </div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-num fn-blue">3</div>
+      <div class="flow-body">
+        <h4>Next.js Server Component fetches store data from Express</h4>
+        <p>The <code>app/store/[handle]/page.tsx</code> Server Component runs on the server and calls <code>GET /api/v1/stores/janes-tech</code> on Express, including the auth token if the user is logged in. Express queries Supabase's PostgreSQL via Prisma, returns store + active listings. The browser receives fully rendered HTML — not a loading spinner.</p>
+      </div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-num fn-blue">4</div>
+      <div class="flow-body">
+        <h4>HTML served + React hydrates interactive elements</h4>
+        <p>Vercel caches the rendered HTML with <code>next: { revalidate: 60 }</code>. React hydrates the cart button, image gallery, and message thread client-side. The page is interactive in milliseconds — all layout content was already in the HTML.</p>
+      </div>
+    </div>
+  </div>
+
+  <h3>Phase B — "Buy Now" → Paystack Checkout → Escrow</h3>
+  <div class="flow">
+    <div class="flow-step">
+      <div class="flow-num fn-red">5</div>
+      <div class="flow-body">
+        <h4>Client Component → Express: Initiate Order</h4>
+        <p>"Buy Now" is a Client Component. On click, it makes an authenticated <code>POST /api/v1/orders/initiate</code> to Express with the listing ID, quantity, and shipping method. The Supabase JWT travels in the <code>Authorization: Bearer &lt;token&gt;</code> header.</p>
+      </div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-num fn-express">6</div>
+      <div class="flow-body">
+        <h4>Express: Validate, snapshot policy, create Order, call Paystack</h4>
+        <p>Express's OrderService: (a) verifies the JWT via Supabase, (b) checks listing is Active and in stock, (c) calculates the platform fee (5% for verified students, 8% for resellers), (d) <strong>snapshots the seller's return policy into the Order record</strong> — this snapshot is immutable after creation, (e) decrements stock in a database transaction, (f) calls Paystack's <code>POST /transaction/initialize</code> API to get a checkout URL, (g) returns the Paystack <code>authorization_url</code> and the internal order ID to the frontend.</p>
+      </div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-num fn-paystack">7</div>
+      <div class="flow-body">
+        <h4>Frontend redirects to Paystack's hosted checkout page</h4>
+        <p>The user is redirected to Paystack's <code>authorization_url</code> — a page hosted entirely on Paystack's servers. The user selects payment method: card, MTN MoMo, Vodafone Cash, or AirtelTigo. U-Shop never sees card details or MoMo PINs. Paystack handles PCI compliance entirely.</p>
+      </div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-num fn-paystack">8</div>
+      <div class="flow-body">
+        <h4>Payment processed → Paystack redirects back + fires webhook</h4>
+        <p>After the user pays, Paystack does two things simultaneously: (a) redirects the user's browser to your <code>callback_url</code> (e.g., <code>/checkout/complete?reference=abc123</code>), and (b) fires a <code>charge.success</code> webhook to your Express server. <strong>Never trust the redirect alone</strong> — a bad actor can manually visit the callback URL. Only trust the webhook.</p>
+      </div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-num fn-express">9</div>
+      <div class="flow-body">
+        <h4>Express webhook handler: verify HMAC → update Order → create Escrow</h4>
+        <p>The webhook handler verifies the <strong>HMAC-SHA512 signature</strong> using your Paystack secret key, looks up the Order by the Paystack reference, updates status to <code>PAYMENT_RECEIVED</code>, creates an Escrow record (<code>HOLDING</code>), schedules reminder jobs in Redis (Day 3/5/6/6.5), and sends an email to the seller. All of this runs inside a <strong>Prisma database transaction</strong> — if any step fails, all steps roll back.</p>
+      </div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-num fn-blue">10</div>
+      <div class="flow-body">
+        <h4>Callback route: Next.js verifies and shows confirmation</h4>
+        <p>The <code>/checkout/complete</code> page calls <code>GET /api/v1/orders/[id]</code> on Express to get the latest order status. If <code>PAYMENT_RECEIVED</code>, show the success screen. If still <code>PENDING_PAYMENT</code> (webhook hasn't fired yet), poll every 2 seconds for up to 30 seconds. This handles the race between the redirect and the webhook.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout callout-paystack">
+    <strong>Paystack Initialize vs. Inline vs. Popup — Why Initialize</strong>
+    <p>Paystack offers three integration modes. <strong>Use Initialize (server-side redirect)</strong> for U-Shop, not the inline embed or popup. The Initialize API call happens on your Express server using your secret key — never exposed to the browser. The popup and inline modes require your <em>public key</em> in the browser, which is less secure for server-side order creation logic. Initialize is also more reliable on slow mobile connections, which is the dominant device type for your campus audience.</p>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ════════════════════════════════════════════════════════
+     02 — FRONTEND
+═════════════════════════════════════════════════════════ -->
+<div class="section" id="frontend">
+  <div class="sec-label">02 — Frontend Architecture</div>
+  <h1>Next.js 14 Frontend Design</h1>
+
+  <h2>2.1 Rendering Strategy: Server vs. Client Components</h2>
+  <p>In Next.js 14's App Router, every component is a <strong>React Server Component (RSC)</strong> by default — it runs on the server, can fetch data directly, and never ships its code to the browser. You opt into client-side behaviour by adding <code>'use client'</code>. The rule: a component needs <code>'use client'</code> only if it uses hooks (<code>useState</code>, <code>useEffect</code>), browser APIs, or event handlers. Everything else stays server-side.</p>
+
+  <div class="comp-grid">
+    <div class="comp-card">
+      <h3><span class="ctag tag-rsc">Server Component (RSC)</span> — Default</h3>
+      <ul>
+        <li>Store page <code>/store/[handle]</code> — fetches store + listings, renders SEO HTML</li>
+        <li>Listing detail page — product info, seller details, policy accordion</li>
+        <li>Search results page — runs query, renders filtered grid</li>
+        <li>Category pages — fetches listings, no interaction needed at load time</li>
+        <li>Homepage feed — featured + recently added listings</li>
+        <li>Order history page — pure data display</li>
+        <li>Dashboard layout shell — wraps authenticated pages, fetches user once</li>
+        <li>Admin panel pages — heavy data, no real-time updates needed</li>
+      </ul>
+    </div>
+    <div class="comp-card">
+      <h3><span class="ctag tag-cc">Client Component ('use client')</span></h3>
+      <ul>
+        <li>Cart button + cart drawer — maintains cart state via <code>useState</code></li>
+        <li>Image gallery / lightbox — carousel needs browser pointer events</li>
+        <li>Checkout redirect button — calls Express to get Paystack URL, then <code>window.location.href</code></li>
+        <li>In-app message chat — Supabase Realtime subscription requires WebSocket</li>
+        <li>Search bar with autocomplete — debounced <code>onChange</code></li>
+        <li>Store policy builder form — complex multi-field controlled state</li>
+        <li>Listing creation form — multi-step with file upload previews</li>
+        <li>Meetup confirmation code widget — 6-digit input with timer</li>
+      </ul>
+    </div>
+    <div class="comp-card">
+      <h3><span class="ctag tag-sa">Server Actions</span></h3>
+      <ul>
+        <li>Confirm delivery — buyer marks received, triggers escrow release flow</li>
+        <li>Leave review — post-transaction, calls Express mutation</li>
+        <li>Open dispute — uploads evidence to Supabase Storage, calls Express</li>
+        <li>Update profile — simple user data mutations</li>
+        <li>Save / unsave listing — toggle wishlist state</li>
+      </ul>
+    </div>
+    <div class="comp-card">
+      <h3><span class="ctag tag-mw">Middleware (Edge)</span></h3>
+      <ul>
+        <li>Auth guard — redirects unauthenticated users from <code>/dashboard</code></li>
+        <li>Role guard — blocks non-admins from <code>/admin</code></li>
+        <li>Store handle validation — regex check, no DB query</li>
+        <li>301 redirect for changed store handles — checks <code>previousHandle</code></li>
+        <li>Bot / crawler detection — lightweight check at edge layer</li>
+      </ul>
+    </div>
+  </div>
+
+  <h2>2.2 Middleware: Dynamic Store URL Routing</h2>
+
+  <pre><code><span class="cm">// apps/web/middleware.ts — Runs at Vercel Edge BEFORE any page renders.</span>
+<span class="cm">// Must be fast. No database queries. No heavy imports. Pure logic only.</span>
+<span class="kw">import</span> <span class="var">{ NextResponse }</span> <span class="kw">from</span> <span class="str">'next/server'</span><span class="var">;</span>
+<span class="kw">import type</span> <span class="var">{ NextRequest }</span> <span class="kw">from</span> <span class="str">'next/server'</span><span class="var">;</span>
+<span class="kw">import</span> <span class="var">{ createServerClient }</span> <span class="kw">from</span> <span class="str">'@supabase/ssr'</span><span class="var">;</span>
+
+<span class="cm">// Valid handle: starts + ends with alphanumeric, hyphens allowed in middle,</span>
+<span class="cm">// total length 3–24 characters. Rejects path traversal and special chars.</span>
+<span class="kw">const</span> <span class="var">VALID_HANDLE</span> <span class="var">= /^[a-z0-9][a-z0-9-]{1,22}[a-z0-9]$/;</span>
+<span class="kw">const</span> <span class="var">PROTECTED = [</span><span class="str">'/dashboard'</span><span class="var">,</span> <span class="str">'/checkout'</span><span class="var">,</span> <span class="str">'/admin'</span><span class="var">];</span>
+
+<span class="kw">export async function</span> <span class="fn">middleware</span><span class="var">(req: NextRequest) {</span>
+  <span class="kw">const</span> <span class="var">{ pathname } = req.nextUrl;</span>
+
+  <span class="cm">// 1. Validate store handle format — zero DB queries needed</span>
+  <span class="kw">if</span> <span class="var">(pathname.startsWith(</span><span class="str">'/store/'</span><span class="var">)) {</span>
+    <span class="kw">const</span> <span class="var">handle = pathname.split(</span><span class="str">'/'</span><span class="var">)[</span><span class="num">2</span><span class="var">];</span>
+    <span class="kw">if</span> <span class="var">(!VALID_HANDLE.test(handle))</span>
+      <span class="kw">return</span> <span class="var">NextResponse.redirect(</span><span class="kw">new</span> <span class="fn">URL</span><span class="var">(</span><span class="str">'/not-found'</span><span class="var">, req.url));</span>
+  <span class="var">}</span>
+
+  <span class="cm">// 2. Refresh Supabase session from cookies (fast — just reads a cookie)</span>
+  <span class="kw">let</span> <span class="var">res = NextResponse.next({ request: req });</span>
+  <span class="kw">const</span> <span class="var">supabase = createServerClient(</span>
+    <span class="var">process.env.NEXT_PUBLIC_SUPABASE_URL!,</span>
+    <span class="var">process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,</span>
+    <span class="var">{ cookies: { get: (n) => req.cookies.get(n)?.value,</span>
+                  <span class="var">set: (n,v,o) => res.cookies.set(n,v,o),</span>
+                  <span class="var">remove: (n,o) => res.cookies.set(n,</span><span class="str">''</span><span class="var">,o) } }</span>
+  <span class="var">);</span>
+  <span class="kw">const</span> <span class="var">{ data: { session } } =</span> <span class="kw">await</span> <span class="var">supabase.auth.getSession();</span>
+
+  <span class="cm">// 3. Guard protected routes</span>
+  <span class="kw">const</span> <span class="var">isProtected = PROTECTED.some(p => pathname.startsWith(p));</span>
+  <span class="kw">if</span> <span class="var">(isProtected && !session) {</span>
+    <span class="kw">const</span> <span class="var">url =</span> <span class="kw">new</span> <span class="fn">URL</span><span class="var">(</span><span class="str">'/auth/login'</span><span class="var">, req.url);</span>
+    <span class="var">url.searchParams.set(</span><span class="str">'redirectTo'</span><span class="var">, pathname);</span>
+    <span class="kw">return</span> <span class="var">NextResponse.redirect(url);</span>
+  <span class="var">}</span>
+
+  <span class="kw">return</span> <span class="var">res;</span>
+<span class="var">}</span>
+
+<span class="kw">export const</span> <span class="var">config = { matcher: [</span>
+  <span class="str">'/((?!_next/static|_next/image|favicon.ico|.*\\.(?:png|jpg|svg|webp)$).*)'</span>
+<span class="var">]};</span></code></pre>
+
+  <div class="callout callout-amber">
+    <strong>Store Handle Change → 301 Redirect</strong>
+    <p>Sellers can change their handle once. The old handle is stored in <code>store.previousHandle</code>. The store's Server Component checks for this and calls Next.js's <code>redirect()</code> which issues a proper 301 permanent redirect. Vercel's CDN caches this redirect — old URLs keep working indefinitely and Google's index updates automatically within days.</p>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ════════════════════════════════════════════════════════
+     03 — BACKEND
+═════════════════════════════════════════════════════════ -->
+<div class="section" id="backend">
+  <div class="sec-label">03 — Backend Architecture</div>
+  <h1>Express.js Backend Design</h1>
+
+  <h2>3.1 Folder Structure</h2>
+  <p>The backend follows a strict <strong>Routes → Controllers → Services → Data</strong> layered architecture. The rule: a Route never talks to Prisma. A Controller never writes business logic. A Service never touches HTTP request/response objects.</p>
+
+  <div class="ftree">
+<span class="ft-dir">apps/api/src/</span>
+├── <span class="ft-dir">routes/</span>               <span class="ft-cm">← URL paths + HTTP methods. Nothing else.</span>
+│   ├── <span class="ft-file">auth.ts</span>            <span class="ft-cm">← POST /auth/sync-user (after Supabase login)</span>
+│   ├── <span class="ft-file">stores.ts</span>          <span class="ft-cm">← GET /:handle  POST /  PATCH /:handle</span>
+│   ├── <span class="ft-file">listings.ts</span>        <span class="ft-cm">← Full CRUD + GET /search</span>
+│   ├── <span class="ft-file">orders.ts</span>          <span class="ft-cm">← POST /initiate  PATCH /:id/confirm-delivery</span>
+│   ├── <span class="ft-file">payments.ts</span>        <span class="ft-cm">← POST /initialize  GET /verify/:ref  POST /payout</span>
+│   ├── <span class="ft-file">users.ts</span>           <span class="ft-cm">← GET /me  PATCH /me  POST /verify-student</span>
+│   ├── <span class="ft-file">admin.ts</span>           <span class="ft-cm">← All admin ops (heavily guarded)</span>
+│   └── <span class="ft-file">webhooks.ts</span>        <span class="ft-cm">← POST /paystack (raw body — MUST be before json())</span>
+│
+├── <span class="ft-dir">controllers/</span>          <span class="ft-cm">← Extract from req, call service, send res. Nothing else.</span>
+│   ├── <span class="ft-file">stores.controller.ts</span>
+│   ├── <span class="ft-file">orders.controller.ts</span>
+│   ├── <span class="ft-file">payments.controller.ts</span>
+│   └── <span class="ft-file">webhooks.controller.ts</span>
+│
+├── <span class="ft-dir">services/</span>             <span class="ft-cm">← ALL business logic. No req/res objects ever touch here.</span>
+│   ├── <span class="ft-file">store.service.ts</span>       <span class="ft-cm">← createStore, getStoreByHandle, validateHandle</span>
+│   ├── <span class="ft-file">listing.service.ts</span>     <span class="ft-cm">← createListing, searchListings, validateCondition</span>
+│   ├── <span class="ft-file">order.service.ts</span>       <span class="ft-cm">← initiateOrder, confirmDelivery, autoReleaseEscrow</span>
+│   ├── <span class="ft-file">payment.service.ts</span>     <span class="ft-cm">← initializeTransaction, verifyTransaction, requestTransfer</span>
+│   ├── <span class="ft-file">escrow.service.ts</span>      <span class="ft-cm">← holdFunds, releaseFunds, refundBuyer</span>
+│   ├── <span class="ft-file">wallet.service.ts</span>      <span class="ft-cm">← creditWallet, debitWallet, requestPayout</span>
+│   ├── <span class="ft-file">webhook.service.ts</span>     <span class="ft-cm">← handleChargeSuccess, handleTransferSuccess</span>
+│   └── <span class="ft-file">notification.service.ts</span> <span class="ft-cm">← sendEmail, scheduleEscrowReminders</span>
+│
+├── <span class="ft-dir">middleware/</span>
+│   ├── <span class="ft-file">authenticate.ts</span>    <span class="ft-cm">← Verify Supabase JWT, attach user to req</span>
+│   ├── <span class="ft-file">authorize.ts</span>       <span class="ft-cm">← requireRole('ADMIN'), requireStoreOwner()</span>
+│   ├── <span class="ft-file">rateLimiter.ts</span>     <span class="ft-cm">← Redis-backed sliding window rate limits</span>
+│   ├── <span class="ft-file">validateBody.ts</span>    <span class="ft-cm">← Zod schema validation on req.body</span>
+│   └── <span class="ft-file">errorHandler.ts</span>    <span class="ft-cm">← Global error catcher, consistent JSON errors</span>
+│
+├── <span class="ft-dir">lib/</span>
+│   ├── <span class="ft-file">prisma.ts</span>          <span class="ft-cm">← PrismaClient singleton (only import THIS, never PrismaClient directly)</span>
+│   ├── <span class="ft-file">paystack.ts</span>        <span class="ft-cm">← Paystack API wrapper (initialize, verify, transfer, recipient)</span>
+│   ├── <span class="ft-file">supabase-admin.ts</span>  <span class="ft-cm">← Admin client with SERVICE_ROLE key — never goes to frontend</span>
+│   ├── <span class="ft-file">redis.ts</span>           <span class="ft-cm">← Upstash Redis singleton</span>
+│   └── <span class="ft-file">resend.ts</span>          <span class="ft-cm">← Transactional email client</span>
+│
+├── <span class="ft-dir">jobs/</span>                 <span class="ft-cm">← BullMQ workers — need a persistent process, not serverless</span>
+│   ├── <span class="ft-file">escrow-release.job.ts</span>    <span class="ft-cm">← Auto-release after 7 days if buyer silent</span>
+│   ├── <span class="ft-file">escrow-reminder.job.ts</span>   <span class="ft-cm">← Send buyer emails at Day 3/5/6/6.5</span>
+│   └── <span class="ft-file">reconciliation.job.ts</span>    <span class="ft-cm">← Every 5 min: catch stuck PENDING_PAYMENT orders</span>
+│
+└── <span class="ft-file">index.ts</span>              <span class="ft-cm">← App entry: middleware order matters (see below)</span></div>
+
+  <h2>3.2 The Critical Middleware Order in index.ts</h2>
+  <p>The order in which middleware is registered in <code>index.ts</code> is not a stylistic choice — it is a functional requirement. Getting this order wrong will silently break webhook signature verification.</p>
+
+  <pre><code><span class="cm">// apps/api/src/index.ts — middleware registration order matters</span>
+
+<span class="kw">const</span> <span class="var">app = express();</span>
+
+<span class="cm">// ── Step 1: Security headers ─────────────────────────────────────────</span>
+<span class="var">app.use(helmet());</span>
+
+<span class="cm">// ── Step 2: CORS ──────────────────────────────────────────────────────</span>
+<span class="var">app.use(cors({ origin: process.env.FRONTEND_URL, credentials:</span> <span class="kw">true</span> <span class="var">}));</span>
+
+<span class="cm">// ── Step 3: WEBHOOK ROUTES — registered BEFORE body parsing ──────────</span>
+<span class="cm">// PAYSTACK SIGNATURE VERIFICATION REQUIRES THE RAW, UNPARSED REQUEST BODY.</span>
+<span class="cm">// Once express.json() runs, the raw bytes are gone and HMAC verification fails.</span>
+<span class="cm">// This is the #1 webhook integration mistake. Register webhooks FIRST.</span>
+<span class="var">app.use(</span><span class="str">'/webhooks'</span><span class="var">, webhookRoutes);</span>
+
+<span class="cm">// ── Step 4: Body parsing (AFTER webhook routes) ───────────────────────</span>
+<span class="var">app.use(express.json({ limit:</span> <span class="str">'10mb'</span> <span class="var">}));</span>
+<span class="var">app.use(express.urlencoded({ extended:</span> <span class="kw">true</span> <span class="var">}));</span>
+
+<span class="cm">// ── Step 5: Logging ───────────────────────────────────────────────────</span>
+<span class="var">app.use(morgan(process.env.NODE_ENV ===</span> <span class="str">'production'</span> <span class="var">?</span> <span class="str">'combined'</span> <span class="var">:</span> <span class="str">'dev'</span><span class="var">));</span>
+
+<span class="cm">// ── Step 6: Rate limiting ─────────────────────────────────────────────</span>
+<span class="var">app.use(</span><span class="str">'/api'</span><span class="var">, rateLimiter.general);</span>
+
+<span class="cm">// ── Step 7: All other routes ──────────────────────────────────────────</span>
+<span class="var">app.use(</span><span class="str">'/api/v1/auth'</span><span class="var">, authRoutes);</span>
+<span class="var">app.use(</span><span class="str">'/api/v1/stores'</span><span class="var">, storeRoutes);</span>
+<span class="var">app.use(</span><span class="str">'/api/v1/listings'</span><span class="var">, listingRoutes);</span>
+<span class="var">app.use(</span><span class="str">'/api/v1/orders'</span><span class="var">, orderRoutes);</span>
+<span class="var">app.use(</span><span class="str">'/api/v1/payments'</span><span class="var">, paymentRoutes);</span>
+<span class="var">app.use(</span><span class="str">'/api/v1/users'</span><span class="var">, userRoutes);</span>
+<span class="var">app.use(</span><span class="str">'/api/v1/admin'</span><span class="var">, adminRoutes);</span>
+
+<span class="cm">// ── Step 8: Error handler — MUST be last ──────────────────────────────</span>
+<span class="var">app.use(errorHandler);</span></code></pre>
+
+  <h2>3.3 Order Initiation — Full Service Implementation</h2>
+
+  <pre><code><span class="cm">// apps/api/src/services/order.service.ts</span>
+<span class="cm">// This is the business logic layer. No req/res objects here.</span>
+
+<span class="kw">async function</span> <span class="fn">initiateOrder</span><span class="var">(dto: {</span>
+  <span class="var">buyerId: string; listingId: string;</span>
+  <span class="var">quantity: number; shippingAddress: object;</span>
+<span class="var">}) {</span>
+  <span class="cm">// 1. Fetch listing with store + seller in a single query</span>
+  <span class="kw">const</span> <span class="var">listing =</span> <span class="kw">await</span> <span class="var">prisma.listing.findUniqueOrThrow({</span>
+    <span class="var">where: { id: dto.listingId, status:</span> <span class="str">'ACTIVE'</span> <span class="var">},</span>
+    <span class="var">include: { store: { include: { owner:</span> <span class="kw">true</span> <span class="var">} } }</span>
+  <span class="var">});</span>
+
+  <span class="cm">// 2. Business rules</span>
+  <span class="kw">if</span> <span class="var">(listing.store.ownerId === dto.buyerId)</span>
+    <span class="kw">throw new</span> <span class="fn">ForbiddenError</span><span class="var">(</span><span class="str">'You cannot purchase your own listing'</span><span class="var">);</span>
+  <span class="kw">if</span> <span class="var">(listing.stock < dto.quantity)</span>
+    <span class="kw">throw new</span> <span class="fn">BadRequestError</span><span class="var">(</span><span class="str">'Insufficient stock'</span><span class="var">);</span>
+
+  <span class="cm">// 3. Fee calculation based on seller verification status</span>
+  <span class="kw">const</span> <span class="var">isStudentSeller = listing.store.owner.verificationStatus ===</span> <span class="str">'VERIFIED'</span><span class="var">;</span>
+  <span class="kw">const</span> <span class="var">feeRate    = isStudentSeller ?</span> <span class="num">0.05</span> <span class="var">:</span> <span class="num">0.08</span><span class="var">;</span>
+  <span class="kw">const</span> <span class="var">totalAmount = listing.price.mul(dto.quantity);</span>
+  <span class="kw">const</span> <span class="var">platformFee = totalAmount.mul(feeRate);</span>
+  <span class="kw">const</span> <span class="var">sellerAmount = totalAmount.sub(platformFee);</span>
+
+  <span class="cm">// 4. Generate a unique Paystack reference for this transaction</span>
+  <span class="cm">// Format: ushop_[timestamp]_[random] — helps with debugging in Paystack dashboard</span>
+  <span class="kw">const</span> <span class="var">paystackRef = `ushop_${Date.now()}_${crypto.randomUUID().slice(0,8)}`;</span>
+
+  <span class="cm">// 5. Database transaction — all-or-nothing. If Paystack call fails,</span>
+  <span class="cm">// the DB is rolled back and no dangling order record is left behind.</span>
+  <span class="kw">const</span> <span class="var">order =</span> <span class="kw">await</span> <span class="var">prisma.$transaction(</span><span class="kw">async</span> <span class="var">(tx) => {</span>
+    <span class="kw">const</span> <span class="var">newOrder =</span> <span class="kw">await</span> <span class="var">tx.order.create({ data: {</span>
+      <span class="var">buyerId:         dto.buyerId,</span>
+      <span class="var">storeId:         listing.storeId,</span>
+      <span class="var">totalAmount,     platformFee,    sellerAmount,</span>
+      <span class="var">paystackRef,</span>
+      <span class="var">shippingAddress: dto.shippingAddress,</span>
+      <span class="cm">// POLICY SNAPSHOT — immutable at point of purchase.</span>
+      <span class="cm">// Even if the seller updates their policy tomorrow, this</span>
+      <span class="cm">// order is governed by what they had at checkout time.</span>
+      <span class="var">policySnapshot:  listing.store.returnPolicy ?? {},</span>
+      <span class="var">items: { create: { listingId: dto.listingId, quantity: dto.quantity, unitPrice: listing.price } }</span>
+    <span class="var">}});</span>
+    <span class="cm">// Reserve stock immediately to prevent overselling</span>
+    <span class="kw">await</span> <span class="var">tx.listing.update({</span>
+      <span class="var">where: { id: dto.listingId },</span>
+      <span class="var">data: { stock: { decrement: dto.quantity } }</span>
+    <span class="var">});</span>
+    <span class="kw">return</span> <span class="var">newOrder;</span>
+  <span class="var">});</span>
+
+  <span class="cm">// 6. Initialize Paystack transaction (outside the DB transaction —</span>
+  <span class="cm">// Paystack is an external service and cannot be rolled back with Prisma)</span>
+  <span class="kw">const</span> <span class="var">buyer =</span> <span class="kw">await</span> <span class="var">prisma.user.findUniqueOrThrow({ where: { id: dto.buyerId } });</span>
+  <span class="kw">const</span> <span class="var">paymentData =</span> <span class="kw">await</span> <span class="var">PaystackService.initializeTransaction({</span>
+    <span class="var">email:     buyer.email,</span>
+    <span class="var">amount:    toKobo(totalAmount),  </span><span class="cm">// Paystack uses lowest denomination (kobo/pesewas)</span>
+    <span class="var">reference: paystackRef,</span>
+    <span class="var">callback_url: `${process.env.FRONTEND_URL}/checkout/complete?orderId=${order.id}`,</span>
+    <span class="var">metadata: {</span>
+      <span class="var">orderId:  order.id,</span>
+      <span class="var">storeId:  listing.storeId,</span>
+      <span class="var">sellerId: listing.store.ownerId,</span>
+    <span class="var">},</span>
+    <span class="cm">// Restrict to channels available in Ghana</span>
+    <span class="var">channels: [</span><span class="str">'card'</span><span class="var">,</span> <span class="str">'mobile_money'</span><span class="var">,</span> <span class="str">'bank'</span><span class="var">],</span>
+  <span class="var">});</span>
+
+  <span class="kw">return</span> <span class="var">{</span>
+    <span class="var">orderId:          order.id,</span>
+    <span class="var">authorizationUrl: paymentData.authorization_url, </span><span class="cm">// Frontend redirects here</span>
+    <span class="var">accessCode:       paymentData.access_code,</span>
+    <span class="var">reference:        paystackRef,</span>
+  <span class="var">};</span>
+<span class="var">}</span></code></pre>
+</div>
+
+<div class="divider"></div>
+
+<!-- ════════════════════════════════════════════════════════
+     04 — DATA LAYER
+═════════════════════════════════════════════════════════ -->
+<div class="section" id="data">
+  <div class="sec-label">04 — Data Layer</div>
+  <h1>Supabase + Prisma Data Architecture</h1>
+
+  <h2>4.1 Connection Pooling — The Two-URL Pattern</h2>
+  <p>This is the most common source of production outages for teams using Supabase + Prisma. PostgreSQL has a maximum connection limit. Supabase's free tier allows ~60 connections; Pro tier allows more. If 200 simultaneous requests each try to open a database connection, you hit the limit and queries fail with <code>too many connections</code>.</p>
+
+  <div class="callout callout-green">
+    <strong>The Solution: PgBouncer (port 6543) for queries, Direct (port 5432) for migrations</strong>
+    <p>Supabase provides a built-in connection pooler called PgBouncer. Your Express server connects through it (port 6543) — PgBouncer multiplexes thousands of app requests through ~20 real database connections. Prisma's migration CLI needs a <em>direct</em> connection (port 5432) because DDL operations don't work through PgBouncer's transaction-mode pooling. This is why you have two database URLs.</p>
+  </div>
+
+  <pre><code><span class="cm"># apps/api/.env</span>
+
+<span class="cm"># ── ALL application queries go through PgBouncer (port 6543) ─────────</span>
+<span class="cm"># ?pgbouncer=true disables Prisma's prepared statements, which PgBouncer</span>
+<span class="cm"># doesn't support in transaction mode.</span>
+<span class="var">DATABASE_URL</span>=<span class="str">"postgresql://postgres.[ref]:[password]@[host]:6543/postgres?pgbouncer=true"</span>
+
+<span class="cm"># ── MIGRATIONS ONLY — bypasses PgBouncer directly (port 5432) ────────</span>
+<span class="cm"># Only used when you run: prisma migrate dev / prisma migrate deploy</span>
+<span class="var">DIRECT_URL</span>=<span class="str">"postgresql://postgres.[ref]:[password]@[host]:5432/postgres"</span>
+
+<span class="cm"># ── Paystack keys ──────────────────────────────────────────────────────</span>
+<span class="var">PAYSTACK_SECRET_KEY</span>=<span class="str">"sk_live_..."</span>        <span class="cm"># NEVER goes to the frontend</span>
+<span class="var">PAYSTACK_WEBHOOK_SECRET</span>=<span class="str">"your_secret"</span>    <span class="cm"># From your Paystack dashboard</span>
+
+<span class="cm"># ── Supabase ───────────────────────────────────────────────────────────</span>
+<span class="var">SUPABASE_URL</span>=<span class="str">"https://[ref].supabase.co"</span>
+<span class="var">SUPABASE_SERVICE_ROLE_KEY</span>=<span class="str">"eyJ..."</span>    <span class="cm"># Bypasses RLS — backend ONLY, never frontend</span>
+
+<span class="cm"># ── Other services ─────────────────────────────────────────────────────</span>
+<span class="var">UPSTASH_REDIS_REST_URL</span>=<span class="str">"https://..."</span>
+<span class="var">UPSTASH_REDIS_REST_TOKEN</span>=<span class="str">"..."</span>
+<span class="var">RESEND_API_KEY</span>=<span class="str">"re_..."</span>
+<span class="var">FRONTEND_URL</span>=<span class="str">"https://ushop.com"</span></code></pre>
+
+  <h2>4.2 Supabase Storage — Bucket Structure</h2>
+  <p>Supabase Storage works like S3. Every bucket has access policies. The key principle: <strong>store file paths in the database, not full URLs</strong>. Generate public URLs or signed URLs on-the-fly when serving files. This keeps your data portable if you ever change storage providers.</p>
+
+  <div class="storage-grid">
+    <div class="sbucket">
+      <h3>🪣 product-images · PUBLIC READ</h3>
+      <div class="sp"><span class="p-path">listings/{listingId}/photo-1.webp</span><span class="p-note">Primary photo — rendered with condition badge</span></div>
+      <div class="sp"><span class="p-path">listings/{listingId}/photo-{2-6}.webp</span><span class="p-note">Up to 6 images per listing</span></div>
+      <div class="sp"><span class="p-path">listings/{listingId}/battery.webp</span><span class="p-note">Battery health screenshot (phones/laptops)</span></div>
+    </div>
+    <div class="sbucket">
+      <h3>🪣 store-assets · PUBLIC READ</h3>
+      <div class="sp"><span class="p-path">stores/{storeId}/logo.webp</span><span class="p-note">Square, min 200×200px</span></div>
+      <div class="sp"><span class="p-path">stores/{storeId}/banner.webp</span><span class="p-note">Banner image, 16:9 recommended</span></div>
+    </div>
+    <div class="sbucket">
+      <h3>🪣 user-avatars · PUBLIC READ</h3>
+      <div class="sp"><span class="p-path">avatars/{userId}/avatar.webp</span><span class="p-note">Profile photo, resized client-side before upload</span></div>
+    </div>
+    <div class="sbucket">
+      <h3>🪣 verification-docs · 🔒 PRIVATE</h3>
+      <div class="sp"><span class="p-path">student-ids/{userId}/front.webp</span><span class="p-note">Admin read only · Delete after decision · Ghana DPA</span></div>
+      <div class="sp"><span class="p-path">student-ids/{userId}/back.webp</span><span class="p-note">Encrypted at rest by Supabase · 30-day deletion SLA</span></div>
+    </div>
+    <div class="sbucket">
+      <h3>🪣 dispute-evidence · 🔒 RESTRICTED</h3>
+      <div class="sp"><span class="p-path">disputes/{disputeId}/evidence-{n}.webp</span><span class="p-note">Read: dispute parties + admins only · Signed URLs</span></div>
+      <div class="sp"><span class="p-path">disputes/{disputeId}/video-{n}.mp4</span><span class="p-note">Max 50MB per file</span></div>
+    </div>
+    <div class="sbucket">
+      <h3>🪣 message-attachments · 🔒 RESTRICTED</h3>
+      <div class="sp"><span class="p-path">messages/{orderId}/{messageId}.webp</span><span class="p-note">Photos shared in order chat threads</span></div>
+    </div>
+  </div>
+
+  <h2>4.3 Full-Text Search Setup (PostgreSQL tsvector)</h2>
+
+  <pre><code><span class="cm">-- Run in Supabase SQL Editor once after schema creation.</span>
+<span class="cm">-- The GIN index makes search queries instant even at 100k+ listings.</span>
+
+<span class="cm">-- GIN = Generalized Inverted Index. Specifically designed for full-text search.</span>
+<span class="type">CREATE INDEX</span> <span class="var">idx_listings_search</span> <span class="type">ON</span> <span class="var">listings USING GIN(search_vector);</span>
+
+<span class="cm">-- This trigger auto-populates the search_vector column whenever a listing</span>
+<span class="cm">-- is created or updated. You never have to manually update it.</span>
+<span class="type">CREATE OR REPLACE FUNCTION</span> <span class="fn">update_listing_search_vector</span><span class="var">()</span>
+<span class="type">RETURNS TRIGGER AS</span> <span class="var">$$</span>
+<span class="type">BEGIN</span>
+  <span class="cm">-- 'A' weight = title (highest priority in search ranking)</span>
+  <span class="cm">-- 'B' weight = description (lower priority)</span>
+  <span class="type">NEW</span><span class="var">.search_vector :=</span>
+    <span class="fn">setweight</span><span class="var">(to_tsvector(</span><span class="str">'english'</span><span class="var">, coalesce(</span><span class="type">NEW</span><span class="var">.title, </span><span class="str">''</span><span class="var">)),</span> <span class="str">'A'</span><span class="var">) ||</span>
+    <span class="fn">setweight</span><span class="var">(to_tsvector(</span><span class="str">'english'</span><span class="var">, coalesce(</span><span class="type">NEW</span><span class="var">.description, </span><span class="str">''</span><span class="var">)),</span> <span class="str">'B'</span><span class="var">);</span>
+  <span class="type">RETURN NEW</span><span class="var">;</span>
+<span class="type">END</span><span class="var">;</span>
+<span class="type">$$ LANGUAGE plpgsql</span><span class="var">;</span>
+
+<span class="type">CREATE TRIGGER</span> <span class="var">listings_search_update</span>
+  <span class="type">BEFORE INSERT OR UPDATE ON</span> <span class="var">listings</span>
+  <span class="type">FOR EACH ROW EXECUTE FUNCTION</span> <span class="fn">update_listing_search_vector</span><span class="var">();</span>
+
+<span class="cm">-- Example search query in your Prisma service:</span>
+<span class="cm">-- SELECT * FROM listings</span>
+<span class="cm">-- WHERE search_vector @@ plainto_tsquery('english', 'macbook pro m2')</span>
+<span class="cm">-- AND status = 'ACTIVE'</span>
+<span class="cm">-- ORDER BY ts_rank(search_vector, plainto_tsquery('english', 'macbook pro m2')) DESC;</span></code></pre>
+</div>
+
+<div class="divider"></div>
+
+<!-- ════════════════════════════════════════════════════════
+     05 — PAYSTACK
+═════════════════════════════════════════════════════════ -->
+<div class="section" id="paystack">
+  <div class="sec-label">05 — Paystack Webhooks & Payouts</div>
+  <h1>Paystack: Complete Integration Architecture</h1>
+
+  <h2>5.1 How the Money Flows</h2>
+  <p>Paystack does not natively split funds the way Stripe Connect does. Instead, you build a <strong>virtual escrow</strong> in your own database and use Paystack's Transfer API to pay out sellers after delivery is confirmed. Here is the complete money flow for a GH₵ 1,000 laptop sale:</p>
+
+  <div class="money-flow">
+    <div class="mf-row"><span class="mf-label">Buyer pays via MTN MoMo or card</span><span class="mf-amount">GH₵ 1,000.00</span></div>
+    <div class="mf-divider"></div>
+    <div class="mf-row"><span class="mf-arrow">→</span><span class="mf-label">Paystack processing fee (~1.95% + GH₵ 0.50 cap) deducted by Paystack</span><span class="mf-amount" style="color:var(--rose)">− GH₵ 19.50</span></div>
+    <div class="mf-row"><span class="mf-arrow">→</span><span class="mf-label">Net amount received into U-Shop's Paystack account</span><span class="mf-amount">GH₵ 980.50</span></div>
+    <div class="mf-divider"></div>
+    <div class="mf-row"><span class="mf-label" style="color:rgba(255,255,255,0.3);font-size:11px">[ ESCROW STATE: HOLDING — funds sit in U-Shop Paystack account ]</span></div>
+    <div class="mf-divider"></div>
+    <div class="mf-row"><span class="mf-arrow">→</span><span class="mf-label">Buyer confirms delivery (or 7-day auto-release fires)</span><span class="mf-amount" style="color:var(--green)">Escrow released</span></div>
+    <div class="mf-row"><span class="mf-arrow">→</span><span class="mf-label">U-Shop platform fee (8% of GH₵ 1,000) retained by platform</span><span class="mf-amount" style="color:var(--paystack)">GH₵ 80.00</span></div>
+    <div class="mf-row"><span class="mf-arrow">→</span><span class="mf-label">Seller payout via Paystack Transfer API to MoMo or bank</span><span class="mf-amount" style="color:var(--green)">GH₵ 900.50</span></div>
+    <div class="mf-divider"></div>
+    <div class="mf-row"><span class="mf-label" style="font-size:11px">U-Shop keeps: GH₵ 80.00 (platform fee) + Paystack fee is buyer-side cost</span></div>
+  </div>
+
+  <div class="callout callout-paystack">
+    <strong>Escrow is a database concept, not a Paystack feature</strong>
+    <p>Unlike Stripe Connect, Paystack doesn't have a built-in escrow mechanism. When a buyer pays, the full amount goes into your U-Shop Paystack account. Your <strong>Escrow table in the database</strong> tracks which funds are "held" for which order. The funds are physically in your Paystack account the whole time — your Escrow record is just a ledger entry saying "GH₵ 1,000 of the money in our account is reserved for order xyz until delivery is confirmed." When delivery is confirmed, you instruct Paystack to transfer the seller's share via the Transfer API. This means you <strong>must have enough float in your Paystack balance</strong> to process all pending payouts — factor this into cash flow planning.</p>
+  </div>
+
+  <h2>5.2 Seller Payout Recipient Setup (One-Time)</h2>
+  <p>Before you can transfer money to a seller, Paystack requires you to create a <strong>Transfer Recipient</strong> — a record of who to pay and how. This is done once when the seller sets up their payout method. Store the <code>recipient_code</code> on the User record.</p>
+
+  <pre><code><span class="cm">// apps/api/src/lib/paystack.ts — Paystack API wrapper</span>
+<span class="kw">const</span> <span class="var">PAYSTACK_BASE = </span><span class="str">'https://api.paystack.co'</span><span class="var">;</span>
+<span class="kw">const</span> <span class="var">headers = {</span>
+  <span class="var">Authorization: `Bearer ${process.env.PAYSTACK_SECRET_KEY}`,</span>
+  <span class="str">'Content-Type'</span><span class="var">:</span> <span class="str">'application/json'</span><span class="var">,</span>
+<span class="var">};</span>
+
+<span class="cm">// Create a Transfer Recipient for a seller (called once during seller onboarding)</span>
+<span class="kw">export async function</span> <span class="fn">createTransferRecipient</span><span class="var">(data: {</span>
+  <span class="var">type:</span> <span class="str">'mobile_money'</span> <span class="var">|</span> <span class="str">'ghipss'</span><span class="var">;  </span><span class="cm">// mobile_money = MoMo, ghipss = bank</span>
+  <span class="var">name: string;           </span><span class="cm">// Seller's full name</span>
+  <span class="var">account_number: string; </span><span class="cm">// MoMo number or bank account number</span>
+  <span class="var">bank_code: string;      </span><span class="cm">// "MTN" for MTN MoMo, bank code for banks</span>
+  <span class="var">currency:</span> <span class="str">'GHS'</span><span class="var">;</span>
+<span class="var">}) {</span>
+  <span class="kw">const</span> <span class="var">res =</span> <span class="kw">await</span> <span class="fn">fetch</span><span class="var">(`${PAYSTACK_BASE}/transferrecipient`, {</span>
+    <span class="var">method:</span> <span class="str">'POST'</span><span class="var">, headers,</span>
+    <span class="var">body: JSON.stringify(data),</span>
+  <span class="var">});</span>
+  <span class="kw">const</span> <span class="var">json =</span> <span class="kw">await</span> <span class="var">res.json();</span>
+  <span class="kw">if</span> <span class="var">(!json.status)</span> <span class="kw">throw new</span> <span class="fn">Error</span><span class="var">(`Paystack recipient creation failed: ${json.message}`);</span>
+  <span class="cm">// Store json.data.recipient_code on the User record: user.paystackRecipientCode</span>
+  <span class="kw">return</span> <span class="var">json.data;</span>
+<span class="var">}</span>
+
+<span class="cm">// Initialize a transaction — returns authorization_url to redirect the buyer to</span>
+<span class="kw">export async function</span> <span class="fn">initializeTransaction</span><span class="var">(data: {</span>
+  <span class="var">email: string; amount: number; reference: string;</span>
+  <span class="var">callback_url: string; metadata: object; channels: string[];</span>
+<span class="var">}) {</span>
+  <span class="kw">const</span> <span class="var">res =</span> <span class="kw">await</span> <span class="fn">fetch</span><span class="var">(`${PAYSTACK_BASE}/transaction/initialize`, {</span>
+    <span class="var">method:</span> <span class="str">'POST'</span><span class="var">, headers, body: JSON.stringify(data),</span>
+  <span class="var">});</span>
+  <span class="kw">const</span> <span class="var">json =</span> <span class="kw">await</span> <span class="var">res.json();</span>
+  <span class="kw">if</span> <span class="var">(!json.status)</span> <span class="kw">throw new</span> <span class="fn">Error</span><span class="var">(`Paystack initialize failed: ${json.message}`);</span>
+  <span class="kw">return</span> <span class="var">json.data; </span><span class="cm">// { authorization_url, access_code, reference }</span>
+<span class="var">}</span>
+
+<span class="cm">// Initiate a transfer to a seller's recipient code</span>
+<span class="kw">export async function</span> <span class="fn">initiateTransfer</span><span class="var">(data: {</span>
+  <span class="var">source:</span> <span class="str">'balance'</span><span class="var">; amount: number; recipient: string;</span>
+  <span class="var">reason: string; reference: string;</span>
+<span class="var">}) {</span>
+  <span class="kw">const</span> <span class="var">res =</span> <span class="kw">await</span> <span class="fn">fetch</span><span class="var">(`${PAYSTACK_BASE}/transfer`, {</span>
+    <span class="var">method:</span> <span class="str">'POST'</span><span class="var">, headers, body: JSON.stringify(data),</span>
+  <span class="var">});</span>
+  <span class="kw">const</span> <span class="var">json =</span> <span class="kw">await</span> <span class="var">res.json();</span>
+  <span class="kw">if</span> <span class="var">(!json.status)</span> <span class="kw">throw new</span> <span class="fn">Error</span><span class="var">(`Paystack transfer failed: ${json.message}`);</span>
+  <span class="kw">return</span> <span class="var">json.data; </span><span class="cm">// { transfer_code, status } — store transfer_code on Payout record</span>
+<span class="var">}</span></code></pre>
+
+  <h2 id="escrow">5.3 Escrow Release & Seller Payout — Complete Flow</h2>
+  <div class="flow">
+    <div class="flow-step">
+      <div class="flow-num fn-blue">1</div>
+      <div class="flow-body">
+        <h4>Buyer clicks "Confirm Delivery" (or 7-day auto-release fires)</h4>
+        <p>A Server Action calls <code>PATCH /api/v1/orders/:id/confirm-delivery</code> on Express.</p>
+      </div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-num fn-express">2</div>
+      <div class="flow-body">
+        <h4>Express: Update Order + Escrow in a DB transaction</h4>
+        <p>Inside a Prisma transaction: Order status → <code>COMPLETED</code>, Escrow status → <code>RELEASED</code>, <code>releasedAt</code> timestamped. Credit the seller's Wallet (<code>availableBalance += sellerAmount</code>) and create a WalletTransaction ledger entry. All atomic — either all happens or none does.</p>
+      </div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-num fn-green">3</div>
+      <div class="flow-body">
+        <h4>Seller's wallet balance updated — payout is not instant</h4>
+        <p>The seller's wallet now shows the credited amount. They can see it in their dashboard. The <em>actual money transfer</em> to their MoMo or bank happens when they explicitly request a payout, or automatically when their balance exceeds the auto-payout threshold (optional feature).</p>
+      </div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-num fn-paystack">4</div>
+      <div class="flow-body">
+        <h4>Seller requests payout → Express calls Paystack Transfer API</h4>
+        <p>When the seller clicks "Withdraw GH₵ 900": Express validates the amount against their <code>availableBalance</code>, deducts the amount from the wallet in a DB transaction, creates a Payout record (<code>PENDING</code>), then calls Paystack's <code>POST /transfer</code> using the seller's stored <code>paystackRecipientCode</code>. Paystack returns a <code>transfer_code</code> — stored on the Payout record for tracking.</p>
+      </div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-num fn-paystack">5</div>
+      <div class="flow-body">
+        <h4>Paystack fires <code>transfer.success</code> or <code>transfer.failed</code> webhook</h4>
+        <p>If success: Payout status → <code>COMPLETED</code>. Notify seller via email/in-app. If failed: Payout status → <code>FAILED</code>, store <code>failureReason</code>, <strong>reverse the wallet debit</strong> (add the amount back to <code>availableBalance</code>), notify seller with the failure reason and instructions to retry.</p>
+      </div>
+    </div>
+  </div>
+
+  <h2>5.4 Webhook Handler — Secure HMAC Verification</h2>
+  <p>Paystack signs every webhook with an HMAC-SHA512 hash of the request body using your secret key. Your server recomputes the hash and compares it. If they match, the webhook is genuine. This must happen <strong>before</strong> you act on any webhook data.</p>
+
+  <pre><code><span class="cm">// apps/api/src/controllers/webhooks.controller.ts</span>
+<span class="kw">import</span> <span class="var">crypto</span> <span class="kw">from</span> <span class="str">'crypto'</span><span class="var">;</span>
+
+<span class="kw">export async function</span> <span class="fn">handlePaystack</span><span class="var">(req: Request, res: Response) {</span>
+
+  <span class="cm">// ── Step 1: Verify HMAC-SHA512 signature ──────────────────────────</span>
+  <span class="cm">// Paystack sends the hash in the 'x-paystack-signature' header.</span>
+  <span class="cm">// We recompute it from the raw body using our secret key.</span>
+  <span class="cm">// req.body is a Buffer here because this route uses express.raw()</span>
+  <span class="kw">const</span> <span class="var">signature = req.headers[</span><span class="str">'x-paystack-signature'</span><span class="var">]</span> <span class="kw">as</span> <span class="var">string;</span>
+  <span class="kw">const</span> <span class="var">expectedHash = crypto</span>
+    <span class="var">.createHmac(</span><span class="str">'sha512'</span><span class="var">, process.env.PAYSTACK_SECRET_KEY!)</span>
+    <span class="var">.update(req.body)   </span><span class="cm">// req.body is the raw Buffer — must NOT be JSON-parsed yet</span>
+    <span class="var">.digest(</span><span class="str">'hex'</span><span class="var">);</span>
+
+  <span class="kw">if</span> <span class="var">(signature !== expectedHash) {</span>
+    <span class="cm">// Signature mismatch — NOT from Paystack. Could be an attack.</span>
+    <span class="var">console.warn(</span><span class="str">'Paystack webhook signature mismatch'</span><span class="var">);</span>
+    <span class="kw">return</span> <span class="var">res.status(</span><span class="num">401</span><span class="var">).send(</span><span class="str">'Unauthorized'</span><span class="var">);</span>
+  <span class="var">}</span>
+
+  <span class="cm">// ── Step 2: Parse the body now that we've verified it ─────────────</span>
+  <span class="kw">const</span> <span class="var">event = JSON.parse(req.body.toString());</span>
+
+  <span class="cm">// ── Step 3: Idempotency — check if we've processed this event ────</span>
+  <span class="cm">// Paystack retries webhooks if it doesn't receive a 200 within 20s.</span>
+  <span class="cm">// The same event can arrive 2–5 times. Without this check, you'd</span>
+  <span class="cm">// double-credit wallets, double-release escrows, double-send emails.</span>
+  <span class="kw">const</span> <span class="var">eventId = event.id?.toString() ?? event.data?.reference;</span>
+  <span class="kw">const</span> <span class="var">existing =</span> <span class="kw">await</span> <span class="var">prisma.webhookEvent.findUnique({</span>
+    <span class="var">where: { externalId: eventId }</span>
+  <span class="var">});</span>
+  <span class="kw">if</span> <span class="var">(existing?.processed) {</span>
+    <span class="kw">return</span> <span class="var">res.status(</span><span class="num">200</span><span class="var">).json({ received:</span> <span class="kw">true</span><span class="var">, status:</span> <span class="str">'already_processed'</span> <span class="var">});</span>
+  <span class="var">}</span>
+
+  <span class="cm">// ── Step 4: Log the raw event BEFORE processing ───────────────────</span>
+  <span class="cm">// If your server crashes mid-processing, you still have the raw event.</span>
+  <span class="kw">await</span> <span class="var">prisma.webhookEvent.upsert({</span>
+    <span class="var">where: { externalId: eventId },</span>
+    <span class="var">create: { externalId: eventId, source:</span> <span class="str">'paystack'</span><span class="var">, eventType: event.event, payload: event },</span>
+    <span class="var">update: {},</span>
+  <span class="var">});</span>
+
+  <span class="cm">// ── Step 5: Acknowledge Paystack IMMEDIATELY ──────────────────────</span>
+  <span class="cm">// CRITICAL: Paystack marks the delivery failed if no 200 within 20 seconds.</span>
+  <span class="cm">// Send 200 first, then process asynchronously. Never make Paystack wait</span>
+  <span class="cm">// for your database writes before acknowledging receipt.</span>
+  <span class="var">res.status(</span><span class="num">200</span><span class="var">).json({ received:</span> <span class="kw">true</span> <span class="var">});</span>
+
+  <span class="cm">// ── Step 6: Process the event (after response is sent) ───────────</span>
+  <span class="kw">try</span> <span class="var">{</span>
+    <span class="kw">switch</span> <span class="var">(event.event) {</span>
+      <span class="kw">case</span> <span class="str">'charge.success'</span><span class="var">:</span>
+        <span class="kw">await</span> <span class="var">WebhookService.handleChargeSuccess(event.data);</span>
+        <span class="kw">break</span><span class="var">;</span>
+      <span class="kw">case</span> <span class="str">'transfer.success'</span><span class="var">:</span>
+        <span class="kw">await</span> <span class="var">WebhookService.handleTransferSuccess(event.data);</span>
+        <span class="kw">break</span><span class="var">;</span>
+      <span class="kw">case</span> <span class="str">'transfer.failed'</span><span class="var">:</span>
+        <span class="kw">await</span> <span class="var">WebhookService.handleTransferFailed(event.data);</span>
+        <span class="kw">break</span><span class="var">;</span>
+      <span class="kw">case</span> <span class="str">'transfer.reversed'</span><span class="var">:</span>
+        <span class="kw">await</span> <span class="var">WebhookService.handleTransferReversed(event.data);</span>
+        <span class="kw">break</span><span class="var">;</span>
+      <span class="kw">default</span><span class="var">:</span>
+        <span class="var">console.log(`Unhandled Paystack event: ${event.event}`);</span>
+    <span class="var">}</span>
+    <span class="kw">await</span> <span class="var">prisma.webhookEvent.update({</span>
+      <span class="var">where: { externalId: eventId },</span>
+      <span class="var">data: { processed:</span> <span class="kw">true</span><span class="var">, processedAt:</span> <span class="kw">new</span> <span class="fn">Date</span><span class="var">() }</span>
+    <span class="var">});</span>
+  <span class="var">} catch (err) {</span>
+    <span class="cm">// Processing failed after 200 was sent. Log it — the reconciliation</span>
+    <span class="cm">// job will retry it. This order is NOT lost.</span>
+    <span class="kw">await</span> <span class="var">prisma.webhookEvent.update({</span>
+      <span class="var">where: { externalId: eventId },</span>
+      <span class="var">data: { error: String(err) }</span>
+    <span class="var">});</span>
+    <span class="var">console.error(</span><span class="str">'Webhook processing error'</span><span class="var">, err);</span>
+  <span class="var">}</span>
+<span class="var">}</span></code></pre>
+
+  <h2 id="webhookevents">5.5 Paystack Webhook Event Reference</h2>
+  <table class="ctable">
+    <thead><tr><th>Event</th><th>When it fires</th><th>Your action</th></tr></thead>
+    <tbody>
+      <tr><td>charge.success</td><td>Buyer's MoMo or card payment confirmed</td><td>Order → <code>PAYMENT_RECEIVED</code>. Create Escrow (<code>HOLDING</code>). Schedule reminder jobs (Day 3/5/6/6.5). Notify seller by email.</td></tr>
+      <tr><td>charge.dispute.create</td><td>Buyer raised a dispute through their bank or MoMo provider</td><td>Freeze escrow. Create Dispute record. Alert admin immediately. You have limited time to respond.</td></tr>
+      <tr><td>transfer.success</td><td>Seller payout completed to MoMo or bank account</td><td>Payout status → <code>COMPLETED</code>. Notify seller: "GH₵ X has been sent to your MTN MoMo."</td></tr>
+      <tr><td>transfer.failed</td><td>Payout transfer failed (wrong number, network issue, etc.)</td><td>Payout status → <code>FAILED</code>. <strong>Reverse wallet debit</strong> (credit amount back). Notify seller with failure reason. Prompt to update payout details.</td></tr>
+      <tr><td>transfer.reversed</td><td>A previously successful transfer was reversed by the bank/network</td><td>Payout status → <code>REVERSED</code>. Debit wallet again. Notify seller. Escalate if amount is large. This is rare but must be handled.</td></tr>
+      <tr><td>dedicatedaccount.assign.success</td><td>A virtual account assigned to a user (if using dedicated accounts)</td><td>Update user record with their virtual account details. Future: enable bank-transfer payments.</td></tr>
+    </tbody>
+  </table>
+
+  <h2>5.6 Reconciliation: Catching Missed Webhooks</h2>
+
+  <pre><code><span class="cm">// apps/api/src/jobs/reconciliation.job.ts</span>
+<span class="cm">// Runs every 5 minutes via BullMQ cron job.</span>
+<span class="cm">// Problem: Your server was briefly down when Paystack fired a webhook.</span>
+<span class="cm">// Paystack retried 3 times, all failed. Buyer paid, order stuck at PENDING_PAYMENT.</span>
+<span class="cm">// This job catches those cases and heals them automatically.</span>
+
+<span class="kw">async function</span> <span class="fn">reconcileStuckOrders</span><span class="var">() {</span>
+  <span class="cm">// Orders stuck in PENDING_PAYMENT for more than 10 minutes.</span>
+  <span class="cm">// If payment was processed, Paystack confirms in < 2 minutes normally.</span>
+  <span class="kw">const</span> <span class="var">stuckOrders =</span> <span class="kw">await</span> <span class="var">prisma.order.findMany({</span>
+    <span class="var">where: { status:</span> <span class="str">'PENDING_PAYMENT'</span><span class="var">,</span>
+             <span class="var">createdAt: { lte:</span> <span class="kw">new</span> <span class="fn">Date</span><span class="var">(Date.now() -</span> <span class="num">10</span> <span class="var">* 60 *</span> <span class="num">1000</span><span class="var">) } }</span>
+  <span class="var">});</span>
+
+  <span class="kw">for</span> <span class="var">(const order of stuckOrders) {</span>
+    <span class="kw">try</span> <span class="var">{</span>
+      <span class="cm">// Ask Paystack directly: did this transaction succeed?</span>
+      <span class="kw">const</span> <span class="var">res =</span> <span class="kw">await</span> <span class="fn">fetch</span><span class="var">(`https://api.paystack.co/transaction/verify/${order.paystackRef}`,</span>
+        <span class="var">{ headers });</span>
+      <span class="kw">const</span> <span class="var">{ data } =</span> <span class="kw">await</span> <span class="var">res.json();</span>
+
+      <span class="kw">if</span> <span class="var">(data.status ===</span> <span class="str">'success'</span><span class="var">) {</span>
+        <span class="cm">// Payment went through — we just missed the webhook. Process it now.</span>
+        <span class="kw">await</span> <span class="var">WebhookService.handleChargeSuccess(data);</span>
+        <span class="var">console.log(`Reconciled order: ${order.id}`);</span>
+      <span class="var">} else if (data.status ===</span> <span class="str">'failed'</span><span class="var">) {</span>
+        <span class="cm">// Payment genuinely failed — cancel the order and restock</span>
+        <span class="kw">await</span> <span class="var">prisma.$transaction([</span>
+          <span class="var">prisma.order.update({ where: { id: order.id }, data: { status:</span> <span class="str">'CANCELLED'</span> <span class="var">}}),</span>
+          <span class="var">prisma.listing.update({ where: { id: order.items[</span><span class="num">0</span><span class="var">].listingId },</span>
+            <span class="var">data: { stock: { increment: order.items[</span><span class="num">0</span><span class="var">].quantity } }}</span>
+          <span class="var">),</span>
+        <span class="var">]);</span>
+      <span class="var">}</span>
+      <span class="cm">// If status is 'pending' or 'abandoned', leave it — Paystack is still processing</span>
+    <span class="var">} catch (err) {</span>
+      <span class="var">console.error(`Reconciliation failed for ${order.id}:`, err);</span>
+    <span class="var">}</span>
+  <span class="var">}</span>
+<span class="var">}</span></code></pre>
+</div>
+
+<div class="divider"></div>
+
+<!-- ════════════════════════════════════════════════════════
+     06 — SECURITY & SCALING
+═════════════════════════════════════════════════════════ -->
+<div class="section" id="security">
+  <div class="sec-label">06 — Security & Scaling</div>
+  <h1>Security Architecture & Scaling Strategy</h1>
+
+  <h2>6.1 Auth Token Flow: Supabase JWT → Express</h2>
+  <div class="flow">
+    <div class="flow-step">
+      <div class="flow-num fn-blue">1</div>
+      <div class="flow-body">
+        <h4>User logs in via Supabase — JWT stored in httpOnly cookie</h4>
+        <p>The Supabase JS client handles login. The JWT is stored in an <code>httpOnly</code> secure cookie — JavaScript cannot read this cookie, which prevents XSS attacks from stealing auth tokens.</p>
+      </div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-num fn-blue">2</div>
+      <div class="flow-body">
+        <h4>Server Components and Client Components extract the JWT differently</h4>
+        <p>In Server Components: <code>@supabase/ssr</code>'s <code>createServerClient</code> reads the cookie server-side and provides the session. In Client Components: <code>supabase.auth.getSession()</code> reads from browser memory. Both give you an <code>access_token</code> to pass to Express.</p>
+      </div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-num fn-express">3</div>
+      <div class="flow-body">
+        <h4>Express middleware verifies the JWT via Supabase Admin SDK</h4>
+        <p>The <code>authenticate</code> middleware calls <code>supabaseAdmin.auth.getUser(token)</code>. This verifies the JWT's HMAC signature against Supabase's keys and returns the Supabase User object. It then queries Prisma for the full application User record (<code>findUnique({ where: { supabaseId } })</code>) and attaches it to <code>req.user</code>.</p>
+      </div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-num fn-express">4</div>
+      <div class="flow-body">
+        <h4>Role-based authorization runs after authentication</h4>
+        <p><code>requireRole('ADMIN')</code> checks <code>req.user.role</code>. <code>requireStoreOwner()</code> checks that the authenticated user's store matches the requested store handle. These middleware functions run in the route definition chain after <code>authenticate</code>.</p>
+      </div>
+    </div>
+  </div>
+
+  <h2>6.2 Rate Limiting (Redis-Backed Sliding Window)</h2>
+  <p>Rate limiting uses <strong>Upstash Redis</strong> — not in-memory. Your Express container may run as multiple instances; an in-memory rate limiter only tracks its own instance. Redis provides a shared, consistent counter across all instances.</p>
+
+  <table class="ctable">
+    <thead><tr><th>Endpoint Group</th><th>Limit</th><th>Window</th><th>Key by</th></tr></thead>
+    <tbody>
+      <tr><td>General API (<code>/api/</code>)</td><td>300 requests</td><td>1 minute</td><td>IP address</td></tr>
+      <tr><td>Auth routes (<code>/auth/</code>)</td><td>10 requests</td><td>1 minute</td><td>IP address</td></tr>
+      <tr><td>Checkout / Order initiation</td><td>5 requests</td><td>1 minute</td><td>User ID</td></tr>
+      <tr><td>Student verification upload</td><td>3 requests</td><td>24 hours</td><td>User ID</td></tr>
+      <tr><td>Dispute creation</td><td>3 requests</td><td>24 hours</td><td>User ID</td></tr>
+      <tr><td>Search endpoint</td><td>60 requests</td><td>1 minute</td><td>IP address</td></tr>
+      <tr><td>File upload</td><td>20 requests</td><td>1 hour</td><td>User ID</td></tr>
+      <tr><td>Payout request</td><td>5 requests</td><td>1 hour</td><td>User ID</td></tr>
+    </tbody>
+  </table>
+
+  <h2>6.3 Caching Strategy</h2>
+  <table class="ctable">
+    <thead><tr><th>Layer</th><th>What's cached</th><th>TTL</th><th>Invalidation</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Vercel CDN</strong> (edge)</td><td>Store pages, category pages, homepage</td><td>60 seconds</td><td><code>revalidateTag('store-janes-tech')</code> when listing updated/deleted</td></tr>
+      <tr><td><strong>Next.js fetch cache</strong> (server)</td><td>Listing detail pages, store profiles</td><td>30 seconds</td><td><code>revalidatePath('/listing/[id]')</code> after edit/delete/sold</td></tr>
+      <tr><td><strong>Redis</strong> (application)</td><td>Search results, store data, category counts, user session data</td><td>2–10 minutes</td><td>Explicit <code>redis.del(cacheKey)</code> on mutation</td></tr>
+    </tbody>
+  </table>
+
+  <pre><code><span class="cm">// Pattern: cache-aside in Express service</span>
+<span class="kw">async function</span> <span class="fn">getStoreByHandle</span><span class="var">(handle: string) {</span>
+  <span class="kw">const</span> <span class="var">key = `store:${handle}`;</span>
+  <span class="kw">const</span> <span class="var">cached =</span> <span class="kw">await</span> <span class="var">redis.get(key);</span>
+  <span class="kw">if</span> <span class="var">(cached)</span> <span class="kw">return</span> <span class="var">JSON.parse(cached);</span>
+
+  <span class="kw">const</span> <span class="var">store =</span> <span class="kw">await</span> <span class="var">prisma.store.findUnique({</span>
+    <span class="var">where: { handle },</span>
+    <span class="var">include: { owner: { select: { verificationStatus:</span> <span class="kw">true</span><span class="var">, name:</span> <span class="kw">true</span> <span class="var">} },</span>
+               <span class="var">listings: { where: { status:</span> <span class="str">'ACTIVE'</span> <span class="var">} } }</span>
+  <span class="var">});</span>
+  <span class="kw">if</span> <span class="var">(!store)</span> <span class="kw">throw new</span> <span class="fn">NotFoundError</span><span class="var">(</span><span class="str">`Store not found: ${handle}`</span><span class="var">);</span>
+
+  <span class="kw">await</span> <span class="var">redis.set(key, JSON.stringify(store), { ex:</span> <span class="num">300</span> <span class="var">});</span> <span class="cm">// 5-min TTL</span>
+  <span class="kw">return</span> <span class="var">store;</span>
+<span class="var">}</span>
+
+<span class="cm">// Call this whenever a store or its listings are mutated</span>
+<span class="kw">async function</span> <span class="fn">invalidateStoreCache</span><span class="var">(handle: string) {</span>
+  <span class="kw">await</span> <span class="var">redis.del(`store:${handle}`);</span>
+<span class="var">}</span></code></pre>
+
+  <h2>6.4 Production Security Checklist</h2>
+  <ul class="sec-list">
+    <li><span class="si crit">[!]</span><div><strong>Use <code>Decimal</code> type for all money — never Float.</strong> <code>0.1 + 0.2 !== 0.3</code> in JavaScript floats. Every price, fee, escrow amount, and wallet balance must use Prisma's <code>Decimal</code> type (<code>@db.Decimal(10, 2)</code>). Getting this wrong corrupts ledgers silently.</div></li>
+    <li><span class="si crit">[!]</span><div><strong>Webhook route before JSON parser — no exceptions.</strong> <code>app.use('/webhooks', webhookRoutes)</code> must appear before <code>app.use(express.json())</code> in <code>index.ts</code>. HMAC-SHA512 verification requires the raw request body bytes. Once JSON parsing runs, those bytes are gone.</div></li>
+    <li><span class="si ok">[✓]</span><div><strong>PAYSTACK_SECRET_KEY — Express backend only, never frontend.</strong> Never prefix it with <code>NEXT_PUBLIC_</code>. Anyone with your secret key can drain your Paystack balance via the Transfer API.</div></li>
+    <li><span class="si ok">[✓]</span><div><strong>SUPABASE_SERVICE_ROLE_KEY — Express backend only.</strong> This key bypasses Row Level Security entirely. In the frontend environment, only <code>NEXT_PUBLIC_SUPABASE_ANON_KEY</code> should exist — it has limited permissions enforced by RLS.</div></li>
+    <li><span class="si ok">[✓]</span><div><strong>Webhook idempotency — the <code>WebhookEvent</code> table with <code>externalId</code> unique constraint.</strong> Paystack retries webhooks. Without deduplication, a retry will double-credit a wallet or double-release an escrow. This is a financial integrity issue, not a bug.</div></li>
+    <li><span class="si ok">[✓]</span><div><strong>CORS set to production domain only.</strong> <code>origin: 'https://ushop.com'</code> — not <code>'*'</code>. This prevents other websites from making authenticated calls to your API on behalf of your logged-in users (CSRF via CORS).</div></li>
+    <li><span class="si ok">[✓]</span><div><strong>Payout: transfer_code stored on Payout record.</strong> When Paystack's <code>transfer.failed</code> webhook fires, you identify which Payout failed by matching <code>data.transfer_code</code> to the stored value. Without this you can't reconcile failed payouts.</div></li>
+    <li><span class="si warn">[⚠]</span><div><strong>Ghana Data Protection Act — student ID deletion SLA.</strong> Student ID photos in the <code>verification-docs</code> bucket must be deleted within 30 days of a verification decision. Schedule a BullMQ job at the time of upload that fires at day 30 and deletes the file from Supabase Storage, then clears the <code>studentIdImagePath</code> field on the User record.</div></li>
+    <li><span class="si warn">[⚠]</span><div><strong>Paystack balance float — plan for peak season.</strong> Since funds flow through your Paystack account (not a Stripe-style sub-account per seller), you need enough balance to pay out all pending escrows. During high-volume periods (August back-to-school), your payouts can exceed incoming payments on a given day. Model this in cash flow planning.</div></li>
+    <li><span class="si ok">[✓]</span><div><strong>Confirm delivery race condition — idempotent handler.</strong> A buyer might double-click "Confirm Delivery". The escrow release handler must check <code>escrow.status === 'HOLDING'</code> before proceeding. Use a Prisma transaction with a <code>where: { status: 'HOLDING' }</code> guard so concurrent calls are safe.</div></li>
+  </ul>
+
+  <div class="insight">
+    <div class="ins-l">Principal Engineer's Final Note</div>
+    <p>The three things that will cause production incidents if you skip them: <strong>(1) the webhook raw-body ordering</strong> — your Paystack signature verification will silently fail and every webhook will be rejected as unauthorized; <strong>(2) the idempotency check on webhooks</strong> — Paystack retries are not rare, they happen on any slow response, and a double-processed <code>charge.success</code> event will double-credit a seller's wallet; <strong>(3) the <code>Decimal</code> type on all money fields</strong> — floating-point rounding errors in a financial ledger accumulate and are nearly impossible to debug after the fact. Get these three right before writing any other code and the rest is recoverable.</p>
+  </div>
+</div>
+
+<!-- END MARKER -->
+<div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:rgba(255,255,255,0.1);letter-spacing:0.14em;text-transform:uppercase;display:flex;align-items:center;gap:12px;margin:64px 0 0;">
+  <span style="flex:1;height:1px;background:rgba(255,255,255,0.05);display:block;"></span>
+  End of Document · U-Shop Architecture Blueprint v1.0 · Paystack Edition · Internal
+  <span style="flex:1;height:1px;background:rgba(255,255,255,0.05);display:block;"></span>
+</div>
+
+</div><!-- .body -->
+
+<div class="footer">
+  <div class="ft-logo"><div class="ft-u">U</div><div class="ft-sh">shop</div></div>
+  <div class="ft-r">Architecture Blueprint v1.0 · Paystack Edition · Next.js 14 + Express + Supabase · Internal</div>
+</div>
+</div><!-- .main -->
+</body>
+</html>

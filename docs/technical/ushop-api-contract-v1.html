@@ -1,0 +1,1693 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>U-Shop · API Contract v1.0 — Communication Guide</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;1,9..144,300&display=swap" rel="stylesheet">
+<style>
+:root {
+  --red:       #E8000B;
+  --black:     #0A0A0A;
+  --purple:    #6B1FA8;
+  --magenta:   #D4009B;
+  --grad:      linear-gradient(90deg,#6B1FA8,#D4009B);
+  --next:      #0070f3;
+  --express:   #68a063;
+  --supa:      #3ecf8e;
+  --paystack:  #00c3f7;
+  --redis:     #dc382d;
+  --bg:        #0d0e11;
+  --bg2:       #13151a;
+  --bg3:       #1a1d25;
+  --surface:   #1e2130;
+  --line:      rgba(255,255,255,0.07);
+  --line2:     rgba(255,255,255,0.12);
+  --text:      #e8e8f0;
+  --muted:     #7a7d8e;
+  --soft:      #b0b3c4;
+  --green:     #22c55e;
+  --amber:     #f59e0b;
+  --blue:      #3b82f6;
+  --cyan:      #06b6d4;
+  --rose:      #f43f5e;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:'Fraunces',Georgia,serif;background:var(--bg);color:var(--text);font-size:15px;line-height:1.75;}
+
+/* ── SIDEBAR ── */
+.nav{position:fixed;top:0;left:0;bottom:0;width:240px;background:var(--bg2);border-right:1px solid var(--line);display:flex;flex-direction:column;z-index:200;overflow-y:auto;}
+.nav-logo{padding:22px 20px 18px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:0;flex-shrink:0;}
+.nl-u{background:var(--red);width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-size:16px;font-weight:800;color:#fff;}
+.nl-sh{font-family:'Syne',sans-serif;font-size:16px;font-weight:800;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;padding:0 8px;line-height:28px;}
+.nl-badge{margin-left:auto;font-family:'IBM Plex Mono',monospace;font-size:8px;background:rgba(0,195,247,0.15);color:var(--paystack);border:1px solid rgba(0,195,247,0.3);padding:2px 6px;border-radius:3px;letter-spacing:0.08em;}
+.nav-section{font-family:'IBM Plex Mono',monospace;font-size:8px;letter-spacing:0.22em;text-transform:uppercase;color:rgba(255,255,255,0.2);padding:14px 20px 6px;}
+.nav a{display:flex;align-items:flex-start;gap:9px;padding:7px 20px;color:var(--muted);text-decoration:none;font-family:'IBM Plex Mono',monospace;font-size:11px;transition:all 0.12s;}
+.nav a:hover{color:var(--text);background:rgba(255,255,255,0.03);}
+.nav a .n{color:var(--red);min-width:16px;font-size:9px;padding-top:2px;}
+.nav-footer{padding:16px 20px;margin-top:auto;border-top:1px solid var(--line);font-family:'IBM Plex Mono',monospace;font-size:8px;color:rgba(255,255,255,0.15);letter-spacing:0.1em;flex-shrink:0;}
+
+/* ── MAIN ── */
+.main{margin-left:240px;}
+
+/* ── COVER ── */
+.cover{background:var(--black);min-height:100vh;padding:64px 72px;display:grid;grid-template-rows:1fr auto;position:relative;overflow:hidden;}
+.cover::before{content:'';position:absolute;left:0;top:0;bottom:0;width:5px;background:var(--red);}
+.cover-mesh{position:absolute;inset:0;background:radial-gradient(ellipse 60% 50% at 80% 40%,rgba(0,195,247,0.08) 0%,transparent 65%),radial-gradient(ellipse 40% 35% at 10% 70%,rgba(232,0,11,0.07) 0%,transparent 55%),radial-gradient(ellipse 30% 30% at 55% 88%,rgba(107,31,168,0.07) 0%,transparent 50%);pointer-events:none;}
+.cover-circuit{position:absolute;inset:0;opacity:0.03;background-image:linear-gradient(rgba(255,255,255,0.6) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.6) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;}
+.cover-content{position:relative;z-index:2;}
+.cover-eyebrow{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.22em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:52px;display:flex;align-items:center;gap:12px;}
+.cover-eyebrow .dot{width:5px;height:5px;border-radius:50%;background:var(--paystack);}
+.cover-logo{display:flex;align-items:center;margin-bottom:36px;}
+.cl-u{background:var(--red);width:72px;height:72px;display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-size:46px;font-weight:800;color:#fff;line-height:1;flex-shrink:0;}
+.cl-sh{font-family:'Syne',sans-serif;font-size:46px;font-weight:800;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;padding:0 14px;line-height:72px;}
+.cover-h1{font-family:'Syne',sans-serif;font-size:26px;font-weight:700;color:rgba(255,255,255,0.8);margin-bottom:14px;letter-spacing:-0.01em;}
+.cover-sub{font-size:15px;color:rgba(255,255,255,0.38);max-width:640px;font-weight:300;line-height:1.75;margin-bottom:32px;font-style:italic;}
+.cover-stack{display:flex;flex-wrap:wrap;gap:10px;}
+.sc{display:flex;align-items:center;gap:7px;font-family:'IBM Plex Mono',monospace;font-size:10px;padding:6px 12px;border-radius:4px;border:1px solid;}
+.sc-next{color:var(--next);border-color:rgba(0,112,243,0.3);background:rgba(0,112,243,0.08);}
+.sc-express{color:var(--express);border-color:rgba(104,160,99,0.3);background:rgba(104,160,99,0.08);}
+.sc-supa{color:var(--supa);border-color:rgba(62,207,142,0.3);background:rgba(62,207,142,0.08);}
+.sc-paystack{color:var(--paystack);border-color:rgba(0,195,247,0.3);background:rgba(0,195,247,0.08);}
+.sc-ts{color:#3178c6;border-color:rgba(49,120,198,0.3);background:rgba(49,120,198,0.08);}
+.chip-dot{width:6px;height:6px;border-radius:50%;}
+.cover-meta{position:relative;z-index:2;display:grid;grid-template-columns:repeat(5,1fr);gap:16px;border-top:1px solid rgba(255,255,255,0.07);padding-top:24px;}
+.cm .cm-l{font-family:'IBM Plex Mono',monospace;font-size:8px;letter-spacing:0.18em;text-transform:uppercase;color:rgba(255,255,255,0.22);display:block;margin-bottom:4px;}
+.cm .cm-v{font-size:13px;color:rgba(255,255,255,0.6);font-family:'IBM Plex Mono',monospace;}
+
+/* ── BODY ── */
+.body{padding:0 72px 120px;}
+.section{padding-top:80px;}
+.sec-label{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:0.24em;text-transform:uppercase;color:var(--red);margin-bottom:14px;display:flex;align-items:center;gap:10px;}
+.sec-label::after{content:'';flex:1;height:1px;background:var(--red);opacity:0.15;}
+h1{font-family:'Syne',sans-serif;font-size:30px;font-weight:800;margin-bottom:16px;letter-spacing:-0.02em;line-height:1.15;}
+h2{font-family:'Syne',sans-serif;font-size:19px;font-weight:700;margin:40px 0 14px;letter-spacing:-0.01em;}
+h3{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;margin:28px 0 8px;}
+p{color:var(--soft);margin-bottom:12px;line-height:1.75;}
+strong{color:var(--text);}
+code,.mono{font-family:'IBM Plex Mono',monospace;font-size:12px;background:var(--surface);padding:2px 8px;border-radius:3px;color:#a5d6ff;}
+.divider{border:none;border-top:1px solid var(--line);margin:64px 0 0;}
+
+/* ── CODE BLOCKS ── */
+pre{font-family:'IBM Plex Mono',monospace;font-size:12.5px;background:var(--bg3);border:1px solid var(--line2);border-radius:8px;padding:22px 24px;overflow-x:auto;line-height:1.8;color:#cdd6f4;margin:16px 0;tab-size:2;}
+.pre-header{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:0.16em;text-transform:uppercase;background:var(--surface);border:1px solid var(--line2);border-bottom:none;border-radius:8px 8px 0 0;padding:10px 24px;color:var(--muted);display:flex;align-items:center;gap:10px;margin-top:16px;}
+.pre-header + pre{margin-top:0;border-radius:0 0 8px 8px;}
+.pre-header .ph-dot{width:6px;height:6px;border-radius:50%;}
+pre .cm{color:#636674;font-style:italic;}
+pre .kw{color:#cba6f7;}
+pre .str{color:#a6e3a1;}
+pre .fn{color:#89dceb;}
+pre .num{color:#fab387;}
+pre .var{color:#cdd6f4;}
+pre .type{color:#f5c2e7;}
+pre .field{color:#89b4fa;}
+pre .op{color:#94e2d5;}
+pre .en{color:#f9e2af;}
+pre .dec{color:#cba6f7;}
+
+/* ── ENDPOINT CARDS ── */
+.ep-card{background:var(--bg2);border:1px solid var(--line2);border-radius:10px;margin:20px 0;overflow:hidden;}
+.ep-head{display:flex;align-items:center;gap:14px;padding:16px 22px;border-bottom:1px solid var(--line);}
+.method{font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600;padding:4px 10px;border-radius:4px;letter-spacing:0.08em;min-width:60px;text-align:center;}
+.m-get{background:rgba(34,197,94,0.15);color:var(--green);border:1px solid rgba(34,197,94,0.3);}
+.m-post{background:rgba(59,130,246,0.15);color:var(--blue);border:1px solid rgba(59,130,246,0.3);}
+.m-patch{background:rgba(245,158,11,0.15);color:var(--amber);border:1px solid rgba(245,158,11,0.3);}
+.m-delete{background:rgba(244,63,94,0.15);color:var(--rose);border:1px solid rgba(244,63,94,0.3);}
+.ep-route{font-family:'IBM Plex Mono',monospace;font-size:14px;color:var(--text);flex:1;}
+.ep-route .base{color:var(--muted);}
+.auth-badge{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:0.1em;padding:3px 9px;border-radius:12px;white-space:nowrap;}
+.auth-req{background:rgba(107,31,168,0.2);color:#d8b4fe;border:1px solid rgba(107,31,168,0.35);}
+.auth-pub{background:rgba(34,197,94,0.12);color:var(--green);border:1px solid rgba(34,197,94,0.25);}
+.auth-seller{background:rgba(245,158,11,0.15);color:var(--amber);border:1px solid rgba(245,158,11,0.3);}
+.auth-admin{background:rgba(244,63,94,0.15);color:var(--rose);border:1px solid rgba(244,63,94,0.3);}
+.ep-body{padding:22px;}
+.ep-desc{color:var(--soft);font-size:14px;margin-bottom:16px;}
+.ep-cols{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+.ep-col-label{font-family:'IBM Plex Mono',monospace;font-size:8px;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;}
+
+/* ── TABLES ── */
+.ctable{width:100%;border-collapse:collapse;font-size:13px;margin:16px 0;}
+.ctable th{font-family:'IBM Plex Mono',monospace;font-size:8px;letter-spacing:0.18em;text-transform:uppercase;color:var(--muted);padding:10px 14px;border-bottom:1px solid var(--line2);text-align:left;background:var(--surface);}
+.ctable td{padding:12px 14px;border-bottom:1px solid var(--line);color:var(--soft);vertical-align:top;}
+.ctable tr:last-child td{border-bottom:none;}
+.ctable td:first-child{color:var(--text);font-family:'IBM Plex Mono',monospace;font-size:12px;}
+
+/* ── STATUS PILLS ── */
+.pill{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:0.08em;padding:2px 8px;border-radius:10px;}
+.p-200{background:rgba(34,197,94,0.15);color:var(--green);border:1px solid rgba(34,197,94,0.3);}
+.p-201{background:rgba(34,197,94,0.1);color:#86efac;border:1px solid rgba(34,197,94,0.25);}
+.p-400{background:rgba(245,158,11,0.15);color:var(--amber);border:1px solid rgba(245,158,11,0.3);}
+.p-401{background:rgba(244,63,94,0.15);color:var(--rose);border:1px solid rgba(244,63,94,0.3);}
+.p-403{background:rgba(244,63,94,0.1);color:#fda4af;border:1px solid rgba(244,63,94,0.2);}
+.p-404{background:rgba(107,31,168,0.15);color:#d8b4fe;border:1px solid rgba(107,31,168,0.3);}
+.p-409{background:rgba(251,146,60,0.15);color:#fdba74;border:1px solid rgba(251,146,60,0.3);}
+.p-422{background:rgba(6,182,212,0.12);color:var(--cyan);border:1px solid rgba(6,182,212,0.25);}
+.p-500{background:rgba(244,63,94,0.2);color:var(--rose);border:1px solid rgba(244,63,94,0.4);}
+
+/* ── CALLOUTS ── */
+.callout{border-radius:8px;padding:16px 20px;margin:20px 0;display:flex;gap:14px;}
+.callout-icon{font-size:16px;flex-shrink:0;margin-top:2px;}
+.callout.warn{background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.25);}
+.callout.warn p{color:rgba(251,191,36,0.9);}
+.callout.crit{background:rgba(244,63,94,0.08);border:1px solid rgba(244,63,94,0.25);}
+.callout.crit p{color:rgba(253,164,175,0.9);}
+.callout.info{background:rgba(59,130,246,0.08);border:1px solid rgba(59,130,246,0.25);}
+.callout.info p{color:rgba(147,197,253,0.9);}
+.callout.ok{background:rgba(34,197,94,0.08);border:1px solid rgba(34,197,94,0.25);}
+.callout.ok p{color:rgba(134,239,172,0.9);}
+.callout.paystack{background:rgba(0,195,247,0.07);border:1px solid rgba(0,195,247,0.22);}
+.callout.paystack p{color:rgba(103,232,249,0.9);}
+.callout p{margin:0;font-size:14px;line-height:1.65;}
+.callout strong{color:inherit;}
+
+/* ── FLOW STEPS ── */
+.flow{margin:20px 0;}
+.flow-step{display:flex;gap:16px;margin-bottom:4px;position:relative;}
+.flow-step:not(:last-child)::after{content:'';position:absolute;left:16px;top:34px;bottom:-4px;width:2px;background:var(--line2);}
+.flow-num{width:33px;height:33px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:500;color:#fff;flex-shrink:0;background:var(--red);}
+.flow-step.blue .flow-num{background:var(--blue);}
+.flow-step.green .flow-num{background:#16a34a;}
+.flow-step.purple .flow-num{background:var(--purple);}
+.flow-step.paystack .flow-num{background:var(--paystack);color:var(--black);}
+.flow-body{padding-top:5px;padding-bottom:16px;}
+.flow-body h4{font-family:'Syne',sans-serif;font-size:14px;font-weight:700;margin-bottom:3px;}
+.flow-body p{font-size:13px;color:var(--muted);margin:0;}
+.flow-body code{font-size:11px;}
+
+/* ── PARAM TABLE ── */
+.param-table{width:100%;border-collapse:collapse;font-size:12.5px;margin:10px 0;}
+.param-table th{font-family:'IBM Plex Mono',monospace;font-size:8px;letter-spacing:0.16em;text-transform:uppercase;color:var(--muted);padding:8px 12px;border-bottom:1px solid var(--line2);text-align:left;}
+.param-table td{padding:9px 12px;border-bottom:1px solid var(--line);vertical-align:top;}
+.param-table tr:last-child td{border-bottom:none;}
+.param-table .pname{font-family:'IBM Plex Mono',monospace;color:#a5d6ff;font-size:12px;}
+.param-table .ptype{font-family:'IBM Plex Mono',monospace;color:var(--amber);font-size:11px;}
+.param-table .prequired{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--rose);}
+.param-table .poptional{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--muted);}
+.param-table .pdesc{color:var(--soft);font-size:12px;}
+
+/* ── SECTION HEADER ── */
+.section-intro{max-width:680px;margin-bottom:8px;}
+
+/* ── DIVIDER ── */
+hr.soft{border:none;border-top:1px solid var(--line);margin:48px 0;}
+
+/* ── WEBHOOK BOX ── */
+.webhook-box{background:var(--bg3);border:1px solid rgba(0,195,247,0.2);border-radius:10px;padding:22px;margin:16px 0;}
+.wb-route{font-family:'IBM Plex Mono',monospace;font-size:14px;color:var(--paystack);margin-bottom:8px;}
+.wb-desc{color:var(--soft);font-size:14px;}
+
+/* ── STATUS CODE TABLE ── */
+.status-grid{display:grid;grid-template-columns:90px 1fr;gap:0;border:1px solid var(--line2);border-radius:8px;overflow:hidden;margin:16px 0;}
+.sg-row{display:contents;}
+.sg-row:not(:last-child) > div{border-bottom:1px solid var(--line);}
+.sg-code{font-family:'IBM Plex Mono',monospace;font-size:13px;padding:14px 16px;background:var(--surface);display:flex;align-items:flex-start;}
+.sg-body{padding:14px 18px;}
+.sg-title{font-family:'Syne',sans-serif;font-size:14px;font-weight:700;margin-bottom:4px;}
+.sg-desc{font-size:13px;color:var(--soft);}
+
+/* ── INSIGHT BOX ── */
+.insight{background:var(--surface);border-left:3px solid var(--paystack);border-radius:0 8px 8px 0;padding:20px 24px;margin:24px 0;}
+.ins-l{font-family:'IBM Plex Mono',monospace;font-size:8px;letter-spacing:0.2em;text-transform:uppercase;color:var(--paystack);margin-bottom:8px;}
+.insight p{color:var(--soft);font-size:14px;margin:0;}
+
+/* ── SECURITY TAG ── */
+.sec-tag{font-family:'IBM Plex Mono',monospace;font-size:9px;padding:2px 8px;border-radius:3px;background:rgba(244,63,94,0.12);color:var(--rose);border:1px solid rgba(244,63,94,0.25);letter-spacing:0.06em;margin-left:8px;}
+
+/* ── FOOTER ── */
+.footer{background:var(--bg2);border-top:1px solid var(--line);padding:20px 72px;display:flex;align-items:center;justify-content:space-between;}
+.ft-logo{display:flex;align-items:center;}
+.ft-u{background:var(--red);width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-size:11px;font-weight:800;color:#fff;}
+.ft-sh{font-family:'Syne',sans-serif;font-size:12px;font-weight:800;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;padding:0 6px;}
+.ft-r{font-family:'IBM Plex Mono',monospace;font-size:9px;color:rgba(255,255,255,0.15);letter-spacing:0.1em;}
+
+/* ── QUERY PARAM SECTION ── */
+.qp-box{background:var(--surface);border:1px solid var(--line2);border-radius:6px;padding:14px 18px;margin:10px 0;}
+.qp-title{font-family:'IBM Plex Mono',monospace;font-size:8px;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;}
+</style>
+</head>
+<body>
+
+<!-- ── SIDEBAR NAV ── -->
+<nav class="nav">
+  <div class="nav-logo">
+    <div class="nl-u">U</div>
+    <div class="nl-sh">shop</div>
+    <div class="nl-badge">API v1</div>
+  </div>
+
+  <div class="nav-section">Preface</div>
+  <a href="#cover"><span class="n">00</span>Cover &amp; Metadata</a>
+
+  <div class="nav-section">Section 1</div>
+  <a href="#s1"><span class="n">01</span>Global Standards</a>
+  <a href="#s1-baseurl"><span class="n">↳</span>Base URL</a>
+  <a href="#s1-auth"><span class="n">↳</span>Auth Flow</a>
+  <a href="#s1-envelope"><span class="n">↳</span>Response Envelope</a>
+
+  <div class="nav-section">Section 2</div>
+  <a href="#s2"><span class="n">02</span>Endpoints Dictionary</a>
+  <a href="#s2-auth"><span class="n">↳</span>User Auth</a>
+  <a href="#s2-store"><span class="n">↳</span>Store Management</a>
+  <a href="#s2-vendor"><span class="n">↳</span>Vendor Onboarding</a>
+  <a href="#s2-product"><span class="n">↳</span>Product Management</a>
+  <a href="#s2-escrow"><span class="n">↳</span>Checkout &amp; Escrow</a>
+  <a href="#s2-orders"><span class="n">↳</span>Order Management</a>
+  <a href="#s2-disputes"><span class="n">↳</span>Disputes</a>
+
+  <div class="nav-section">Section 3</div>
+  <a href="#s3"><span class="n">03</span>Webhook Spec</a>
+  <a href="#s3-verify"><span class="n">↳</span>Signature Verification</a>
+  <a href="#s3-charge"><span class="n">↳</span>charge.success</a>
+  <a href="#s3-transfer"><span class="n">↳</span>transfer.success</a>
+  <a href="#s3-failed"><span class="n">↳</span>transfer.failed</a>
+
+  <div class="nav-section">Section 4</div>
+  <a href="#s4"><span class="n">04</span>Error Handling</a>
+  <a href="#s4-codes"><span class="n">↳</span>Status Code Map</a>
+  <a href="#s4-payload"><span class="n">↳</span>Error Payload Schema</a>
+
+  <div class="nav-footer">API Contract v1.0 · Internal</div>
+</nav>
+
+<div class="main">
+
+<!-- ══════════════════════════════════════════════════════════
+     COVER
+════════════════════════════════════════════════════════════ -->
+<div class="cover" id="cover">
+  <div class="cover-mesh"></div>
+  <div class="cover-circuit"></div>
+  <div class="cover-content">
+    <div class="cover-eyebrow">
+      <span class="dot"></span>
+      U-Shop Internal Engineering Documentation
+    </div>
+    <div class="cover-logo">
+      <div class="cl-u">U</div>
+      <div class="cl-sh">shop</div>
+    </div>
+    <div class="cover-h1">API Contract &amp; Communication Guide — v1.0</div>
+    <div class="cover-sub">
+      The definitive contract between the Next.js 14 frontend and the Express.js backend.
+      A frontend engineer and a backend engineer should be able to work entirely independently using only this document.
+      Every endpoint, payload shape, auth flow, webhook spec, and error format is defined here.
+    </div>
+    <div class="cover-stack">
+      <div class="sc sc-next"><div class="chip-dot" style="background:var(--next)"></div>Next.js 14 · Consumer</div>
+      <div class="sc sc-express"><div class="chip-dot" style="background:var(--express)"></div>Express.js · API Server</div>
+      <div class="sc sc-supa"><div class="chip-dot" style="background:var(--supa)"></div>Supabase · Auth + Storage</div>
+      <div class="sc sc-paystack"><div class="chip-dot" style="background:var(--paystack)"></div>Paystack · Payments</div>
+      <div class="sc sc-ts"><div class="chip-dot" style="background:#3178c6"></div>TypeScript / Zod Schemas</div>
+    </div>
+  </div>
+  <div class="cover-meta">
+    <div class="cm"><span class="cm-l">Document</span><span class="cm-v">API Contract</span></div>
+    <div class="cm"><span class="cm-l">Version</span><span class="cm-v">v1.0</span></div>
+    <div class="cm"><span class="cm-l">Base URL</span><span class="cm-v">/api/v1</span></div>
+    <div class="cm"><span class="cm-l">Auth Method</span><span class="cm-v">Bearer JWT</span></div>
+    <div class="cm"><span class="cm-l">Audience</span><span class="cm-v">Internal · Eng</span></div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+     SECTION 1 — GLOBAL COMMUNICATION STANDARDS
+════════════════════════════════════════════════════════════ -->
+<div class="body">
+<div class="section" id="s1">
+  <div class="sec-label">Section 01</div>
+  <h1>Global Communication Standards</h1>
+  <p class="section-intro">Every HTTP exchange between the Next.js client and the Express API must conform to the conventions defined in this section. No endpoint is exempt. These standards eliminate ambiguity and allow engineers to build on either side of the boundary without coordination.</p>
+
+  <!-- 1.1 BASE URL -->
+  <h2 id="s1-baseurl">1.1 Base URL Structure</h2>
+  <p>All Express API routes are namespaced under <code>/api/v1</code>. This versioning prefix allows a future <code>/api/v2</code> to co-exist without breaking existing clients during migrations.</p>
+
+  <div class="pre-header"><div class="ph-dot" style="background:var(--express)"></div>Environment URLs</div>
+<pre><span class="cm">// Development</span>
+<span class="kw">const</span> <span class="var">API_BASE</span> = <span class="str">"http://localhost:4000/api/v1"</span>
+
+<span class="cm">// Production (Express on Fly.io / Railway)</span>
+<span class="kw">const</span> <span class="var">API_BASE</span> = <span class="str">"https://api.ushop.com/api/v1"</span>
+
+<span class="cm">// Store in Next.js environment variable — NEVER hardcoded in components</span>
+<span class="cm">// .env.local</span>
+<span class="var">NEXT_PUBLIC_API_URL</span>=<span class="str">http://localhost:4000/api/v1</span>   <span class="cm">// dev</span>
+<span class="var">NEXT_PUBLIC_API_URL</span>=<span class="str">https://api.ushop.com/api/v1</span>  <span class="cm">// prod</span></pre>
+
+  <p>The Paystack webhook endpoint is a special-case exception — it lives at <code>/webhooks/paystack</code> (no <code>/api/v1</code> prefix) because it is not a client-facing endpoint and must be registered before Express's JSON body parser middleware. See Section 3 for full details.</p>
+
+  <table class="ctable">
+    <thead><tr><th>Segment</th><th>Example Full Route</th><th>Notes</th></tr></thead>
+    <tbody>
+      <tr><td>/api/v1/auth/...</td><td>/api/v1/auth/me</td><td>User identity endpoints</td></tr>
+      <tr><td>/api/v1/stores/...</td><td>/api/v1/stores/janes-tech</td><td>Store CRUD + slug validation</td></tr>
+      <tr><td>/api/v1/listings/...</td><td>/api/v1/listings?category=phones</td><td>Product catalog</td></tr>
+      <tr><td>/api/v1/orders/...</td><td>/api/v1/orders/ord_abc123/release-escrow</td><td>Order lifecycle + escrow</td></tr>
+      <tr><td>/api/v1/payouts/...</td><td>/api/v1/payouts/recipients</td><td>Seller payout management</td></tr>
+      <tr><td>/api/v1/disputes/...</td><td>/api/v1/disputes/dsp_xyz456</td><td>Dispute lifecycle</td></tr>
+      <tr><td>/api/v1/admin/...</td><td>/api/v1/admin/disputes</td><td>Admin-only operations</td></tr>
+      <tr><td>/webhooks/paystack</td><td>/webhooks/paystack</td><td>⚠ No /api/v1 prefix. Raw body required.</td></tr>
+    </tbody>
+  </table>
+
+  <!-- 1.2 AUTH FLOW -->
+  <h2 id="s1-auth">1.2 Authentication Flow</h2>
+  <p>U-Shop uses <strong>Supabase Auth</strong> as the identity provider. The JWT it issues is the single credential the Express backend trusts. The flow is strictly one-directional — Next.js reads the session from Supabase and forwards the token to Express; Express verifies it independently using the Supabase service role SDK.</p>
+
+  <div class="flow">
+    <div class="flow-step">
+      <div class="flow-num">1</div>
+      <div class="flow-body">
+        <h4>User signs in via Supabase Auth (Next.js client)</h4>
+        <p>Supabase issues a signed JWT access token and stores it in a HttpOnly cookie (<code>sb-[project]-auth-token</code>). The Next.js <code>createBrowserClient</code> handles this automatically.</p>
+      </div>
+    </div>
+    <div class="flow-step blue">
+      <div class="flow-num">2</div>
+      <div class="flow-body">
+        <h4>Next.js reads the session token</h4>
+        <p>In Server Components / Server Actions, use <code>createServerClient</code> from <code>@supabase/ssr</code>. In Client Components, use <code>supabase.auth.getSession()</code>. Extract <code>session.access_token</code>.</p>
+      </div>
+    </div>
+    <div class="flow-step purple">
+      <div class="flow-num">3</div>
+      <div class="flow-body">
+        <h4>Next.js attaches the token to every Express request</h4>
+        <p>Pass the token in the <code>Authorization</code> header as a Bearer token. Also always include <code>Content-Type: application/json</code>.</p>
+      </div>
+    </div>
+    <div class="flow-step green">
+      <div class="flow-num">4</div>
+      <div class="flow-body">
+        <h4>Express verifies the JWT</h4>
+        <p>The <code>authenticate</code> middleware on Express calls <code>supabase.auth.getUser(token)</code> using the <strong>service role</strong> Supabase client. On success it attaches <code>req.user</code> (the verified Supabase user object) for use by downstream route handlers.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="pre-header"><div class="ph-dot" style="background:var(--next)"></div>Next.js — How to call the Express API (utility function)</div>
+<pre><span class="cm">// lib/api.ts — reusable fetch wrapper for all Express API calls</span>
+<span class="kw">import</span> <span class="var">{ createServerClient }</span> <span class="kw">from</span> <span class="str">'@supabase/ssr'</span>
+<span class="kw">import</span> <span class="var">{ cookies }</span> <span class="kw">from</span> <span class="str">'next/headers'</span>
+
+<span class="kw">const</span> <span class="var">API_URL</span> = <span class="var">process.env.NEXT_PUBLIC_API_URL</span>
+
+<span class="cm">/** Server-side authenticated fetch (Server Components, Server Actions) */</span>
+<span class="kw">export async function</span> <span class="fn">apiFetch</span><span class="type">&lt;T&gt;</span>(
+  <span class="var">path: string,</span>
+  <span class="var">options?: RequestInit</span>
+)<span class="op">: Promise&lt;T&gt;</span> {
+  <span class="kw">const</span> <span class="var">cookieStore =</span> <span class="kw">await</span> <span class="fn">cookies</span><span class="var">()</span>
+  <span class="kw">const</span> <span class="var">supabase =</span> <span class="fn">createServerClient</span><span class="var">(</span>
+    <span class="var">process.env.NEXT_PUBLIC_SUPABASE_URL!,</span>
+    <span class="var">process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,</span>
+    <span class="var">{ cookies: { getAll: () => cookieStore.getAll() } }</span>
+  <span class="var">)</span>
+
+  <span class="kw">const</span> <span class="var">{ data: { session } } =</span> <span class="kw">await</span> <span class="var">supabase.auth.getSession()</span>
+  <span class="kw">if</span> <span class="var">(!session)</span> <span class="kw">throw new</span> <span class="fn">Error</span><span class="var">(</span><span class="str">'Unauthenticated'</span><span class="var">)</span>
+
+  <span class="kw">const</span> <span class="var">res =</span> <span class="kw">await</span> <span class="fn">fetch</span><span class="var">(`${API_URL}${path}`, {</span>
+    <span class="var">...options,</span>
+    <span class="var">headers: {</span>
+      <span class="str">'Content-Type'</span><span class="var">:</span> <span class="str">'application/json'</span><span class="var">,</span>
+      <span class="str">'Authorization'</span><span class="var">: `Bearer ${session.access_token}`,</span>
+      <span class="var">...(options?.headers ?? {}),</span>
+    <span class="var">},</span>
+  <span class="var">})</span>
+
+  <span class="kw">if</span> <span class="var">(!res.ok) {</span>
+    <span class="kw">const</span> <span class="var">err =</span> <span class="kw">await</span> <span class="var">res.json()</span>
+    <span class="kw">throw</span> <span class="var">err</span>  <span class="cm">// Throws the standardized ApiError object — see Section 4</span>
+  <span class="var">}</span>
+
+  <span class="kw">return</span> <span class="var">res.json()</span>
+<span class="var">}</span></pre>
+
+  <div class="pre-header"><div class="ph-dot" style="background:var(--express)"></div>Express — authenticate middleware</div>
+<pre><span class="cm">// middleware/authenticate.ts</span>
+<span class="kw">import</span> <span class="var">{ createClient }</span> <span class="kw">from</span> <span class="str">'@supabase/supabase-js'</span>
+<span class="kw">import type</span> <span class="var">{ Request, Response, NextFunction }</span> <span class="kw">from</span> <span class="str">'express'</span>
+
+<span class="cm">// Use the SERVICE ROLE key — bypasses RLS, never expose to frontend</span>
+<span class="kw">const</span> <span class="var">supabaseAdmin =</span> <span class="fn">createClient</span><span class="var">(</span>
+  <span class="var">process.env.SUPABASE_URL!,</span>
+  <span class="var">process.env.SUPABASE_SERVICE_ROLE_KEY!,</span>
+<span class="var">)</span>
+
+<span class="kw">export async function</span> <span class="fn">authenticate</span><span class="var">(</span>
+  <span class="var">req: Request, res: Response, next: NextFunction</span>
+<span class="var">) {</span>
+  <span class="kw">const</span> <span class="var">authHeader = req.headers.authorization</span>
+  <span class="kw">if</span> <span class="var">(!authHeader?.startsWith(</span><span class="str">'Bearer '</span><span class="var">)) {</span>
+    <span class="kw">return</span> <span class="var">res.status(</span><span class="num">401</span><span class="var">).json(</span><span class="fn">buildError</span><span class="var">(</span><span class="num">401</span><span class="var">,</span> <span class="str">'MISSING_TOKEN'</span><span class="var">,</span> <span class="str">'Authorization header required'</span><span class="var">))</span>
+  <span class="var">}</span>
+
+  <span class="kw">const</span> <span class="var">token = authHeader.slice(</span><span class="num">7</span><span class="var">)</span>
+  <span class="kw">const</span> <span class="var">{ data: { user }, error } =</span> <span class="kw">await</span> <span class="var">supabaseAdmin.auth.getUser(token)</span>
+
+  <span class="kw">if</span> <span class="var">(error || !user) {</span>
+    <span class="kw">return</span> <span class="var">res.status(</span><span class="num">401</span><span class="var">).json(</span><span class="fn">buildError</span><span class="var">(</span><span class="num">401</span><span class="var">,</span> <span class="str">'INVALID_TOKEN'</span><span class="var">,</span> <span class="str">'Token is invalid or expired'</span><span class="var">))</span>
+  <span class="var">}</span>
+
+  <span class="cm">// Attach verified user to request — available in all downstream handlers</span>
+  <span class="var">req.user = user</span>
+  <span class="fn">next</span><span class="var">()</span>
+<span class="var">}</span>
+
+<span class="cm">/** Extend this with requireSeller / requireAdmin guards */</span>
+<span class="kw">export async function</span> <span class="fn">requireSeller</span><span class="var">(</span>
+  <span class="var">req: Request, res: Response, next: NextFunction</span>
+<span class="var">) {</span>
+  <span class="kw">const</span> <span class="var">dbUser =</span> <span class="kw">await</span> <span class="var">prisma.user.findUnique({ where: { supabaseId: req.user!.id } })</span>
+  <span class="kw">if</span> <span class="var">(!dbUser || (dbUser.role !==</span> <span class="str">'SELLER'</span> <span class="kw">&&</span> <span class="var">dbUser.role !==</span> <span class="str">'BOTH'</span><span class="var">)) {</span>
+    <span class="kw">return</span> <span class="var">res.status(</span><span class="num">403</span><span class="var">).json(</span><span class="fn">buildError</span><span class="var">(</span><span class="num">403</span><span class="var">,</span> <span class="str">'FORBIDDEN'</span><span class="var">,</span> <span class="str">'Seller role required'</span><span class="var">))</span>
+  <span class="var">}</span>
+  <span class="var">req.dbUser = dbUser</span>
+  <span class="fn">next</span><span class="var">()</span>
+<span class="var">}</span></pre>
+
+  <table class="ctable">
+    <thead><tr><th>Header</th><th>Required On</th><th>Value</th></tr></thead>
+    <tbody>
+      <tr><td>Authorization</td><td>All protected routes</td><td><code>Bearer &lt;supabase_access_token&gt;</code></td></tr>
+      <tr><td>Content-Type</td><td>All POST / PATCH requests</td><td><code>application/json</code></td></tr>
+      <tr><td>x-paystack-signature</td><td>Webhook only (sent by Paystack)</td><td>HMAC-SHA512 of raw body — see Section 3</td></tr>
+    </tbody>
+  </table>
+
+  <!-- 1.3 RESPONSE ENVELOPE -->
+  <h2 id="s1-envelope">1.3 Standardized Response Envelope</h2>
+  <p>Every response from the Express API — success or error — is wrapped in a consistent JSON envelope. This means the Next.js client never has to guess the shape of a response; it always reads the same top-level fields.</p>
+
+  <div class="ep-cols">
+    <div>
+      <div class="ep-col-label">✅ Success Envelope</div>
+      <div class="pre-header"><div class="ph-dot" style="background:var(--green)"></div>TypeScript Interface</div>
+<pre><span class="kw">interface</span> <span class="type">ApiSuccess</span><span class="var">&lt;T&gt; {</span>
+  <span class="field">success</span><span class="var">: </span><span class="kw">true</span>
+  <span class="field">data</span><span class="var">: T</span>
+  <span class="field">meta</span><span class="var">?: {</span>
+    <span class="field">page</span><span class="var">: number</span>
+    <span class="field">limit</span><span class="var">: number</span>
+    <span class="field">total</span><span class="var">: number</span>
+    <span class="field">totalPages</span><span class="var">: number</span>
+  <span class="var">}</span>
+<span class="var">}</span>
+
+<span class="cm">// Example: GET /listings</span>
+<span class="var">{</span>
+  <span class="field">"success"</span><span class="var">:</span> <span class="kw">true</span><span class="var">,</span>
+  <span class="field">"data"</span><span class="var">: [</span> <span class="var">{ ...listing },</span> <span class="var">... ],</span>
+  <span class="field">"meta"</span><span class="var">: {</span>
+    <span class="field">"page"</span><span class="var">:</span> <span class="num">1</span><span class="var">,</span>
+    <span class="field">"limit"</span><span class="var">:</span> <span class="num">20</span><span class="var">,</span>
+    <span class="field">"total"</span><span class="var">:</span> <span class="num">143</span><span class="var">,</span>
+    <span class="field">"totalPages"</span><span class="var">:</span> <span class="num">8</span>
+  <span class="var">}</span>
+<span class="var">}</span></pre>
+    </div>
+    <div>
+      <div class="ep-col-label">❌ Error Envelope</div>
+      <div class="pre-header"><div class="ph-dot" style="background:var(--rose)"></div>TypeScript Interface</div>
+<pre><span class="kw">interface</span> <span class="type">ApiError</span> <span class="var">{</span>
+  <span class="field">success</span><span class="var">:</span> <span class="kw">false</span>
+  <span class="field">error</span><span class="var">: {</span>
+    <span class="field">code</span><span class="var">: string</span>    <span class="cm">// Machine-readable</span>
+    <span class="field">message</span><span class="var">: string</span> <span class="cm">// Human-readable</span>
+    <span class="field">details</span><span class="var">?: Record&lt;string, string[]&gt;</span>
+    <span class="cm">// ^ Zod field errors: { "price": ["Too small"] }</span>
+  <span class="var">}</span>
+<span class="var">}</span>
+
+<span class="cm">// Example: POST /listings (validation fail)</span>
+<span class="var">{</span>
+  <span class="field">"success"</span><span class="var">:</span> <span class="kw">false</span><span class="var">,</span>
+  <span class="field">"error"</span><span class="var">: {</span>
+    <span class="field">"code"</span><span class="var">:</span> <span class="str">"VALIDATION_ERROR"</span><span class="var">,</span>
+    <span class="field">"message"</span><span class="var">:</span> <span class="str">"Request body failed validation"</span><span class="var">,</span>
+    <span class="field">"details"</span><span class="var">: {</span>
+      <span class="field">"price"</span><span class="var">: [</span><span class="str">"Must be greater than 0"</span><span class="var">],</span>
+      <span class="field">"title"</span><span class="var">: [</span><span class="str">"Required"</span><span class="var">]</span>
+    <span class="var">}</span>
+  <span class="var">}</span>
+<span class="var">}</span></pre>
+    </div>
+  </div>
+
+  <div class="pre-header"><div class="ph-dot" style="background:var(--express)"></div>Express — buildError helper (use in every route handler)</div>
+<pre><span class="cm">// utils/response.ts</span>
+<span class="kw">export function</span> <span class="fn">buildSuccess</span><span class="type">&lt;T&gt;</span><span class="var">(data: T, meta?: ApiSuccess&lt;T&gt;[</span><span class="str">'meta'</span><span class="var">]) {</span>
+  <span class="kw">return</span> <span class="var">{ success:</span> <span class="kw">true</span><span class="var">, data, ...(meta ? { meta } : {}) }</span>
+<span class="var">}</span>
+
+<span class="kw">export function</span> <span class="fn">buildError</span><span class="var">(</span>
+  <span class="var">status: number, code: string, message: string,</span>
+  <span class="var">details?: Record&lt;string, string[]&gt;</span>
+<span class="var">) {</span>
+  <span class="kw">return</span> <span class="var">{ success:</span> <span class="kw">false</span><span class="var">, error: { code, message, ...(details ? { details } : {}) } }</span>
+<span class="var">}</span>
+
+<span class="cm">// Usage in a route handler:</span>
+<span class="var">res.status(</span><span class="num">201</span><span class="var">).json(</span><span class="fn">buildSuccess</span><span class="var">(newStore))</span>
+<span class="var">res.status(</span><span class="num">409</span><span class="var">).json(</span><span class="fn">buildError</span><span class="var">(</span><span class="num">409</span><span class="var">,</span> <span class="str">'SLUG_TAKEN'</span><span class="var">,</span> <span class="str">'This store URL is already taken'</span><span class="var">))</span></pre>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     SECTION 2 — CORE ENDPOINTS DICTIONARY
+════════════════════════════════════════════════════════════ -->
+<div class="body">
+<div class="section" id="s2">
+  <div class="sec-label">Section 02</div>
+  <h1>Core Endpoints Dictionary</h1>
+  <p class="section-intro">Complete endpoint specifications for every critical user flow. Each entry defines the HTTP method, route, authentication requirement, request schema (Zod), and response shape. Query parameters for list endpoints are listed separately.</p>
+
+  <!-- ──────── 2.1 AUTH ──────── -->
+  <h2 id="s2-auth">2.1 User Identity</h2>
+  <p>User creation in the Postgres database happens after Supabase Auth signup via a secure backend call. The Next.js frontend never writes user records directly to the database.</p>
+
+  <!-- GET /auth/me -->
+  <div class="ep-card">
+    <div class="ep-head">
+      <div class="method m-get">GET</div>
+      <div class="ep-route"><span class="base">/api/v1</span>/auth/me</div>
+      <div class="auth-badge auth-req">🔒 Authenticated</div>
+    </div>
+    <div class="ep-body">
+      <div class="ep-desc">Returns the fully-hydrated user record from the Postgres database (not just the Supabase Auth object). Use this after login to determine the user's role, verification status, and whether they have a store.</div>
+      <div class="ep-col-label">Response — 200 OK</div>
+<pre><span class="kw">interface</span> <span class="type">UserProfile</span> <span class="var">{</span>
+  <span class="field">id</span><span class="var">: string</span>                    <span class="cm">// Internal DB UUID</span>
+  <span class="field">supabaseId</span><span class="var">: string</span>            <span class="cm">// Supabase Auth UID</span>
+  <span class="field">email</span><span class="var">: string</span>
+  <span class="field">name</span><span class="var">: string</span>
+  <span class="field">avatarUrl</span><span class="var">: string | null</span>
+  <span class="field">role</span><span class="var">:</span> <span class="str">'BUYER'</span> <span class="var">|</span> <span class="str">'SELLER'</span> <span class="var">|</span> <span class="str">'BOTH'</span> <span class="var">|</span> <span class="str">'ADMIN'</span>
+  <span class="field">verificationStatus</span><span class="var">:</span> <span class="str">'UNVERIFIED'</span> <span class="var">|</span> <span class="str">'PENDING'</span> <span class="var">|</span> <span class="str">'VERIFIED'</span> <span class="var">|</span> <span class="str">'REJECTED'</span>
+  <span class="field">store</span><span class="var">: {</span>
+    <span class="field">id</span><span class="var">: string</span>
+    <span class="field">handle</span><span class="var">: string</span>
+    <span class="field">name</span><span class="var">: string</span>
+    <span class="field">isActive</span><span class="var">: boolean</span>
+  <span class="var">} | null</span>
+  <span class="field">walletBalance</span><span class="var">: string</span>          <span class="cm">// Decimal as string — e.g. "1250.50"</span>
+  <span class="field">createdAt</span><span class="var">: string</span>              <span class="cm">// ISO 8601</span>
+<span class="var">}</span></pre>
+    </div>
+  </div>
+
+  <!-- POST /auth/sync -->
+  <div class="ep-card">
+    <div class="ep-head">
+      <div class="method m-post">POST</div>
+      <div class="ep-route"><span class="base">/api/v1</span>/auth/sync</div>
+      <div class="auth-badge auth-req">🔒 Authenticated</div>
+    </div>
+    <div class="ep-body">
+      <div class="ep-desc">Called <strong>once</strong> immediately after a successful Supabase signup to create (or upsert) the corresponding user row in the Postgres database. The Next.js <code>onAuthStateChange</code> handler should fire this on the <code>SIGNED_IN</code> event for new users.</div>
+      <div class="ep-cols">
+        <div>
+          <div class="ep-col-label">Request Body (Zod)</div>
+<pre><span class="kw">const</span> <span class="var">SyncUserSchema =</span> <span class="fn">z.object</span><span class="var">({</span>
+  <span class="field">name</span><span class="var">:</span> <span class="var">z.string().min(</span><span class="num">2</span><span class="var">).max(</span><span class="num">60</span><span class="var">),</span>
+  <span class="field">avatarUrl</span><span class="var">:</span> <span class="var">z.string().url().optional(),</span>
+<span class="var">})</span></pre>
+        </div>
+        <div>
+          <div class="ep-col-label">Response — 200 OK (upsert)</div>
+<pre><span class="var">{</span>
+  <span class="field">"success"</span><span class="var">:</span> <span class="kw">true</span><span class="var">,</span>
+  <span class="field">"data"</span><span class="var">: { ...UserProfile }</span>
+<span class="var">}</span></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ──────── 2.2 STORE MANAGEMENT ──────── -->
+  <h2 id="s2-store">2.2 Store Management</h2>
+
+  <!-- GET /stores/:slug/available -->
+  <div class="ep-card">
+    <div class="ep-head">
+      <div class="method m-get">GET</div>
+      <div class="ep-route"><span class="base">/api/v1</span>/stores/<strong>:slug</strong>/available</div>
+      <div class="auth-badge auth-pub">🌐 Public</div>
+    </div>
+    <div class="ep-body">
+      <div class="ep-desc">Validates whether a store URL slug is available before the seller submits the store creation form. Called on debounced input change (300ms debounce recommended). Returns a 409 if the slug is already taken. Slugs must be <strong>lowercase alphanumeric with hyphens only</strong>, max 32 chars.</div>
+      <div class="ep-cols">
+        <div>
+          <div class="ep-col-label">Path Parameter</div>
+          <table class="param-table">
+            <thead><tr><th>Param</th><th>Type</th><th>Notes</th></tr></thead>
+            <tbody>
+              <tr><td class="pname">:slug</td><td class="ptype">string</td><td class="pdesc">e.g. <code>janes-tech-store</code>. Validated regex: <code>/^[a-z0-9-]{3,32}$/</code></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div>
+          <div class="ep-col-label">Responses</div>
+<pre><span class="cm">// 200 — slug is free</span>
+<span class="var">{ </span><span class="field">"success"</span><span class="var">:</span> <span class="kw">true</span><span class="var">,</span> <span class="field">"data"</span><span class="var">: { </span><span class="field">"available"</span><span class="var">:</span> <span class="kw">true</span> <span class="var">} }</span>
+
+<span class="cm">// 409 — slug is taken</span>
+<span class="var">{</span>
+  <span class="field">"success"</span><span class="var">:</span> <span class="kw">false</span><span class="var">,</span>
+  <span class="field">"error"</span><span class="var">: {</span>
+    <span class="field">"code"</span><span class="var">:</span> <span class="str">"SLUG_TAKEN"</span><span class="var">,</span>
+    <span class="field">"message"</span><span class="var">:</span> <span class="str">"This store URL is already in use"</span>
+  <span class="var">}</span>
+<span class="var">}</span></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- POST /stores -->
+  <div class="ep-card">
+    <div class="ep-head">
+      <div class="method m-post">POST</div>
+      <div class="ep-route"><span class="base">/api/v1</span>/stores</div>
+      <div class="auth-badge auth-req">🔒 Authenticated</div>
+    </div>
+    <div class="ep-body">
+      <div class="ep-desc">Creates a new store for the authenticated user. Automatically sets the user's <code>role</code> to <code>SELLER</code> (or <code>BOTH</code> if they've previously made purchases). A user may only own one store. Attempting to create a second store returns a <code>409 STORE_EXISTS</code>.</div>
+      <div class="ep-cols">
+        <div>
+          <div class="ep-col-label">Request Body (Zod)</div>
+<pre><span class="kw">const</span> <span class="var">CreateStoreSchema =</span> <span class="fn">z.object</span><span class="var">({</span>
+  <span class="field">handle</span><span class="var">: z.string()</span>
+    <span class="var">.regex(/^[a-z0-9-]{3,32}$/,</span> <span class="str">'Lowercase letters, numbers, hyphens only'</span><span class="var">),</span>
+  <span class="field">name</span><span class="var">: z.string().min(</span><span class="num">3</span><span class="var">).max(</span><span class="num">60</span><span class="var">),</span>
+  <span class="field">description</span><span class="var">: z.string().max(</span><span class="num">500</span><span class="var">).optional(),</span>
+  <span class="field">logoUrl</span><span class="var">: z.string().url().optional(),</span>
+  <span class="field">bannerUrl</span><span class="var">: z.string().url().optional(),</span>
+  <span class="field">category</span><span class="var">: z.enum([</span>
+    <span class="str">'ELECTRONICS'</span><span class="var">,</span> <span class="str">'FASHION'</span><span class="var">,</span> <span class="str">'BOOKS'</span><span class="var">,</span>
+    <span class="str">'ACCESSORIES'</span><span class="var">,</span> <span class="str">'OTHER'</span>
+  <span class="var">]),</span>
+  <span class="field">whatsappNumber</span><span class="var">: z.string().regex(/^0[0-9]{9}$/).optional(),</span>
+<span class="var">})</span></pre>
+        </div>
+        <div>
+          <div class="ep-col-label">Response — 201 Created</div>
+<pre><span class="kw">interface</span> <span class="type">StoreResponse</span> <span class="var">{</span>
+  <span class="field">id</span><span class="var">: string</span>
+  <span class="field">handle</span><span class="var">: string</span>          <span class="cm">// The slug / URL</span>
+  <span class="field">name</span><span class="var">: string</span>
+  <span class="field">description</span><span class="var">: string | null</span>
+  <span class="field">logoUrl</span><span class="var">: string | null</span>
+  <span class="field">bannerUrl</span><span class="var">: string | null</span>
+  <span class="field">category</span><span class="var">: string</span>
+  <span class="field">whatsappNumber</span><span class="var">: string | null</span>
+  <span class="field">isActive</span><span class="var">: boolean</span>
+  <span class="field">ownerId</span><span class="var">: string</span>
+  <span class="field">createdAt</span><span class="var">: string</span>
+<span class="var">}</span></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- GET /stores/:slug -->
+  <div class="ep-card">
+    <div class="ep-head">
+      <div class="method m-get">GET</div>
+      <div class="ep-route"><span class="base">/api/v1</span>/stores/<strong>:slug</strong></div>
+      <div class="auth-badge auth-pub">🌐 Public</div>
+    </div>
+    <div class="ep-body">
+      <div class="ep-desc">Returns a store's public profile including its active listings. Used by Next.js to server-render the store page at <code>/store/[slug]</code>. Response is cached in Redis with a 5-minute TTL. Cache is invalidated by any mutation to the store or its listings.</div>
+      <div class="ep-col-label">Response — 200 OK</div>
+<pre><span class="kw">interface</span> <span class="type">StorePublicProfile</span> <span class="var">{</span>
+  <span class="var">...StoreResponse,</span>
+  <span class="field">owner</span><span class="var">: { </span><span class="field">name</span><span class="var">: string;</span> <span class="field">verificationStatus</span><span class="var">: string }</span>
+  <span class="field">listings</span><span class="var">: ListingSummary[]</span>   <span class="cm">// ACTIVE listings only</span>
+  <span class="field">_count</span><span class="var">: { </span><span class="field">listings</span><span class="var">: number;</span> <span class="field">completedOrders</span><span class="var">: number }</span>
+<span class="var">}</span></pre>
+    </div>
+  </div>
+
+  <!-- ──────── 2.3 VENDOR ONBOARDING ──────── -->
+  <h2 id="s2-vendor">2.3 Vendor Onboarding — Payout Recipient</h2>
+  <p>Before a seller can receive any payouts, they must register their MoMo number or bank account with Paystack via the Express backend. Express calls the <strong>Paystack Create Transfer Recipient</strong> API and stores the resulting <code>recipient_code</code> on the seller's record. This code is used to initiate all future transfers to this seller.</p>
+
+  <div class="callout warn">
+    <div class="callout-icon">⚠️</div>
+    <p><strong>Security:</strong> The Express backend must <em>own</em> this call entirely. The frontend never calls the Paystack API directly. The <code>PAYSTACK_SECRET_KEY</code> lives in Express's environment only. A buyer must not be able to call this endpoint — apply the <code>requireSeller</code> guard.</p>
+  </div>
+
+  <!-- POST /payouts/recipients -->
+  <div class="ep-card">
+    <div class="ep-head">
+      <div class="method m-post">POST</div>
+      <div class="ep-route"><span class="base">/api/v1</span>/payouts/recipients</div>
+      <div class="auth-badge auth-seller">🏪 Seller Only</div>
+    </div>
+    <div class="ep-body">
+      <div class="ep-desc">Registers a seller's MoMo number or bank account as a Paystack Transfer Recipient. Express calls <code>POST https://api.paystack.co/transferrecipient</code> on the seller's behalf, then persists the <code>recipient_code</code> and <code>recipientId</code> to the database. Idempotent — updating account details replaces the existing recipient.</div>
+      <div class="ep-cols">
+        <div>
+          <div class="ep-col-label">Request Body (Zod) — MoMo variant</div>
+<pre><span class="kw">const</span> <span class="var">MomoRecipientSchema =</span> <span class="fn">z.object</span><span class="var">({</span>
+  <span class="field">type</span><span class="var">:</span> <span class="var">z.literal(</span><span class="str">'mobile_money'</span><span class="var">),</span>
+  <span class="field">name</span><span class="var">: z.string().min(</span><span class="num">3</span><span class="var">),</span>     <span class="cm">// Account holder full name</span>
+  <span class="field">accountNumber</span><span class="var">: z.string()</span>
+    <span class="var">.regex(/^0[0-9]{9}$/),</span>       <span class="cm">// 10-digit Ghana number</span>
+  <span class="field">bankCode</span><span class="var">: z.enum([</span>
+    <span class="str">'MTN'</span><span class="var">,</span> <span class="str">'VOD'</span><span class="var">,</span> <span class="str">'TGO'</span>          <span class="cm">// MTN, Vodafone, AirtelTigo</span>
+  <span class="var">]),</span>
+  <span class="field">currency</span><span class="var">:</span> <span class="var">z.literal(</span><span class="str">'GHS'</span><span class="var">),</span>
+<span class="var">})</span>
+
+<span class="kw">const</span> <span class="var">BankRecipientSchema =</span> <span class="fn">z.object</span><span class="var">({</span>
+  <span class="field">type</span><span class="var">:</span> <span class="var">z.literal(</span><span class="str">'ghipss'</span><span class="var">),</span>    <span class="cm">// Ghana Interbank</span>
+  <span class="field">name</span><span class="var">: z.string().min(</span><span class="num">3</span><span class="var">),</span>
+  <span class="field">accountNumber</span><span class="var">: z.string().min(</span><span class="num">10</span><span class="var">),</span>
+  <span class="field">bankCode</span><span class="var">: z.string(),</span>          <span class="cm">// Paystack bank code e.g. "030100"</span>
+  <span class="field">currency</span><span class="var">:</span> <span class="var">z.literal(</span><span class="str">'GHS'</span><span class="var">),</span>
+<span class="var">})</span>
+
+<span class="kw">const</span> <span class="var">CreateRecipientSchema =</span>
+  <span class="var">z.discriminatedUnion(</span><span class="str">'type'</span><span class="var">, [</span>
+    <span class="var">MomoRecipientSchema,</span>
+    <span class="var">BankRecipientSchema,</span>
+  <span class="var">])</span></pre>
+        </div>
+        <div>
+          <div class="ep-col-label">Response — 201 Created</div>
+<pre><span class="kw">interface</span> <span class="type">RecipientResponse</span> <span class="var">{</span>
+  <span class="field">id</span><span class="var">: string</span>              <span class="cm">// DB record ID</span>
+  <span class="field">recipientCode</span><span class="var">: string</span>  <span class="cm">// Paystack recipient_code</span>
+                           <span class="cm">// e.g. "RCP_hx66axgxsy..."</span>
+  <span class="field">type</span><span class="var">: string</span>
+  <span class="field">name</span><span class="var">: string</span>
+  <span class="field">accountNumber</span><span class="var">: string</span>  <span class="cm">// Masked: "024***1234"</span>
+  <span class="field">bankCode</span><span class="var">: string</span>
+  <span class="field">currency</span><span class="var">:</span> <span class="str">'GHS'</span>
+  <span class="field">isDefault</span><span class="var">: boolean</span>
+  <span class="field">createdAt</span><span class="var">: string</span>
+<span class="var">}</span></pre>
+
+          <div class="ep-col-label" style="margin-top:16px;">Express internal logic</div>
+<pre><span class="cm">// services/paystack.ts</span>
+<span class="kw">const</span> <span class="var">response =</span> <span class="kw">await</span> <span class="fn">fetch</span><span class="var">(</span>
+  <span class="str">'https://api.paystack.co/transferrecipient'</span><span class="var">,</span>
+  <span class="var">{</span>
+    <span class="field">method</span><span class="var">:</span> <span class="str">'POST'</span><span class="var">,</span>
+    <span class="field">headers</span><span class="var">: {</span>
+      <span class="str">'Authorization'</span><span class="var">: `Bearer ${PAYSTACK_SECRET}`,</span>
+      <span class="str">'Content-Type'</span><span class="var">:</span> <span class="str">'application/json'</span><span class="var">,</span>
+    <span class="var">},</span>
+    <span class="field">body</span><span class="var">: JSON.stringify({</span>
+      <span class="field">type</span><span class="var">: body.type,</span>
+      <span class="field">name</span><span class="var">: body.name,</span>
+      <span class="field">account_number</span><span class="var">: body.accountNumber,</span>
+      <span class="field">bank_code</span><span class="var">: body.bankCode,</span>
+      <span class="field">currency</span><span class="var">: body.currency,</span>
+    <span class="var">}),</span>
+  <span class="var">}</span>
+<span class="var">)</span>
+<span class="cm">// Store response.data.recipient_code in DB</span></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ──────── 2.4 PRODUCT MANAGEMENT ──────── -->
+  <h2 id="s2-product">2.4 Product Management (Listings)</h2>
+
+  <!-- POST /listings -->
+  <div class="ep-card">
+    <div class="ep-head">
+      <div class="method m-post">POST</div>
+      <div class="ep-route"><span class="base">/api/v1</span>/listings</div>
+      <div class="auth-badge auth-seller">🏪 Seller Only</div>
+    </div>
+    <div class="ep-body">
+      <div class="ep-desc">Creates a new product listing for the authenticated seller's store. Images must be uploaded to Supabase Storage by the frontend <em>first</em> (using the Supabase client directly), and only the resulting public URLs are sent in this request body.</div>
+
+      <div class="callout info">
+        <div class="callout-icon">ℹ️</div>
+        <p><strong>Image Upload Flow:</strong> The Next.js client uploads images directly to the Supabase Storage bucket <code>listing-images</code> using <code>supabase.storage.from('listing-images').upload(...)</code>. It then calls <code>supabase.storage.from('listing-images').getPublicUrl(path)</code> and passes those public URLs in <code>imagePaths[]</code> below. The Express backend is never involved in raw file handling.</p>
+      </div>
+
+      <div class="ep-cols">
+        <div>
+          <div class="ep-col-label">Request Body (Zod)</div>
+<pre><span class="kw">const</span> <span class="var">CreateListingSchema =</span> <span class="fn">z.object</span><span class="var">({</span>
+  <span class="field">title</span><span class="var">: z.string().min(</span><span class="num">5</span><span class="var">).max(</span><span class="num">120</span><span class="var">),</span>
+  <span class="field">description</span><span class="var">: z.string().min(</span><span class="num">20</span><span class="var">).max(</span><span class="num">2000</span><span class="var">),</span>
+  <span class="field">price</span><span class="var">: z.number().positive().multipleOf(</span><span class="num">0.01</span><span class="var">),</span>
+  <span class="field">category</span><span class="var">: z.enum([</span>
+    <span class="str">'PHONES'</span><span class="var">,</span> <span class="str">'LAPTOPS'</span><span class="var">,</span> <span class="str">'ACCESSORIES'</span><span class="var">,</span>
+    <span class="str">'GAMING'</span><span class="var">,</span> <span class="str">'AUDIO'</span><span class="var">,</span> <span class="str">'CAMERAS'</span><span class="var">,</span> <span class="str">'OTHER'</span>
+  <span class="var">]),</span>
+  <span class="field">condition</span><span class="var">: z.enum([</span>
+    <span class="str">'NEW'</span><span class="var">,</span> <span class="str">'LIKE_NEW'</span><span class="var">,</span> <span class="str">'USED_EXCELLENT'</span><span class="var">,</span>
+    <span class="str">'USED_GOOD'</span><span class="var">,</span> <span class="str">'USED_FAIR'</span><span class="var">,</span> <span class="str">'FOR_PARTS'</span>
+  <span class="var">]),</span>
+  <span class="field">imagePaths</span><span class="var">: z.array(z.string().url())</span>
+    <span class="var">.min(</span><span class="num">1</span><span class="var">,</span> <span class="str">'At least 1 image required'</span><span class="var">)</span>
+    <span class="var">.max(</span><span class="num">8</span><span class="var">),</span>
+  <span class="field">brand</span><span class="var">: z.string().max(</span><span class="num">60</span><span class="var">).optional(),</span>
+  <span class="field">model</span><span class="var">: z.string().max(</span><span class="num">80</span><span class="var">).optional(),</span>
+  <span class="field">tags</span><span class="var">: z.array(z.string().max(</span><span class="num">30</span><span class="var">)).max(</span><span class="num">10</span><span class="var">).optional(),</span>
+  <span class="field">locationCity</span><span class="var">: z.string().max(</span><span class="num">50</span><span class="var">).optional(),</span>
+  <span class="field">publishImmediately</span><span class="var">: z.boolean().default(</span><span class="kw">false</span><span class="var">),</span>
+<span class="var">})</span></pre>
+        </div>
+        <div>
+          <div class="ep-col-label">Response — 201 Created</div>
+<pre><span class="kw">interface</span> <span class="type">ListingResponse</span> <span class="var">{</span>
+  <span class="field">id</span><span class="var">: string</span>
+  <span class="field">title</span><span class="var">: string</span>
+  <span class="field">slug</span><span class="var">: string</span>               <span class="cm">// auto-generated</span>
+  <span class="field">description</span><span class="var">: string</span>
+  <span class="field">price</span><span class="var">: string</span>              <span class="cm">// Decimal as string: "450.00"</span>
+  <span class="field">category</span><span class="var">: string</span>
+  <span class="field">condition</span><span class="var">: string</span>
+  <span class="field">status</span><span class="var">:</span> <span class="str">'DRAFT'</span> <span class="var">|</span> <span class="str">'ACTIVE'</span>
+  <span class="field">imagePaths</span><span class="var">: string[]</span>
+  <span class="field">brand</span><span class="var">: string | null</span>
+  <span class="field">model</span><span class="var">: string | null</span>
+  <span class="field">tags</span><span class="var">: string[]</span>
+  <span class="field">locationCity</span><span class="var">: string | null</span>
+  <span class="field">storeId</span><span class="var">: string</span>
+  <span class="field">store</span><span class="var">: { </span><span class="field">handle</span><span class="var">: string;</span> <span class="field">name</span><span class="var">: string }</span>
+  <span class="field">viewCount</span><span class="var">: number</span>
+  <span class="field">createdAt</span><span class="var">: string</span>
+  <span class="field">updatedAt</span><span class="var">: string</span>
+<span class="var">}</span></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- GET /listings -->
+  <div class="ep-card">
+    <div class="ep-head">
+      <div class="method m-get">GET</div>
+      <div class="ep-route"><span class="base">/api/v1</span>/listings</div>
+      <div class="auth-badge auth-pub">🌐 Public</div>
+    </div>
+    <div class="ep-body">
+      <div class="ep-desc">Paginated, filterable product catalog. Returns only <code>ACTIVE</code> listings unless the caller is authenticated as the listing's owner (in which case drafts are also included). Results are ordered by <code>createdAt DESC</code> by default.</div>
+      <div class="qp-box">
+        <div class="qp-title">Query Parameters</div>
+        <table class="param-table">
+          <thead><tr><th>Parameter</th><th>Type</th><th>Required</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr><td class="pname">page</td><td class="ptype">number</td><td class="poptional">optional</td><td class="pdesc">Page number, default <code>1</code></td></tr>
+            <tr><td class="pname">limit</td><td class="ptype">number</td><td class="poptional">optional</td><td class="pdesc">Items per page, default <code>20</code>, max <code>50</code></td></tr>
+            <tr><td class="pname">category</td><td class="ptype">string</td><td class="poptional">optional</td><td class="pdesc"><code>PHONES</code> | <code>LAPTOPS</code> | <code>ACCESSORIES</code> etc.</td></tr>
+            <tr><td class="pname">condition</td><td class="ptype">string</td><td class="poptional">optional</td><td class="pdesc"><code>NEW</code> | <code>LIKE_NEW</code> | <code>USED_GOOD</code> etc.</td></tr>
+            <tr><td class="pname">minPrice</td><td class="ptype">number</td><td class="poptional">optional</td><td class="pdesc">Minimum price in GHS</td></tr>
+            <tr><td class="pname">maxPrice</td><td class="ptype">number</td><td class="poptional">optional</td><td class="pdesc">Maximum price in GHS</td></tr>
+            <tr><td class="pname">q</td><td class="ptype">string</td><td class="poptional">optional</td><td class="pdesc">Full-text search query (hits title, description, tags)</td></tr>
+            <tr><td class="pname">storeHandle</td><td class="ptype">string</td><td class="poptional">optional</td><td class="pdesc">Filter by store slug (for store page product tabs)</td></tr>
+            <tr><td class="pname">sortBy</td><td class="ptype">string</td><td class="poptional">optional</td><td class="pdesc"><code>newest</code> | <code>price_asc</code> | <code>price_desc</code> | <code>popular</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="ep-col-label">Response — 200 OK</div>
+<pre><span class="var">{</span>
+  <span class="field">"success"</span><span class="var">:</span> <span class="kw">true</span><span class="var">,</span>
+  <span class="field">"data"</span><span class="var">: ListingSummary[],</span>   <span class="cm">// Lighter shape — no full description</span>
+  <span class="field">"meta"</span><span class="var">: { </span><span class="field">"page"</span><span class="var">:</span> <span class="num">1</span><span class="var">,</span> <span class="field">"limit"</span><span class="var">:</span> <span class="num">20</span><span class="var">,</span> <span class="field">"total"</span><span class="var">:</span> <span class="num">143</span><span class="var">,</span> <span class="field">"totalPages"</span><span class="var">:</span> <span class="num">8</span> <span class="var">}</span>
+<span class="var">}</span>
+
+<span class="kw">interface</span> <span class="type">ListingSummary</span> <span class="var">{</span>
+  <span class="field">id</span><span class="var">: string;</span>  <span class="field">title</span><span class="var">: string;</span>  <span class="field">slug</span><span class="var">: string</span>
+  <span class="field">price</span><span class="var">: string</span>           <span class="cm">// Decimal as string</span>
+  <span class="field">condition</span><span class="var">: string</span>
+  <span class="field">category</span><span class="var">: string</span>
+  <span class="field">primaryImageUrl</span><span class="var">: string</span> <span class="cm">// imagePaths[0]</span>
+  <span class="field">store</span><span class="var">: { </span><span class="field">handle</span><span class="var">: string;</span> <span class="field">name</span><span class="var">: string;</span> <span class="field">logoUrl</span><span class="var">: string | null }</span>
+  <span class="field">locationCity</span><span class="var">: string | null</span>
+  <span class="field">createdAt</span><span class="var">: string</span>
+<span class="var">}</span></pre>
+    </div>
+  </div>
+
+  <!-- ──────── 2.5 CHECKOUT & ESCROW ──────── -->
+  <h2 id="s2-escrow">2.5 The Escrow Flow — Checkout &amp; Release</h2>
+  <p>This is the most security-critical flow in U-Shop. The platform collects <strong>100% of the order value</strong> from the buyer via Paystack, holds it in escrow, and releases the seller's cut only after the buyer confirms delivery. Below is the complete sequence before we define each endpoint.</p>
+
+  <div class="flow">
+    <div class="flow-step">
+      <div class="flow-num">1</div>
+      <div class="flow-body">
+        <h4>Buyer clicks "Buy Now" → Next.js calls <code>POST /api/v1/orders</code></h4>
+        <p>Express creates an <code>Order</code> (status: <code>PENDING_PAYMENT</code>), generates a unique Paystack <code>reference</code>, and initializes a Paystack transaction for the full listing price. Returns the Paystack <code>authorization_url</code>.</p>
+      </div>
+    </div>
+    <div class="flow-step paystack">
+      <div class="flow-num">2</div>
+      <div class="flow-body">
+        <h4>Next.js redirects buyer to Paystack's hosted checkout</h4>
+        <p>Buyer pays via MoMo or card at <code>authorization_url</code>. Paystack collects 100% of the funds to your platform account.</p>
+      </div>
+    </div>
+    <div class="flow-step blue">
+      <div class="flow-num">3</div>
+      <div class="flow-body">
+        <h4>Paystack fires <code>charge.success</code> webhook → Express <code>POST /webhooks/paystack</code></h4>
+        <p>Express verifies the HMAC signature, marks the order as <code>PAYMENT_RECEIVED</code>, creates the <code>Escrow</code> record (<code>status: HOLDING</code>), and deducts seller platform fee. Schedules 7-day auto-release job.</p>
+      </div>
+    </div>
+    <div class="flow-step green">
+      <div class="flow-num">4</div>
+      <div class="flow-body">
+        <h4>Buyer confirms delivery → Next.js calls <code>POST /orders/:id/release-escrow</code></h4>
+        <p>Express verifies the caller is the buyer of this order, checks <code>escrow.status === 'HOLDING'</code>, fires the Paystack Transfers API for the seller's net amount, and moves the order to <code>COMPLETED</code> pending the <code>transfer.success</code> webhook.</p>
+      </div>
+    </div>
+    <div class="flow-step purple">
+      <div class="flow-num">5</div>
+      <div class="flow-body">
+        <h4>Paystack fires <code>transfer.success</code> webhook</h4>
+        <p>Express sets <code>escrow.status = 'RELEASED'</code>, credits the seller's wallet balance, and marks the order as <code>COMPLETED</code>.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- POST /orders -->
+  <div class="ep-card">
+    <div class="ep-head">
+      <div class="method m-post">POST</div>
+      <div class="ep-route"><span class="base">/api/v1</span>/orders</div>
+      <div class="auth-badge auth-req">🔒 Authenticated (Buyer)</div>
+    </div>
+    <div class="ep-body">
+      <div class="ep-desc">Initializes a Paystack checkout session. Express creates an Order record, calls <code>POST https://api.paystack.co/transaction/initialize</code> with the full listing price (in kobo), and returns the hosted checkout URL. A seller cannot buy their own listing — Express must validate <code>listing.storeId !== req.dbUser.store.id</code>.</div>
+
+      <div class="callout crit">
+        <div class="callout-icon">🔴</div>
+        <p><strong>Money precision:</strong> All amounts sent to Paystack must be in <strong>kobo</strong> (integer, GHS × 100). Example: GHS 450.00 = kobo <code>45000</code>. Use <code>Decimal</code> arithmetic throughout — never JavaScript floats. Store prices in the DB as <code>Decimal</code> and only convert to kobo at the point of the Paystack API call.</p>
+      </div>
+
+      <div class="ep-cols">
+        <div>
+          <div class="ep-col-label">Request Body (Zod)</div>
+<pre><span class="kw">const</span> <span class="var">InitializeOrderSchema =</span> <span class="fn">z.object</span><span class="var">({</span>
+  <span class="field">listingId</span><span class="var">: z.string().uuid(),</span>
+  <span class="field">deliveryMethod</span><span class="var">: z.enum([</span>
+    <span class="str">'MEETUP'</span><span class="var">,</span>
+    <span class="str">'DELIVERY'</span><span class="var">,</span>
+  <span class="var">]),</span>
+  <span class="field">deliveryAddress</span><span class="var">: z.string().max(</span><span class="num">300</span><span class="var">).optional(),</span>
+  <span class="field">buyerNote</span><span class="var">: z.string().max(</span><span class="num">500</span><span class="var">).optional(),</span>
+<span class="var">})</span></pre>
+        </div>
+        <div>
+          <div class="ep-col-label">Response — 201 Created</div>
+<pre><span class="kw">interface</span> <span class="type">OrderInitResponse</span> <span class="var">{</span>
+  <span class="field">orderId</span><span class="var">: string</span>
+  <span class="field">paystackRef</span><span class="var">: string</span>      <span class="cm">// Store this — used for webhook matching</span>
+  <span class="field">authorizationUrl</span><span class="var">: string</span> <span class="cm">// Redirect buyer HERE</span>
+  <span class="field">accessCode</span><span class="var">: string</span>
+  <span class="field">amount</span><span class="var">: string</span>           <span class="cm">// GHS, e.g. "450.00"</span>
+  <span class="field">status</span><span class="var">:</span> <span class="str">'PENDING_PAYMENT'</span>
+<span class="var">}</span>
+
+<span class="cm">// Next.js usage:</span>
+<span class="kw">const</span> <span class="var">{ data } =</span> <span class="kw">await</span> <span class="fn">apiFetch</span><span class="var">(</span><span class="str">'/orders'</span><span class="var">, {</span>
+  <span class="field">method</span><span class="var">:</span> <span class="str">'POST'</span><span class="var">,</span>
+  <span class="field">body</span><span class="var">: JSON.stringify(payload),</span>
+<span class="var">})</span>
+<span class="cm">// Store orderId in session state before redirect</span>
+<span class="var">router.push(data.authorizationUrl)</span></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- POST /orders/:id/release-escrow -->
+  <div class="ep-card">
+    <div class="ep-head">
+      <div class="method m-post">POST</div>
+      <div class="ep-route"><span class="base">/api/v1</span>/orders/<strong>:orderId</strong>/release-escrow</div>
+      <div class="auth-badge auth-req">🔒 Authenticated (Buyer of this order) <span class="sec-tag">CRITICAL</span></div>
+    </div>
+    <div class="ep-body">
+      <div class="ep-desc">The buyer explicitly confirms they have received the item, triggering the payout to the seller. This is the most sensitive endpoint in the system. Express must enforce multiple guards before calling the Paystack Transfers API.</div>
+
+      <div class="callout crit">
+        <div class="callout-icon">🔴</div>
+        <p><strong>Guards — all must pass in order:</strong><br>
+        1. <code>order.buyerId === req.user.id</code> — only the buyer of this specific order can release it.<br>
+        2. <code>order.status === 'PAYMENT_RECEIVED' || 'PROCESSING' || 'IN_TRANSIT'</code> — payment must have cleared.<br>
+        3. <code>escrow.status === 'HOLDING'</code> — must use a Prisma transaction with a <code>where: { status: 'HOLDING' }</code> clause to prevent race conditions on double-click.<br>
+        4. Seller must have a registered Paystack <code>recipientCode</code> — if missing, return <code>400 NO_PAYOUT_ACCOUNT</code>.</p>
+      </div>
+
+      <div class="ep-cols">
+        <div>
+          <div class="ep-col-label">Request Body</div>
+<pre><span class="cm">// No body required — the orderId in the URL path</span>
+<span class="cm">// is the sole identifier. Optionally accept:</span>
+<span class="kw">const</span> <span class="var">ReleaseEscrowSchema =</span> <span class="fn">z.object</span><span class="var">({</span>
+  <span class="field">buyerRating</span><span class="var">: z.number().int().min(</span><span class="num">1</span><span class="var">).max(</span><span class="num">5</span><span class="var">).optional(),</span>
+  <span class="field">buyerReview</span><span class="var">: z.string().max(</span><span class="num">500</span><span class="var">).optional(),</span>
+<span class="var">})</span></pre>
+        </div>
+        <div>
+          <div class="ep-col-label">Response — 200 OK</div>
+<pre><span class="kw">interface</span> <span class="type">ReleaseEscrowResponse</span> <span class="var">{</span>
+  <span class="field">orderId</span><span class="var">: string</span>
+  <span class="field">orderStatus</span><span class="var">:</span> <span class="str">'COMPLETED'</span>
+  <span class="field">escrowStatus</span><span class="var">:</span> <span class="str">'RELEASED'</span>
+  <span class="field">transferCode</span><span class="var">: string</span>    <span class="cm">// Paystack transfer code</span>
+  <span class="field">sellerNet</span><span class="var">: string</span>        <span class="cm">// Amount sent to seller (GHS)</span>
+  <span class="field">platformFee</span><span class="var">: string</span>     <span class="cm">// Platform's cut (GHS)</span>
+  <span class="field">message</span><span class="var">: string</span>          <span class="cm">// "Transfer initiated. Seller will be paid shortly."</span>
+<span class="var">}</span></pre>
+        </div>
+      </div>
+
+      <div class="ep-col-label" style="margin-top:16px;">Express internal — fee calculation & transfer call</div>
+<pre><span class="cm">// services/escrow.ts</span>
+<span class="kw">const</span> <span class="var">PLATFORM_FEE_RATE =</span> <span class="kw">new</span> <span class="fn">Decimal</span><span class="var">(</span><span class="str">'0.05'</span><span class="var">)</span>  <span class="cm">// 5% — adjust per PRD</span>
+
+<span class="kw">async function</span> <span class="fn">releaseEscrow</span><span class="var">(orderId: string, buyerId: string) {</span>
+  <span class="kw">return</span> <span class="var">prisma.$transaction(</span><span class="kw">async</span> <span class="var">(tx) => {</span>
+    <span class="cm">// Guard: atomically claim the escrow before any Paystack call</span>
+    <span class="kw">const</span> <span class="var">escrow =</span> <span class="kw">await</span> <span class="var">tx.escrow.update({</span>
+      <span class="field">where</span><span class="var">: { orderId, status:</span> <span class="str">'HOLDING'</span> <span class="var">},</span>   <span class="cm">// Will throw if not HOLDING</span>
+      <span class="field">data</span><span class="var">: { status:</span> <span class="str">'RELEASING'</span> <span class="var">},</span>             <span class="cm">// Intermediate state prevents retry</span>
+    <span class="var">})</span>
+
+    <span class="kw">const</span> <span class="var">gross =</span> <span class="kw">new</span> <span class="fn">Decimal</span><span class="var">(escrow.amount)</span>
+    <span class="kw">const</span> <span class="var">platformFee = gross.mul(PLATFORM_FEE_RATE).toDecimalPlaces(</span><span class="num">2</span><span class="var">)</span>
+    <span class="kw">const</span> <span class="var">sellerNet = gross.sub(platformFee)</span>
+    <span class="kw">const</span> <span class="var">koboAmount = sellerNet.mul(</span><span class="num">100</span><span class="var">).toInteger().toNumber()</span>
+
+    <span class="cm">// Fire Paystack Transfer</span>
+    <span class="kw">const</span> <span class="var">transfer =</span> <span class="kw">await</span> <span class="fn">PaystackService.initiateTransfer</span><span class="var">({</span>
+      <span class="field">source</span><span class="var">:</span> <span class="str">'balance'</span><span class="var">,</span>
+      <span class="field">amount</span><span class="var">: koboAmount,</span>
+      <span class="field">recipient</span><span class="var">: seller.recipientCode,</span>
+      <span class="field">reason</span><span class="var">: `U-Shop payout for order ${orderId}`,</span>
+    <span class="var">})</span>
+
+    <span class="cm">// Persist transfer_code — needed to reconcile transfer.success webhook</span>
+    <span class="kw">await</span> <span class="var">tx.payout.create({</span>
+      <span class="field">data</span><span class="var">: { sellerId, orderId, amount: sellerNet, transferCode: transfer.transfer_code, status:</span> <span class="str">'PROCESSING'</span> <span class="var">}</span>
+    <span class="var">})</span>
+
+    <span class="kw">return</span> <span class="var">{ transferCode: transfer.transfer_code, sellerNet, platformFee }</span>
+  <span class="var">})</span>
+<span class="var">}</span></pre>
+    </div>
+  </div>
+
+  <!-- ──────── 2.6 ORDER MANAGEMENT ──────── -->
+  <h2 id="s2-orders">2.6 Order Management</h2>
+
+  <!-- GET /orders (buyer) -->
+  <div class="ep-card">
+    <div class="ep-head">
+      <div class="method m-get">GET</div>
+      <div class="ep-route"><span class="base">/api/v1</span>/orders</div>
+      <div class="auth-badge auth-req">🔒 Authenticated</div>
+    </div>
+    <div class="ep-body">
+      <div class="ep-desc">Returns all orders for the current user. If the user is a buyer, returns their purchases. If a seller, returns their sales. The <code>as</code> query param disambiguates for users with the <code>BOTH</code> role.</div>
+      <div class="qp-box">
+        <div class="qp-title">Query Parameters</div>
+        <table class="param-table">
+          <thead><tr><th>Parameter</th><th>Type</th><th>Required</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr><td class="pname">as</td><td class="ptype">string</td><td class="poptional">optional</td><td class="pdesc"><code>buyer</code> | <code>seller</code>. Defaults based on role.</td></tr>
+            <tr><td class="pname">status</td><td class="ptype">string</td><td class="poptional">optional</td><td class="pdesc">Filter by <code>OrderStatus</code> enum value</td></tr>
+            <tr><td class="pname">page</td><td class="ptype">number</td><td class="poptional">optional</td><td class="pdesc">Default <code>1</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- PATCH /orders/:id/status -->
+  <div class="ep-card">
+    <div class="ep-head">
+      <div class="method m-patch">PATCH</div>
+      <div class="ep-route"><span class="base">/api/v1</span>/orders/<strong>:orderId</strong>/status</div>
+      <div class="auth-badge auth-seller">🏪 Seller Only</div>
+    </div>
+    <div class="ep-body">
+      <div class="ep-desc">Seller updates the order status. Only valid forward-transitions are allowed. A seller may set <code>PROCESSING</code> or <code>IN_TRANSIT</code>. Only the buyer can set <code>DELIVERED</code> (via <code>release-escrow</code> above). Status regressions are rejected with <code>422</code>.</div>
+      <div class="ep-cols">
+        <div>
+          <div class="ep-col-label">Request Body (Zod)</div>
+<pre><span class="kw">const</span> <span class="var">UpdateOrderStatusSchema =</span> <span class="fn">z.object</span><span class="var">({</span>
+  <span class="field">status</span><span class="var">: z.enum([</span><span class="str">'PROCESSING'</span><span class="var">,</span> <span class="str">'IN_TRANSIT'</span><span class="var">]),</span>
+  <span class="field">trackingNote</span><span class="var">: z.string().max(</span><span class="num">300</span><span class="var">).optional(),</span>
+<span class="var">})</span></pre>
+        </div>
+        <div>
+          <div class="ep-col-label">Response — 200 OK</div>
+<pre><span class="var">{ </span><span class="field">"success"</span><span class="var">:</span> <span class="kw">true</span><span class="var">,</span>
+  <span class="field">"data"</span><span class="var">: { </span><span class="field">"orderId"</span><span class="var">: string,</span>
+             <span class="field">"status"</span><span class="var">: string,</span>
+             <span class="field">"updatedAt"</span><span class="var">: string } }</span></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ──────── 2.7 DISPUTES ──────── -->
+  <h2 id="s2-disputes">2.7 Disputes</h2>
+  <div class="callout warn">
+    <div class="callout-icon">⚠️</div>
+    <p><strong>When a dispute is opened, the escrow is frozen.</strong> Express must set <code>order.status = 'DISPUTED'</code> and ensure no auto-release job can fire while the dispute is <code>OPEN</code> or <code>UNDER_REVIEW</code>.</p>
+  </div>
+
+  <!-- POST /disputes -->
+  <div class="ep-card">
+    <div class="ep-head">
+      <div class="method m-post">POST</div>
+      <div class="ep-route"><span class="base">/api/v1</span>/disputes</div>
+      <div class="auth-badge auth-req">🔒 Authenticated (Buyer)</div>
+    </div>
+    <div class="ep-body">
+      <div class="ep-cols">
+        <div>
+          <div class="ep-col-label">Request Body (Zod)</div>
+<pre><span class="kw">const</span> <span class="var">CreateDisputeSchema =</span> <span class="fn">z.object</span><span class="var">({</span>
+  <span class="field">orderId</span><span class="var">: z.string().uuid(),</span>
+  <span class="field">reason</span><span class="var">: z.enum([</span>
+    <span class="str">'ITEM_NOT_RECEIVED'</span><span class="var">,</span>
+    <span class="str">'NOT_AS_DESCRIBED'</span><span class="var">,</span>
+    <span class="str">'DAMAGED_IN_TRANSIT'</span><span class="var">,</span>
+    <span class="str">'WRONG_ITEM_SENT'</span><span class="var">,</span>
+    <span class="str">'OTHER'</span>
+  <span class="var">]),</span>
+  <span class="field">description</span><span class="var">: z.string().min(</span><span class="num">20</span><span class="var">).max(</span><span class="num">2000</span><span class="var">),</span>
+  <span class="field">evidenceImageUrls</span><span class="var">: z.array(z.string().url()).max(</span><span class="num">5</span><span class="var">).optional(),</span>
+<span class="var">})</span></pre>
+        </div>
+        <div>
+          <div class="ep-col-label">Response — 201 Created</div>
+<pre><span class="kw">interface</span> <span class="type">DisputeResponse</span> <span class="var">{</span>
+  <span class="field">id</span><span class="var">: string</span>
+  <span class="field">orderId</span><span class="var">: string</span>
+  <span class="field">status</span><span class="var">:</span> <span class="str">'OPEN'</span>
+  <span class="field">reason</span><span class="var">: string</span>
+  <span class="field">description</span><span class="var">: string</span>
+  <span class="field">createdAt</span><span class="var">: string</span>
+  <span class="field">estimatedResolutionDays</span><span class="var">: number</span>  <span class="cm">// 3–5</span>
+<span class="var">}</span></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     SECTION 3 — PAYSTACK WEBHOOK SPECIFICATIONS
+════════════════════════════════════════════════════════════ -->
+<div class="body">
+<div class="section" id="s3">
+  <div class="sec-label">Section 03</div>
+  <h1>Paystack Webhook Specifications</h1>
+  <p class="section-intro">Paystack notifies your Express backend of payment and transfer events by sending an HTTP POST request to a registered URL. This section defines the exact endpoint, the full signature verification algorithm, and the expected handler logic for each event type.</p>
+
+  <div class="callout crit">
+    <div class="callout-icon">🔴</div>
+    <p><strong>Critical Middleware Ordering:</strong> The webhook route MUST be registered in <code>index.ts</code> BEFORE <code>app.use(express.json())</code>. The HMAC-SHA512 signature is computed over the <strong>raw request body bytes</strong>. Once <code>express.json()</code> parses the body, the raw buffer is gone and signature verification will silently fail on every single webhook. This is a production-breaking mistake.</p>
+  </div>
+
+  <div class="pre-header"><div class="ph-dot" style="background:var(--express)"></div>index.ts — correct middleware order</div>
+<pre><span class="kw">import</span> <span class="var">express</span> <span class="kw">from</span> <span class="str">'express'</span>
+<span class="kw">import</span> <span class="var">{ webhookRouter }</span> <span class="kw">from</span> <span class="str">'./routes/webhooks'</span>
+<span class="kw">import</span> <span class="var">{ apiRouter }</span> <span class="kw">from</span> <span class="str">'./routes/api'</span>
+
+<span class="kw">const</span> <span class="var">app = express()</span>
+
+<span class="cm">// ── 1. WEBHOOK ROUTE MUST COME FIRST — before JSON parser ──────────────</span>
+<span class="cm">// Uses express.raw() to preserve the raw body buffer for HMAC verification</span>
+<span class="var">app.use(</span><span class="str">'/webhooks'</span><span class="var">, express.raw({ type:</span> <span class="str">'application/json'</span> <span class="var">}), webhookRouter)</span>
+
+<span class="cm">// ── 2. JSON parser for all other routes ────────────────────────────────</span>
+<span class="var">app.use(express.json())</span>
+<span class="var">app.use(express.urlencoded({ extended:</span> <span class="kw">true</span> <span class="var">}))</span>
+
+<span class="cm">// ── 3. API routes ──────────────────────────────────────────────────────</span>
+<span class="var">app.use(</span><span class="str">'/api/v1'</span><span class="var">, apiRouter)</span></pre>
+
+  <!-- 3.1 ENDPOINT + SIGNATURE VERIFICATION -->
+  <h2 id="s3-verify">3.1 Endpoint &amp; Signature Verification</h2>
+
+  <div class="webhook-box">
+    <div class="wb-route">POST /webhooks/paystack</div>
+    <div class="wb-desc">The URL you register in your Paystack Dashboard → Settings → Webhooks. No authentication header is needed — the HMAC signature IS the authentication.</div>
+  </div>
+
+  <div class="pre-header"><div class="ph-dot" style="background:var(--paystack)"></div>routes/webhooks.ts — full signature verification + idempotency guard</div>
+<pre><span class="kw">import</span> <span class="var">{ Router }</span> <span class="kw">from</span> <span class="str">'express'</span>
+<span class="kw">import</span> <span class="var">crypto</span> <span class="kw">from</span> <span class="str">'crypto'</span>
+
+<span class="kw">const</span> <span class="var">router = Router()</span>
+<span class="kw">const</span> <span class="var">PAYSTACK_SECRET = process.env.PAYSTACK_SECRET_KEY!</span>
+
+<span class="var">router.post(</span><span class="str">'/'</span><span class="var">,</span> <span class="kw">async</span> <span class="var">(req, res) => {</span>
+  <span class="cm">// ── Step 1: Verify HMAC-SHA512 signature ────────────────────────────</span>
+  <span class="cm">// req.body is a Buffer here (express.raw middleware) — NOT a parsed object</span>
+  <span class="kw">const</span> <span class="var">signature = req.headers[</span><span class="str">'x-paystack-signature'</span><span class="var">] as string</span>
+  <span class="kw">const</span> <span class="var">expectedSig = crypto</span>
+    <span class="var">.createHmac(</span><span class="str">'sha512'</span><span class="var">, PAYSTACK_SECRET)</span>
+    <span class="var">.update(req.body)</span>         <span class="cm">// Pass the raw Buffer — NOT JSON.stringify(body)</span>
+    <span class="var">.digest(</span><span class="str">'hex'</span><span class="var">)</span>
+
+  <span class="kw">if</span> <span class="var">(!crypto.timingSafeEqual(</span>
+    <span class="var">Buffer.from(signature,</span> <span class="str">'hex'</span><span class="var">),</span>
+    <span class="var">Buffer.from(expectedSig,</span> <span class="str">'hex'</span><span class="var">)</span>
+  <span class="var">)) {</span>
+    <span class="kw">return</span> <span class="var">res.status(</span><span class="num">401</span><span class="var">).send(</span><span class="str">'Invalid signature'</span><span class="var">)</span>
+  <span class="var">}</span>
+
+  <span class="cm">// ── Step 2: Parse body now that we've verified it ───────────────────</span>
+  <span class="kw">const</span> <span class="var">event = JSON.parse(req.body.toString()) as PaystackEvent</span>
+
+  <span class="cm">// ── Step 3: Idempotency guard ────────────────────────────────────────</span>
+  <span class="cm">// Paystack retries webhooks. The WebhookEvent table with a unique</span>
+  <span class="cm">// constraint on externalId prevents double-processing.</span>
+  <span class="kw">const</span> <span class="var">externalId = event.data.id.toString()</span>  <span class="cm">// Paystack's transaction/transfer ID</span>
+  <span class="kw">const</span> <span class="var">existing =</span> <span class="kw">await</span> <span class="var">prisma.webhookEvent.findUnique({ where: { externalId } })</span>
+  <span class="kw">if</span> <span class="var">(existing) {</span>
+    <span class="kw">return</span> <span class="var">res.status(</span><span class="num">200</span><span class="var">).send(</span><span class="str">'Already processed'</span><span class="var">)</span>  <span class="cm">// Acknowledge to stop retries</span>
+  <span class="var">}</span>
+
+  <span class="cm">// ── Step 4: Persist event record (dedupe lock) ───────────────────────</span>
+  <span class="kw">await</span> <span class="var">prisma.webhookEvent.create({</span>
+    <span class="field">data</span><span class="var">: { externalId, event: event.event, payload: event </span><span class="kw">as any</span><span class="var"> }</span>
+  <span class="var">})</span>
+
+  <span class="cm">// ── Step 5: Respond 200 IMMEDIATELY — before heavy processing ───────</span>
+  <span class="cm">// Paystack considers any non-2xx response a failure and will retry.</span>
+  <span class="cm">// Acknowledge receipt first, then do the work asynchronously.</span>
+  <span class="var">res.status(</span><span class="num">200</span><span class="var">).send(</span><span class="str">'OK'</span><span class="var">)</span>
+
+  <span class="cm">// ── Step 6: Route to correct handler ────────────────────────────────</span>
+  <span class="kw">switch</span> <span class="var">(event.event) {</span>
+    <span class="kw">case</span> <span class="str">'charge.success'</span><span class="var">:</span>
+      <span class="kw">await</span> <span class="fn">handleChargeSuccess</span><span class="var">(event.data)</span>
+      <span class="kw">break</span>
+    <span class="kw">case</span> <span class="str">'transfer.success'</span><span class="var">:</span>
+      <span class="kw">await</span> <span class="fn">handleTransferSuccess</span><span class="var">(event.data)</span>
+      <span class="kw">break</span>
+    <span class="kw">case</span> <span class="str">'transfer.failed'</span><span class="var">:</span>
+      <span class="kw">await</span> <span class="fn">handleTransferFailed</span><span class="var">(event.data)</span>
+      <span class="kw">break</span>
+    <span class="kw">case</span> <span class="str">'transfer.reversed'</span><span class="var">:</span>
+      <span class="kw">await</span> <span class="fn">handleTransferReversed</span><span class="var">(event.data)</span>
+      <span class="kw">break</span>
+    <span class="kw">default</span><span class="var">:</span>
+      <span class="var">console.log(`Unhandled Paystack event: ${event.event}`)</span>
+  <span class="var">}</span>
+<span class="var">})</span>
+
+<span class="kw">export const</span> <span class="var">webhookRouter = router</span></pre>
+
+  <!-- 3.2 charge.success -->
+  <h2 id="s3-charge">3.2 Event: <code>charge.success</code></h2>
+  <p>Fired when a buyer's payment is confirmed. This is the trigger that moves the order from <code>PENDING_PAYMENT</code> to <code>PAYMENT_RECEIVED</code> and creates the escrow record.</p>
+
+  <div class="pre-header"><div class="ph-dot" style="background:var(--paystack)"></div>Paystack Payload Shape</div>
+<pre><span class="kw">interface</span> <span class="type">ChargeSuccessData</span> <span class="var">{</span>
+  <span class="field">id</span><span class="var">: number</span>                <span class="cm">// Paystack transaction ID — use as externalId</span>
+  <span class="field">reference</span><span class="var">: string</span>        <span class="cm">// Matches paystackRef on the Order record</span>
+  <span class="field">amount</span><span class="var">: number</span>           <span class="cm">// In kobo — divide by 100 for GHS</span>
+  <span class="field">currency</span><span class="var">: string</span>         <span class="cm">// "GHS"</span>
+  <span class="field">status</span><span class="var">: string</span>           <span class="cm">// "success"</span>
+  <span class="field">paid_at</span><span class="var">: string</span>          <span class="cm">// ISO 8601</span>
+  <span class="field">channel</span><span class="var">: string</span>          <span class="cm">// "mobile_money" | "card"</span>
+  <span class="field">customer</span><span class="var">: {</span>
+    <span class="field">email</span><span class="var">: string</span>
+    <span class="field">phone</span><span class="var">: string | null</span>
+  <span class="var">}</span>
+  <span class="field">metadata</span><span class="var">: {</span>
+    <span class="field">orderId</span><span class="var">: string</span>        <span class="cm">// ⬅ You embed this when initializing the transaction</span>
+    <span class="field">listingId</span><span class="var">: string</span>
+    <span class="field">buyerId</span><span class="var">: string</span>
+  <span class="var">}</span>
+<span class="var">}</span></pre>
+
+  <div class="pre-header"><div class="ph-dot" style="background:var(--express)"></div>handleChargeSuccess — database operations</div>
+<pre><span class="kw">async function</span> <span class="fn">handleChargeSuccess</span><span class="var">(data: ChargeSuccessData) {</span>
+  <span class="kw">const</span> <span class="var">{ orderId, listingId } = data.metadata</span>
+  <span class="kw">const</span> <span class="var">amountGHS =</span> <span class="kw">new</span> <span class="fn">Decimal</span><span class="var">(data.amount).div(</span><span class="num">100</span><span class="var">)</span>
+
+  <span class="kw">await</span> <span class="var">prisma.$transaction(</span><span class="kw">async</span> <span class="var">(tx) => {</span>
+    <span class="cm">// 1. Update order status</span>
+    <span class="kw">await</span> <span class="var">tx.order.update({</span>
+      <span class="field">where</span><span class="var">: { id: orderId },</span>
+      <span class="field">data</span><span class="var">: { status:</span> <span class="str">'PAYMENT_RECEIVED'</span><span class="var">, paidAt:</span> <span class="kw">new</span> <span class="fn">Date</span><span class="var">(data.paid_at) }</span>
+    <span class="var">})</span>
+
+    <span class="cm">// 2. Create escrow record — funds are now "held" on the platform</span>
+    <span class="kw">await</span> <span class="var">tx.escrow.create({</span>
+      <span class="field">data</span><span class="var">: {</span>
+        <span class="field">orderId</span><span class="var">,</span>
+        <span class="field">amount</span><span class="var">: amountGHS,</span>
+        <span class="field">status</span><span class="var">:</span> <span class="str">'HOLDING'</span><span class="var">,</span>
+        <span class="field">autoReleaseAt</span><span class="var">:</span> <span class="kw">new</span> <span class="fn">Date</span><span class="var">(Date.now() +</span> <span class="num">7</span> <span class="var">*</span> <span class="num">24</span> <span class="var">*</span> <span class="num">60</span> <span class="var">*</span> <span class="num">60</span> <span class="var">*</span> <span class="num">1000</span><span class="var">),</span>
+      <span class="var">}</span>
+    <span class="var">})</span>
+
+    <span class="cm">// 3. Mark listing as SOLD to prevent double-purchase</span>
+    <span class="kw">await</span> <span class="var">tx.listing.update({</span>
+      <span class="field">where</span><span class="var">: { id: listingId },</span>
+      <span class="field">data</span><span class="var">: { status:</span> <span class="str">'SOLD'</span> <span class="var">}</span>
+    <span class="var">})</span>
+  <span class="var">})</span>
+
+  <span class="cm">// 4. Schedule auto-release job outside the transaction</span>
+  <span class="kw">await</span> <span class="fn">scheduleEscrowReminders</span><span class="var">(orderId, autoReleaseAt)</span>
+  <span class="kw">await</span> <span class="fn">notifySellerOfNewOrder</span><span class="var">(orderId)</span>
+<span class="var">}</span></pre>
+
+  <!-- 3.3 transfer.success -->
+  <h2 id="s3-transfer">3.3 Event: <code>transfer.success</code></h2>
+  <p>Fired when the Paystack transfer to the seller's MoMo or bank account is confirmed. This finalizes the escrow release and credits the seller's in-platform wallet.</p>
+
+  <div class="pre-header"><div class="ph-dot" style="background:var(--paystack)"></div>Paystack Payload Shape + handleTransferSuccess</div>
+<pre><span class="kw">interface</span> <span class="type">TransferData</span> <span class="var">{</span>
+  <span class="field">id</span><span class="var">: number</span>
+  <span class="field">transfer_code</span><span class="var">: string</span>   <span class="cm">// Matches Payout.transferCode in DB</span>
+  <span class="field">amount</span><span class="var">: number</span>          <span class="cm">// Kobo</span>
+  <span class="field">status</span><span class="var">: string</span>          <span class="cm">// "success" | "failed" | "reversed"</span>
+  <span class="field">recipient</span><span class="var">: {</span>
+    <span class="field">recipient_code</span><span class="var">: string</span>
+    <span class="field">name</span><span class="var">: string</span>
+    <span class="field">details</span><span class="var">: { account_number: string; bank_code: string }</span>
+  <span class="var">}</span>
+<span class="var">}</span>
+
+<span class="kw">async function</span> <span class="fn">handleTransferSuccess</span><span class="var">(data: TransferData) {</span>
+  <span class="cm">// Look up the Payout record using transfer_code — NOT order ID</span>
+  <span class="kw">const</span> <span class="var">payout =</span> <span class="kw">await</span> <span class="var">prisma.payout.findUniqueOrThrow({</span>
+    <span class="field">where</span><span class="var">: { transferCode: data.transfer_code },</span>
+    <span class="field">include</span><span class="var">: { order: { select: { id:</span> <span class="kw">true</span><span class="var">, sellerId:</span> <span class="kw">true</span> <span class="var">} } }</span>
+  <span class="var">})</span>
+
+  <span class="kw">await</span> <span class="var">prisma.$transaction(</span><span class="kw">async</span> <span class="var">(tx) => {</span>
+    <span class="cm">// 1. Finalize escrow</span>
+    <span class="kw">await</span> <span class="var">tx.escrow.update({</span>
+      <span class="field">where</span><span class="var">: { orderId: payout.orderId },</span>
+      <span class="field">data</span><span class="var">: { status:</span> <span class="str">'RELEASED'</span><span class="var">, releasedAt:</span> <span class="kw">new</span> <span class="fn">Date</span><span class="var">() }</span>
+    <span class="var">})</span>
+
+    <span class="cm">// 2. Mark payout complete</span>
+    <span class="kw">await</span> <span class="var">tx.payout.update({</span>
+      <span class="field">where</span><span class="var">: { id: payout.id },</span>
+      <span class="field">data</span><span class="var">: { status:</span> <span class="str">'COMPLETED'</span><span class="var">, completedAt:</span> <span class="kw">new</span> <span class="fn">Date</span><span class="var">() }</span>
+    <span class="var">})</span>
+
+    <span class="cm">// 3. Mark order as COMPLETED</span>
+    <span class="kw">await</span> <span class="var">tx.order.update({</span>
+      <span class="field">where</span><span class="var">: { id: payout.orderId },</span>
+      <span class="field">data</span><span class="var">: { status:</span> <span class="str">'COMPLETED'</span> <span class="var">}</span>
+    <span class="var">})</span>
+
+    <span class="cm">// 4. Credit seller's in-platform wallet (for future reference / withdrawals)</span>
+    <span class="kw">const</span> <span class="var">amountGHS =</span> <span class="kw">new</span> <span class="fn">Decimal</span><span class="var">(data.amount).div(</span><span class="num">100</span><span class="var">)</span>
+    <span class="kw">await</span> <span class="var">tx.wallet.update({</span>
+      <span class="field">where</span><span class="var">: { userId: payout.order.sellerId },</span>
+      <span class="field">data</span><span class="var">: { balance: { increment: amountGHS } }</span>
+    <span class="var">})</span>
+  <span class="var">})</span>
+
+  <span class="kw">await</span> <span class="fn">notifySellerOfPayout</span><span class="var">(payout.orderId, amountGHS)</span>
+<span class="var">}</span></pre>
+
+  <!-- 3.4 transfer.failed -->
+  <h2 id="s3-failed">3.4 Event: <code>transfer.failed</code></h2>
+  <p>Fired when a Paystack transfer to a seller is rejected (e.g., invalid MoMo number, insufficient Paystack balance). The funds remain on your platform and the escrow should be reverted to <code>HOLDING</code> so it can be retried.</p>
+
+  <div class="pre-header"><div class="ph-dot" style="background:var(--rose)"></div>handleTransferFailed</div>
+<pre><span class="kw">async function</span> <span class="fn">handleTransferFailed</span><span class="var">(data: TransferData) {</span>
+  <span class="kw">const</span> <span class="var">payout =</span> <span class="kw">await</span> <span class="var">prisma.payout.findUniqueOrThrow({</span>
+    <span class="field">where</span><span class="var">: { transferCode: data.transfer_code }</span>
+  <span class="var">})</span>
+
+  <span class="kw">await</span> <span class="var">prisma.$transaction(</span><span class="kw">async</span> <span class="var">(tx) => {</span>
+    <span class="cm">// Revert escrow to HOLDING so admin/seller can retry</span>
+    <span class="kw">await</span> <span class="var">tx.escrow.update({</span>
+      <span class="field">where</span><span class="var">: { orderId: payout.orderId },</span>
+      <span class="field">data</span><span class="var">: { status:</span> <span class="str">'HOLDING'</span> <span class="var">}</span>
+    <span class="var">})</span>
+    <span class="kw">await</span> <span class="var">tx.payout.update({</span>
+      <span class="field">where</span><span class="var">: { id: payout.id },</span>
+      <span class="field">data</span><span class="var">: { status:</span> <span class="str">'FAILED'</span><span class="var">, failedAt:</span> <span class="kw">new</span> <span class="fn">Date</span><span class="var">(), failureReason: data.status }</span>
+    <span class="var">})</span>
+  <span class="var">})</span>
+
+  <span class="cm">// Alert: send internal Slack/email alert for manual review</span>
+  <span class="kw">await</span> <span class="fn">alertAdminOfFailedTransfer</span><span class="var">(payout, data)</span>
+<span class="var">}</span></pre>
+
+  <div class="insight">
+    <div class="ins-l">Idempotency &amp; Reconciliation</div>
+    <p>Paystack retries webhooks up to 3 times on non-2xx responses or timeouts. The <code>WebhookEvent</code> table with a <code>UNIQUE</code> constraint on <code>externalId</code> (Paystack's <code>data.id</code>) is your primary defense. Additionally, run a cron job every 5 minutes to query Paystack's <code>GET /transaction/verify/:reference</code> for any orders that have been in <code>PENDING_PAYMENT</code> for more than 10 minutes. This reconciles orders where your server was down during webhook delivery.</p>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     SECTION 4 — STANDARDIZED ERROR HANDLING
+════════════════════════════════════════════════════════════ -->
+<div class="body">
+<div class="section" id="s4">
+  <div class="sec-label">Section 04</div>
+  <h1>Standardized Error Handling</h1>
+  <p class="section-intro">Every error response from the Express API must follow the same <code>ApiError</code> envelope defined in Section 1.3. Below is the complete mapping of HTTP status codes used in this API and their corresponding machine-readable error codes.</p>
+
+  <!-- 4.1 STATUS CODE MAP -->
+  <h2 id="s4-codes">4.1 HTTP Status Code Map</h2>
+
+  <div class="status-grid">
+    <div class="sg-row">
+      <div class="sg-code"><span class="pill p-400">400</span></div>
+      <div class="sg-body">
+        <div class="sg-title">Bad Request</div>
+        <div class="sg-desc">The request is structurally malformed (not JSON, missing required field that Zod can't parse). Distinct from 422. Common codes: <code>MALFORMED_JSON</code>, <code>MISSING_BODY</code>.</div>
+      </div>
+    </div>
+    <div class="sg-row">
+      <div class="sg-code"><span class="pill p-401">401</span></div>
+      <div class="sg-body">
+        <div class="sg-title">Unauthorized</div>
+        <div class="sg-desc">No token provided, token is expired, or token signature is invalid. The client should redirect to login. Common codes: <code>MISSING_TOKEN</code>, <code>INVALID_TOKEN</code>, <code>TOKEN_EXPIRED</code>.</div>
+      </div>
+    </div>
+    <div class="sg-row">
+      <div class="sg-code"><span class="pill p-403">403</span></div>
+      <div class="sg-body">
+        <div class="sg-title">Forbidden</div>
+        <div class="sg-desc">Token is valid but the user lacks the permission for this action (e.g., a buyer calling a seller-only endpoint, a user accessing another user's order). Common codes: <code>FORBIDDEN</code>, <code>SELLER_ROLE_REQUIRED</code>, <code>NOT_YOUR_ORDER</code>.</div>
+      </div>
+    </div>
+    <div class="sg-row">
+      <div class="sg-code"><span class="pill p-404">404</span></div>
+      <div class="sg-body">
+        <div class="sg-title">Not Found</div>
+        <div class="sg-desc">The requested resource does not exist or is intentionally hidden from the caller. Never use 200 with an empty body for not-found. Common codes: <code>LISTING_NOT_FOUND</code>, <code>ORDER_NOT_FOUND</code>, <code>STORE_NOT_FOUND</code>.</div>
+      </div>
+    </div>
+    <div class="sg-row">
+      <div class="sg-code"><span class="pill p-409">409</span></div>
+      <div class="sg-body">
+        <div class="sg-title">Conflict</div>
+        <div class="sg-desc">The request conflicts with the current state of a resource. The primary use case is slug uniqueness collisions and duplicate resource creation. Common codes: <code>SLUG_TAKEN</code>, <code>STORE_EXISTS</code>, <code>DUPLICATE_WEBHOOK</code>.</div>
+      </div>
+    </div>
+    <div class="sg-row">
+      <div class="sg-code"><span class="pill p-422">422</span></div>
+      <div class="sg-body">
+        <div class="sg-title">Unprocessable Entity</div>
+        <div class="sg-desc">The JSON is valid and parseable, but the field values fail business-rule validation (Zod schema). The <code>error.details</code> map shows field-by-field errors. Common codes: <code>VALIDATION_ERROR</code>. The <code>details</code> field is always populated for 422.</div>
+      </div>
+    </div>
+    <div class="sg-row">
+      <div class="sg-code"><span class="pill p-500">500</span></div>
+      <div class="sg-body">
+        <div class="sg-title">Internal Server Error</div>
+        <div class="sg-desc">An unexpected server-side error. In production, <code>message</code> is always a generic string — never expose stack traces or DB errors to clients. Log the full error to Sentry. Common code: <code>INTERNAL_ERROR</code>.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4.2 ERROR PAYLOAD EXAMPLES -->
+  <h2 id="s4-payload">4.2 Standardized Error Payload — Full Examples</h2>
+
+  <div class="pre-header"><div class="ph-dot" style="background:var(--amber)"></div>422 Validation Error — POST /listings (field-level detail)</div>
+<pre><span class="cm">// HTTP 422 Unprocessable Entity</span>
+<span class="var">{</span>
+  <span class="field">"success"</span><span class="var">:</span> <span class="kw">false</span><span class="var">,</span>
+  <span class="field">"error"</span><span class="var">: {</span>
+    <span class="field">"code"</span><span class="var">:</span>    <span class="str">"VALIDATION_ERROR"</span><span class="var">,</span>
+    <span class="field">"message"</span><span class="var">:</span> <span class="str">"Request body failed validation"</span><span class="var">,</span>
+    <span class="field">"details"</span><span class="var">: {</span>
+      <span class="field">"price"</span><span class="var">:      [</span><span class="str">"Must be a positive number"</span><span class="var">],</span>
+      <span class="field">"title"</span><span class="var">:      [</span><span class="str">"Required"</span><span class="var">,</span> <span class="str">"Must be at least 5 characters"</span><span class="var">],</span>
+      <span class="field">"imagePaths"</span><span class="var">: [</span><span class="str">"At least 1 image is required"</span><span class="var">]</span>
+    <span class="var">}</span>
+  <span class="var">}</span>
+<span class="var">}</span></pre>
+
+  <div class="pre-header"><div class="ph-dot" style="background:var(--rose)"></div>401 Unauthorized — expired Supabase token</div>
+<pre><span class="cm">// HTTP 401 Unauthorized</span>
+<span class="var">{</span>
+  <span class="field">"success"</span><span class="var">:</span> <span class="kw">false</span><span class="var">,</span>
+  <span class="field">"error"</span><span class="var">: {</span>
+    <span class="field">"code"</span><span class="var">:</span>    <span class="str">"TOKEN_EXPIRED"</span><span class="var">,</span>
+    <span class="field">"message"</span><span class="var">:</span> <span class="str">"Your session has expired. Please sign in again."</span>
+  <span class="var">}</span>
+<span class="var">}</span></pre>
+
+  <div class="pre-header"><div class="ph-dot" style="background:#fdba74)"></div>409 Conflict — slug already taken</div>
+<pre><span class="cm">// HTTP 409 Conflict</span>
+<span class="var">{</span>
+  <span class="field">"success"</span><span class="var">:</span> <span class="kw">false</span><span class="var">,</span>
+  <span class="field">"error"</span><span class="var">: {</span>
+    <span class="field">"code"</span><span class="var">:</span>    <span class="str">"SLUG_TAKEN"</span><span class="var">,</span>
+    <span class="field">"message"</span><span class="var">:</span> <span class="str">"The store URL 'janes-tech' is already in use. Please choose another."</span>
+  <span class="var">}</span>
+<span class="var">}</span></pre>
+
+  <div class="pre-header"><div class="ph-dot" style="background:var(--rose)"></div>403 Forbidden — buyer trying to release another buyer's escrow</div>
+<pre><span class="cm">// HTTP 403 Forbidden</span>
+<span class="var">{</span>
+  <span class="field">"success"</span><span class="var">:</span> <span class="kw">false</span><span class="var">,</span>
+  <span class="field">"error"</span><span class="var">: {</span>
+    <span class="field">"code"</span><span class="var">:</span>    <span class="str">"NOT_YOUR_ORDER"</span><span class="var">,</span>
+    <span class="field">"message"</span><span class="var">:</span> <span class="str">"You do not have permission to release escrow for this order."</span>
+  <span class="var">}</span>
+<span class="var">}</span></pre>
+
+  <div class="pre-header"><div class="ph-dot" style="background:var(--rose)"></div>400 Bad Request — seller has no payout account registered</div>
+<pre><span class="cm">// HTTP 400 Bad Request</span>
+<span class="var">{</span>
+  <span class="field">"success"</span><span class="var">:</span> <span class="kw">false</span><span class="var">,</span>
+  <span class="field">"error"</span><span class="var">: {</span>
+    <span class="field">"code"</span><span class="var">:</span>    <span class="str">"NO_PAYOUT_ACCOUNT"</span><span class="var">,</span>
+    <span class="field">"message"</span><span class="var">:</span> <span class="str">"The seller has not yet registered a payout account. Escrow release is paused."</span>
+  <span class="var">}</span>
+<span class="var">}</span></pre>
+
+  <div class="pre-header"><div class="ph-dot" style="background:var(--rose)"></div>500 Internal Server Error — never expose internal details</div>
+<pre><span class="cm">// HTTP 500 Internal Server Error</span>
+<span class="var">{</span>
+  <span class="field">"success"</span><span class="var">:</span> <span class="kw">false</span><span class="var">,</span>
+  <span class="field">"error"</span><span class="var">: {</span>
+    <span class="field">"code"</span><span class="var">:</span>    <span class="str">"INTERNAL_ERROR"</span><span class="var">,</span>
+    <span class="field">"message"</span><span class="var">:</span> <span class="str">"An unexpected error occurred. Our team has been notified."</span>
+    <span class="cm">// "details" is NEVER included for 500 errors in production</span>
+    <span class="cm">// Full error is sent to Sentry with error.id for correlation</span>
+  <span class="var">}</span>
+<span class="var">}</span></pre>
+
+  <h2>4.3 Global Error Handler (Express)</h2>
+  <p>Register this as the final middleware in <code>index.ts</code>. It catches any unhandled errors, logs them to Sentry, and ensures they are always returned in the standardized envelope.</p>
+
+  <div class="pre-header"><div class="ph-dot" style="background:var(--express)"></div>middleware/errorHandler.ts</div>
+<pre><span class="kw">import</span> <span class="var">* as Sentry from</span> <span class="str">'@sentry/node'</span>
+<span class="kw">import type</span> <span class="var">{ Request, Response, NextFunction }</span> <span class="kw">from</span> <span class="str">'express'</span>
+<span class="kw">import</span> <span class="var">{ ZodError }</span> <span class="kw">from</span> <span class="str">'zod'</span>
+<span class="kw">import</span> <span class="var">{ Prisma }</span> <span class="kw">from</span> <span class="str">'@prisma/client'</span>
+
+<span class="kw">export function</span> <span class="fn">globalErrorHandler</span><span class="var">(</span>
+  <span class="var">err: unknown, req: Request, res: Response, _next: NextFunction</span>
+<span class="var">) {</span>
+  <span class="cm">// ── ZodError: validation failure ───────────────────────────────────────</span>
+  <span class="kw">if</span> <span class="var">(err</span> <span class="kw">instanceof</span> <span class="var">ZodError) {</span>
+    <span class="kw">const</span> <span class="var">details: Record&lt;string, string[]&gt; = {}</span>
+    <span class="kw">for</span> <span class="var">(const issue of err.issues) {</span>
+      <span class="kw">const</span> <span class="var">field = issue.path.join(</span><span class="str">'.'</span><span class="var">) ||</span> <span class="str">'_root'</span>
+      <span class="var">details[field] = [...(details[field] ?? []), issue.message]</span>
+    <span class="var">}</span>
+    <span class="kw">return</span> <span class="var">res.status(</span><span class="num">422</span><span class="var">).json(</span><span class="fn">buildError</span><span class="var">(</span><span class="num">422</span><span class="var">,</span> <span class="str">'VALIDATION_ERROR'</span><span class="var">,</span>
+      <span class="str">'Request body failed validation'</span><span class="var">, details))</span>
+  <span class="var">}</span>
+
+  <span class="cm">// ── Prisma NOT FOUND: P2025 ────────────────────────────────────────────</span>
+  <span class="kw">if</span> <span class="var">(err</span> <span class="kw">instanceof</span> <span class="var">Prisma.PrismaClientKnownRequestError</span>
+      <span class="var">&& err.code ===</span> <span class="str">'P2025'</span><span class="var">) {</span>
+    <span class="kw">return</span> <span class="var">res.status(</span><span class="num">404</span><span class="var">).json(</span><span class="fn">buildError</span><span class="var">(</span><span class="num">404</span><span class="var">,</span> <span class="str">'NOT_FOUND'</span><span class="var">,</span> <span class="str">'Resource not found'</span><span class="var">))</span>
+  <span class="var">}</span>
+
+  <span class="cm">// ── Prisma UNIQUE VIOLATION: P2002 ────────────────────────────────────</span>
+  <span class="kw">if</span> <span class="var">(err</span> <span class="kw">instanceof</span> <span class="var">Prisma.PrismaClientKnownRequestError</span>
+      <span class="var">&& err.code ===</span> <span class="str">'P2002'</span><span class="var">) {</span>
+    <span class="kw">return</span> <span class="var">res.status(</span><span class="num">409</span><span class="var">).json(</span><span class="fn">buildError</span><span class="var">(</span><span class="num">409</span><span class="var">,</span> <span class="str">'CONFLICT'</span><span class="var">,</span> <span class="str">'A resource with this value already exists'</span><span class="var">))</span>
+  <span class="var">}</span>
+
+  <span class="cm">// ── Unknown error: report to Sentry, return generic 500 ───────────────</span>
+  <span class="var">Sentry.captureException(err)</span>
+  <span class="cm">// Log full error server-side only — never expose to client</span>
+  <span class="var">console.error(</span><span class="str">'[UNHANDLED ERROR]'</span><span class="var">, err)</span>
+  <span class="kw">return</span> <span class="var">res.status(</span><span class="num">500</span><span class="var">).json(</span><span class="fn">buildError</span><span class="var">(</span><span class="num">500</span><span class="var">,</span> <span class="str">'INTERNAL_ERROR'</span><span class="var">,</span>
+    <span class="str">'An unexpected error occurred. Our team has been notified.'</span><span class="var">))</span>
+<span class="var">}</span>
+
+<span class="cm">// In index.ts — must be registered LAST, after all routes</span>
+<span class="var">app.use(globalErrorHandler)</span></pre>
+
+  <h2>4.4 Next.js — Consuming Errors</h2>
+  <div class="pre-header"><div class="ph-dot" style="background:var(--next)"></div>How the frontend reads error codes</div>
+<pre><span class="cm">// In a Next.js Server Action or Client Component</span>
+<span class="kw">try</span> <span class="var">{</span>
+  <span class="kw">const</span> <span class="var">{ data } =</span> <span class="kw">await</span> <span class="fn">apiFetch</span><span class="var">(</span><span class="str">'/stores'</span><span class="var">, { method:</span> <span class="str">'POST'</span><span class="var">, body: ... })</span>
+<span class="var">}</span> <span class="kw">catch</span> <span class="var">(err) {</span>
+  <span class="cm">// err is the ApiError object thrown by apiFetch</span>
+  <span class="kw">const</span> <span class="var">apiError = err as ApiError</span>
+  <span class="kw">switch</span> <span class="var">(apiError.error?.code) {</span>
+    <span class="kw">case</span> <span class="str">'SLUG_TAKEN'</span><span class="var">:</span>
+      <span class="fn">setFieldError</span><span class="var">(</span><span class="str">'handle'</span><span class="var">,</span> <span class="str">'This URL is already taken'</span><span class="var">)</span>
+      <span class="kw">break</span>
+    <span class="kw">case</span> <span class="str">'VALIDATION_ERROR'</span><span class="var">:</span>
+      <span class="cm">// Map apiError.error.details to form field errors</span>
+      <span class="fn">applyFieldErrors</span><span class="var">(apiError.error.details)</span>
+      <span class="kw">break</span>
+    <span class="kw">case</span> <span class="str">'TOKEN_EXPIRED'</span><span class="var">:</span>
+      <span class="fn">router.push</span><span class="var">(</span><span class="str">'/login?reason=session-expired'</span><span class="var">)</span>
+      <span class="kw">break</span>
+    <span class="kw">default</span><span class="var">:</span>
+      <span class="fn">toast.error</span><span class="var">(apiError.error?.message ??</span> <span class="str">'Something went wrong'</span><span class="var">)</span>
+  <span class="var">}</span>
+<span class="var">}</span></pre>
+
+  <div class="insight">
+    <div class="ins-l">Principal Engineer's Contract Summary</div>
+    <p>Three things will cause a production incident if you skip them: <strong>(1) Webhook raw-body ordering</strong> — registering the Paystack webhook route after <code>express.json()</code> means every single webhook is silently rejected with a signature mismatch. <strong>(2) Idempotency on webhooks</strong> — Paystack retries on any slow response; without the <code>WebhookEvent</code> deduplication table, a retry double-credits a wallet or double-releases escrow. <strong>(3) Decimal type for all money</strong> — storing prices or escrow amounts as JavaScript floats introduces rounding errors that accumulate silently in a financial ledger. Every price, fee, and wallet balance must use Prisma's <code>Decimal</code> field and be converted to kobo (integer) only at the moment of the Paystack API call.</p>
+  </div>
+
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+     END MARKER
+════════════════════════════════════════════════════════════ -->
+<div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:rgba(255,255,255,0.1);letter-spacing:0.14em;text-transform:uppercase;display:flex;align-items:center;gap:12px;margin:64px 0 0 0;">
+  <span style="flex:1;height:1px;background:rgba(255,255,255,0.05);display:block;"></span>
+  End of Document · U-Shop API Contract v1.0 · Next.js 14 + Express.js + Supabase · Paystack Edition · Internal
+  <span style="flex:1;height:1px;background:rgba(255,255,255,0.05);display:block;"></span>
+</div>
+</div>
+
+<div class="footer">
+  <div class="ft-logo">
+    <div class="ft-u">U</div>
+    <div class="ft-sh">shop</div>
+  </div>
+  <div class="ft-r">API Contract v1.0 · Next.js 14 + Express.js + Supabase + Paystack · Internal Engineering</div>
+</div>
+
+</div><!-- .main -->
+</body>
+</html>
