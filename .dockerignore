@@ -1,0 +1,33 @@
+# Version control
+.git
+.gitignore
+
+# Build artefacts
+development/apps/api/dist
+development/apps/web/.next
+development/apps/web/out
+
+# Dependency directories (will be installed fresh inside the image)
+**/node_modules
+
+# Environment files
+**/.env
+**/.env.*
+!**/.env.example
+
+# OS / editor noise
+.DS_Store
+**/.DS_Store
+Thumbs.db
+
+# Logs
+**/*.log
+**/npm-debug.log*
+**/pnpm-debug.log*
+
+# Test artefacts
+**/coverage
+**/.nyc_output
+
+# Assets not needed at runtime
+assets/
