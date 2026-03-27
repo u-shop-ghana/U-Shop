@@ -1,0 +1,35 @@
+[build]
+builder = "NIXPACKS"
+buildCommand = "pnpm install && pnpm db:generate && pnpm build"
+watchPatterns = ["src/**", "prisma/**"]
+
+[deploy]
+startCommand = "node dist/index.js"
+healthcheckPath = "/health"
+healthcheckTimeout = 300
+restartPolicyType = "ON_FAILURE"
+restartPolicyMaxRetries = 10
+
+# Root directory of your backend service
+rootDir = "development/apps/api"
+
+
+# Wait for CI ensures deploy only after GitHub Actions passes
+waitForCI = true
+
+[env]
+# Connect to Supabase via connection pooling
+DATABASE_URL="postgresql://postgres.sghnfxwkyrxqciogtodq:e6qmLDxk3m18thFH@aws-1-eu-west-1.pooler.supabase.com:6543/postgres?pgbouncer=true"
+
+# Direct connection to the database. Used for migrations
+DIRECT_URL="postgresql://postgres.sghnfxwkyrxqciogtodq:e6qmLDxk3m18thFH@aws-1-eu-west-1.pooler.supabase.com:5432/postgres"
+
+# ─── Supabase ─────────────────────────────────
+SUPABASE_URL="https://sghnfxwkyrxqciogtodq.supabase.co"
+SUPABASE_SERVICE_ROLE_KEY="[REDACTED_OLD_SERVICE_KEY]"
+SUPABASE_ANON_KEY="[REDACTED_OLD_ANON_KEY]"
+
+# ─── Upstash Redis ────────────────────────────
+UPSTASH_REDIS_URL="https://redis-11437.crce262.us-east-1-1.ec2.cloud.redislabs.com:11437"
+
+PORT = "4000"
