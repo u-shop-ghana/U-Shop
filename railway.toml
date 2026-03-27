@@ -1,35 +1,21 @@
 [build]
 builder = "NIXPACKS"
-buildCommand = "pnpm install && pnpm db:generate && pnpm build"
-watchPatterns = ["src/**", "prisma/**"]
+nixpacksConfigPath = "apps/api/nixpacks.toml"
+buildCommand = "cd apps/api && pnpm db:generate && pnpm build"
+watchPatterns = ["apps/api/**", "packages/shared/**"]
 
 [deploy]
-startCommand = "node dist/index.ts"
+startCommand = "cd apps/api && node dist/index.js"
 healthcheckPath = "/health"
 healthcheckTimeout = 300
 restartPolicyType = "ON_FAILURE"
 restartPolicyMaxRetries = 10
 
-# Root directory of your backend service
-rootDir = "development/apps/api"
-
-
-# Wait for CI ensures deploy only after GitHub Actions passes
-waitForCI = true
+# Root directory — must be the MONOREPO root so pnpm workspaces resolve
+rootDir = "development"
 
 [env]
-# Connect to Supabase via connection pooling
-DATABASE_URL="postgresql://postgres.sghnfxwkyrxqciogtodq:[REDACTED_SECURITY_HUB]@aws-1-eu-west-1.pooler.supabase.com:6543/postgres?pgbouncer=true"
-
-# Direct connection to the database. Used for migrations
-DIRECT_URL="postgresql://postgres.sghnfxwkyrxqciogtodq:[REDACTED_SECURITY_HUB]@aws-1-eu-west-1.pooler.supabase.com:5432/postgres"
-
-# ─── Supabase ─────────────────────────────────
-SUPABASE_URL="https://sghnfxwkyrxqciogtodq.supabase.co"
-SUPABASE_SERVICE_ROLE_KEY="[REDACTED_OLD_SERVICE_KEY]"
-SUPABASE_ANON_KEY="[REDACTED_OLD_ANON_KEY]"
-
-# ─── Upstash Redis ────────────────────────────
-UPSTASH_REDIS_URL="https://redis-11437.crce262.us-east-1-1.ec2.cloud.redislabs.com:11437"
-
+NODE_ENV = "production"
 PORT = "4000"
+# Set DATABASE_URL, DIRECT_URL, SUPABASE_*, PAYSTACK_*, etc
+# in Railway dashboard → Variables (never commit secrets to git)
