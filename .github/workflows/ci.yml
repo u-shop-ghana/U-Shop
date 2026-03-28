@@ -43,4 +43,4 @@ jobs:
         with:
           version: 9
       - run: pnpm install
-      - run: pnpm tsc --noEmit
+      - run: pnpm typecheck
