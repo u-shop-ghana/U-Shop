@@ -1,0 +1,8 @@
+{
+  "files": [],
+  "references": [
+    { "path": "development/apps/api" },
+    { "path": "development/apps/web" },
+    { "path": "development/packages/shared" }
+  ]
+}
