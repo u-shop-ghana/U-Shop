@@ -85,6 +85,9 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - Added `@ushop/shared` as workspace dependency to `apps/web/package.json`
 - All auth pages follow the Figma designs from `design/web-designs/desktop/`
 
+### Fixed
+- **Build failure on `/verify`** — Wrapped `useSearchParams()` in a `<Suspense>` boundary to satisfy Next.js 16 static generation requirements. Without this, the build crashes during prerendering because `useSearchParams` is a client-only hook that can't be resolved at build time.
+
 ---
 
 ## [0.2.0] — 2026-04-01 — Phase 1: Auth & Verification
