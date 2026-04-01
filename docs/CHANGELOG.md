@@ -5,6 +5,141 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [0.3.0] — 2026-04-01 — Phase 1: Frontend Auth Pages
+
+### Added
+
+#### Design System — `apps/web/src/app/globals.css`
+- Full U-Shop design system for Tailwind v4 via `@theme inline`
+- Brand core tokens: `ushop-red`, `ushop-purple`, `ushop-magenta`, `ushop-pink`
+- Ink layer system: `ink-void`, `ink-deep`, `ink-dark`, `ink-mid`, `ink-surface`
+- Campus Figma tokens: `campus-dark`, `campus-card`, `campus-purple`, `campus-pink`
+- Text colors: `ink-text`, `ink-soft`, `ink-muted`, `ink-disabled`
+- Semantic status colors: `success`, `warning`, `error`, `info`
+- Utility classes: `.text-gradient-brand`, `.bg-gradient-brand`, `.bg-gradient-cta`, `.bg-dark-mesh`
+- Typography custom properties matching `docs/brand/typography.md` scale
+
+#### Root Layout — `apps/web/src/app/layout.tsx`
+- Replaced Geist fonts with **Plus Jakarta Sans** (primary) + **IBM Plex Mono** (secondary)
+- SEO metadata: title, description, keywords for U-Shop Ghana
+- Material Symbols Outlined icon font loaded
+- Dark mode enabled by default (`dark` class on `<html>`)
+
+#### Supabase Client Setup
+- **Browser client** — `apps/web/src/lib/supabase/client.ts` for Client Components
+- **Server client** — `apps/web/src/lib/supabase/server.ts` for Server Components with cookie-based sessions
+- Both use `@supabase/ssr` for proper SSR/SSG compatibility
+
+#### Next.js Middleware — `apps/web/src/middleware.ts`
+- Automatic Supabase auth token refresh on every request
+- Route protection: redirects unauthenticated users from `/dashboard`, `/settings`, etc.
+- Reverse protection: redirects authenticated users away from `/login`, `/register`
+- `returnTo` parameter support for post-login redirects
+
+#### Auth Pages — `apps/web/src/app/(auth)/`
+
+**Login** — `login/page.tsx`
+- Split-screen layout: hero section (desktop), form card (all sizes)
+- Email/password login via `supabase.auth.signInWithPassword()`
+- Google OAuth via `supabase.auth.signInWithOAuth()`
+- Show/hide password toggle, "Remember me" checkbox
+- "Forgot Password?" link, error messages with user-friendly text
+- Login/Sign Up tab switcher, social proof badges
+
+**Register** — `register/page.tsx`
+- Student hero banner with campus imagery + feature badges
+- Full Name, Email, Password fields with icon prefixes
+- **Password strength indicator** (4-level: Weak → Strong)
+- **Student email auto-detection** — green badge when `.edu.gh` domain detected
+- "Verify as Student" toggle with explanation
+- Terms & Privacy Policy checkbox (required)
+- Supabase signup → Express API `/register` sync → auto-verify flow
+- Google OAuth signup option
+
+**Forgot Password** — `forgot-password/page.tsx`
+- Email entry form with Supabase `resetPasswordForEmail()`
+- Success state with "Check Your Email" confirmation
+- "Try again" option, "Need Help?" support note
+- Back to Login navigation
+
+**Reset Password** — `reset-password/page.tsx`
+- New Password + Confirm Password fields with show/hide
+- **Real-time security requirement checkers** (8 chars, uppercase+number, match)
+- Supabase `updateUser()` for password change
+- Visual feedback: green check icons as requirements are met
+
+**Student Verification** — `verify/page.tsx`
+- Three states: email confirmation, manual verification, submission success
+- University dropdown (10 Ghanaian institutions)
+- Student email input with `.edu.gh` auto-verify detection
+- **Dual file upload** for Student ID (front/back) with type/size validation
+- Security/encryption notice
+- "Skip for now" option to continue without verification
+
+**OAuth Callback** — `callback/route.ts`
+- Route handler for Supabase OAuth code exchange
+- Automatic backend user sync via `/api/v1/auth/register`
+- Error fallback redirect to login
+
+### Changed
+- Added `@ushop/shared` as workspace dependency to `apps/web/package.json`
+- All auth pages follow the Figma designs from `design/web-designs/desktop/`
+
+---
+
+## [0.2.0] — 2026-04-01 — Phase 1: Auth & Verification
+
+
+### Added
+
+#### Supabase Admin Client — `src/lib/supabase.ts`
+- Supabase admin client using `SERVICE_ROLE_KEY` (bypasses RLS)
+- Fail-fast startup validation — crashes immediately with clear error messages if `SUPABASE_URL` or `SUPABASE_SERVICE_ROLE_KEY` are missing
+- Server-side config: `autoRefreshToken: false`, `persistSession: false`
+- Used for: JWT verification, storage management, admin operations
+
+#### Auth Middleware — `src/middleware/authenticate.ts`
+- `authenticate()` — verifies Supabase JWT via `getUser()` (revocation-safe), looks up internal User record, checks suspension status, attaches `req.user`
+- `requireSeller()` — restricts to users with SELLER, BOTH, or ADMIN roles
+- `requireAdmin()` — restricts to ADMIN role only
+- `requireVerified()` — restricts to VERIFIED verification status
+- Minimal `SELECT` on user lookup to avoid leaking sensitive fields (e.g., `studentIdImagePath`)
+
+#### Auth Routes — `src/routes/auth.ts`
+- `POST /api/v1/auth/register` — creates internal User record after Supabase signup; idempotent (returns existing user if called twice); triggers auto-verification for student emails
+- `POST /api/v1/auth/sync` — safety net endpoint for re-syncing Supabase → DB if registration failed
+- `GET /api/v1/auth/me` — returns full user profile with store info
+- `POST /api/v1/auth/verify/upload` — submit student ID image path for admin review; guards against re-submission while PENDING
+
+#### Verification Service — `src/services/verification.service.ts`
+- **Auto-verification (Path 1):** Matches email against 18 Ghanaian university domains with subdomain support (e.g., `st.ug.edu.gh` → `ug.edu.gh`)
+- **Manual verification (Path 2):** ID upload → PENDING status → admin review
+- `extractUniversityName()` — maps domain to human-readable name (UG, KNUST, Ashesi, etc.)
+- State machine guards: prevents re-submission while PENDING, prevents upload if already VERIFIED
+- `approveVerification()` / `rejectVerification()` — admin actions with audit logging
+
+#### Rate Limiter — `src/middleware/rate-limiter.ts`
+- In-memory sliding-window rate limiter with 4 tiers:
+  - `auth`: 10 req / 15 min (brute-force prevention)
+  - `general`: 200 req / 15 min (normal API usage)
+  - `upload`: 30 req / hour (storage abuse prevention)
+  - `checkout`: 5 req / 15 min (payment spam prevention)
+- Sets standard `X-RateLimit-*` and `Retry-After` headers
+- Auto-cleanup of expired entries every 5 minutes
+- Designed for easy swap to Upstash Redis for multi-instance deploys
+
+#### Type Declarations — `src/types/express.d.ts`
+- Dedicated ambient declaration file for `req.user` type augmentation
+- Avoids ESM namespace lint warnings from inline `declare global`
+
+#### Dependency
+- Installed `@supabase/supabase-js` in `@ushop/api`
+
+### Changed
+- Updated `src/index.ts` — wired auth routes at `/api/v1/auth` with strict rate limiting, general rate limit on all `/api` routes
+
+---
+
 ## [0.1.0] — 2026-03-28 — Phase 0: Foundation & Project Setup
 
 ### Added

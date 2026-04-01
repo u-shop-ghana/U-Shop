@@ -6,6 +6,8 @@ import dotenv from 'dotenv';
 import { logger } from './lib/logger.js';
 import { errorHandler } from './middleware/error-handler.js';
 import { notFound } from './middleware/not-found.js';
+import { rateLimiter } from './middleware/rate-limiter.js';
+import authRouter from './routes/auth.js';
 
 // Load environment variables
 dotenv.config();
@@ -38,9 +40,16 @@ app.get('/health', (_req, res) => {
   });
 });
 
+// ─── Rate Limiting ───────────────────────────────────────────────
+// General rate limit on all /api routes: 200 req / 15 min per IP.
+// More specific limits are applied per-route group below.
+app.use('/api', rateLimiter.general);
+
 // ─── API Routes ──────────────────────────────────────────────────
-// Routes will be added here as we build each feature:
-// app.use('/api/v1/auth', authRouter);
+// Auth gets stricter rate limiting (10 req / 15 min) to prevent brute-force.
+app.use('/api/v1/auth', rateLimiter.auth, authRouter);
+
+// Routes to be added as we build each feature:
 // app.use('/api/v1/stores', storesRouter);
 // app.use('/api/v1/listings', listingsRouter);
 // app.use('/api/v1/orders', ordersRouter);
