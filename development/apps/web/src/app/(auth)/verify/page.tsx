@@ -1,10 +1,31 @@
 "use client";
 
-import { useState, useRef, type FormEvent, type ChangeEvent } from "react";
+import { useState, useRef, Suspense, type FormEvent, type ChangeEvent } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { STUDENT_EMAIL_DOMAINS } from "@/lib/student-domains";
+
+// ─── Verify Page Wrapper ────────────────────────────────────────
+// useSearchParams() requires a Suspense boundary at the page level
+// for Next.js static generation. Without this, the build fails
+// because Next.js can't prerender a page that reads URL search params.
+export default function VerifyPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen flex items-center justify-center bg-campus-form-bg">
+          <div className="animate-pulse flex flex-col items-center gap-4">
+            <div className="w-12 h-12 bg-ushop-purple/30 rounded-full" />
+            <p className="text-gray-400 text-sm">Loading...</p>
+          </div>
+        </div>
+      }
+    >
+      <VerifyPageContent />
+    </Suspense>
+  );
+}
 
 // ─── Student Verification Page ──────────────────────────────────
 // Two paths:
@@ -12,7 +33,7 @@ import { STUDENT_EMAIL_DOMAINS } from "@/lib/student-domains";
 //      they see a success state and can proceed immediately.
 //   2. Manual verification: University selection + student ID upload.
 // Matches design/web-designs/desktop/Student verification.html
-export default function VerifyPage() {
+function VerifyPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const supabase = createClient();
