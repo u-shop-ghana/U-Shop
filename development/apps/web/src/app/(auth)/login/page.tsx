@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
@@ -73,9 +74,16 @@ export default function LoginPage() {
     <div className="flex flex-col lg:flex-row min-h-screen w-full">
       {/* ── Left Side: Hero Section (Desktop only) ────────────── */}
       <div className="hidden lg:flex flex-1 bg-campus-card relative overflow-hidden items-center justify-center p-16">
-        {/* Background Image with Overlay */}
+        {/* Background Image with Overlay — uses the real hero image */}
         <div className="absolute inset-0">
-          <div className="absolute inset-0 bg-campus-card" />
+          <Image
+            src="/assets/images/hero/login.png"
+            alt="Students collaborating on laptops"
+            fill
+            className="object-cover opacity-40 mix-blend-overlay"
+            priority
+            sizes="50vw"
+          />
           <div className="absolute inset-0 bg-gradient-to-t from-campus-dark via-[rgba(127,13,242,0.2)] to-transparent" />
           <div className="absolute inset-0 bg-[rgba(127,13,242,0.1)] mix-blend-multiply" />
         </div>
@@ -134,13 +142,15 @@ export default function LoginPage() {
       <div className="flex-1 bg-campus-dark flex flex-col p-6 md:p-12 relative overflow-y-auto min-h-screen">
         {/* Logo Header */}
         <div className="mb-12 flex justify-center lg:justify-start">
-          <Link href="/" className="flex items-center gap-1">
-            <div className="w-10 h-10 bg-ushop-red flex items-center justify-center text-white text-2xl font-bold">
-              U
-            </div>
-            <span className="text-white text-2xl font-bold tracking-tight">
-              shop
-            </span>
+          <Link href="/">
+            <Image
+              src="/assets/logos/web/logo-300w.png"
+              alt="U-Shop"
+              width={120}
+              height={40}
+              className="h-10 w-auto object-contain"
+              priority
+            />
           </Link>
         </div>
 
