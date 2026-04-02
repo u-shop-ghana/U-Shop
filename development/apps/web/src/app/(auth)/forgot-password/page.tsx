@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 
@@ -47,8 +48,16 @@ export default function ForgotPasswordPage() {
     <main className="min-h-screen flex flex-col md:flex-row">
       {/* ── Left Side: Hero Section ───────────────────────────── */}
       <section className="relative w-full md:w-1/2 flex items-center justify-center overflow-hidden bg-campus-form-bg p-8 md:p-16 hidden md:flex">
-        {/* Background Overlay */}
+        {/* Background Image with Overlay — illustrated students scene */}
         <div className="absolute inset-0 z-0">
+          <Image
+            src="/assets/images/hero/forgot password.png"
+            alt="Students studying together"
+            fill
+            className="object-cover opacity-30 mix-blend-overlay"
+            priority
+            sizes="50vw"
+          />
           <div className="absolute inset-0 bg-gradient-to-br from-ushop-purple/80 via-campus-form-bg/90 to-campus-form-bg" />
         </div>
 
@@ -58,13 +67,15 @@ export default function ForgotPasswordPage() {
 
         <div className="relative z-10 max-w-lg w-full">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-1 mb-12">
-            <div className="w-10 h-10 bg-ushop-red flex items-center justify-center text-white text-2xl font-bold">
-              U
-            </div>
-            <span className="text-white text-2xl font-bold tracking-tight">
-              shop
-            </span>
+          <Link href="/" className="mb-12 inline-block">
+            <Image
+              src="/assets/logos/web/logo-300w.png"
+              alt="U-Shop"
+              width={120}
+              height={40}
+              className="h-10 w-auto object-contain"
+              priority
+            />
           </Link>
 
           <div className="space-y-6">
@@ -99,13 +110,14 @@ export default function ForgotPasswordPage() {
         <div className="w-full max-w-md space-y-8">
           {/* Mobile Logo */}
           <div className="md:hidden flex justify-center">
-            <Link href="/" className="flex items-center gap-1">
-              <div className="w-10 h-10 bg-ushop-red flex items-center justify-center text-white text-2xl font-bold">
-                U
-              </div>
-              <span className="text-white text-2xl font-bold tracking-tight">
-                shop
-              </span>
+            <Link href="/">
+              <Image
+                src="/assets/logos/web/logo-300w.png"
+                alt="U-Shop"
+                width={120}
+                height={40}
+                className="h-10 w-auto object-contain"
+              />
             </Link>
           </div>
 

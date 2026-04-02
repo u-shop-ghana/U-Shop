@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
@@ -62,19 +63,34 @@ export default function ResetPasswordPage() {
     <main className="flex min-h-screen flex-col md:flex-row">
       {/* ── Left Side: Hero Section ───────────────────────────── */}
       <section className="relative hidden md:flex md:w-1/2 bg-campus-dark overflow-hidden items-center justify-center p-12">
+        {/* Background Image with Overlay */}
+        <div className="absolute inset-0">
+          <Image
+            src="/assets/images/hero/reset password.png"
+            alt="Students collaborating at a desk"
+            fill
+            className="object-cover opacity-30 mix-blend-overlay"
+            priority
+            sizes="50vw"
+          />
+          <div className="absolute inset-0 bg-gradient-to-br from-campus-dark via-campus-dark/90 to-ushop-purple/20" />
+        </div>
+
         {/* Decorative Gradients */}
         <div className="absolute top-0 right-0 w-96 h-96 bg-ushop-pink rounded-full filter blur-[120px] opacity-20 -translate-y-1/2 translate-x-1/2" />
         <div className="absolute bottom-0 left-0 w-96 h-96 bg-ushop-purple rounded-full filter blur-[120px] opacity-20 translate-y-1/2 -translate-x-1/2" />
 
         <div className="relative z-10 max-w-lg space-y-6 text-left">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-2 mb-12">
-            <div className="w-10 h-10 bg-ushop-red flex items-center justify-center text-white text-2xl font-bold">
-              U
-            </div>
-            <span className="text-white text-2xl font-bold tracking-tight">
-              shop
-            </span>
+          <Link href="/" className="mb-12 inline-block">
+            <Image
+              src="/assets/logos/web/logo-300w.png"
+              alt="U-Shop"
+              width={120}
+              height={40}
+              className="h-10 w-auto object-contain"
+              priority
+            />
           </Link>
 
           <h1 className="text-4xl lg:text-5xl font-extrabold leading-tight tracking-tight text-white">
@@ -107,13 +123,14 @@ export default function ResetPasswordPage() {
       <section className="flex-1 flex flex-col items-center justify-center p-6 md:p-12 lg:p-24 bg-campus-form-bg">
         {/* Mobile Logo */}
         <div className="md:hidden flex items-center gap-2 mb-12">
-          <Link href="/" className="flex items-center gap-1">
-            <div className="w-10 h-10 bg-ushop-red flex items-center justify-center text-white text-2xl font-bold">
-              U
-            </div>
-            <span className="text-white text-2xl font-bold tracking-tight">
-              shop
-            </span>
+          <Link href="/">
+            <Image
+              src="/assets/logos/web/logo-300w.png"
+              alt="U-Shop"
+              width={120}
+              height={40}
+              className="h-10 w-auto object-contain"
+            />
           </Link>
         </div>
 

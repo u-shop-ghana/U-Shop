@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, Suspense, type FormEvent, type ChangeEvent } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
@@ -164,13 +165,14 @@ function VerifyPageContent() {
     return (
       <main className="min-h-screen flex items-center justify-center bg-campus-form-bg p-6">
         <div className="w-full max-w-md text-center space-y-6">
-          <Link href="/" className="inline-flex items-center gap-1 mb-8">
-            <div className="w-10 h-10 bg-ushop-red flex items-center justify-center text-white text-2xl font-bold">
-              U
-            </div>
-            <span className="text-white text-2xl font-bold tracking-tight">
-              shop
-            </span>
+          <Link href="/" className="inline-block mb-8">
+            <Image
+              src="/assets/logos/web/logo-300w.png"
+              alt="U-Shop"
+              width={120}
+              height={40}
+              className="h-10 w-auto object-contain"
+            />
           </Link>
 
           <div className="p-8 bg-campus-card border border-white/5 rounded-2xl shadow-2xl">
@@ -243,21 +245,30 @@ function VerifyPageContent() {
     <main className="min-h-screen flex flex-col md:flex-row overflow-hidden">
       {/* ── Left Side: Hero ───────────────────────────────────── */}
       <section className="relative w-full md:w-1/2 min-h-[400px] md:min-h-screen bg-campus-dark flex items-center justify-center overflow-hidden">
-        {/* Background Overlay */}
+        {/* Background Image with Overlay — real Ghanaian students photo */}
         <div className="absolute inset-0 z-0">
-          <div className="absolute inset-0 bg-campus-dark" />
+          <Image
+            src="/assets/images/hero/verify.png"
+            alt="Ghanaian university students on campus"
+            fill
+            className="object-cover opacity-40 mix-blend-overlay"
+            priority
+            sizes="50vw"
+          />
           <div className="absolute inset-0 bg-gradient-to-t from-campus-dark via-transparent to-campus-dark/50" />
           <div className="absolute inset-0 bg-gradient-to-r from-ushop-purple/20 to-transparent" />
         </div>
 
         <div className="relative z-10 p-8 md:p-16 max-w-xl">
-          <Link href="/" className="flex items-center gap-2 mb-8">
-            <div className="w-10 h-10 bg-ushop-red flex items-center justify-center text-white text-2xl font-bold">
-              U
-            </div>
-            <span className="text-white text-2xl font-bold tracking-tight">
-              shop
-            </span>
+          <Link href="/" className="mb-8 inline-block">
+            <Image
+              src="/assets/logos/web/logo-300w.png"
+              alt="U-Shop"
+              width={120}
+              height={40}
+              className="h-10 w-auto object-contain"
+              priority
+            />
           </Link>
 
           <h1 className="text-4xl md:text-6xl font-extrabold text-white mb-6 leading-tight">
