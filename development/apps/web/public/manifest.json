@@ -1,0 +1,27 @@
+{
+  "name": "U-Shop — Ghana's Student Tech Marketplace",
+  "short_name": "U-Shop",
+  "description": "Buy and sell laptops, phones, and accessories with escrow protection.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0E0B14",
+  "theme_color": "#7c3aed",
+  "icons": [
+    {
+      "src": "/assets/logos/favicon/android-chrome-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/assets/logos/favicon/android-chrome-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "/assets/logos/app/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}
