@@ -24,6 +24,7 @@ const plexMono = IBM_Plex_Mono({
 
 // ─── Metadata ───────────────────────────────────────────────────
 // SEO-optimized metadata for the entire application.
+// Icons reference the real brand favicons from /public/assets/logos/.
 export const metadata: Metadata = {
   title: {
     default: "U-Shop — Ghana's Trusted Student Tech Marketplace",
@@ -42,6 +43,19 @@ export const metadata: Metadata = {
     "KNUST",
     "Ashesi",
   ],
+  icons: {
+    icon: [
+      { url: "/favicon.ico", sizes: "any" },
+      { url: "/assets/logos/favicon/favicon-16x16.png", sizes: "16x16", type: "image/png" },
+      { url: "/assets/logos/favicon/favicon-32x32.png", sizes: "32x32", type: "image/png" },
+    ],
+    apple: "/apple-touch-icon.png",
+    other: [
+      { rel: "icon", url: "/assets/logos/favicon/android-chrome-192x192.png", sizes: "192x192", type: "image/png" },
+      { rel: "icon", url: "/assets/logos/favicon/android-chrome-512x512.png", sizes: "512x512", type: "image/png" },
+    ],
+  },
+  manifest: "/manifest.json",
 };
 
 export default function RootLayout({

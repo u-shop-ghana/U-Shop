@@ -5,6 +5,29 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [0.3.1] — 2026-04-02 — Real Brand Assets & Favicons
+
+### Added
+- **Favicons & PWA** — Proper favicon metadata in root layout (16x16, 32x32, apple-touch-icon, android-chrome 192/512) referencing real brand assets from `/assets/logos/favicon/`
+- **Web Manifest** — Created `public/manifest.json` for PWA support with U-Shop branding, theme color, and maskable icons
+- **Favicon copies** — Copied `favicon.ico` and `apple-touch-icon.png` to `/public/` root for automatic browser discovery
+
+### Changed
+- **Login hero** — Replaced solid `bg-campus-card` with actual `login.png` photo (students collaborating on laptops) + purple gradient overlay matching Figma design
+- **Register hero** — Replaced solid `bg-ushop-purple` with actual `signup.png` photo (Ghanaian students studying together) + purple-to-pink gradient overlay
+- **Forgot Password hero** — Added `forgot password.png` illustrated students scene with purple overlay
+- **Reset Password hero** — Added `reset password.png` students collaboration photo with dark-to-purple gradient
+- **Verify hero** — Added `verify.png` Ghanaian university campus students photo with purple tint overlay
+- **All logos** — Replaced all 12 hardcoded text logos (`<div>U</div><span>shop</span>`) across 5 auth pages with `next/image` `<Image>` components referencing the real `logo-300w.png` brand asset
+- **Root layout** — Added SEO icons metadata for all favicon sizes and apple-touch-icon
+
+### Technical Notes
+- All hero images use `next/image` with `fill` mode, `mix-blend-overlay` opacity, and `priority` loading for LCP optimization
+- Logo images use `next/image` with explicit `width`/`height` and `object-contain` for crisp rendering at all DPIs
+- `sizes="50vw"` on hero images enables Next.js to serve optimally-sized images for split-screen layouts
+
+---
+
 ## [0.3.0] — 2026-04-01 — Phase 1: Frontend Auth Pages
 
 ### Added
