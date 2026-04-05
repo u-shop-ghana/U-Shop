@@ -5,6 +5,36 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [0.4.0] — 2026-04-05 — Phase 1B: Database + Auth Provider + Dashboard
+
+### Added
+
+#### Database — All 13 Tables Live in Supabase
+- Ran `prisma db push` to create all models: `User`, `Store`, `Category`, `Listing`, `Order`, `OrderItem`, `Escrow`, `Wallet`, `WalletTransaction`, `Payout`, `MessageThread`, `Message`, `Review`, `Dispute`, `WebhookEvent`
+- All 12 enums created: `UserRole`, `VerificationStatus`, `ListingStatus`, `ListingCondition`, `OrderStatus`, `EscrowStatus`, `DisputeStatus`, `DisputeReason`, `PayoutStatus`, `WalletTransactionType`, `DeliveryMode`, `WebhookEventType`
+- Generated Prisma Client v6.19.2
+
+#### Auth Provider — `src/lib/auth/`
+- `auth-provider.tsx` — React context provider that hydrates user state from Supabase session + Express API (`GET /api/v1/auth/me`). Subscribes to `onAuthStateChange` for auto-sync on login/logout/token-refresh
+- `types.ts` — Shared `AuthUser` and `AuthContextType` interfaces
+- `hooks/use-auth.ts` — Convenience hook with safety check (throws if used outside provider)
+- Wired `<AuthProvider>` into root `layout.tsx`
+
+#### Dashboard — `src/app/dashboard/`
+- `layout.tsx` — Sidebar navigation with role-adaptive links (Buyer vs Seller vs Admin), user profile section, mobile-responsive hamburger menu, verification status badges
+- `page.tsx` — Overview page with time-of-day greeting, stats cards (placeholder), role-aware quick actions, and account info section
+
+### Changed
+- **Favicon fix** — Replaced default Next.js favicon in `src/app/favicon.ico` with real U-Shop brand favicon (the `src/app/` file was overriding `public/favicon.ico`)
+- **DIRECT_URL** — Fixed to use Supabase Session Mode pooler (port 5432 on `pooler.supabase.com`) since direct DB connection was blocked by local network
+
+### Technical Notes
+- `prisma db push` was used instead of `prisma migrate dev` because local network blocks direct PostgreSQL connections (port 5432 on `db.*.supabase.co`). Session Mode pooler supports DDL operations.
+- Auth state flows: Supabase JWT → Express API verification → internal User record → React context
+- Dashboard layout uses Material Symbols Outlined for consistent iconography
+
+---
+
 ## [0.3.1] — 2026-04-02 — Real Brand Assets & Favicons
 
 ### Added
