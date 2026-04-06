@@ -27,736 +27,709 @@ graph LR
 
 ---
 
-## Phase 0 — Foundation & Project Setup
-**Duration:** Week 1 | **Risk:** Low | **Dependency:** None
+## Current Progress Snapshot
 
-### What You're Building
-The monorepo skeleton, database connection, dev tooling, and CI pipeline. No user-facing features — but this is the most important phase. Bad infrastructure decisions here compound into every future feature.
-
-### What Makes This Production-Grade (Not Just "Basic")
-
-| Concern | Basic Approach ❌ | Production Approach ✅ |
-|---------|-------------------|----------------------|
-| Project structure | Single folder, everything mixed | pnpm monorepo with Turborepo, shared packages |
-| Database | Raw SQL or ad-hoc migrations | Prisma ORM with version-controlled migrations |
-| Environment vars | Hardcoded strings | `.env` files with validation on startup (crash early if missing) |
-| Dev experience | Manual restarts | Nodemon, hot-reload, TypeScript strict mode |
-| Code quality | No linting | ESLint + Prettier + Husky pre-commit hooks |
-| Type safety | `any` everywhere | Strict TypeScript, shared types between apps |
-
-### Step-by-Step Tasks
-
-1. **Initialize monorepo root**
-   - `pnpm init` + configure `pnpm-workspace.yaml` (apps/\*, packages/\*)
-   - Install Turborepo globally, create `turbo.json` build pipeline
-   - Configure root scripts: `dev`, `build`, `lint`, `typecheck`
-
-2. **Bootstrap Next.js frontend** (`apps/web/`)
-   - `npx create-next-app@latest` with TypeScript, App Router, Tailwind, ESLint
-   - Configure `next.config.js` with image domains (Supabase storage)
-   - Set up global CSS + design tokens (colors, spacing, typography)
-   - Add Google Fonts (Inter/Outfit) — no system defaults
-
-3. **Bootstrap Express API** (`apps/api/`)
-   - Set up TypeScript compilation (`tsconfig.json` with strict: true)
-   - Install core: `express`, `cors`, `helmet`, `morgan`, `dotenv`, `zod`
-   - Create entry point (`src/index.ts`) with middleware chain
-   - Configure Nodemon for dev auto-restart
-
-4. **Initialize Prisma & database**
-   - Set up Prisma in `apps/api/prisma/`
-   - Create the **full schema** from the roadmap (all 13 models, all enums)
-   - Configure dual connection strings (pooled + direct) for Supabase
-   - Run `prisma migrate dev` to create initial migration
-   - Create Prisma client singleton (`lib/prisma.ts`)
-
-5. **Set up shared package** (`packages/shared/`)
-   - TypeScript config extending root
-   - Create shared types directory structure
-   - Create shared Zod schemas directory structure
-   - Create shared constants (categories, conditions, order statuses)
-
-6. **Environment & tooling**
-   - Create `.env.example` files for both apps
-   - Add environment variable validation (crash on startup if critical vars missing)
-   - Configure ESLint (shared config), Prettier
-   - Add Husky + lint-staged for pre-commit hooks
-   - Create `docker-compose.yml` for local Postgres + Redis
-
-7. **CI pipeline basics**
-   - `.github/workflows/pr-check.yml` — lint, typecheck, test on every PR
-   - Ensure `turbo dev` runs both apps concurrently
-
-### Verification
-- Run `turbo dev` → both apps start without errors
-- Run `prisma migrate dev` → migration applies cleanly
-- Run `turbo lint && turbo typecheck` → zero errors
-- API health check at `GET /health` returns `{ status: "ok" }`
+| Phase | Status | Notes |
+|-------|--------|-------|
+| Phase 0 — Foundation | ✅ Done | Monorepo, Prisma, Supabase, CI |
+| Phase 1 — Auth | ✅ Done | Register, Login, Verify, Callback, Security middleware |
+| Phase 0.5 — Component Library | ✅ Done | 15 components (Button, Badge, Input, Card, ProductCard, Modal, Header, Footer, etc.) |
+| Phase 0.5 — DB Expansion | ✅ Done | University, Cart, Wishlist, Address tables + 5 university seeds |
+| Phase 2 — Stores | 🔲 Next | Store creation, policies, public storefront |
+| Phases 3–10 | 🔲 Planned | See below |
 
 ---
 
-## Phase 1 — Authentication & Student Verification
-**Duration:** Week 2 | **Risk:** Medium | **Dependency:** Phase 0
+## Complete Page Inventory: Start → Production
 
-### What You're Building
-Complete auth system: registration, login, session management, student verification. This is the trust foundation — if users don't trust your auth, they won't trust your escrow.
+This is the definitive list of every page in the application, organized by build phase. Each page lists its route, the components it uses, the API endpoints it calls, and which design reference to follow.
 
-### What Makes This Production-Grade
-
-| Concern | Basic Approach ❌ | Production Approach ✅ |
-|---------|-------------------|----------------------|
-| Auth provider | Custom JWT with bcrypt | Supabase Auth (battle-tested, handles OAuth, MFA) |
-| Session management | localStorage token | HTTP-only secure cookies via `@supabase/ssr` |
-| Token verification | Skip on some routes | Every API route runs through `authenticate` middleware |
-| Student verification | Just a checkbox | Two-tier system: auto-domain + manual ID review |
-| Data privacy | Store ID photos forever | Delete after verification per Ghana Data Protection Act |
-| Rate limiting | None | 10 login attempts per 15 min per IP |
-| Error messages | "Invalid credentials" | Distinguish expired vs invalid vs no account (carefully, avoiding enumeration) |
-
-### Step-by-Step Tasks
-
-**Backend (`apps/api/`):**
-
-1. **Supabase admin client** (`lib/supabase.ts`)
-   - Uses SERVICE_ROLE key — never expose to frontend
-   - Used for: verifying JWTs, managing storage, admin operations
-
-2. **Auth middleware** (`middleware/authenticate.ts`)
-   - Extract Bearer token from Authorization header
-   - Verify via `supabaseAdmin.auth.getUser(token)`
-   - Look up internal User record by `supabaseId`
-   - Attach `req.user` (id, email, role, verificationStatus, storeId)
-   - Handle: expired tokens, missing users, database failures
-   - Create `requireAdmin` and `requireSeller` authorization middlewares
-
-3. **Auth routes** (`routes/auth.ts`)
-   - `POST /api/v1/auth/register` — Create User record after Supabase signup
-     - Auto-detect student email domain → instant verification
-     - Set default role (BUYER), default verification (UNVERIFIED)
-   - `POST /api/v1/auth/sync` — Sync Supabase user to our DB (idempotent)
-   - `GET /api/v1/auth/me` — Return current user profile
-
-4. **Verification service** (`services/verification.service.ts`)
-   - `isStudentEmail()` — Check against allowlist of 20+ Ghanaian university domains
-   - Support subdomain matching (`st.ug.edu.gh` → `ug.edu.gh`)
-   - `handlePostSignup()` — Auto-verify domain matches
-   - `submitIdForReview()` — Store ID image path, set status to PENDING
-   - `approveVerification()` — Admin approval workflow
-   - `rejectVerification()` — With reason message
-
-5. **Rate limiting** (`middleware/rateLimiter.ts`)
-   - Auth endpoints: 10 requests / 15 min per IP
-   - General API: 200 requests / 15 min per IP
-   - Configure Upstash Redis-backed rate limiter
-
-**Frontend (`apps/web/`):**
-
-6. **Supabase clients**
-   - `lib/supabase/server.ts` — Server Component client (cookie-based)
-   - `lib/supabase/client.ts` — Browser client (for client-side auth actions)
-   - `lib/supabase/middleware.ts` — Session refresh in Next.js middleware
-
-7. **Auth pages**
-   - `app/(auth)/login/page.tsx` — Email/password + Google OAuth
-   - `app/(auth)/register/page.tsx` — Registration with role selection
-   - `app/(auth)/verify/page.tsx` — Email verification landing page
-   - `app/(auth)/callback/route.ts` — OAuth callback handler
-   - `app/(auth)/layout.tsx` — Clean layout without marketplace nav
-
-8. **Auth provider & middleware**
-   - `providers/auth-provider.tsx` — React context with user state
-   - `hooks/use-auth.ts` — Hook for accessing auth state
-   - `middleware.ts` — Protect `/dashboard/*` routes, redirect unauthenticated
-
-9. **Student verification page**
-   - `app/dashboard/verification/page.tsx`
-   - ID photo upload to Supabase Storage
-   - Status display: Unverified → Pending → Verified / Rejected
-   - Clear instructions on what photo is needed
-
-### Edge Cases to Handle
-- User signed up with Supabase but our DB sync failed → idempotent sync endpoint
-- Supabase token expired mid-session → middleware refreshes token automatically
-- User deletes their Supabase account → handle gracefully in `authenticate` middleware
-- ID upload with oversized file → 5MB limit with client + server validation
-- Rate-limited login → clear message: "Too many attempts, try again in X minutes"
-
-### Verification
-- Register with `.edu.gh` email → auto-verified ✅
-- Register with regular email → status stays UNVERIFIED ✅
-- Access `/dashboard/*` without login → redirected to `/login` ✅
-- Expired session → auto-refresh or graceful re-login ✅
-- Rate limit: 11 rapid login attempts → blocked on 11th ✅
+### Legend
+- 🟢 = Built and shipped
+- 🟡 = Needs update (exists but incomplete)
+- 🔲 = Not started
 
 ---
 
-## Phase 2 — Store Creation & Custom Policies
-**Duration:** Week 3 | **Risk:** Medium | **Dependency:** Phase 1
+## 🟢 BUILT — Phase 0: Foundation Pages
 
-### What You're Building
-Sellers create branded storefronts with unique URLs and structured return/warranty policies. This is a key differentiator — the storefront is the seller's identity.
+### Page 1: Root Layout (`app/layout.tsx`)
+| Detail | Value |
+|--------|-------|
+| Route | Global wrapper |
+| Status | 🟢 Done |
+| Design Ref | `design/ui-kit/organisms/header.png`, `footer.png` |
+| Components | `<Header />`, `<Footer />` (not yet wired) |
+| Key Notes | Google Fonts (Plus Jakarta Sans, IBM Plex Mono), Material Symbols, globals.css |
 
-### What Makes This Production-Grade
-
-| Concern | Basic Approach ❌ | Production Approach ✅ |
-|---------|-------------------|----------------------|
-| Handle validation | Check length only | Alphanumeric + hyphens, 3–24 chars, reserved word blacklist (~200 words), real-time availability API |
-| Handle uniqueness | Application-level check only | DB unique constraint + application check (double-safety) |
-| Handle editing | Allow unlimited changes | One edit allowed, old URL 301-redirects for 90 days |
-| Policy system | Free text field | Structured form with dropdown options, JSON storage |
-| Policy versioning | Store current policy only | Snapshot policy per order at checkout time |
-| Store SEO | Default `<title>` tag | Server-rendered with `generateMetadata()`, OG images for WhatsApp/Twitter sharing |
-| Image uploads | Accept any file | Validate type (JPEG/PNG/WebP), max size (2MB), resize for thumbnails |
-
-### Step-by-Step Tasks
-
-**Backend:**
-
-1. **Store service** (`services/store.service.ts`)
-   - `validateHandle()` — Format, length, reserved words
-   - `isHandleAvailable()` — Real-time check endpoint
-   - `createStore()` — Transaction: create store + update user role to BOTH
-   - `updateStore()` — Bio, logo, banner (NOT handle — separate flow)
-   - `changeHandle()` — One-time change with 301 redirect tracking
-
-2. **Store routes** (`routes/stores.ts`)
-   - `POST /api/v1/stores` — Create store (auth required)
-   - `GET /api/v1/stores/:handle` — Public store profile
-   - `PATCH /api/v1/stores/:id` — Update store settings (owner only)
-   - `GET /api/v1/stores/check-handle/:handle` — Handle availability
-
-3. **Policy system**
-   - Structured JSON schema for return/warranty policies
-   - 7 configurable fields (return window, condition, shipping cost, warranty period, coverage, refund method, notes)
-   - Platform defaults applied when seller doesn't set a value
-   - Policy rendered as plain-language text for display
-
-**Frontend:**
-
-4. **Become a Seller flow**
-   - `app/dashboard/store/create/page.tsx`
-   - Multi-step form: Store Name → Handle (with live availability check) → Logo/Banner upload → Return Policy builder
-   - Handle availability endpoint called on debounced input (300ms delay)
-   - Preview of how the store page will look
-
-5. **Store settings page**
-   - `app/dashboard/store/settings/page.tsx`
-   - Edit store name, bio (280 char limit with counter), logo, banner
-   - Policy builder with dropdowns + preview of policy text
-   - Handle change (one-time, with warning modal)
-
-6. **Public store page**
-   - `app/store/[handle]/page.tsx` — Server-side rendered
-   - `generateMetadata()` — Title, description, OG image
-   - Store header: logo, name, bio, verified badge if applicable, rating
-   - Listings grid (will be populated in Phase 3)
-   - Return policy accordion
-
-7. **OG image generation**
-   - `app/api/og/store/route.ts` — Dynamic OG image with store name + logo
-   - Used for WhatsApp/Twitter link previews (huge for organic sharing)
-
-### Edge Cases to Handle
-- Two sellers try to register the same handle at the same time → DB unique constraint catches it
-- Handle contains reserved word → rejected with helpful message
-- Logo upload fails mid-way → graceful retry with progress indicator
-- Seller with 0 listings → show "This store hasn't listed any items yet" state
-
-### Verification
-- Create store with handle "kwame-tech" → accessible at `/store/kwame-tech` ✅
-- Try reserved handle "admin" → rejected ✅
-- Update store bio → changes reflected on public page ✅
-- Share store URL on WhatsApp → shows OG preview image ✅
+**TODO on this page:**
+- [ ] Wire `<Header />` and `<Footer />` components into the root layout
+- [ ] Add conditional auth state (logged in / guest) to Header
+- [ ] Add cart count and wishlist count to Header
 
 ---
 
-## Phase 3 — Product Listings & Discovery
-**Duration:** Week 4–5 | **Risk:** Medium | **Dependency:** Phase 2
+## 🟢 BUILT — Phase 1: Authentication Pages
 
-### What You're Building
-Full listing lifecycle (create/edit/publish/pause/sell) plus search and category browsing. This is the marketplace core — if sellers can't list and buyers can't find, nothing else matters.
+### Page 2: Login (`app/(auth)/login/page.tsx`)
+| Detail | Value |
+|--------|-------|
+| Route | `/login` |
+| Status | 🟢 Done |
+| Design Ref | `design/ui-kit/Screens/desktop/Login screen.png` |
+| Components | Custom form (not using shared Input yet) |
+| API | Supabase `signInWithPassword()`, Supabase `signInWithOAuth()` |
+| Backend | `POST /api/v1/auth/sync` (on successful login) |
 
-### What Makes This Production-Grade
+**TODO on this page:**
+- [ ] Refactor to use shared `<Input />`, `<Button />` components
+- [ ] Add Google OAuth button
 
-| Concern | Basic Approach ❌ | Production Approach ✅ |
-|---------|-------------------|----------------------|
-| Condition grading | Free text "good condition" | 6-tier standardized system (New → For Parts) with required criteria per grade |
-| Photo requirements | Accept 1 photo | Min 3 photos, max 6, required angles per condition grade, battery screenshot for phones/laptops |
-| Search | SQL `LIKE '%query%'` | PostgreSQL full-text search with `tsvector`, weighted by title (A) > description (B) |
-| Filtering | Category only | Category + price range + condition + seller type + sort (newest/price/rating) |
-| Pagination | Load all | Cursor-based pagination, 20 items per page, infinite scroll |
-| Image handling | Store raw uploads | Resize to multiple sizes (thumbnail, card, full), WebP conversion, lazy loading |
-| Listing status | Active only | Draft → Active → Paused → Sold lifecycle with inventory tracking |
-| Price handling | JavaScript float | `Decimal(10,2)` in DB, never use float for money |
+### Page 3: Register (`app/(auth)/register/page.tsx`)
+| Detail | Value |
+|--------|-------|
+| Route | `/register` |
+| Status | 🟢 Done |
+| Design Ref | `design/ui-kit/Screens/desktop/Signup screen.png` |
+| Components | Custom form with student verification toggle |
+| API | Supabase `signUp()` with `wants_student_verification` metadata |
 
-### Step-by-Step Tasks
+**TODO on this page:**
+- [ ] Refactor to use shared `<Input />`, `<Button />`, `<Toggle />` components
 
-**Backend:**
+### Page 4: Forgot Password (`app/(auth)/forgot-password/page.tsx`)
+| Detail | Value |
+|--------|-------|
+| Route | `/forgot-password` |
+| Status | 🟢 Done |
+| Design Ref | `design/ui-kit/Screens/desktop/Forgot Password screen.png` |
+| API | Supabase `resetPasswordForEmail()` |
 
-1. **Category seeding**
-   - Seed script for tech categories: Laptops, Phones, Tablets, Accessories, Components, Networking, Storage, Audio, Gaming, Peripherals
-   - Each with slug and optional icon
+### Page 5: Reset Password (`app/(auth)/reset-password/page.tsx`)
+| Detail | Value |
+|--------|-------|
+| Route | `/reset-password` |
+| Status | 🟢 Done |
+| Design Ref | `design/ui-kit/Screens/desktop/Reset password screen.png` |
+| API | Supabase `updateUser({ password })` |
 
-2. **Listing service** (`services/listing.service.ts`)
-   - `createListing()` — With policy snapshot from store's current policy
-   - `updateListing()` — Only owner can update, cannot change after first sale
-   - `publishListing()` — DRAFT → ACTIVE (validate all required fields)
-   - `pauseListing()` — ACTIVE → PAUSED (temporarily hide)
-   - `deleteListing()` — Soft delete or hard delete (no orders? hard delete)
+### Page 6: Student Verification (`app/(auth)/verify/page.tsx`)
+| Detail | Value |
+|--------|-------|
+| Route | `/verify?type=student` |
+| Status | 🟢 Done |
+| Design Ref | `design/ui-kit/Screens/desktop/Student Verification screen.png` |
+| API | `POST /api/v1/auth/verify-student` |
+| Key Notes | ID photo upload to Supabase Storage, university selector |
 
-3. **Search service** (`services/search.service.ts`)
-   - Full-text search using PostgreSQL `tsvector` + GIN index
-   - Dynamic `WHERE` clause builder for all filters
-   - Pagination with total count + `hasMore` flag
-   - Sort: `newest`, `price_asc`, `price_desc`
+**TODO on this page:**
+- [ ] Replace hardcoded university list with API call to `GET /api/v1/universities`
 
-4. **Listing routes** (`routes/listings.ts`)
-   - `POST /api/v1/listings` — Create (auth + seller required)
-   - `GET /api/v1/listings` — Search/browse (public)
-   - `GET /api/v1/listings/:id` — Single listing detail (public)
-   - `PATCH /api/v1/listings/:id` — Update (owner only)
-   - `PATCH /api/v1/listings/:id/status` — Change status (owner only)
-   - `GET /api/v1/categories` — List all categories
+### Page 7: Auth Callback (`app/(auth)/callback/route.ts`)
+| Detail | Value |
+|--------|-------|
+| Route | `/callback` |
+| Status | 🟢 Done |
+| Key Notes | Exchanges code for session, checks `wants_student_verification` metadata, redirects to `/verify?type=student` or `/` |
 
-5. **Database indexes**
-   - Composite: `(storeId, status)`
-   - Composite: `(categoryId, status)`
-   - Price: `(price)`
-   - Full-text: GIN index on `search_vector`
-   - Trigger function to auto-update `search_vector` on insert/update
+### Page 8: Dashboard (`app/dashboard/page.tsx`)
+| Detail | Value |
+|--------|-------|
+| Route | `/dashboard` |
+| Status | 🟡 Exists (placeholder) |
+| Components | Dashboard layout with sidebar |
 
-**Frontend:**
-
-6. **Create listing page**
-   - `app/dashboard/store/listings/new/page.tsx`
-   - Multi-step form: Title → Category → Condition (with criteria checklist) → Photos (drag-and-drop reorder) → Price → Description (rich text) → Policy preview → Publish or Save Draft
-   - Photo upload to Supabase Storage with progress bars
-   - Price input with GH₵ prefix, decimal handling
-
-7. **Manage listings page**
-   - `app/dashboard/store/listings/page.tsx`
-   - Grid/list toggle, filter by status (All/Active/Draft/Paused/Sold)
-   - Bulk actions: Pause, Activate, Delete
-   - Quick stats: views, orders
-
-8. **Search & browse pages**
-   - `app/(marketplace)/search/page.tsx` — Full search with filter sidebar
-   - `app/(marketplace)/category/[slug]/page.tsx` — Category browsing
-   - `app/(marketplace)/page.tsx` — Homepage with featured, recent, by category
-
-9. **Listing detail page**
-   - `app/listing/[id]/page.tsx` — ISR with 30-second revalidation
-   - Image gallery with lightbox, zoom
-   - Condition badge with explanation tooltip
-   - Seller info card (store name, verified badge, rating)
-   - Return policy accordion
-   - "Buy Now" / "Message Seller" buttons
-
-10. **Listing card component**
-    - `components/listings/listing-card.tsx`
-    - Photo, title, price (formatted GH₵), condition badge, seller name, verified badge
-    - Skeleton loading state
-    - Responsive: 4-column → 2-column → 1-column
-
-### Edge Cases to Handle
-- Listing with 0 stock → auto-change to SOLD status
-- Search with no results → helpful "try different keywords" message
-- Category with no listings → show category info + "Be the first to list" CTA
-- Decimal price edge cases (GH₵ 0.01, GH₵ 99999.99) → validation
-- Image upload fails → retry with informative error, don't lose other uploaded images
-
-### Verification
-- Create listing with all fields → appears on store page and search ✅
-- Search "MacBook Pro" → returns relevant results, ranked by title match ✅
-- Filter by category + price range → correct results ✅
-- Listing with 0 stock auto-marked as SOLD ✅
-- Unpublished drafts not visible in search ✅
+**TODO on this page:**
+- [ ] Add user profile card
+- [ ] Add quick-stats: recent orders, wallet balance, verification status
+- [ ] Link to: orders, messages, wallet, store settings
 
 ---
 
-## Phase 4 — Checkout & Paystack Payments
-**Duration:** Week 5–6 | **Risk:** 🔴 High | **Dependency:** Phase 3
+## 🔲 Phase 2: Store Pages
 
-### What You're Building
-The complete checkout flow: cart → order creation → Paystack payment → webhook processing. This is where real money moves — every bug here costs you or your users real money.
+### Page 9: Become a Seller (`app/dashboard/store/create/page.tsx`) — NEW
+| Detail | Value |
+|--------|-------|
+| Route | `/dashboard/store/create` |
+| Status | 🔲 Not started |
+| Components | `<Input />`, `<Button />`, `<Textarea />`, `<Select />`, `<Card />` |
+| API | `POST /api/v1/stores`, `GET /api/v1/stores/check-handle/:handle` |
 
-### What Makes This Production-Grade
+**Build steps:**
+1. Multi-step form: Store Name → Handle (live availability check) → Logo/Banner upload → Category selection
+2. Handle debounced availability check (300ms) with visual feedback
+3. Logo + Banner upload to Supabase Storage with progress bars
+4. Preview of how the store URL will look
+5. Submit creates store + updates user role to BOTH
 
-| Concern | Basic Approach ❌ | Production Approach ✅ |
-|---------|-------------------|----------------------|
-| Payment amounts | Use JavaScript float | `Decimal(10,2)` in DB, convert to pesewas (integer) for Paystack |
-| Webhook handling | Parse JSON, trust the body | Verify HMAC-SHA512 signature with `crypto.timingSafeEqual` |
-| Idempotency | Process every webhook | Store webhook events, check `externalId` before processing |
-| Order creation | Simple INSERT | Transaction: create order + create order items + validate stock atomically |
-| Stock management | Decrement after order create | Atomic `UPDATE WHERE stock >= quantity` to prevent overselling |
-| Webhook registration | Before `express.json()` middleware | Raw body required for signature verification |
-| Failure recovery | Hope it works | Cron job reconciles stuck PENDING_PAYMENT orders every 5 minutes |
-| Policy snapshot | Reference current policy | Deep-copy store policy JSON into order record at checkout |
+### Page 10: Store Settings (`app/dashboard/store/settings/page.tsx`) — NEW
+| Detail | Value |
+|--------|-------|
+| Route | `/dashboard/store/settings` |
+| Status | 🔲 Not started |
+| Components | `<Input />`, `<Textarea />`, `<Button />`, `<Select />`, `<Toggle />`, `<ConfirmModal />` |
+| API | `PATCH /api/v1/stores/:id` |
 
-### Step-by-Step Tasks
+**Build steps:**
+1. Edit store name, bio (280 char counter), logo, banner
+2. Return policy builder (dropdowns for return window, condition, refund method)
+3. Warranty builder
+4. Handle change — one-time, with confirmation modal warning
+5. Policy preview rendered as plain-language text
 
-**Backend:**
+### Page 11: Public Store Page (`app/store/[handle]/page.tsx`) — NEW
+| Detail | Value |
+|--------|-------|
+| Route | `/store/:handle` |
+| Status | 🔲 Not started |
+| Components | `<ProductCard />`, `<Badge />`, `<EmptyState />` |
+| API | `GET /api/v1/stores/:handle` |
+| SEO | `generateMetadata()` — store name, description, OG image |
 
-1. **Paystack wrapper** (`lib/paystack.ts`)
-   - `initializeTransaction()` — Amount in pesewas, GHS currency, channels: card/mobile_money/bank
-   - `verifyTransaction()` — Verify by reference
-   - `initiateTransfer()` — For payouts (Phase 5)
-   - Create a dedicated Paystack transfer recipient for sellers
+**Build steps:**
+1. Server-rendered store header: logo, banner, name, bio, verified badge, rating
+2. Listings grid using `<ProductCard />` (populated in Phase 3)
+3. Return policy accordion
+4. Share button (copy URL)
+5. Empty state if no listings: "This store hasn't listed any items yet"
 
-2. **Order service** (`services/order.service.ts`)
-   - `createOrder()` — In a DB transaction:
-     - Validate listing exists, is ACTIVE, has stock
-     - Reserve stock atomically (`UPDATE WHERE stock >= quantity`)
-     - Calculate: `totalAmount`, `platformFee` (5% or 8% based on seller verification), `sellerAmount`
-     - Snapshot store policy into order record
-     - Generate unique `paystackRef` (e.g., `ushop_${orderId}_${timestamp}`)
-     - Call Paystack to initialize transaction
-     - Return Paystack `authorization_url`
-   - `handlePaymentSuccess()` — Called by webhook:
-     - Update order status → PAYMENT_RECEIVED
-     - Create Escrow record with HOLDING status
-     - Set `escrowReleaseAt` = now + 7 days
-     - Send confirmation notifications
-
-3. **Webhook handler** (`routes/webhooks.ts`)
-   - **CRITICAL:** Register BEFORE `express.json()` middleware
-   - Use `express.raw()` to keep body as Buffer
-   - Verify HMAC-SHA512 signature with `crypto.timingSafeEqual`
-   - Respond `200 OK` immediately, process async
-   - Store all events in `WebhookEvent` table for audit trail
-   - Handle: `charge.success`, `transfer.success`, `transfer.failed`, `transfer.reversed`
-   - Idempotency: check `externalId` before processing
-
-4. **Order routes** (`routes/orders.ts`)
-   - `POST /api/v1/orders` — Create order + initiate payment (auth required)
-   - `GET /api/v1/orders` — List buyer's orders (auth required)
-   - `GET /api/v1/orders/:id` — Order detail (buyer or seller)
-   - `PATCH /api/v1/orders/:id/confirm-delivery` — Buyer confirms receipt
-
-5. **Payment reconciliation cron** (`jobs/reconcile-payments.ts`)
-   - Every 5 minutes: find orders PENDING_PAYMENT for >10 minutes
-   - Verify each with Paystack API
-   - If payment succeeded: process like a webhook
-
-**Frontend:**
-
-6. **Checkout flow**
-   - `app/checkout/page.tsx` — Order summary, shipping address form
-   - Policy acknowledgment checkbox ("I have read the seller's return policy")
-   - `app/checkout/actions.ts` — Server Action: call API → redirect to Paystack
-   - `app/checkout/success/page.tsx` — Payment success landing
-   - `app/checkout/cancelled/page.tsx` — Payment cancelled landing
-
-7. **Buyer order pages**
-   - `app/dashboard/orders/page.tsx` — Order history with status filters
-   - `app/dashboard/orders/[id]/page.tsx` — Order detail + timeline + confirm delivery button
-
-8. **Seller transaction pages**
-   - `app/dashboard/store/transactions/page.tsx` — Incoming orders list
-   - Mark order as "Dispatched" / "Ready for Meetup"
-   - Enter tracking number or generate meetup code
-
-### Edge Cases to Handle
-- Two buyers checkout the same last-in-stock item simultaneously → atomic stock reservation
-- Paystack webhook arrives before user redirected back → order already processed, show success
-- Paystack webhook fails (server down) → reconciliation cron catches it within 10 minutes
-- User closes browser during Paystack payment → order stays PENDING_PAYMENT, reconciliation resolves
-- Paystack sends duplicate webhook → idempotency check prevents double-processing
-- Seller's fee calculation: 5% if VERIFIED, 8% if not → verify at order creation time
-
-### Verification
-- End-to-end: browse → buy → pay (test mode) → webhook fires → order confirmed ✅
-- Concurrent checkout: two users, one item → one succeeds, one gets "out of stock" ✅
-- Webhook signature mismatch → rejected with 400 ✅
-- Duplicate webhook → skipped, no double-processing ✅
-- Stuck order → reconciliation cron picks it up within 10 min ✅
+### Page 12: OG Image for Store (`app/api/og/store/route.ts`) — NEW
+| Detail | Value |
+|--------|-------|
+| Route | `/api/og/store?handle=...` |
+| Status | 🔲 Not started |
+| Key Notes | Dynamic OG image with store name + logo. For WhatsApp/Twitter previews. |
 
 ---
 
-## Phase 5 — Escrow, Wallet & Payouts
-**Duration:** Week 6–7 | **Risk:** 🔴 High | **Dependency:** Phase 4
+## 🔲 Phase 3: Product Listing & Discovery Pages
 
-### What You're Building
-The escrow release flow (buyer confirmation + 7-day auto-release), seller wallet with balance tracking, and payout to MoMo/bank via Paystack Transfers.
+### Page 13: Homepage (`app/page.tsx`) — REBUILD
+| Detail | Value |
+|--------|-------|
+| Route | `/` |
+| Status | 🟡 Placeholder exists |
+| Design Ref | `design/web-designs/desktop/Homepage.html`, `design/ui-kit/Screens/desktop/Homepage.png` |
+| Components | `<Header />`, `<Footer />`, `<ProductCard />`, `<SearchBar />`, `<Badge />`, `<Button />` |
+| API | `GET /api/v1/listings?featured=true`, `GET /api/v1/categories`, `GET /api/v1/universities`, `GET /api/v1/stores?featured=true` |
 
-### What Makes This Production-Grade
+**Sections to build (from Homepage.html design):**
+1. **Escrow trust banner** — "Every purchase protected by escrow" (dismissible)
+2. **Hero section** — Gradient purple bg, "Power Your Academic Excellence," Shop Deals + Sell Now CTAs
+3. **Features bar** — 4 columns: Secure Payment, Verified Sellers, Campus Delivery, Local Support
+4. **Browse Categories** — 4-column image grid (Laptops, Phones, Accessories, Tablets) with item counts
+5. **Browse Universities** — 4-column card grid (UG, KNUST, UCC, UMAT, GCTU) with product counts
+6. **Browse Stores** — 4-column store cards (logo, name, rating, university badge, "Visit Store" button)
+7. **Featured Deals** — 4-column ProductCard grid with HOT/NEW/OFFER badges
+8. **Student Deals** — Purple bg section with 3 promo cards (gradient bg, icon, CTA)
+9. **Trending Now** — 4-column ProductCard grid
 
-| Concern | Basic Approach ❌ | Production Approach ✅ |
-|---------|-------------------|----------------------|
-| Escrow release | Manual only | Buyer confirmation OR 7-day cron auto-release |
-| Auto-release safety | Silent release | 4-notification escalation sequence (Day 3, 5, 6, 6.5) |
-| Wallet balance | Single field | `availableBalance` + `totalEarned` + full transaction history |
-| Payouts | Immediate transfer | Create Paystack transfer recipient → initiate transfer → handle webhook for success/failure |
-| Financial audit | No trail | Every wallet change creates a `WalletTransaction` record |
-| Disputed orders | Release anyway | Freeze escrow if dispute opened before release |
-| Amount precision | JavaScript math | `Decimal(10,2)` throughout, never floating point |
+### Page 14: Search Results (`app/search/page.tsx`) — NEW
+| Detail | Value |
+|--------|-------|
+| Route | `/search?q=...&category=...&condition=...&minPrice=...&maxPrice=...&sort=...` |
+| Status | 🔲 Not started |
+| Components | `<ProductCard />`, `<Input />`, `<Select />`, `<Badge />`, `<EmptyState />` |
+| API | `GET /api/v1/listings?q=...` |
 
-### Step-by-Step Tasks
+**Build steps:**
+1. Filter sidebar: Category checkboxes, Condition checkboxes, Price range (min/max), University, Sort dropdown
+2. Results grid: `<ProductCard />` in 4-col / 2-col / 1-col responsive grid
+3. Pagination: cursor-based, infinite scroll or "Load More"
+4. Result count: "Showing 1-20 of 142 results for 'MacBook Pro'"
+5. Empty state: "No results found" with suggestions
 
-1. **Escrow service** (`services/escrow.service.ts`)
-   - `releaseToSeller()` — Transaction: update escrow → complete order → credit wallet → log transaction
-   - `processAutoReleases()` — Cron: find orders past `escrowReleaseAt`, release each
-   - `freezeEscrow()` — Called when dispute is opened
+### Page 15: Category Browsing (`app/categories/page.tsx`) — NEW
+| Detail | Value |
+|--------|-------|
+| Route | `/categories` |
+| Status | 🔲 Not started |
+| Components | `<Card />` |
+| API | `GET /api/v1/categories` |
 
-2. **Wallet service** (`services/wallet.service.ts`)
-   - `getBalance()` — Return available balance + total earned
-   - `getTransactionHistory()` — Paginated list of all credits/debits
-   - `requestPayout()` — Validate min GH₵ 20, create Payout record, initiate Paystack transfer
-   - `handleTransferSuccess()` — Debit wallet, mark payout as COMPLETED
-   - `handleTransferFailed()` — Return funds to wallet, mark payout as FAILED
+**Build steps:**
+1. Grid of category cards (image, name, item count)
+2. Click navigates to `/search?category=laptops`
 
-3. **Escrow auto-release cron** (`jobs/escrow-auto-release.ts`)
-   - Run every hour
-   - Find overdue orders (PAYMENT_RECEIVED + escrowReleaseAt < now)
-   - Skip disputed orders
-   - Process each independently (one failure doesn't block others)
+### Page 16: Single Category (`app/categories/[slug]/page.tsx`) — NEW
+| Detail | Value |
+|--------|-------|
+| Route | `/categories/:slug` |
+| Status | 🔲 Not started |
+| Components | `<ProductCard />`, `<Badge />` |
+| API | `GET /api/v1/listings?category=:slug` |
+| SEO | `generateMetadata()` |
 
-4. **Escrow reminder scheduler** (`jobs/send-reminders.ts`)
-   - Schedule 4 notifications when order enters PAYMENT_RECEIVED:
-     - Day 3: Low urgency
-     - Day 5: Medium urgency
-     - Day 6: High urgency (24h warning)
-     - Day 6.5: Urgent (6h warning — "open dispute NOW if there's a problem")
+### Page 17: University Store Directory (`app/universities/page.tsx`) — NEW
+| Detail | Value |
+|--------|-------|
+| Route | `/universities` |
+| Status | 🔲 Not started |
+| Components | `<Card />`, `<Badge />` |
+| API | `GET /api/v1/universities` |
 
-5. **Wallet & payout frontend**
-   - `app/dashboard/wallet/page.tsx`
-   - Balance card, transaction history table, payout request form
-   - Payout: choose MoMo or bank, enter details, confirm with email OTP
+**Build steps:**
+1. Grid of university cards with logo, name, short name, product count
+2. Click navigates to `/universities/:slug`
 
-### Verification
-- Buyer confirms delivery → escrow released, wallet credited ✅
-- Order not confirmed for 7 days → auto-released with notification trail ✅
-- Dispute opened before auto-release → escrow frozen ✅
-- Payout GH₵ 50 to MoMo → Paystack transfer initiated, webhook confirms ✅
-- Wallet balance never goes negative ✅
+### Page 18: Single University (`app/universities/[slug]/page.tsx`) — NEW
+| Detail | Value |
+|--------|-------|
+| Route | `/universities/:slug` |
+| Status | 🔲 Not started |
+| Components | `<ProductCard />`, `<Card />` |
+| API | `GET /api/v1/universities/:slug`, `GET /api/v1/listings?university=:slug` |
+| SEO | `generateMetadata()` — university name, logo |
 
----
+### Page 19: All Stores (`app/stores/page.tsx`) — NEW
+| Detail | Value |
+|--------|-------|
+| Route | `/stores` |
+| Status | 🔲 Not started |
+| Components | `<Card />`, `<Badge />`, `<SearchBar />` |
+| API | `GET /api/v1/stores` |
 
-## Phase 6 — In-App Messaging
-**Duration:** Week 7–8 | **Risk:** Low | **Dependency:** Phase 4
+### Page 20: Create Listing (`app/dashboard/store/listings/new/page.tsx`) — NEW
+| Detail | Value |
+|--------|-------|
+| Route | `/dashboard/store/listings/new` |
+| Status | 🔲 Not started |
+| Components | `<Input />`, `<Textarea />`, `<Select />`, `<Button />`, `<Badge />`, `<Toggle />` |
+| API | `POST /api/v1/listings`, `GET /api/v1/categories` |
 
-### What You're Building
-Buyer-seller chat threads attached to listings (pre-purchase Q&A) and orders (post-purchase communication). Messages are evidence in disputes.
+**Build steps:**
+1. Multi-step form: Title → Category → Condition (criteria checklist) → Photos (drag-and-drop, min 3, max 6) → Price (GH₵) → Description → Policy preview → Publish or Save Draft
+2. Photo upload with reorder, progress bars
+3. Condition picker with detailed criteria for each grade
+4. Price input with GH₵ prefix (never use float — Decimal)
 
-### What Makes This Production-Grade
+### Page 21: Manage Listings (`app/dashboard/store/listings/page.tsx`) — NEW
+| Detail | Value |
+|--------|-------|
+| Route | `/dashboard/store/listings` |
+| Status | 🔲 Not started |
+| Components | `<Card />`, `<Badge />`, `<Button />`, `<ConfirmModal />` |
+| API | `GET /api/v1/listings?storeId=mine`, `PATCH /api/v1/listings/:id/status` |
 
-| Concern | Basic Approach ❌ | Production Approach ✅ |
-|---------|-------------------|----------------------|
-| Thread access | Anyone can message | Only buyer + seller in that transaction |
-| Content safety | Accept all text | Block phone numbers, WhatsApp handles, social media links |
-| Message history | Ephemeral | Permanent — used as dispute evidence |
-| Notifications | None | In-app badge + email for unread messages |
-| Context | Generic chat | Messages tied to specific listing or order |
+**Build steps:**
+1. Grid/list toggle view
+2. Filter by status: All / Active / Draft / Paused / Sold
+3. Bulk actions: Pause, Activate, Delete
+4. Quick stats per listing: views, orders
 
-### Step-by-Step Tasks
+### Page 22: Listing Detail (`app/listing/[id]/page.tsx`) — NEW
+| Detail | Value |
+|--------|-------|
+| Route | `/listing/:id` |
+| Status | 🔲 Not started |
+| Components | `<Badge />`, `<Button />`, `<Card />`, `<ProductCard />` (related items) |
+| API | `GET /api/v1/listings/:id` |
+| SEO | `generateMetadata()` — product title, price, image |
 
-1. **Message routes** (`routes/messages.ts`)
-   - `POST /api/v1/messages` — Send message (listing thread or order thread)
-   - `GET /api/v1/messages/threads` — List all threads for current user
-   - `GET /api/v1/messages/threads/:id` — Messages in a thread
-   - `PATCH /api/v1/messages/:id/read` — Mark as read
+**Build steps:**
+1. Image gallery with lightbox + zoom
+2. Product info: title, price, condition badge with explanation tooltip, stock status
+3. Seller info card: store name, verified badge, rating, "Visit Store" link
+4. Return policy accordion
+5. "Buy Now" + "Add to Cart" + "Message Seller" buttons
+6. Related products row (same category or store)
 
-2. **Content filtering**
-   - Regex detection: Ghana phone numbers (`+233...`, `0XX-XXX-XXXX`), WhatsApp, Telegram, Instagram handles
-   - Rejection message: "Use the platform for all communication to stay protected by escrow"
-
-3. **Messaging frontend**
-   - `app/dashboard/messages/page.tsx` — Inbox with thread list
-   - `app/dashboard/messages/[threadId]/page.tsx` — Chat UI
-   - "Message Seller" button on listing pages → creates/opens thread
-   - Unread message count in dashboard sidebar
-
-### Verification
-- Buyer asks question on listing → seller sees it in inbox ✅
-- Message with phone number "0557123456" → blocked ✅
-- Unauthorized user tries to access thread → 403 ✅
-
----
-
-## Phase 7 — Reviews & Trust Signals
-**Duration:** Week 8 | **Risk:** Low | **Dependency:** Phase 5
-
-### What You're Building
-Post-transaction review system (buyer → seller rating) and trust signals displayed throughout the platform.
-
-### What Makes This Production-Grade
-
-| Concern | Basic Approach ❌ | Production Approach ✅ |
-|---------|-------------------|----------------------|
-| Review eligibility | Anyone can review | Only buyers with COMPLETED orders for that store |
-| Review quantity | Unlimited | One review per transaction (enforced by `@@unique([authorId, orderId])`) |
-| Rating display | Just a number | Star rating + text + "Verified Purchase" badge + time since |
-| Aggregate rating | Simple average | Weighted average displayed on store page, listing cards, search results |
-| Trust signals | Star rating only | Verified badge + rating + total sales count + response time |
-
-### Step-by-Step Tasks
-
-1. **Review routes** — Create, read reviews (per store, per listing)
-2. **Review component** — Star rating input, text comment, "Verified Purchase" badge
-3. **Store trust signals** — Display on store page, listing cards, checkout page
-4. **Rating aggregation** — Pre-computed store average rating and review count
-
-### Verification
-- Complete order → review prompt appears → submit 4-star review ✅
-- Try to review without completed order → rejected ✅
-- Store rating displayed on store page and listing cards ✅
-
----
-
-## Phase 8 — Admin Panel
-**Duration:** Week 9 | **Risk:** Medium | **Dependency:** Phases 1–7
-
-### What You're Building
-Internal admin dashboard for: student ID review, dispute arbitration, user management, listing moderation, manual escrow operations.
-
-### What Makes This Production-Grade
-
-| Concern | Basic Approach ❌ | Production Approach ✅ |
-|---------|-------------------|----------------------|
-| Access control | Check `role === 'ADMIN'` | Middleware + RLS policies + IP allowlisting |
-| ID review | View image + click approve | Side-by-side: ID photo + profile photo + checklist |
-| Dispute resolution | Free-form notes | Structured: view evidence, policy snapshot, message history, resolve with reason |
-| Audit trail | None | Every admin action logged with timestamp, admin ID, and before/after state |
-
-### Step-by-Step Tasks
-
-1. **Admin routes** (`routes/admin.ts`) — protected by `authenticate + requireAdmin`
-2. **Student verification queue** — List pending, view ID, approve/reject with reason
-3. **Dispute resolution dashboard** — View dispute, evidence, messages, policy, resolve
-4. **User management** — Search, view, suspend, change roles
-5. **Listing moderation** — Flagged listings queue, remove + notify seller
-6. **Platform stats** — Total orders, GMV, active stores, active disputes
-
-**Frontend:**
-
-7. **Admin layout & pages** (`app/admin/`)
-   - Protected layout with `requireAdmin` check
-   - Dashboard with key metrics
-   - Verification queue, dispute queue, user search, listing moderation
-
-### Verification
-- Non-admin user navigates to `/admin` → redirected ✅
-- Approve student ID → user status changes to VERIFIED ✅
-- Resolve dispute in buyer's favor → escrow refunded ✅
+### Page 23: Student Deals (`app/student-deals/page.tsx`) — NEW
+| Detail | Value |
+|--------|-------|
+| Route | `/student-deals` |
+| Status | 🔲 Not started |
+| Components | `<ProductCard />`, `<Badge />` |
+| API | `GET /api/v1/listings?studentDeals=true` |
 
 ---
 
-## Phase 9 — Notifications & UX Polish
-**Duration:** Week 10 | **Risk:** Low | **Dependency:** Phases 1–8
+## 🔲 Phase 4: Checkout & Payment Pages
 
-### What You're Building
-Transactional email notifications (Resend), in-app notification badges, and overall UX polish (loading states, error states, empty states, animations).
+### Page 24: Cart (`app/cart/page.tsx`) — NEW
+| Detail | Value |
+|--------|-------|
+| Route | `/cart` |
+| Status | 🔲 Not started |
+| Components | `<Button />`, `<Input />`, `<EmptyState />`, `<ConfirmModal />` |
+| API | `GET /api/v1/cart`, `PATCH /api/v1/cart/items/:id`, `DELETE /api/v1/cart/items/:id` |
 
-### Key Notifications
+**Build steps:**
+1. Cart items list: product image, title, vendor, price, quantity +/- controls, remove
+2. Order summary sidebar: subtotal, shipping, tax, total
+3. Promo code input
+4. "Proceed to Checkout" button (requires auth)
+5. Empty state: "Your cart is empty" + "Start Shopping" CTA
+6. Guest cart → merge on login
 
-| Event | Channel | Recipient |
-|-------|---------|-----------|
-| Order confirmed | Email + In-app | Buyer + Seller |
-| Order dispatched | Email + In-app | Buyer |
-| Delivery confirmed | Email + In-app | Seller |
-| Escrow released | Email + In-app | Seller |
-| Escrow reminders (Day 3, 5, 6, 6.5) | Email + In-app | Buyer |
-| Dispute opened | Email + In-app | Seller |
-| Dispute resolved | Email + In-app | Buyer + Seller |
-| Payout completed | Email + In-app | Seller |
-| Verification approved/rejected | Email + In-app | User |
-| New message | In-app (+ email digest) | Receiver |
-| Review received | In-app | Seller |
+### Page 25: Wishlist (`app/wishlist/page.tsx`) — NEW
+| Detail | Value |
+|--------|-------|
+| Route | `/wishlist` |
+| Status | 🔲 Not started |
+| Components | `<ProductCard />`, `<EmptyState />`, `<Button />` |
+| API | `GET /api/v1/wishlist`, `DELETE /api/v1/wishlist/items/:id` |
 
-### UX Polish Checklist
-- [ ] Loading skeletons on every page (not spinners)
-- [ ] Empty states with illustration + CTA on every list
-- [ ] Error boundaries per page section (not full-page crash)
-- [ ] Toast notifications for user actions
-- [ ] Mobile responsive on every page (test at 375px, 768px, 1440px)
-- [ ] Keyboard navigation on forms
-- [ ] Micro-animations: button hover, card hover, page transitions
-- [ ] Dark mode support (CSS variables + theme provider)
+**Build steps:**
+1. Grid of wishlisted products using `<ProductCard />`
+2. "Move to Cart" action per item
+3. Empty state: "Your wishlist is empty" with "Explore Products" CTA
+
+### Page 26: Checkout — Delivery (`app/checkout/page.tsx`) — NEW
+| Detail | Value |
+|--------|-------|
+| Route | `/checkout` |
+| Status | 🔲 Not started |
+| Design Ref | `design/ui-kit/organisms/Checkout flow.png` (Step 1) |
+| Components | `<Input />`, `<Select />`, `<Button />`, `<Card />`, `<Toggle />` |
+| API | `GET /api/v1/addresses`, `POST /api/v1/addresses` |
+
+**Build steps (from Checkout flow.png — Step 1: Delivery):**
+1. Progress stepper: ① Delivery → ② Payment → ③ Review
+2. Shipping address selector (saved addresses with radio buttons)
+3. "+ Add New Address" form (fullName, phone, line1, line2, city, region, digitalAddress, university, hall)
+4. Delivery method selector: Campus Meetup (FREE), Standard Courier (GH₵ 25)
+5. Student deal applied notice (if student verified)
+6. Order Summary sidebar: item thumbnails, subtotal, shipping, tax, total
+7. "Continue to Payment" button
+
+### Page 27: Checkout — Payment (`app/checkout/payment/page.tsx`) — NEW
+| Detail | Value |
+|--------|-------|
+| Route | `/checkout/payment` |
+| Status | 🔲 Not started |
+| Design Ref | `design/ui-kit/organisms/Checkout flow.png` (Step 2) |
+| Components | `<Button />`, `<Card />`, `<Badge />` |
+| API | `POST /api/v1/orders` → Paystack `authorization_url` |
+
+**Build steps (from Checkout flow.png — Step 2: Payment):**
+1. Payment method selector: Mobile Money (MTN, Telecel, AirtelTigo) / Card
+2. Phone number input (for MoMo)
+3. Secure Student Escrow Protection info section (3-step: Pay → Deliver → Release)
+4. Protection notice: "Open a dispute within 48h to freeze funds"
+5. Order summary sidebar (same as delivery step)
+6. "Continue to Review" button
+
+### Page 28: Checkout — Review (`app/checkout/review/page.tsx`) — NEW
+| Detail | Value |
+|--------|-------|
+| Route | `/checkout/review` |
+| Status | 🔲 Not started |
+| Design Ref | `design/ui-kit/organisms/Checkout flow.png` (Step 3) |
+| Components | `<Button />`, `<Card />`, `<Input />`, `<Badge />` |
+
+**Build steps (from Checkout flow.png — Step 3: Review):**
+1. Review Your Order: Delivery address (with Change link), Payment method (with Change link), Order items
+2. Order Summary: items, shipping, student discount, tax, total amount (GH₵)
+3. Trust badges: "Secure encrypted checkout", "Escrow protected"
+4. Promo code input + Apply button
+5. Escrow timeline: "You pay → Seller delivers → You confirm → Seller gets paid"
+6. "Place Order (GH₵ X,XXX)" button
+7. "Back to Payment" link
+
+### Page 29: Payment Success (`app/checkout/success/page.tsx`) — NEW
+| Detail | Value |
+|--------|-------|
+| Route | `/checkout/success?ref=...` |
+| Status | 🔲 Not started |
+| Design Ref | `design/ui-kit/organisms/Checkout flow.png` (bottom section) |
+| Components | `<Button />`, `<Card />` |
+
+**Build steps (from Checkout flow.png — success screen):**
+1. Green check icon + "Payment Received. GH₵ X,XXX held safely in escrow."
+2. Order confirmation text
+3. Order reference (e.g. `ORD-3924-001234`) with copy button
+4. Escrow Protection Active notice: "Funds released after 7 days if no dispute"
+5. "View Order Details" (primary) + "Continue Shopping" (outline) buttons
+6. "Need help?" link to support
+
+### Page 30: Payment Cancelled (`app/checkout/cancelled/page.tsx`) — NEW
+| Detail | Value |
+|--------|-------|
+| Route | `/checkout/cancelled` |
+| Status | 🔲 Not started |
+| Components | `<EmptyState />`, `<Button />` |
 
 ---
 
-## Phase 10 — Security Hardening & Production Deployment
-**Duration:** Week 11–12 | **Risk:** 🔴 High | **Dependency:** All previous
+## 🔲 Phase 5: Order & Wallet Pages
 
-### What You're Building
-Production-ready security, observability, CI/CD, and deployment infrastructure.
+### Page 31: Buyer Order History (`app/dashboard/orders/page.tsx`) — NEW
+| Detail | Value |
+|--------|-------|
+| Route | `/dashboard/orders` |
+| Status | 🔲 Not started |
+| Components | `<Card />`, `<Badge />`, `<EmptyState />` |
+| API | `GET /api/v1/orders` |
 
-### Security Hardening Checklist
+**Build steps:**
+1. Order list with status filter tabs: All / Active / Completed / Disputed
+2. Each order card: order ID, date, items summary, total, status badge, "View" button
+3. Empty state: "No orders yet" + "Start Shopping" CTA
 
-- [ ] **Supabase RLS** — Enable on all tables, test with non-admin user
-- [ ] **CORS** — Lock to production frontend domain only
-- [ ] **Helmet.js** — All security headers active
-- [ ] **Input validation** — Zod on every route, no `req.body` used directly
-- [ ] **SQL injection** — All Prisma raw queries use parameterized templates
-- [ ] **XSS** — DOMPurify on user-generated HTML (descriptions, bios)
-- [ ] **Rate limiting** — Configured on auth, checkout, and general endpoints
-- [ ] **Webhook verification** — HMAC-SHA512 with `timingSafeEqual`
-- [ ] **Secrets** — All in env vars, never in code, `.env` in `.gitignore`
-- [ ] **HTTPS** — Enforced everywhere (Vercel and Fly.io handle this)
-- [ ] **File upload** — Type validation, size limits, virus scanning (future)
-- [ ] **Sensitive data selection** — Never return `studentIdImagePath`, internal IDs, etc.
+### Page 32: Order Detail (`app/dashboard/orders/[id]/page.tsx`) — NEW
+| Detail | Value |
+|--------|-------|
+| Route | `/dashboard/orders/:id` |
+| Status | 🔲 Not started |
+| Components | `<Card />`, `<Badge />`, `<Button />`, `<ConfirmModal />` |
+| API | `GET /api/v1/orders/:id`, `PATCH /api/v1/orders/:id/confirm-delivery` |
 
-### Observability
+**Build steps:**
+1. Order status timeline: Placed → Paid → Dispatched → Delivered → Completed
+2. Item details: product images, names, quantities, prices
+3. Delivery info: address, method, tracking (if available)
+4. "Confirm Delivery" button (triggers escrow release countdown)
+5. "Open Dispute" button (if within 48h window)
+6. Escrow status section
 
-- [ ] **Logging** — Pino structured logger with redacted sensitive fields
-- [ ] **Error tracking** — Sentry configured for both frontend and API
-- [ ] **Analytics** — PostHog for product analytics
-- [ ] **Health checks** — `/health` endpoint on API
+### Page 33: Seller Transactions (`app/dashboard/store/transactions/page.tsx`) — NEW
+| Detail | Value |
+|--------|-------|
+| Route | `/dashboard/store/transactions` |
+| Status | 🔲 Not started |
+| Components | `<Card />`, `<Badge />`, `<Button />` |
+| API | `GET /api/v1/orders?seller=me` |
 
-### Deployment
+**Build steps:**
+1. Incoming orders list with status filters
+2. Per-order actions: "Mark as Dispatched", "Enter Tracking Number", "Generate Meetup Code"
+3. Order timeline view
+4. Revenue summary: total earned, pending escrow, available balance
 
-- [ ] **Docker** — Multi-stage Dockerfile for Express API
-- [ ] **Fly.io** — `fly.toml` configured, auto-scaling, health checks
-- [ ] **Vercel** — Next.js deployed with preview deployments on PRs
-- [ ] **GitHub Actions** — Full CI/CD pipeline: lint → typecheck → test → deploy
-- [ ] **Database migrations** — Run before deploy, never after
-- [ ] **Secrets management** — All environment variables set in deployment platforms
+### Page 34: Wallet (`app/dashboard/wallet/page.tsx`) — NEW
+| Detail | Value |
+|--------|-------|
+| Route | `/dashboard/wallet` |
+| Status | 🔲 Not started |
+| Components | `<Card />`, `<Button />`, `<Input />`, `<Select />`, `<Badge />` |
+| API | `GET /api/v1/wallet`, `GET /api/v1/wallet/transactions`, `POST /api/v1/wallet/payout` |
 
-### Pre-Launch Checklist
+**Build steps:**
+1. Balance card: available balance (GH₵), pending escrow, total earned
+2. Transaction history table: date, type, description, amount, status
+3. Payout request form: choose MoMo or Bank, enter details, minimum GH₵ 20
+4. Payout history with status badges
+
+---
+
+## 🔲 Phase 6: Messaging Pages
+
+### Page 35: Message Inbox (`app/dashboard/messages/page.tsx`) — NEW
+| Detail | Value |
+|--------|-------|
+| Route | `/dashboard/messages` |
+| Status | 🔲 Not started |
+| Components | `<Card />`, `<Badge />`, `<EmptyState />` |
+| API | `GET /api/v1/messages/threads` |
+
+**Build steps:**
+1. Thread list: avatar, store/user name, last message preview, timestamp, unread dot
+2. Empty state: "No messages yet"
+
+### Page 36: Message Thread (`app/dashboard/messages/[threadId]/page.tsx`) — NEW
+| Detail | Value |
+|--------|-------|
+| Route | `/dashboard/messages/:threadId` |
+| Status | 🔲 Not started |
+| Components | `<Input />`, `<Button />`, `<Card />`, `<Badge />` |
+| API | `GET /api/v1/messages/threads/:id`, `POST /api/v1/messages`, `PATCH /api/v1/messages/:id/read` |
+
+**Build steps:**
+1. Chat UI: message bubbles (sender/receiver), timestamps
+2. Input field with send button
+3. Listing/Order context card at top of thread
+4. Content filter warnings (phone numbers, social handles blocked)
+
+---
+
+## 🔲 Phase 7: Reviews
+
+### Page 37: Write Review (`app/dashboard/orders/[id]/review/page.tsx`) — NEW
+| Detail | Value |
+|--------|-------|
+| Route | `/dashboard/orders/:id/review` |
+| Status | 🔲 Not started |
+| Components | `<Input />`, `<Textarea />`, `<Button />` |
+| API | `POST /api/v1/reviews` |
+
+**Build steps:**
+1. Star rating input (1-5, click to select)
+2. Review text (optional, max 500 chars)
+3. "Verified Purchase" badge auto-applied
+4. Submit sends review tied to order
+
+---
+
+## 🔲 Phase 8: Admin Pages
+
+### Page 38: Admin Dashboard (`app/admin/page.tsx`) — NEW
+| Detail | Value |
+|--------|-------|
+| Route | `/admin` |
+| Status | 🔲 Not started |
+| Components | `<Card />`, `<Badge />` |
+| API | `GET /api/v1/admin/stats` |
+
+**Build steps:**
+1. Key metrics: total orders, GMV, active stores, active disputes, pending verifications
+2. Quick links to queues
+
+### Page 39: Admin — Verification Queue (`app/admin/verification/page.tsx`) — NEW
+| Detail | Value |
+|--------|-------|
+| Route | `/admin/verification` |
+| Status | 🔲 Not started |
+| API | `GET /api/v1/admin/verifications?status=PENDING`, `PATCH /api/v1/admin/verifications/:id` |
+
+**Build steps:**
+1. Pending verification list
+2. Per-item: student ID photo, user profile, university, approve/reject with reason
+
+### Page 40: Admin — Disputes (`app/admin/disputes/page.tsx`) — NEW
+| Detail | Value |
+|--------|-------|
+| Route | `/admin/disputes` |
+| Status | 🔲 Not started |
+| API | `GET /api/v1/admin/disputes` |
+
+**Build steps:**
+1. Dispute list with priority sorting
+2. Detail view: evidence, policy snapshot, message history, resolve with reason
+
+### Page 41: Admin — Users (`app/admin/users/page.tsx`) — NEW
+| Detail | Value |
+|--------|-------|
+| Route | `/admin/users` |
+| Status | 🔲 Not started |
+| API | `GET /api/v1/admin/users` |
+
+### Page 42: Admin — Listing Moderation (`app/admin/listings/page.tsx`) — NEW
+| Detail | Value |
+|--------|-------|
+| Route | `/admin/listings` |
+| Status | 🔲 Not started |
+| API | `GET /api/v1/admin/listings?flagged=true` |
+
+---
+
+## 🔲 Phase 9: Static / Info Pages
+
+### Page 43: About Us (`app/about/page.tsx`) — NEW
+| Route | `/about` |
+
+### Page 44: Contact Us (`app/contact/page.tsx`) — NEW
+| Route | `/contact` |
+
+### Page 45: Help Center / FAQ (`app/help/page.tsx`) — NEW
+| Route | `/help` |
+
+### Page 46: Privacy Policy (`app/privacy/page.tsx`) — NEW
+| Route | `/privacy` |
+
+### Page 47: Terms of Service (`app/terms/page.tsx`) — NEW
+| Route | `/terms` |
+
+### Page 48: Cookie Policy (`app/cookies/page.tsx`) — NEW
+| Route | `/cookies` |
+
+### Page 49: Returns & Refunds (`app/returns/page.tsx`) — NEW
+| Route | `/returns` |
+
+### Page 50: Track Order (`app/track/page.tsx`) — NEW
+| Route | `/track` |
+
+### Page 51: Sell on U-Shop (`app/sell/page.tsx`) — NEW
+| Route | `/sell` |
+
+---
+
+## 🔲 Phase 10: Error & System Pages
+
+### Page 52: 404 Not Found (`app/not-found.tsx`)
+| Route | Any unmatched route |
+| Status | 🟡 Default exists |
+| Components | `<EmptyState />`, `<Button />` |
+
+**TODO:**
+- [ ] Custom branded 404 with "Back to Home" CTA
+
+### Page 53: Error Boundary (`app/error.tsx`)
+| Route | Runtime errors |
+| Status | 🔲 Not started |
+| Components | `<EmptyState />`, `<Button />` |
+
+### Page 54: Loading (`app/loading.tsx`)
+| Route | Global loading state |
+| Status | 🔲 Not started |
+
+---
+
+## Summary: All 54 Pages by Phase
+
+| Phase | Pages | Count | Status |
+|-------|-------|-------|--------|
+| Foundation | Root Layout | 1 | 🟡 Needs Header/Footer |
+| Auth | Login, Register, Forgot Password, Reset Password, Verify, Callback, Dashboard | 7 | 🟢 Done (refactor pending) |
+| Stores | Create Store, Store Settings, Public Store, OG Image | 4 | 🔲 |
+| Listings & Discovery | Homepage, Search, Categories (2), Universities (2), Stores, Create Listing, Manage Listings, Listing Detail, Student Deals | 11 | 🟡 Homepage placeholder |
+| Checkout & Payments | Cart, Wishlist, Checkout (3 steps), Success, Cancelled | 7 | 🔲 |
+| Orders & Wallet | Buyer Orders (2), Seller Transactions, Wallet | 4 | 🔲 |
+| Messaging | Inbox, Thread | 2 | 🔲 |
+| Reviews | Write Review | 1 | 🔲 |
+| Admin | Dashboard, Verification, Disputes, Users, Listings | 5 | 🔲 |
+| Static / Info | About, Contact, Help, Privacy, Terms, Cookies, Returns, Track, Sell | 9 | 🔲 |
+| System | 404, Error, Loading | 3 | 🟡 Default 404 |
+| **Total** | | **54** | **8 done, 46 remaining** |
+
+---
+
+## Build Execution Order (Recommended)
 
 ```
-PAYMENTS
-□ Test end-to-end with Paystack test keys
-□ Switch to Paystack live keys
-□ Verify webhook URL configured in Paystack dashboard
-□ Test payout flow with real bank account
-
-DATABASE
-□ All indexes created (search, composite, partial)
-□ RLS policies active and tested
-□ Connection pool configured (10 connections per instance)
-
-SECURITY
-□ Rate limiting tested under load
-□ CORS locked to production domain
-□ All secrets rotated from development values
-□ Webhook signature verification tested
-
-MONITORING
-□ Sentry configured and receiving test errors
-□ Pino logs flowing to log aggregator
-□ Health check endpoint responding
-
-LEGAL
-□ Terms of Service drafted (platform as intermediary)
-□ Privacy Policy drafted (Ghana Data Protection Act compliant)
-□ Seller agreement (policy enforceability, dispute process)
+Week 3:   Homepage rebuild + Store pages (Pages 9-13)
+Week 4:   Category + University + Store browsing (Pages 14-19)
+Week 5:   Create/Manage Listings + Listing Detail (Pages 20-23)
+Week 6:   Cart + Wishlist + Checkout flow (Pages 24-30)
+Week 7:   Order pages + Wallet (Pages 31-34)
+Week 8:   Messaging (Pages 35-36) + Reviews (Page 37)
+Week 9:   Admin panel (Pages 38-42)
+Week 10:  Static pages (Pages 43-51) + System pages (Pages 52-54)
+Week 11:  Component refactoring, UX polish, responsive testing
+Week 12:  Security hardening, deployment, final QA
 ```
 
 ---
 
-## Summary: Build Order at a Glance
+## Phase-Specific Backend Work: Quick Reference
 
-| Phase | Feature | Duration | Risk | Key Files |
-|-------|---------|----------|------|-----------|
-| 0 | Foundation & Setup | Week 1 | Low | `turbo.json`, `schema.prisma`, `index.ts` |
-| 1 | Auth & Verification | Week 2 | Medium | `authenticate.ts`, `verification.service.ts` |
-| 2 | Stores & Policies | Week 3 | Medium | `store.service.ts`, `[handle]/page.tsx` |
-| 3 | Listings & Search | Week 4–5 | Medium | `listing.service.ts`, `search.service.ts` |
-| 4 | Checkout & Payments | Week 5–6 | 🔴 High | `webhooks.ts`, `paystack.ts`, `order.service.ts` |
-| 5 | Escrow & Wallet | Week 6–7 | 🔴 High | `escrow.service.ts`, `wallet.service.ts` |
-| 6 | Messaging | Week 7–8 | Low | `message.service.ts`, messages UI |
-| 7 | Reviews & Trust | Week 8 | Low | `review` routes, trust badge components |
-| 8 | Admin Panel | Week 9 | Medium | `admin/` pages, admin routes |
-| 9 | Notifications & Polish | Week 10 | Low | `notification.service.ts`, `resend.ts` |
-| 10 | Security & Deploy | Week 11–12 | 🔴 High | CI/CD, Dockerfile, RLS policies, Sentry |
+Each frontend phase requires backend API endpoints. Here's the API work that must be done *before* or *alongside* each set of pages:
+
+| Phase | Backend Work Required |
+|-------|----------------------|
+| Phase 2 (Stores) | Store CRUD routes, handle availability API, store service |
+| Phase 3 (Listings) | Listing CRUD routes, search service, full-text search setup, category seeding, university API |
+| Phase 4 (Payments) | Cart CRUD routes, wishlist CRUD routes, order service, Paystack integration, webhook handler, address CRUD |
+| Phase 5 (Escrow) | Escrow service, wallet service, auto-release cron, reminder scheduler |
+| Phase 6 (Messaging) | Message routes, content filtering, unread count endpoint |
+| Phase 7 (Reviews) | Review CRUD routes, rating aggregation |
+| Phase 8 (Admin) | Admin routes (protected), verification queue, dispute resolution, user management |
+| Phase 9 (Notifications) | Resend email integration, notification service, in-app notification model |
+
+---
+
+## Pre-Flight Checklist Per Page
+
+Before building any page, verify:
+
+- [ ] API endpoint exists (or build it first)
+- [ ] Prisma schema supports the data needed
+- [ ] Design reference exists (PNG, HTML, or Figma)
+- [ ] Components needed are available in `@/components`
+- [ ] Zod validation schema exists for any form inputs
+- [ ] Error states are defined (what happens on API failure?)
+- [ ] Empty states are defined (what if there's no data?)
+- [ ] Loading states are defined (skeleton, not spinner)
+- [ ] Mobile responsive layout is planned (test at 375px, 768px, 1440px)
+- [ ] SEO metadata is configured via `generateMetadata()`
