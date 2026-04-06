@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, Suspense, type FormEvent, type ChangeEvent } from "react";
+import { useState, useEffect, useRef, Suspense, type FormEvent, type ChangeEvent } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -61,19 +61,39 @@ function VerifyPageContent() {
   const frontInputRef = useRef<HTMLInputElement>(null);
   const backInputRef = useRef<HTMLInputElement>(null);
 
-  // Ghanaian universities for the dropdown
-  const universities = [
-    { value: "ug", label: "University of Ghana (UG)" },
-    { value: "knust", label: "Kwame Nkrumah University of Science and Technology (KNUST)" },
-    { value: "ucc", label: "University of Cape Coast (UCC)" },
-    { value: "ashesi", label: "Ashesi University" },
-    { value: "uds", label: "University for Development Studies (UDS)" },
-    { value: "uew", label: "University of Education, Winneba (UEW)" },
-    { value: "gimpa", label: "GIMPA" },
-    { value: "upsa", label: "University of Professional Studies (UPSA)" },
-    { value: "gctu", label: "Ghana Communication Technology University" },
-    { value: "central", label: "Central University" },
-  ];
+  // ── University data from the API ──────────────────────────────
+  // Fetched from GET /api/v1/universities on mount instead of hardcoding.
+  // This ensures the dropdown always matches the DB (admins can add/remove
+  // universities without a code deploy).
+  interface UniversityOption {
+    id: string;
+    name: string;
+    shortName: string;
+    slug: string;
+    domain: string | null;
+    logoUrl: string | null;
+  }
+  const [universities, setUniversities] = useState<UniversityOption[]>([]);
+  const [universitiesLoading, setUniversitiesLoading] = useState(true);
+
+  useEffect(() => {
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
+
+    // Fetch the list of active universities from our Express API.
+    // We don't need auth for this — it's a public endpoint.
+    fetch(`${apiUrl}/api/v1/universities`)
+      .then((res) => res.json())
+      .then((data: { success: boolean; data: UniversityOption[] }) => {
+        if (data.success) {
+          setUniversities(data.data);
+        }
+      })
+      .catch(() => {
+        // API down — the user will see "No universities available"
+        // in the dropdown, which is better than crashing.
+      })
+      .finally(() => setUniversitiesLoading(false));
+  }, []);
 
   function handleFileChange(
     e: ChangeEvent<HTMLInputElement>,
@@ -332,11 +352,11 @@ function VerifyPageContent() {
                   className="w-full bg-campus-input border border-gray-700 text-white py-3 px-4 rounded-xl appearance-none focus:ring-2 focus:ring-status-info outline-none transition-all"
                 >
                   <option disabled value="">
-                    Choose your institution
+                    {universitiesLoading ? "Loading universities..." : "Choose your institution"}
                   </option>
                   {universities.map((uni) => (
-                    <option key={uni.value} value={uni.value}>
-                      {uni.label}
+                    <option key={uni.slug} value={uni.slug}>
+                      {uni.name} ({uni.shortName})
                     </option>
                   ))}
                 </select>
