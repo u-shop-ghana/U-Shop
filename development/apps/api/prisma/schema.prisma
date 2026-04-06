@@ -131,10 +131,121 @@ model User {
   sentMessages       Message[]          @relation("MessageSender")
   receivedMessages   Message[]          @relation("MessageReceiver")
   disputes           Dispute[]          @relation("DisputeOpener")
+  cart               Cart?
+  wishlist           Wishlist?
+  addresses          Address[]
 
   @@index([supabaseId])
   @@index([email])
   @@index([verificationStatus])
+}
+
+// ─── University ─────────────────────────────────────────────────
+// Replaces the hardcoded STUDENT_EMAIL_DOMAINS list.
+// Used for: student verification, university-based browsing,
+//           the "Universities" nav link in the header.
+model University {
+  id        String    @id @default(cuid())
+  name      String    @unique          // "University of Ghana"
+  shortName String    @unique          // "UG"
+  slug      String    @unique          // "university-of-ghana"
+  domain    String?                    // "ug.edu.gh" — for future email domain matching
+  logoUrl   String?                    // "/assets/images/universities/legon.jpg"
+  isActive  Boolean   @default(true)
+  createdAt DateTime  @default(now())
+
+  // Relations
+  addresses Address[]
+
+  @@index([slug])
+  @@index([isActive])
+}
+
+// ─── Cart ───────────────────────────────────────────────────────
+// Server-side cart — one per user. Persists across sessions/devices.
+// Guest carts are handled client-side (localStorage) and merged
+// on login via the /cart/merge endpoint.
+model Cart {
+  id        String     @id @default(cuid())
+  userId    String     @unique
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+
+  // Relations
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  items     CartItem[]
+}
+
+model CartItem {
+  id        String   @id @default(cuid())
+  cartId    String
+  listingId String
+  quantity  Int      @default(1)
+  addedAt   DateTime @default(now())
+
+  // Relations
+  cart      Cart     @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  listing   Listing  @relation(fields: [listingId], references: [id], onDelete: Cascade)
+
+  // Prevent duplicate listings in the same cart
+  @@unique([cartId, listingId])
+  @@index([cartId])
+}
+
+// ─── Wishlist ───────────────────────────────────────────────────
+// One wishlist per user. Heart icon on product cards toggles items.
+model Wishlist {
+  id        String         @id @default(cuid())
+  userId    String         @unique
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
+
+  // Relations
+  user      User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  items     WishlistItem[]
+}
+
+model WishlistItem {
+  id         String   @id @default(cuid())
+  wishlistId String
+  listingId  String
+  addedAt    DateTime @default(now())
+
+  // Relations
+  wishlist   Wishlist @relation(fields: [wishlistId], references: [id], onDelete: Cascade)
+  listing    Listing  @relation(fields: [listingId], references: [id], onDelete: Cascade)
+
+  // Prevent duplicate listings in the same wishlist
+  @@unique([wishlistId, listingId])
+  @@index([wishlistId])
+}
+
+// ─── Address ────────────────────────────────────────────────────
+// Supports campus addresses (hall + university) and off-campus.
+// digitalAddress is Ghana Post GPS (e.g. "GA-123-4567") — optional.
+model Address {
+  id              String      @id @default(cuid())
+  userId          String
+  label           String      @default("Home")  // "Hall", "Off-campus", "Home"
+  fullName        String                          // Recipient name
+  phone           String                          // Delivery contact
+  line1           String                          // Street / Hall name
+  line2           String?                         // Room number, floor, etc.
+  city            String
+  region          String                          // Ashanti, Greater Accra, etc.
+  digitalAddress  String?                         // Ghana Post GPS — optional
+  universityId    String?                         // Links to University for campus addresses
+  campusHall      String?                         // Hall of residence name
+  isDefault       Boolean     @default(false)
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+
+  // Relations
+  user            User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  university      University? @relation(fields: [universityId], references: [id])
+
+  @@index([userId])
+  @@index([userId, isDefault])
 }
 
 model Store {
@@ -210,6 +321,8 @@ model Listing {
   category      Category         @relation(fields: [categoryId], references: [id])
   orderItems    OrderItem[]
   messageThreads MessageThread[]
+  cartItems     CartItem[]
+  wishlistItems WishlistItem[]
 
   @@index([storeId, status])
   @@index([categoryId, status])
