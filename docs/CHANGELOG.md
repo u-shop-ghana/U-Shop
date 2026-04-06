@@ -5,6 +5,53 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [0.5.0] — 2026-04-06 — Database Expansion + Component Library
+
+### Added
+
+#### Database — 6 New Tables
+- **`University`** — Replaces hardcoded student email domain list. Fields: `name`, `shortName`, `slug`, `domain`, `logoUrl`, `isActive`. Indexed on `slug` and `isActive`.
+- **`Cart`** — Server-side cart, one per user (`userId` unique). Cascades on user delete.
+- **`CartItem`** — Items in a cart. Unique constraint on `[cartId, listingId]` prevents duplicates.
+- **`Wishlist`** — One wishlist per user (`userId` unique). Cascades on user delete.
+- **`WishlistItem`** — Items in a wishlist. Unique constraint on `[wishlistId, listingId]`.
+- **`Address`** — Delivery addresses supporting campus (hall + university FK) and off-campus. `digitalAddress` (Ghana Post GPS) is optional. Indexed on `[userId, isDefault]`.
+
+#### University Seed Data — `prisma/seed-universities.ts`
+- 5 Ghanaian universities seeded: **GCTU**, **UG**, **UCC**, **KNUST**, **UMAT**
+- Logos from `/assets/images/universities/`
+- Idempotent upsert — safe to re-run
+
+#### Component Library — `src/components/` (15 files)
+
+**Atoms (`components/ui/`)**:
+- `Button` — 5 variants (Primary, Secondary, Outline, Ghost, Danger), 3 sizes, loading spinner, icon slots
+- `Badge` — 7 color variants + pre-built `ConditionBadge`, `VerificationBadge`, `StockBadge`
+- `Input` — Text input with label, error state, helper text, left/right icon slots
+- `Textarea` — Multi-line input, same styling as Input
+- `Select` — Dropdown with placeholder support
+- `Toggle` — Switch toggle with label, description, Material Symbols icon
+
+**Molecules (`components/cards/`, `components/modals/`)**:
+- `Card` — Elevated/Outlined/Hoverable + composable Header/Content/Footer
+- `ProductCard` — Full product listing card: image, vendor, title, stars, price (GH₵), condition badge, wishlist heart, "Add to Cart" button, out-of-stock overlay
+- `SearchBar` — Search input with autocomplete suggestions dropdown
+- `Modal` — 3 sizes (sm/md/lg), ESC-to-close, backdrop click, scrollable content
+- `ConfirmModal` — Pre-built destructive action dialog with danger/warning variants
+
+**Organisms (`components/layout/`)**:
+- `Header` — 3-row layout (topbar → main → nav) with mobile responsive menu
+- `Footer` — Brand, Quick Links, Customer Service, Contact Us, newsletter, payment logos (Momo, TCash, AT Money, Visa)
+- `EmptyState` — Centered icon, title, description, CTA button
+
+**Barrel exports** — `components/index.ts` enables `import { Button, ProductCard } from '@/components'`
+
+### Changed
+- `User` model — added `cart`, `wishlist`, `addresses` relations
+- `Listing` model — added `cartItems`, `wishlistItems` relations
+
+---
+
 ## [0.4.1] — 2026-04-06 — Security Hardening + Auth Flow Redesign
 
 ### Security Fix — Auto-Verification Vulnerability
