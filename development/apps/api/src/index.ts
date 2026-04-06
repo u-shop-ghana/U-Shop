@@ -8,6 +8,7 @@ import { errorHandler } from './middleware/error-handler.js';
 import { notFound } from './middleware/not-found.js';
 import { rateLimiter } from './middleware/rate-limiter.js';
 import authRouter from './routes/auth.js';
+import universitiesRouter from './routes/universities.js';
 
 // Load environment variables
 dotenv.config();
@@ -65,6 +66,9 @@ app.use('/api', rateLimiter.general);
 // ─── API Routes ──────────────────────────────────────────────────
 // Auth gets stricter rate limiting (10 req / 15 min) to prevent brute-force.
 app.use('/api/v1/auth', rateLimiter.auth, authRouter);
+
+// Universities is a public read-only endpoint — uses general rate limit.
+app.use('/api/v1/universities', universitiesRouter);
 
 // Routes to be added as we build each feature:
 // app.use('/api/v1/stores', storesRouter);
