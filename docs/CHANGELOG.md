@@ -5,6 +5,49 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [0.5.2] — 2026-04-06 — Category Seeding with Icons
+
+### Changed
+- **`packages/shared/src/constants.ts`** — Added `iconUrl` field to `CATEGORIES` array, mapping 6 of 10 categories to their image assets in `/assets/images/categories/`
+- **`prisma/seed.ts`** — Updated seed script to include `iconUrl` in both create and update paths of the upsert
+
+### Seeded Data
+| Category | Icon | Path |
+|----------|------|------|
+| Laptops | ✅ | `laptop.jpg` |
+| Phones | ✅ | `phone.png` |
+| Tablets | ✅ | `Tablet.png` |
+| Accessories | ✅ | `Accessories.png` |
+| Storage | ✅ | `storage.png` |
+| Gaming | ✅ | `Gaming.png` |
+| Components | — | No image yet |
+| Networking | — | No image yet |
+| Audio | — | No image yet |
+| Peripherals | — | No image yet |
+
+---
+
+## [0.5.1] — 2026-04-06 — Phase 0 & 1 TODOs: Layout + University API
+
+### Added
+
+#### Backend — University API
+- **`GET /api/v1/universities`** — Public endpoint returning all active universities (name, shortName, slug, domain, logoUrl). Registered in `index.ts` with general rate limit.
+
+#### Frontend — Marketplace Layout
+- **`app/(marketplace)/layout.tsx`** — New route group wrapping all public pages with `<Header />` + `<Footer />`. Auth-aware: shows Login/Sign Up for guests, user name + dashboard link for logged-in users.
+- Moved `app/page.tsx` → `app/(marketplace)/page.tsx` (homepage now wrapped with Header/Footer)
+- Moved `app/dashboard/` → `app/(marketplace)/dashboard/` (dashboard now has Header/Footer)
+
+### Changed
+
+#### Frontend — Verify Page
+- Replaced hardcoded 10-university list with dynamic `GET /api/v1/universities` API call
+- Dropdown shows "Loading universities..." placeholder while fetching
+- University options now display as "University Name (SHORT)" from the database
+
+---
+
 ## [0.5.0] — 2026-04-06 — Database Expansion + Component Library + Build Guide
 
 ### Documentation
