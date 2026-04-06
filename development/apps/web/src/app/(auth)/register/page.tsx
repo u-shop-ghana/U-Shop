@@ -5,7 +5,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
-import { STUDENT_EMAIL_DOMAINS } from "@/lib/student-domains";
 
 // ─── Register Page ──────────────────────────────────────────────
 // Split-screen: hero left (campus imagery), registration form right.
@@ -24,15 +23,7 @@ export default function RegisterPage() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
-  // Check if the email belongs to a known Ghanaian university domain
-  // to show a real-time hint that they'll be auto-verified
-  const isStudentEmail = (() => {
-    const domain = email.split("@")[1]?.toLowerCase();
-    if (!domain) return false;
-    return STUDENT_EMAIL_DOMAINS.some(
-      (d: string) => domain === d || domain.endsWith("." + d)
-    );
-  })();
+
 
   // Password strength indicator
   const passwordStrength = (() => {
@@ -67,12 +58,18 @@ export default function RegisterPage() {
     setLoading(true);
 
     try {
-      // Step 1: Create the Supabase auth user
+      // Step 1: Create the Supabase auth user.
+      // We store the verifyAsStudent preference in user_metadata so the
+      // callback route can read it after email confirmation and redirect
+      // the user to /verify if they opted in.
       const { data, error: authError } = await supabase.auth.signUp({
         email,
         password,
         options: {
-          data: { full_name: fullName },
+          data: {
+            full_name: fullName,
+            wants_student_verification: verifyAsStudent,
+          },
           emailRedirectTo: `${window.location.origin}/callback`,
         },
       });
@@ -113,11 +110,21 @@ export default function RegisterPage() {
         return;
       }
 
-      // If Supabase requires email confirmation, show the verify page
+      // If Supabase requires email confirmation, show the "check your email" page.
+      // The actual student verification redirect happens in /callback after
+      // the user clicks the confirmation link.
       if (!data.session) {
-        router.push(`/verify?email=${encodeURIComponent(email)}`);
+        router.push(
+          `/verify?email=${encodeURIComponent(email)}&type=email_confirmation`
+        );
       } else {
-        router.push("/dashboard");
+        // Session exists immediately (email confirmation disabled in Supabase).
+        // Route based on student verification preference.
+        if (verifyAsStudent) {
+          router.push("/verify?type=student");
+        } else {
+          router.push("/");
+        }
         router.refresh();
       }
     } catch {
@@ -285,20 +292,11 @@ export default function RegisterPage() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   className="w-full pl-10 pr-4 py-3 bg-campus-input border border-gray-700 rounded-xl text-white focus:ring-2 focus:ring-ushop-purple focus:border-ushop-purple outline-none transition-all placeholder:text-gray-600"
-                  placeholder="example@st.ug.edu.gh"
+                  placeholder="your@email.com"
                   required
                   autoComplete="email"
                 />
               </div>
-              {/* Student email auto-detection hint */}
-              {isStudentEmail && (
-                <div className="flex items-center gap-2 text-status-success text-xs font-medium">
-                  <span className="material-symbols-outlined text-sm">
-                    check_circle
-                  </span>
-                  Student email detected — you&apos;ll be auto-verified!
-                </div>
-              )}
             </div>
 
             {/* Password */}
