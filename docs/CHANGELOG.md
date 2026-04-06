@@ -5,6 +5,51 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [0.4.1] — 2026-04-06 — Security Hardening + Auth Flow Redesign
+
+### Security Fix — Auto-Verification Vulnerability
+
+> **CRITICAL**: Previously, `VerificationService.handlePostSignup()` auto-verified anyone who typed a student email domain (e.g., `@st.ug.edu.gh`) at signup — **before email confirmation**. This meant an attacker could type any student email they don't own, get auto-verified, and gain student-only privileges.
+
+**Fix**: Removed auto-verification entirely. Users must now:
+1. Sign up with any personal email
+2. Confirm their email (click Supabase link)
+3. Optionally opt into student verification via the "Verify as Student" toggle
+4. After email confirmation, users who toggled → redirected to `/verify` for student ID upload
+5. Users who didn't toggle → redirected to home page `/`
+
+### Added
+
+#### Input Sanitisation Middleware — `src/middleware/sanitize.ts`
+- `sanitizePlainText()` — strips ALL HTML (store names, handles, bios, etc.)
+- `sanitizeRichText()` — allowlist of safe formatting tags (`b`, `i`, `em`, `strong`, `br`, `ul`, `ol`, `li`, `p`)
+- Uses `isomorphic-dompurify` as specified in `docs/technical/security.md §1`
+
+#### Zod Validation Middleware — `src/middleware/validate-body.ts`
+- Generic `validateBody(schema)` middleware per security.md §4
+- Replaces `req.body` with validated + type-coerced data; strips unknown fields
+- Returns standardized error envelope with field-level details on failure
+
+### Changed
+
+#### Auth Flow Redesign
+- **Register page**: Stores `wants_student_verification` toggle in Supabase `user_metadata`
+- **Callback route**: After email confirmation, reads `user_metadata.wants_student_verification` to determine redirect (`/verify?type=student` or `/`)
+- **Backend `/register`**: No longer calls `VerificationService.handlePostSignup()`
+- Removed `isStudentEmail` auto-detection hint from register form
+- Email placeholder changed from `example@st.ug.edu.gh` to `your@email.com`
+
+#### Helmet CSP Hardening — `src/index.ts`
+- Replaced bare `helmet()` with explicit Content Security Policy directives
+- `script-src: 'self'` — blocks inline scripts even if XSS injection reaches the DB
+- `img-src` restricted to `self`, `data:`, `*.supabase.co`
+- `connect-src` restricted to `self`, `*.supabase.co`, `api.paystack.co`
+
+### Dependencies Added
+- `isomorphic-dompurify` — HTML sanitisation for user-generated content
+
+---
+
 ## [0.4.0] — 2026-04-05 — Phase 1B: Database + Auth Provider + Dashboard
 
 ### Added
