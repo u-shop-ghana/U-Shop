@@ -70,7 +70,11 @@ export default function RootLayout({
       className={`${jakarta.variable} ${plexMono.variable} dark`}
     >
       <head>
-        {/* Material Symbols for icons used throughout the design */}
+        {/* Material Symbols for icons used throughout the design.
+            eslint-disable-next-line: This rule is a Pages Router rule.
+            In App Router, layout.tsx IS the global document — this font
+            loads on every page, which is the correct behavior. */}
+        {/* eslint-disable-next-line @next/next/no-page-custom-font */}
         <link
           href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
           rel="stylesheet"
