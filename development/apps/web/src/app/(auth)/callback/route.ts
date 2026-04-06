@@ -1,21 +1,30 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { createServerClient } from "@supabase/ssr";
 
-// ─── OAuth Callback Handler ────────────────────────────────────
-// This route handles the callback from Supabase OAuth providers
-// (Google, etc.). It exchanges the auth code for a session,
-// syncs the user with our Express backend, and redirects to
-// the dashboard.
+// ─── OAuth & Email Confirmation Callback Handler ───────────────
+// This route handles TWO Supabase callback types:
+//   1. OAuth callbacks (Google sign-in): ?code=xyz
+//   2. Email confirmation callbacks: ?code=xyz (from signup email link)
 //
-// Flow: Google → Supabase → /callback?code=xyz → exchange → redirect
+// After exchanging the code for a session, it checks the user's
+// metadata to decide where to redirect:
+//   - If wants_student_verification = true → /verify?type=student
+//   - Otherwise → / (home page)
+//
+// It also syncs the user with our Express backend (creates the
+// internal User record if it doesn't exist).
 export async function GET(request: NextRequest) {
   const { searchParams, origin } = new URL(request.url);
   const code = searchParams.get("code");
-  const next = searchParams.get("next") ?? "/dashboard";
 
   if (code) {
-    // Create a Supabase client that can read/write cookies
-    const supabaseResponse = NextResponse.redirect(`${origin}${next}`);
+    // Default redirect — will be overridden based on user metadata
+    let redirectPath = "/";
+
+    // Create a Supabase client that can read/write cookies on the response
+    const supabaseResponse = NextResponse.redirect(
+      `${origin}${redirectPath}`
+    );
 
     const supabase = createServerClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL ?? "https://placeholder.supabase.co",
@@ -34,16 +43,15 @@ export async function GET(request: NextRequest) {
       }
     );
 
-    // Exchange the OAuth code for a session.
+    // Exchange the OAuth/email-confirmation code for a session.
     // This sets the auth cookies on the response.
     const { data, error } = await supabase.auth.exchangeCodeForSession(code);
 
     if (!error && data.session) {
       // Sync user with our Express backend.
-      // This creates the internal User record if it doesn't exist,
-      // and triggers auto-verification for student emails.
-      // We fire-and-forget because the user is already authenticated
-      // and the /sync endpoint will handle this on next login if it fails.
+      // This creates the internal User record if it doesn't exist.
+      // We do NOT call handlePostSignup auto-verification anymore —
+      // verification is a separate, explicit user action.
       const apiUrl =
         process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
 
@@ -65,10 +73,25 @@ export async function GET(request: NextRequest) {
         });
       } catch {
         // Non-critical: user exists in Supabase, sync will retry on next login
-        console.warn("Backend sync failed during OAuth callback, will retry");
       }
 
-      return supabaseResponse;
+      // Determine redirect based on wants_student_verification.
+      // This flag is set during signup in user_metadata.
+      // If the user opted to verify as a student, send them to /verify.
+      // Otherwise, send them to the home page.
+      const wantsVerification =
+        data.user.user_metadata?.wants_student_verification === true;
+
+      if (wantsVerification) {
+        redirectPath = "/verify?type=student";
+      } else {
+        redirectPath = "/";
+      }
+
+      // Build the final redirect with the correct path
+      return NextResponse.redirect(new URL(redirectPath, origin), {
+        headers: supabaseResponse.headers,
+      });
     }
   }
 
