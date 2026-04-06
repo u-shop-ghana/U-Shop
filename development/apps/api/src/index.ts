@@ -16,7 +16,24 @@ const app: express.Application = express();
 const PORT = process.env.PORT || 4000;
 
 // ─── Security Middleware ─────────────────────────────────────────
-app.use(helmet());
+// Explicit CSP directives per security.md §1.
+// script-src 'self' blocks inline scripts even if XSS injection occurs.
+// img-src allows Supabase Storage for user-uploaded images.
+// connect-src allows frontend, Supabase, and Paystack APIs.
+app.use(helmet({
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      scriptSrc: ["'self'"],
+      styleSrc: ["'self'", "'unsafe-inline'"],
+      imgSrc: ["'self'", "data:", "*.supabase.co"],
+      connectSrc: ["'self'", "*.supabase.co", "api.paystack.co"],
+      fontSrc: ["'self'"],
+      objectSrc: ["'none'"],
+      frameAncestors: ["'none'"],
+    },
+  },
+}));
 app.use(cors({
   origin: process.env.FRONTEND_URL || 'http://localhost:3000',
   credentials: true,
