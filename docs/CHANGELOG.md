@@ -5,7 +5,15 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
-## [0.5.0] — 2026-04-06 — Database Expansion + Component Library
+## [0.5.0] — 2026-04-06 — Database Expansion + Component Library + Build Guide
+
+### Documentation
+- **`docs/product/MVP_BUILD_GUIDE.md`** — Complete rewrite with page-by-page build plan:
+  - 54 pages inventoried across 10 phases (8 done, 46 remaining)
+  - Each page: route, design reference, components, API endpoints, build steps, status
+  - Current progress snapshot, build execution timeline (Weeks 3–12)
+  - Per-phase backend work quick reference table
+  - Pre-flight checklist for every new page
 
 ### Added
 
