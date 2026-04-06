@@ -85,13 +85,15 @@ router.post(
         return;
       }
 
-      // Create our internal User record
+      // Create our internal User record.
+      // Everyone starts as BUYER + UNVERIFIED. Student verification
+      // is a separate, explicit user action (not auto-triggered by email domain).
       const newUser = await prisma.user.create({
         data: {
           supabaseId: supabaseUser.id,
           email,
           fullName,
-          role: 'BUYER', // Everyone starts as a buyer
+          role: 'BUYER',
           verificationStatus: 'UNVERIFIED',
         },
         select: {
@@ -102,26 +104,9 @@ router.post(
         },
       });
 
-      // Check if the email is a student domain and auto-verify if so.
-      // We do this AFTER creating the user so we have a valid userId.
-      await VerificationService.handlePostSignup(newUser.id, email);
-
-      // Re-fetch the user to get the updated verification status
-      // (it may have changed from UNVERIFIED → VERIFIED).
-      const updatedUser = await prisma.user.findUnique({
-        where: { id: newUser.id },
-        select: {
-          id: true,
-          email: true,
-          role: true,
-          verificationStatus: true,
-          universityName: true,
-        },
-      });
-
       logger.info({ userId: newUser.id, email }, 'New user registered');
 
-      res.status(201).json({ success: true, data: updatedUser });
+      res.status(201).json({ success: true, data: newUser });
     } catch (err) {
       next(err);
     }
