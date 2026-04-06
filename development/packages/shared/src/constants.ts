@@ -1,17 +1,17 @@
 // ─── U-Shop Shared Constants ─────────────────────────────────────
 
-// Tech product categories
+// Tech product categories with image icons from /assets/images/categories/
 export const CATEGORIES = [
-  { name: 'Laptops', slug: 'laptops' },
-  { name: 'Phones', slug: 'phones' },
-  { name: 'Tablets', slug: 'tablets' },
-  { name: 'Accessories', slug: 'accessories' },
-  { name: 'Components', slug: 'components' },
-  { name: 'Networking', slug: 'networking' },
-  { name: 'Storage', slug: 'storage' },
-  { name: 'Audio', slug: 'audio' },
-  { name: 'Gaming', slug: 'gaming' },
-  { name: 'Peripherals', slug: 'peripherals' },
+  { name: 'Laptops', slug: 'laptops', iconUrl: '/assets/images/categories/laptop.jpg' },
+  { name: 'Phones', slug: 'phones', iconUrl: '/assets/images/categories/phone.png' },
+  { name: 'Tablets', slug: 'tablets', iconUrl: '/assets/images/categories/Tablet.png' },
+  { name: 'Accessories', slug: 'accessories', iconUrl: '/assets/images/categories/Accessories.png' },
+  { name: 'Components', slug: 'components', iconUrl: null },
+  { name: 'Networking', slug: 'networking', iconUrl: null },
+  { name: 'Storage', slug: 'storage', iconUrl: '/assets/images/categories/storage.png' },
+  { name: 'Audio', slug: 'audio', iconUrl: null },
+  { name: 'Gaming', slug: 'gaming', iconUrl: '/assets/images/categories/Gaming.png' },
+  { name: 'Peripherals', slug: 'peripherals', iconUrl: null },
 ] as const;
 
 // 6-tier condition grading system
