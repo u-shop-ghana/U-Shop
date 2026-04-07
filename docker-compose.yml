@@ -8,9 +8,9 @@ services:
     ports:
       - '5432:5432'
     environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=[REDACTED_DEFAULT_PWD]
-      - POSTGRES_DB=ushop_dev
+      - POSTGRES_USER=${POSTGRES_USER:-postgres}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-[REDACTED_DEV_PWD]}
+      - POSTGRES_DB=${POSTGRES_DB:-ushop_dev}
     volumes:
       - ushop-pgdata:/var/lib/postgresql/data
     healthcheck:
