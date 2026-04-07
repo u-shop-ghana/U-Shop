@@ -1,3 +1,4 @@
+import { Buffer } from 'node:buffer';
 import { supabaseAdmin } from '../lib/supabase.js';
 import { logger } from '../lib/logger.js';
 
