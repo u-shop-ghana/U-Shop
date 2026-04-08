@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { HANDLE_RULES, RESERVED_HANDLES } from './constants.js';
+import { HANDLE_RULES, RESERVED_HANDLES } from './constants';
 
 // ─── Auth Schemas ────────────────────────────────────────────────
 
