@@ -28,11 +28,15 @@ export const createStoreSchema = z.object({
   name: z.string().min(2).max(100),
   handle: storeHandleSchema,
   bio: z.string().max(280).optional(),
+  logoUrl: z.string().url().optional(),
+  bannerUrl: z.string().url().optional(),
 });
 
 export const updateStoreSchema = z.object({
   name: z.string().min(2).max(100).optional(),
   bio: z.string().max(280).optional(),
+  logoUrl: z.string().url().optional(),
+  bannerUrl: z.string().url().optional(),
   returnWindow: z.string().optional(),
   returnCondition: z.string().optional(),
   returnShippingCost: z.string().optional(),
@@ -60,6 +64,7 @@ export const searchListingsSchema = z.object({
   q: z.string().optional(),
   category: z.string().optional(),
   condition: z.enum(['NEW', 'LIKE_NEW', 'EXCELLENT', 'GOOD', 'FAIR', 'FOR_PARTS']).optional(),
+  storeId: z.string().cuid().optional(),
   minPrice: z.coerce.number().positive().optional(),
   maxPrice: z.coerce.number().positive().optional(),
   sellerType: z.enum(['student', 'reseller']).optional(),
@@ -108,3 +113,16 @@ export const createDisputeSchema = z.object({
   description: z.string().min(20).max(5000),
   evidenceUrls: z.array(z.string().url()).max(10).optional(),
 });
+
+// ─── Type Exports ────────────────────────────────────────────────
+
+export type RegisterInput = z.infer<typeof registerSchema>;
+export type CreateStoreInput = z.infer<typeof createStoreSchema>;
+export type UpdateStoreInput = z.infer<typeof updateStoreSchema>;
+export type CreateListingInput = z.infer<typeof createListingSchema>;
+export type UpdateListingInput = z.infer<typeof updateListingSchema>;
+export type SearchListingsInput = z.infer<typeof searchListingsSchema>;
+export type CreateOrderInput = z.infer<typeof createOrderSchema>;
+export type CreateReviewInput = z.infer<typeof createReviewSchema>;
+export type SendMessageInput = z.infer<typeof sendMessageSchema>;
+export type CreateDisputeInput = z.infer<typeof createDisputeSchema>;
