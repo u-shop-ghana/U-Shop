@@ -100,7 +100,7 @@ export default async function ListingDetailPage({ params }: { params: Promise<{ 
               <div className="flex items-center gap-4 p-4 bg-white/5 border border-white/10 rounded-2xl group-hover:bg-white/10 transition-colors cursor-pointer">
                 <div className="w-14 h-14 rounded-full bg-gray-800 border border-gray-600 overflow-hidden relative shadow-inner">
                   {store.logoUrl ? (
-                    <img src={store.logoUrl} alt={store.name} className="object-cover w-full h-full" />
+                    <Image src={store.logoUrl} alt={store.name} fill className="object-cover" sizes="56px" />
                   ) : (
                     <span className="material-symbols-outlined absolute inset-0 flex items-center justify-center text-gray-500">store</span>
                   )}
@@ -149,7 +149,7 @@ export default async function ListingDetailPage({ params }: { params: Promise<{ 
                  <span className="material-symbols-outlined text-status-success text-[24px]">verified_user</span>
                  <p className="text-xs text-status-success font-medium">
                    <strong className="block mb-0.5">Protected by U-Shop Escrow.</strong>
-                   Seller doesn't get paid until you confirm receipt.
+                   Seller doesn&apos;t get paid until you confirm receipt.
                  </p>
               </div>
             </div>
