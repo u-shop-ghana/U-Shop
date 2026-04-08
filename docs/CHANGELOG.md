@@ -5,6 +5,22 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [0.6.0] — 2026-04-08 — Phase 3: Marketplace Discovery & Pipeline Fixes
+
+### Added
+- **`apps/web/src/app/dashboard/store/listings/new/page.tsx`** — Implemented the robust multi-step listing creation wizard connected sequentially to Supabase `product-images` storage.
+- **`apps/web/src/app/dashboard/store/listings/page.tsx`** — Created the store managerial inventory UI isolating SSR active bounds safely checking inventory counts limit dynamically.
+- **`apps/web/src/app/listing/[id]/page.tsx`** — Developed the fully immersive, layout-shift-free UI bridging technical escrow logic and dynamic condition stock validation.
+- **`apps/web/src/components/ui/ListingCard.tsx`** — Constructed the glassmorphism UI card token dynamically standardizing layout conditions.
+- **`apps/api/src/services/listing.service.ts`** — Implemented strict inventory search arrays limiting isolated `storeId` matches accurately alongside PostgreSQL search vectors formatting safely.
+
+### Fixed
+- **Next.js 16.x Turbopack Mismatches** — Fixed standard `.js` implicit extensions crashing internal Next.js turbopack scopes by securely establishing `packages/shared` build resolutions dynamically avoiding alias constraints.
+- **Vercel Monorepo Missing Scope** — Ensured `turbo` mapping securely built nested applications resolving Vercel caching mismatch strictly executing independent pnpm build workflows via `package.json`.
+- **ESLint & TS Compilations** — Re-configured TS definitions explicitly enforcing typed structs mitigating all `.any` variables accurately in mapping grids.
+- **Turbo Pipeline Dependency Checks** — Added `"dependsOn": ["^build"]` for proper CI typechecking synchronization inside `.turbo.json`.
+
+---
 ## [0.5.2] — 2026-04-06 — Category Seeding with Icons
 
 ### Changed
