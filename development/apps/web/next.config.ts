@@ -9,7 +9,17 @@ const nextConfig: NextConfig = {
   transpilePackages: ["@ushop/shared"],
   turbopack: {
     resolveExtensions: [".tsx", ".ts", ".jsx", ".js", ".mjs", ".json"],
+    resolveAlias: {
+      "*.js": ["*.ts", "*.tsx", "*.js"]
+    }
   },
+  webpack: (config) => {
+    config.resolve.extensionAlias = {
+      '.js': ['.ts', '.tsx', '.js'],
+      '.jsx': ['.tsx', '.jsx']
+    };
+    return config;
+  }
 };
 
 export default nextConfig;
