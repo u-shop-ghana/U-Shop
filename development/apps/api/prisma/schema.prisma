@@ -28,6 +28,16 @@ enum VerificationStatus {
   EXPIRED
 }
 
+enum VerificationType {
+  STUDENT_ID
+  GHANA_CARD
+}
+
+enum SellerType {
+  STUDENT
+  RESELLER
+}
+
 enum ListingStatus {
   DRAFT
   ACTIVE
@@ -116,7 +126,9 @@ model User {
   avatarUrl          String?
   role               UserRole           @default(BUYER)
   verificationStatus VerificationStatus @default(UNVERIFIED)
+  verificationType   VerificationType?
   studentIdImagePath String?            // Supabase Storage path
+  ghanaCardImagePath String?            // Supabase Storage path
   universityName     String?
   verifiedAt         DateTime?
   rejectionReason    String?
@@ -258,6 +270,7 @@ model Store {
   bio               String?   @db.VarChar(280)
   logoUrl           String?
   bannerUrl         String?
+  sellerType        SellerType @default(STUDENT)
   isActive          Boolean   @default(true)
 
   // Return & Warranty Policy (structured JSON)
@@ -268,6 +281,9 @@ model Store {
   warrantyCoverage  String    @default("DOA")           // DOA, HARDWARE, ALL_FAULTS
   refundMethod      String    @default("WALLET_CREDIT") // WALLET_CREDIT, ORIGINAL_PAYMENT
   policyNotes       String?   @db.VarChar(500)
+
+  // Locked Policy Updates Pending Admin Approval
+  pendingPolicyUpdates Json?
 
   // Aggregate stats (pre-computed)
   averageRating     Float     @default(0)
