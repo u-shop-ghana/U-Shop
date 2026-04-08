@@ -53,7 +53,7 @@ export default function CreateStorePage() {
         if (res.success && res.data) {
           setHandleAvailable(res.data.available);
         }
-      } catch (err) {
+      } catch {
         // Silently skip check bounces
       } finally {
         setCheckingHandle(false);
@@ -148,8 +148,8 @@ export default function CreateStorePage() {
 
       // Success! Push directly inside their configured store settings mapping
       router.push(`/store/${formData.handle}`);
-    } catch (err: any) {
-      setError(err.message || "An unexpected error occurred.");
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "An unexpected error occurred.");
     } finally {
       setLoading(false);
     }
