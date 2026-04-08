@@ -3,7 +3,7 @@
 import { useState, useRef, type ChangeEvent, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { apiFetch } from "@/lib/api";
+import { apiFetch } from "@/lib/api-client";
 import { uploadFileToSupabase } from "@/lib/supabase/storage";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/Button";
