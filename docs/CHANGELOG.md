@@ -17,6 +17,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ### Fixed
 - **Next.js 16.x Turbopack Resolution** — Migrated the backend API configuration entirely to `tsx` native Node runtime, changing `tsconfig.json` `moduleResolution` to `bundler` globally. This completely removes the strict `.js` implicit extensions requirement from `@ushop/shared` allowing Next.js `transpilePackages` to perfectly build the shared dependencies natively without crashing.
 - **Vercel Monorepo Missing Scope** — Successfully enabled default Next.js workspaces dependencies resolution cleanly relying transparently on `src/index.ts` instead of hacking `package.json` with external `dist` build streams.
+- **Server Component Client SSR Mixes** — Split `apiFetch` permanently into `@/lib/api-client` and `@/lib/api-server` to respect strict Next.js App Router isomorphic environments avoiding Supabase object proxies causing Server rendering evaluation crashes.
 - **ESLint & TS Compilations** — Re-configured TS definitions explicitly enforcing typed structs mitigating all `.any` variables accurately in mapping grids.
 - **Turbo Pipeline Dependency Checks** — Added `"dependsOn": ["^build"]` for proper CI typechecking synchronization inside `.turbo.json`.
 

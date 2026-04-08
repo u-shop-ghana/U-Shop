@@ -6,7 +6,7 @@ import Image from "next/image";
 import { CATEGORIES } from "@ushop/shared";
 import { createClient } from "@/lib/supabase/client";
 import { uploadFileToSupabase } from "@/lib/supabase/storage";
-import { apiFetch } from "@/lib/api";
+import { apiFetch } from "@/lib/api-client";
 
 const CONDITIONS = [
   { value: "BRAND_NEW", label: "Brand New" },

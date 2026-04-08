@@ -1,4 +1,4 @@
-import { apiFetch } from "@/lib/api";
+import { apiFetch } from "@/lib/api-server";
 import { cookies } from "next/headers";
 import SettingsForm from "./SettingsForm";
 import { redirect } from "next/navigation";
