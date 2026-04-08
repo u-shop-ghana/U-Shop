@@ -1,4 +1,4 @@
-import { prisma } from '../lib/prisma.js';
+import { prisma } from '../lib/prisma';
 import type { Prisma } from '@prisma/client';
 import type { CreateStoreInput, UpdateStoreInput } from '@ushop/shared';
 

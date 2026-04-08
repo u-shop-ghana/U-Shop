@@ -15,8 +15,8 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - **`apps/api/src/services/listing.service.ts`** — Implemented strict inventory search arrays limiting isolated `storeId` matches accurately alongside PostgreSQL search vectors formatting safely.
 
 ### Fixed
-- **Next.js 16.x Turbopack Resolution** — Removed the `transpilePackages: ["@ushop/shared"]` directive inside `next.config.ts`, directly circumventing Turbopack native source compilation bounds that collided with explicit nested `.js` typescript outputs and bypassing NodeNext constraints strictly mapping to `dist/index.js`.
-- **Vercel Monorepo Missing Scope** — Ensured `packages/shared` dependencies successfully resolve within Vercel's isolated `web` directory mapping by explicitly running `pnpm --filter @ushop/shared build` directly within the Next.js build lifecycle.
+- **Next.js 16.x Turbopack Resolution** — Migrated the backend API configuration entirely to `tsx` native Node runtime, changing `tsconfig.json` `moduleResolution` to `bundler` globally. This completely removes the strict `.js` implicit extensions requirement from `@ushop/shared` allowing Next.js `transpilePackages` to perfectly build the shared dependencies natively without crashing.
+- **Vercel Monorepo Missing Scope** — Successfully enabled default Next.js workspaces dependencies resolution cleanly relying transparently on `src/index.ts` instead of hacking `package.json` with external `dist` build streams.
 - **ESLint & TS Compilations** — Re-configured TS definitions explicitly enforcing typed structs mitigating all `.any` variables accurately in mapping grids.
 - **Turbo Pipeline Dependency Checks** — Added `"dependsOn": ["^build"]` for proper CI typechecking synchronization inside `.turbo.json`.
 

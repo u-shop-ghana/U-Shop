@@ -1,7 +1,7 @@
 import { Router } from 'express';
-import { StoreController } from '../controllers/store.controller.js';
-import { authenticate } from '../middleware/authenticate.js';
-import { validateBody } from '../middleware/validate-body.js';
+import { StoreController } from '../controllers/store.controller';
+import { authenticate } from '../middleware/authenticate';
+import { validateBody } from '../middleware/validate-body';
 import { createStoreSchema, updateStoreSchema } from '@ushop/shared';
 
 const router: Router = Router();
