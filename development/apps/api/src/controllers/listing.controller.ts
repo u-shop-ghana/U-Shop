@@ -1,5 +1,5 @@
 import type { Request, Response } from 'express';
-import { ListingService } from '../services/listing.service.js';
+import { ListingService } from '../services/listing.service';
 import { createListingSchema, updateListingSchema, searchListingsSchema } from '@ushop/shared';
 
 export class ListingController {
