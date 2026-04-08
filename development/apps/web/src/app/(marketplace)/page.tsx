@@ -1,6 +1,6 @@
 import { Metadata } from 'next';
 import Link from 'next/link';
-import { apiFetch } from '@/lib/api';
+import { apiFetch } from '@/lib/api-server';
 import { ListingCard } from '@/components/ui/ListingCard';
 import { CATEGORIES } from '@ushop/shared';
 
