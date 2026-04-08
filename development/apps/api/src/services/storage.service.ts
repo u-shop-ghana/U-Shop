@@ -1,6 +1,6 @@
 import { Buffer } from 'node:buffer';
-import { supabaseAdmin } from '../lib/supabase.js';
-import { logger } from '../lib/logger.js';
+import { supabaseAdmin } from '../lib/supabase';
+import { logger } from '../lib/logger';
 
 // ─── Storage Service ──────────────────────────────────────────
 // Handles interactions with Supabase Storage buckets such as
