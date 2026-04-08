@@ -15,7 +15,7 @@ out/
 .env.development
 .env.production
 .env.*.local
-
+.env.sentry-build-plugin
 # IDE
 .vscode/settings.json
 .idea/
@@ -56,3 +56,6 @@ development/database/backups/*.sql
 
 # Prisma
 development/backend/prisma/migrations/*.sql.bak
+
+# Sentry Config File
+.env.sentry-build-plugin
