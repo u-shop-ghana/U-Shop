@@ -1,5 +1,5 @@
 import type { Request, Response, NextFunction } from 'express';
-import { StoreService } from '../services/store.service.js';
+import { StoreService } from '../services/store.service';
 
 export class StoreController {
   /**

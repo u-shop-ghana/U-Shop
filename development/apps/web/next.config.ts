@@ -6,6 +6,7 @@ import type { NextConfig } from "next";
 // Turbopack needs the resolveExtensions config to properly map.
 
 const nextConfig: NextConfig = {
+  transpilePackages: ["@ushop/shared"],
   turbopack: {
     resolveExtensions: [".tsx", ".ts", ".jsx", ".js", ".mjs", ".json"]
   },

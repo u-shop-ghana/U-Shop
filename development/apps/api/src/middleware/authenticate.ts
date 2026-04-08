@@ -1,7 +1,7 @@
 import type { Request, Response, NextFunction } from 'express';
-import { supabaseAdmin } from '../lib/supabase.js';
-import { prisma } from '../lib/prisma.js';
-import { logger } from '../lib/logger.js';
+import { supabaseAdmin } from '../lib/supabase';
+import { prisma } from '../lib/prisma';
+import { logger } from '../lib/logger';
 
 // Type augmentation for req.user is in src/types/express.d.ts
 // Verifies the Supabase JWT from the Authorization header, looks up
