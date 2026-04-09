@@ -34,6 +34,15 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - **Light Theme Discovery Pages** — Rewrote `/categories`, `/universities`, and `/stores` index pages from dark theme (`bg-campus-dark`) to light theme (`bg-white`) matching the Figma UI kit design. University cards now show campus logo images instead of generic icons.
 - **Homepage Categories/Universities** — Matched Figma reference: categories use image overlay cards on white background; universities display as clean white cards with logo thumbnails and university names.
 - **CORS Multi-Origin Support** — Replaced the single-origin CORS config (`FRONTEND_URL` only) with a dynamic callback that allows localhost, the primary frontend URL, and all `*.vercel.app` preview/production deployments. This was blocking all client-side API calls (auth, universities, etc.) on deployed Vercel builds.
+- **Broken Nav Links (Header/Footer)** — Fixed 404s caused by links to non-existent routes: `/products` → `/search`, `/sell` → `/dashboard/store/create`, `/track` → `/dashboard`, `/categories/smartphones` → `/categories/phones`. Added `id`/`name` attributes to newsletter email input.
+- **Middleware Fixes** — (a) Excluded `manifest.json` from auth middleware matcher to fix 401 on PWA manifest. (b) Removed `/store` from `protectedPaths` so public storefronts (`/store/[handle]`) are accessible without login. (c) Removed the redirect that blocked `/login` and `/register` for users with stale Supabase cookies — this was causing a blank login page.
+- **Placeholder Pages** — Created `(marketplace)/cart/page.tsx` and `(marketplace)/wishlist/page.tsx` with empty-state UIs to eliminate 404 console errors. These will be replaced with real functionality in Phase 4.
+- **Figma-Matched Discovery Pages** — Rewrote all discovery pages to match the Figma UI kit exactly:
+  - **Categories** (`/categories`): Dark hero banner with search bar, 3-col grid of image cards showing product counts, descriptions, and "Browse Collection →" CTAs.
+  - **Universities** (`/universities`): Dark hero banner with "Find Campus" search, 3-col cards with campus images, location pins, "VIEW MARKETPLACE" CTAs, and a purple "Don't see your university?" CTA section.
+  - **Stores** (`/stores`): Dark hero banner with "Verified Marketplace" badge + gradient title, filter pills (All/Student Run/Elite), 4-col store cards with image headers and "Browse Store" CTAs, plus "Want to sell your products?" CTA section.
+  - **Search** (`/search`): Light-themed sidebar with university radio list, price range, condition filters, and "Apply Filters" CTA. No-results state with tips cards and support links matching the Figma no-results screen.
+  - **Homepage Universities**: Changed from small logo thumbnails to full image card grid matching the categories section layout.
 
 ---
 ## [0.5.2] — 2026-04-06 — Category Seeding with Icons
