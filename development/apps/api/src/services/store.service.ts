@@ -162,7 +162,7 @@ export class StoreService {
       take: limit,
     });
 
-    const safeStores = stores.map(store => {
+    const safeStores = stores.map((store: typeof stores[number]) => {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { pendingPolicyUpdates, ...safe } = store;
       return safe;
