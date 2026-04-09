@@ -40,6 +40,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // Fetch the user profile from our Express API.
   // This is the only way to get the full user profile (role, store, etc.)
   // since Supabase only knows about email/password, not our domain data.
+  //
+  // If /me returns 401, the user exists in Supabase but not in our DB.
+  // This happens when signup created the Supabase account but the
+  // /register call failed (e.g., email confirmation was required, network
+  // error, etc.). We auto-recover by calling /register to create the DB
+  // record, then retry /me.
   const fetchUserProfile = useCallback(
     async (accessToken: string): Promise<AuthUser | null> => {
       const apiUrl =
@@ -53,14 +59,52 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           },
         });
 
-        if (!res.ok) {
-          // 401 means the user exists in Supabase but not in our DB.
-          // This is expected for brand-new signups before /register is called.
-          return null;
+        if (res.ok) {
+          const data: { success: boolean; data: AuthUser } = await res.json();
+          return data.success ? data.data : null;
         }
 
-        const data: { success: boolean; data: AuthUser } = await res.json();
-        return data.success ? data.data : null;
+        // 401 = user exists in Supabase but not in our DB.
+        // Auto-recover: call /register to create the internal user record,
+        // then retry /me. This is the safety net for failed initial syncs.
+        if (res.status === 401) {
+          // We need the email from the Supabase session to register.
+          // Decode the JWT payload to extract the email claim without
+          // making another network call (the token is already verified).
+          const payload = JSON.parse(atob(accessToken.split(".")[1]));
+          const email = payload.email as string | undefined;
+
+          if (email) {
+            const syncRes = await fetch(`${apiUrl}/api/v1/auth/register`, {
+              method: "POST",
+              headers: {
+                Authorization: `Bearer ${accessToken}`,
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                email,
+                fullName: payload.user_metadata?.full_name || email.split("@")[0],
+              }),
+            });
+
+            // If sync succeeded, retry /me to get the full profile
+            if (syncRes.ok) {
+              const retryRes = await fetch(`${apiUrl}/api/v1/auth/me`, {
+                headers: {
+                  Authorization: `Bearer ${accessToken}`,
+                  "Content-Type": "application/json",
+                },
+              });
+
+              if (retryRes.ok) {
+                const retryData: { success: boolean; data: AuthUser } = await retryRes.json();
+                return retryData.success ? retryData.data : null;
+              }
+            }
+          }
+        }
+
+        return null;
       } catch {
         // Network error — API might be down. Don't crash the app.
         return null;
