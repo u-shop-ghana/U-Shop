@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Stores Directory | U-Shop</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        body { font-family: 'Inter', sans-serif; }
+        .animate-fade-in {
+            animation: fadeIn 0.8s ease-out forwards;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#520f85",
+                        "secondary": "#d41295",
+                        "on-primary": "#ffffff",
+                        "surface": "#f8fafc",
+                        "on-surface": "#0f172a",
+                        "outline": "#e2e8f0"
+                    },
+                    fontFamily: {
+                        "headline": ["Inter"],
+                        "body": ["Inter"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.5rem",
+                        "lg": "0.75rem",
+                        "xl": "1rem",
+                        "2xl": "1.5rem",
+                        "3xl": "2rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+</head>
+<body class="bg-slate-50 text-slate-900 font-body antialiased">
+<!-- TopNavBar -->
+
+<main class="pt-16 md:pt-20">
+<!-- Premium Hero Section -->
+<section class="relative h-[500px] md:h-[600px] flex items-center justify-center overflow-hidden">
+<div class="absolute inset-0 z-0">
+<img alt="Campus Directory Hero" class="w-full h-full object-cover opacity-90" data-alt="High-fidelity 3D illustration or high-res photo of a modern Ghanaian campus marketplace setting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD96FZAdH--KhVOjn3dofM8QjbvBV0H8TjJWEHknDPslZlMia7NUKE9tS5c2mI-RwIp_pIPoc8tXrdj4yQE4T4jrF8wrUVFPF9cE9T-QZwAeyOABoFxJn2BcctcjmszqrhNjevrgIU9sdKFCkXpz9Wmwvzpu3I1NorMb3uVD1GSnaJVmzS8546lw_OSf8mtqigUBVEZ8vtqQ1SAoenL80YUpJj47w51SqfEp2UGjer7Iey2okt_rd1UMr4D3kfe6WBKBlRcHTyNPQa8" style=""/>
+<div class="absolute inset-0 bg-gradient-to-r from-white via-white/80 to-transparent"></div>
+<div class="absolute inset-0 bg-gradient-to-t from-white via-white/40 to-transparent"></div>
+<div class="absolute inset-0 bg-primary/5 mix-blend-multiply"></div>
+</div>
+<div class="relative z-10 w-full max-w-5xl px-4 flex flex-col items-center">
+<div class="mb-8 animate-fade-in inline-flex items-center bg-primary/10 text-primary border border-primary/20 px-4 py-2 rounded-full text-sm font-bold shadow-sm" style="">
+<span class="w-2 h-2 bg-primary rounded-full animate-pulse mr-2"></span>
+                    Verified Marketplace
+                </div>
+<h1 class="text-5xl md:text-7xl font-black text-slate-900 mb-6 tracking-tighter text-center leading-tight" style="">
+                    Discover Ghana's <br/>
+<span class="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent" style="">
+                        Elite Campus Stores
+                    </span>
+</h1>
+<p class="text-slate-600 text-lg md:text-xl mb-12 max-w-2xl text-center leading-relaxed font-medium" style="">
+                    Shop directly from verified student entrepreneurs and local tech hubs at your favorite university campus.
+                </p>
+<div class="w-full max-w-2xl relative group">
+<div class="relative flex items-center bg-white rounded-2xl shadow-2xl border border-slate-100 p-1 scale-105 overflow-hidden transition-transform group-hover:scale-[1.06]">
+<div class="flex-1 flex items-center px-6">
+<span class="material-symbols-outlined text-slate-400 text-2xl" data-icon="search" style="">search</span>
+<input class="w-full border-none focus:ring-0 text-slate-700 bg-transparent py-4 text-lg font-medium" placeholder="Search by store name, university, or gear..." type="text"/>
+</div>
+<button class="bg-primary text-white px-10 py-4 font-black rounded-xl hover:bg-secondary transition-colors duration-300" style="">
+                            Search
+                        </button>
+</div>
+</div>
+</div>
+</section>
+<!-- Filters & Content Section -->
+<section class="max-w-7xl mx-auto px-4 md:px-8 py-20">
+<div class="flex flex-col lg:flex-row lg:items-end justify-between mb-16 gap-10">
+<div class="relative">
+<div class="absolute -left-4 top-0 w-1.5 h-16 bg-gradient-to-b from-primary to-transparent rounded-full"></div>
+<h2 class="text-4xl font-black text-slate-900 tracking-tight" style="">Verified Stores</h2>
+<p class="text-slate-500 text-lg mt-3 max-w-lg leading-relaxed" style="">Find the perfect gadget from our curated list of student-run and campus-based tech stores.</p>
+</div>
+<div class="flex flex-wrap items-center gap-5">
+<div class="flex items-center bg-white rounded-2xl border border-slate-200 p-1.5 shadow-sm">
+<button class="px-6 py-2.5 text-xs font-bold rounded-xl transition-all bg-primary text-white shadow-lg shadow-primary/20" style="">All Stores</button>
+<button class="px-6 py-2.5 text-xs font-bold rounded-xl transition-all text-slate-500 hover:text-slate-900" style="">Student Run</button>
+<button class="px-6 py-2.5 text-xs font-bold rounded-xl transition-all text-slate-500 hover:text-slate-900" style="">Elite</button>
+</div>
+<div class="h-10 w-px bg-slate-200 mx-2 hidden sm:block"></div>
+<div class="relative group">
+<select class="bg-white border border-slate-200 rounded-2xl text-sm font-bold text-slate-600 focus:ring-1 focus:ring-primary focus:border-transparent py-3 pl-5 pr-12 appearance-none cursor-pointer hover:border-slate-300 transition-all outline-none shadow-sm">
+<option>Sort: Default</option>
+<option>Sort: Top Rated</option>
+<option>Sort: Stock Count</option>
+</select>
+<span class="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none text-xl" data-icon="expand_more" style="">expand_more</span>
+</div>
+</div>
+</div>
+<!-- Store Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+<!-- Store Card 1 -->
+<div class="group bg-white rounded-3xl border border-slate-100 hover:border-primary/30 overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500 flex flex-col">
+<div class="relative h-44 bg-slate-100 overflow-hidden">
+<img alt="Legon Tech Hub" class="w-full h-full object-cover opacity-60 group-hover:scale-110 transition-transform duration-700 blur-[0.5px] group-hover:blur-0" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDS0Bjy0muukvECInsO000K9WTSmO3Ykw3Bphowzae0kM3mSZpL9lC6REG42aQxMRki2ID9QEDjw8IBec7L-5EkAtfnBDZisMidk84OWUy615twDzvfisHDyPng7Ondu0E_2s2ZEN20Rf6lgL0N-gHI54uINxdarkwc9Kj2N54VbKWxnKUICf6-HTZ7vr3CIBGJnZXVoumLI-ALOqu99ME90Sfsxu94ug6i3kaTn-5u1c9DiwHfdJvpc0nGw7F77iEyQsSPCy7da0i-" style=""/>
+<div class="absolute inset-0 bg-gradient-to-t from-white via-white/20 to-transparent"></div>
+<div class="absolute bottom-6 left-6">
+<div class="w-16 h-16 rounded-2xl bg-white shadow-xl flex items-center justify-center p-3 border border-slate-200 group-hover:scale-105 transition-transform duration-500">
+<span class="material-symbols-outlined text-primary text-3xl" data-icon="store" style="">store</span>
+</div>
+</div>
+</div>
+<div class="p-8 pt-4 flex-1 flex flex-col">
+<div class="flex items-center gap-2 mb-1">
+<h3 class="text-xl font-bold text-slate-900 tracking-tight group-hover:text-primary transition-colors" style="">Legon Tech Hub</h3>
+<span class="material-symbols-outlined text-green-500 text-xl" data-icon="verified" style='font-variation-settings: "FILL" 1;'>verified</span>
+</div>
+<div class="flex items-center gap-2 text-sm mb-6">
+<div class="flex items-center gap-1 text-amber-500">
+<span class="material-symbols-outlined text-sm fill-amber-500" data-icon="star" style='font-variation-settings: "FILL" 1;'>star</span>
+<span class="font-bold" style="">4.9</span>
+</div>
+<span class="text-slate-300" style="">•</span>
+<span class="text-slate-500 font-medium italic" style="">Verified Vendor</span>
+</div>
+<div class="grid grid-cols-2 gap-3 mb-8">
+<div class="bg-slate-50 p-3 rounded-xl border border-slate-100">
+<div class="flex items-center gap-1.5 text-slate-400 text-[10px] font-bold uppercase tracking-wider mb-1">
+<svg class="lucide lucide-map-pin text-secondary" fill="none" height="14" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="14" xmlns="http://www.w3.org/2000/svg"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+<span class="" style="">University</span>
+</div>
+<p class="text-xs font-bold text-slate-900 truncate" style="">Univ. of Ghana</p>
+</div>
+<div class="bg-slate-50 p-3 rounded-xl border border-slate-100">
+<div class="flex items-center gap-1.5 text-slate-400 text-[10px] font-bold uppercase tracking-wider mb-1">
+<span class="material-symbols-outlined text-primary text-sm" data-icon="inventory_2" style="">inventory_2</span>
+<span class="" style="">Inventory</span>
+</div>
+<p class="text-xs font-bold text-slate-900" style="">120+ Gear</p>
+</div>
+</div>
+<div class="flex flex-wrap gap-2 mb-8">
+<span class="px-3 py-1 bg-slate-100 text-slate-600 text-[9px] font-black tracking-widest uppercase rounded-full" style="">Laptops</span>
+<span class="px-3 py-1 bg-slate-100 text-slate-600 text-[9px] font-black tracking-widest uppercase rounded-full" style="">Tablets</span>
+</div>
+<button class="w-full h-14 rounded-2xl font-black text-sm bg-slate-900 text-white hover:bg-primary shadow-sm flex items-center justify-center gap-2 group/btn transition-all mt-auto" style="">
+                            Browse Store
+                            <span class="material-symbols-outlined text-lg transition-transform group-hover/btn:translate-x-1" data-icon="arrow_forward" style="">arrow_forward</span>
+</button>
+</div>
+</div>
+<!-- Store Card 2 -->
+<div class="group bg-white rounded-3xl border border-slate-100 hover:border-primary/30 overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500 flex flex-col">
+<div class="relative h-44 bg-slate-100 overflow-hidden">
+<img alt="KNUST Gadgets" class="w-full h-full object-cover opacity-60 group-hover:scale-110 transition-transform duration-700 blur-[0.5px] group-hover:blur-0" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCZ9F3m2xWcxNWjniR-TQoAmT6-ERS7Y5R5MVLYz21vTXNAFmpkYzw6U3ZR-wPybiKUpDdu1DW6Y8Bylf42kCZBWZHZBOqBRSHV_B5Z-03oTobom072WHp3N1_Q05GubsIlSisA6Yt6GLv_uWY9ho7zf13gZspamqod68sioGRRUD94vZsatfW8oWvRDhiZisXuyOpGAhkbeTojh8pzCtES5idUbIv839UNoyp2Wd5kI3E5nnetQhjXtKqHVBQGSzCDgN2lvayPozTZ" style=""/>
+<div class="absolute inset-0 bg-gradient-to-t from-white via-white/20 to-transparent"></div>
+<div class="absolute bottom-6 left-6">
+<div class="w-16 h-16 rounded-2xl bg-white shadow-xl flex items-center justify-center p-3 border border-slate-200 group-hover:scale-105 transition-transform duration-500">
+<span class="material-symbols-outlined text-primary text-3xl" data-icon="store" style="">store</span>
+</div>
+</div>
+</div>
+<div class="p-8 pt-4 flex-1 flex flex-col">
+<div class="flex items-center gap-2 mb-1">
+<h3 class="text-xl font-bold text-slate-900 tracking-tight group-hover:text-primary transition-colors" style="">KNUST Gadgets</h3>
+<span class="material-symbols-outlined text-green-500 text-xl" data-icon="verified" style='font-variation-settings: "FILL" 1;'>verified</span>
+</div>
+<div class="flex items-center gap-2 text-sm mb-6">
+<div class="flex items-center gap-1 text-amber-500">
+<span class="material-symbols-outlined text-sm fill-amber-500" data-icon="star" style='font-variation-settings: "FILL" 1;'>star</span>
+<span class="font-bold" style="">4.7</span>
+</div>
+<span class="text-slate-300" style="">•</span>
+<span class="text-slate-500 font-medium italic" style="">Verified Vendor</span>
+</div>
+<div class="grid grid-cols-2 gap-3 mb-8">
+<div class="bg-slate-50 p-3 rounded-xl border border-slate-100">
+<div class="flex items-center gap-1.5 text-slate-400 text-[10px] font-bold uppercase tracking-wider mb-1">
+<svg class="lucide lucide-map-pin text-secondary" fill="none" height="14" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="14" xmlns="http://www.w3.org/2000/svg"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+<span class="" style="">University</span>
+</div>
+<p class="text-xs font-bold text-slate-900 truncate" style="">KNUST</p>
+</div>
+<div class="bg-slate-50 p-3 rounded-xl border border-slate-100">
+<div class="flex items-center gap-1.5 text-slate-400 text-[10px] font-bold uppercase tracking-wider mb-1">
+<span class="material-symbols-outlined text-primary text-sm" data-icon="inventory_2" style="">inventory_2</span>
+<span class="" style="">Inventory</span>
+</div>
+<p class="text-xs font-bold text-slate-900" style="">85+ Gear</p>
+</div>
+</div>
+<div class="flex flex-wrap gap-2 mb-8">
+<span class="px-3 py-1 bg-slate-100 text-slate-600 text-[9px] font-black tracking-widest uppercase rounded-full" style="">Phones</span>
+<span class="px-3 py-1 bg-slate-100 text-slate-600 text-[9px] font-black tracking-widest uppercase rounded-full" style="">Audio</span>
+</div>
+<button class="w-full h-14 rounded-2xl font-black text-sm bg-slate-900 text-white hover:bg-primary shadow-sm flex items-center justify-center gap-2 group/btn transition-all mt-auto" style="">
+                            Browse Store
+                            <span class="material-symbols-outlined text-lg transition-transform group-hover/btn:translate-x-1" data-icon="arrow_forward" style="">arrow_forward</span>
+</button>
+</div>
+</div>
+<!-- Store Card 3 -->
+<div class="group bg-white rounded-3xl border border-slate-100 hover:border-primary/30 overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500 flex flex-col">
+<div class="relative h-44 bg-slate-100 overflow-hidden">
+<img alt="Student Pro Shop" class="w-full h-full object-cover opacity-60 group-hover:scale-110 transition-transform duration-700 blur-[0.5px] group-hover:blur-0" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAKoDcHwOvOfJ1XYJAFlk2-ZMis6iOLA6UQEmy4irL9wLU78CawFT_NTS5uEjMB0HmEKFrkpJ4yqw7ZCDmV0WaI_FaZdGnv0inVNxoCkucV6TS6ZqyKnzd-B16GGE_fvgCiOM66JR1y464WM4o-w0s9Sjph83GA_iaVOJruNz4zotIqKsNiv68EcLiYQ_JZT1fM7sCOgV4DVNvUdG8WgQEVpnhZFwMPrkVCDlf5QBRMtf80KHH8vdUpKbXXe30alX_YPTocYJ2-8-WB" style=""/>
+<div class="absolute inset-0 bg-gradient-to-t from-white via-white/20 to-transparent"></div>
+<div class="absolute bottom-6 left-6">
+<div class="w-16 h-16 rounded-2xl bg-white shadow-xl flex items-center justify-center p-3 border border-slate-200 group-hover:scale-105 transition-transform duration-500">
+<span class="material-symbols-outlined text-primary text-3xl" data-icon="store" style="">store</span>
+</div>
+</div>
+</div>
+<div class="p-8 pt-4 flex-1 flex flex-col">
+<div class="flex items-center gap-2 mb-1">
+<h3 class="text-xl font-bold text-slate-900 tracking-tight group-hover:text-primary transition-colors" style="">Student Pro Shop</h3>
+<span class="material-symbols-outlined text-green-500 text-xl" data-icon="verified" style='font-variation-settings: "FILL" 1;'>verified</span>
+</div>
+<div class="flex items-center gap-2 text-sm mb-6">
+<div class="flex items-center gap-1 text-amber-500">
+<span class="material-symbols-outlined text-sm fill-amber-500" data-icon="star" style='font-variation-settings: "FILL" 1;'>star</span>
+<span class="font-bold" style="">4.8</span>
+</div>
+<span class="text-slate-300" style="">•</span>
+<span class="text-slate-500 font-medium italic" style="">Verified Vendor</span>
+</div>
+<div class="grid grid-cols-2 gap-3 mb-8">
+<div class="bg-slate-50 p-3 rounded-xl border border-slate-100">
+<div class="flex items-center gap-1.5 text-slate-400 text-[10px] font-bold uppercase tracking-wider mb-1">
+<span class="" style="">University</span>
+</div>
+<p class="text-xs font-bold text-slate-900 truncate" style="">UCC</p>
+</div>
+<div class="bg-slate-50 p-3 rounded-xl border border-slate-100">
+<div class="flex items-center gap-1.5 text-slate-400 text-[10px] font-bold uppercase tracking-wider mb-1">
+<span class="material-symbols-outlined text-primary text-sm" data-icon="inventory_2" style="">inventory_2</span>
+<span class="" style="">Inventory</span>
+</div>
+<p class="text-xs font-bold text-slate-900" style="">45+ Gear</p>
+</div>
+</div>
+<div class="flex flex-wrap gap-2 mb-8">
+<span class="px-3 py-1 bg-slate-100 text-slate-600 text-[9px] font-black tracking-widest uppercase rounded-full" style="">Hardware</span>
+<span class="px-3 py-1 bg-slate-100 text-slate-600 text-[9px] font-black tracking-widest uppercase rounded-full" style="">Tools</span>
+</div>
+<button class="w-full h-14 rounded-2xl font-black text-sm bg-slate-900 text-white hover:bg-primary shadow-sm flex items-center justify-center gap-2 group/btn transition-all mt-auto" style="">
+                            Browse Store
+                            <span class="material-symbols-outlined text-lg transition-transform group-hover/btn:translate-x-1" data-icon="arrow_forward" style="">arrow_forward</span>
+</button>
+</div>
+</div>
+<!-- Store Card 4 -->
+<div class="group bg-white rounded-3xl border border-slate-100 hover:border-primary/30 overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500 flex flex-col">
+<div class="relative h-44 bg-slate-100 overflow-hidden">
+<img alt="Ashesi Hub" class="w-full h-full object-cover opacity-60 group-hover:scale-110 transition-transform duration-700 blur-[0.5px] group-hover:blur-0" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAKoDcHwOvOfJ1XYJAFlk2-ZMis6iOLA6UQEmy4irL9wLU78CawFT_NTS5uEjMB0HmEKFrkpJ4yqw7ZCDmV0WaI_FaZdGnv0inVNxoCkucV6TS6ZqyKnzd-B16GGE_fvgCiOM66JR1y464WM4o-w0s9Sjph83GA_iaVOJruNz4zotIqKsNiv68EcLiYQ_JZT1fM7sCOgV4DVNvUdG8WgQEVpnhZFwMPrkVCDlf5QBRMtf80KHH8vdUpKbXXe30alX_YPTocYJ2-8-WB" style=""/>
+<div class="absolute inset-0 bg-gradient-to-t from-white via-white/20 to-transparent"></div>
+<div class="absolute bottom-6 left-6">
+<div class="w-16 h-16 rounded-2xl bg-white shadow-xl flex items-center justify-center p-3 border border-slate-200 group-hover:scale-105 transition-transform duration-500">
+<span class="material-symbols-outlined text-primary text-3xl" data-icon="store" style="">store</span>
+</div>
+</div>
+</div>
+<div class="p-8 pt-4 flex-1 flex flex-col">
+<div class="flex items-center gap-2 mb-1">
+<h3 class="text-xl font-bold text-slate-900 tracking-tight group-hover:text-primary transition-colors" style="">Ashesi Hub</h3>
+<span class="material-symbols-outlined text-green-500 text-xl" data-icon="verified" style='font-variation-settings: "FILL" 1;'>verified</span>
+</div>
+<div class="flex items-center gap-2 text-sm mb-6">
+<div class="flex items-center gap-1 text-amber-500">
+<span class="material-symbols-outlined text-sm fill-amber-500" data-icon="star" style='font-variation-settings: "FILL" 1;'>star</span>
+<span class="font-bold" style="">5.0</span>
+</div>
+<span class="text-slate-300" style="">•</span>
+<span class="text-slate-500 font-medium italic" style="">Verified Vendor</span>
+</div>
+<div class="grid grid-cols-2 gap-3 mb-8">
+<div class="bg-slate-50 p-3 rounded-xl border border-slate-100">
+<div class="flex items-center gap-1.5 text-slate-400 text-[10px] font-bold uppercase tracking-wider mb-1">
+<svg class="lucide lucide-map-pin text-secondary" fill="none" height="14" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="14" xmlns="http://www.w3.org/2000/svg"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+<span class="" style="">University</span>
+</div>
+<p class="text-xs font-bold text-slate-900 truncate" style="">Ashesi University</p>
+</div>
+<div class="bg-slate-50 p-3 rounded-xl border border-slate-100">
+<div class="flex items-center gap-1.5 text-slate-400 text-[10px] font-bold uppercase tracking-wider mb-1">
+<span class="material-symbols-outlined text-primary text-sm" data-icon="inventory_2" style="">inventory_2</span>
+<span class="" style="">Inventory</span>
+</div>
+<p class="text-xs font-bold text-slate-900" style="">60+ Gear</p>
+</div>
+</div>
+<div class="flex flex-wrap gap-2 mb-8">
+<span class="px-3 py-1 bg-slate-100 text-slate-600 text-[9px] font-black tracking-widest uppercase rounded-full" style="">Gadgets</span>
+<span class="px-3 py-1 bg-slate-100 text-slate-600 text-[9px] font-black tracking-widest uppercase rounded-full" style="">New Tech</span>
+</div>
+<button class="w-full h-14 rounded-2xl font-black text-sm bg-slate-900 text-white hover:bg-primary shadow-sm flex items-center justify-center gap-2 group/btn transition-all mt-auto" style="">
+                            Browse Store
+                            <span class="material-symbols-outlined text-lg transition-transform group-hover/btn:translate-x-1" data-icon="arrow_forward" style="">arrow_forward</span>
+</button>
+</div>
+</div>
+</div>
+<!-- CTA Section -->
+<div class="mt-32 relative group">
+<div class="absolute -inset-1 bg-gradient-to-r from-primary to-secondary rounded-[3rem] blur-xl opacity-10"></div>
+<div class="relative flex flex-col md:flex-row items-center gap-12 bg-white p-12 md:p-20 rounded-[3rem] border border-slate-100 overflow-hidden shadow-xl">
+<div class="absolute top-0 right-0 w-96 h-96 bg-primary/5 rounded-full blur-[100px] -mr-48 -mt-48"></div>
+<div class="flex-1 relative z-10">
+<h2 class="text-4xl md:text-5xl font-black text-slate-900 mb-8 tracking-tight leading-tight" style="">
+                            Want to sell <br/> your products?
+                        </h2>
+<p class="text-xl text-slate-600 mb-0 leading-relaxed max-w-xl font-medium" style="">
+                            Join hundreds of student entrepreneurs. Create your store in minutes and reach thousands of students across Ghana.
+                        </p>
+</div>
+<button class="relative z-10 h-16 px-12 bg-secondary text-white rounded-2xl font-black text-lg hover:scale-105 shadow-2xl shadow-secondary/20 transition-all shrink-0 flex items-center gap-3 group/cta" style="">
+                        Open Your Store
+                        <span class="material-symbols-outlined text-2xl transition-transform group-hover/cta:translate-x-1" data-icon="arrow_forward" style="">arrow_forward</span>
+</button>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="bg-slate-50 dark:bg-slate-900 w-full py-16 px-4 md:px-8 border-t border-slate-200 dark:border-gray-800">
+<div class="max-w-7xl mx-auto">
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
+<div class="space-y-6">
+<div class="flex items-center gap-2">
+<div class="w-10 h-10 bg-red-600 rounded-sm flex items-center justify-center text-white text-xl font-bold" style="">U</div>
+<span class="text-2xl font-black text-primary dark:text-white" style="">shop</span>
+</div>
+<p class="text-slate-500 dark:text-slate-400 text-sm leading-relaxed font-medium" style="">
+                        The #1 campus marketplace for tech products. Trusted by students across Ghana for authentic gadgets and fast delivery.
+                    </p>
+</div>
+<div>
+<h4 class="font-black text-slate-900 dark:text-white mb-8 tracking-tight uppercase text-xs" style="">Quick Links</h4>
+<ul class="space-y-4">
+<li class="" style=""><a class="text-slate-500 dark:text-slate-400 hover:text-primary transition-colors text-sm font-bold" href="#" style="">About U-Shop</a></li>
+<li class="" style=""><a class="text-slate-500 dark:text-slate-400 hover:text-primary transition-colors text-sm font-bold" href="#" style="">Customer Service</a></li>
+<li class="" style=""><a class="text-slate-500 dark:text-slate-400 hover:text-primary transition-colors text-sm font-bold" href="#" style="">Payment &amp; Delivery</a></li>
+</ul>
+</div>
+<div>
+<h4 class="font-black text-slate-900 dark:text-white mb-8 tracking-tight uppercase text-xs" style="">Our Features</h4>
+<ul class="space-y-4">
+<li class="" style=""><a class="text-slate-500 dark:text-slate-400 hover:text-primary transition-colors text-sm font-bold" href="#" style="">Campus Pickup</a></li>
+<li class="" style=""><a class="text-slate-500 dark:text-slate-400 hover:text-primary transition-colors text-sm font-bold" href="#" style="">Student Deals</a></li>
+<li class="" style=""><a class="text-slate-500 dark:text-slate-400 hover:text-primary transition-colors text-sm font-bold" href="#" style="">Sell on U-Shop</a></li>
+</ul>
+</div>
+<div>
+<h4 class="font-black text-slate-900 dark:text-white mb-8 tracking-tight uppercase text-xs" style="">Support</h4>
+<ul class="space-y-4">
+<li class="" style=""><a class="text-slate-500 dark:text-slate-400 hover:text-primary transition-colors text-sm font-bold" href="#" style="">Privacy Policy</a></li>
+<li class="" style=""><a class="text-slate-500 dark:text-slate-400 hover:text-primary transition-colors text-sm font-bold" href="#" style="">Terms of Service</a></li>
+<li class="" style=""><a class="text-slate-500 dark:text-slate-400 hover:text-primary transition-colors text-sm font-bold" href="#" style="">Help Center</a></li>
+</ul>
+</div>
+</div>
+<div class="border-t border-slate-200 dark:border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center gap-6">
+<p class="text-slate-500 dark:text-slate-400 text-sm font-medium" style="">© 2026 U-Shop. Empowering Ghanaian students with affordable technology.</p>
+<div class="flex gap-6">
+<span class="material-symbols-outlined text-slate-400 cursor-pointer hover:text-primary transition-colors" data-icon="facebook" style="">social_leaderboard</span>
+<span class="material-symbols-outlined text-slate-400 cursor-pointer hover:text-primary transition-colors" data-icon="share" style="">share</span>
+<span class="material-symbols-outlined text-slate-400 cursor-pointer hover:text-primary transition-colors" data-icon="alternate_email" style="">alternate_email</span>
+</div>
+</div>
+</div>
+</footer>
+</body></html>
