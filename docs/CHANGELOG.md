@@ -26,6 +26,14 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - **Server Component Client SSR Mixes** — Split `apiFetch` permanently into `@/lib/api-client` and `@/lib/api-server` to respect strict Next.js App Router isomorphic environments avoiding Supabase object proxies causing Server rendering evaluation crashes.
 - **ESLint & TS Compilations** — Re-configured TS definitions explicitly enforcing typed structs mitigating all `.any` variables accurately in mapping grids.
 - **Turbo Pipeline Dependency Checks** — Added `"dependsOn": ["^build"]` for proper CI typechecking synchronization inside `.turbo.json`.
+- **Route Group Fix** — Moved all discovery pages (`/search`, `/categories`, `/universities`, `/stores`, `/student-deals`, `/listing`, `/store`) into the `(marketplace)` route group so they correctly inherit the shared Header and Footer layout.
+- **Login Redirect** — Changed post-login redirect from `/dashboard` to `/` (homepage) for a better marketplace-first UX.
+- **Header Auth State** — Added `account_circle` Material Symbol icon for logged-in users, replacing plain text link with a visual profile indicator.
+- **Local Asset Images** — Replaced all broken external Google CDN URLs for category and university images with local `/assets/images/` paths that ship with the repository.
+- **Verify Page Universities** — Improved the university fetch in the verification page with more robust response shape handling to ensure the dropdown populates correctly.
+- **Light Theme Discovery Pages** — Rewrote `/categories`, `/universities`, and `/stores` index pages from dark theme (`bg-campus-dark`) to light theme (`bg-white`) matching the Figma UI kit design. University cards now show campus logo images instead of generic icons.
+- **Homepage Categories/Universities** — Matched Figma reference: categories use image overlay cards on white background; universities display as clean white cards with logo thumbnails and university names.
+- **CORS Multi-Origin Support** — Replaced the single-origin CORS config (`FRONTEND_URL` only) with a dynamic callback that allows localhost, the primary frontend URL, and all `*.vercel.app` preview/production deployments. This was blocking all client-side API calls (auth, universities, etc.) on deployed Vercel builds.
 
 ---
 ## [0.5.2] — 2026-04-06 — Category Seeding with Icons

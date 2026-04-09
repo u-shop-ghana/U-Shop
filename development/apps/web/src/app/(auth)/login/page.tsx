@@ -45,9 +45,9 @@ export default function LoginPage() {
         return;
       }
 
-      // Redirect to dashboard on success — the middleware will
+      // Redirect to homepage on success — the middleware will
       // pick up the new session cookies automatically.
-      router.push("/dashboard");
+      router.push("/");
       router.refresh();
     } catch {
       setError("Something went wrong. Please try again.");
