@@ -137,9 +137,14 @@ export function Header({
             {isLoggedIn ? (
               <Link
                 href="/dashboard"
-                className="text-sm font-medium text-gray-600 hover:text-[#520f85] transition-colors"
+                className="flex items-center gap-2 text-sm font-medium text-gray-600 hover:text-[#520f85] transition-colors"
               >
-                {userName || "Account"}
+                <span className="material-symbols-outlined text-2xl">
+                  account_circle
+                </span>
+                <span className="hidden lg:inline">
+                  {userName || "Account"}
+                </span>
               </Link>
             ) : (
               <div className="flex items-center gap-2">
