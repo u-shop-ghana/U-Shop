@@ -3,6 +3,24 @@ import { StoreService } from '../services/store.service';
 
 export class StoreController {
   /**
+   * Retrieves all active stores mapped by popularity/verification flags
+   */
+  static async getAllStores(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const page = parseInt(req.query.page as string) || 1;
+      const limit = parseInt(req.query.limit as string) || 20;
+      
+      const stores = await StoreService.listStores(page, limit);
+      
+      res.status(200).json({
+        success: true,
+        data: stores,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+  /**
    * Initializes a new store.
    * Expects payload mapped to `CreateStoreInput`.
    */

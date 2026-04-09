@@ -7,6 +7,7 @@ import { createStoreSchema, updateStoreSchema } from '@ushop/shared';
 const router: Router = Router();
 
 // Public Routes
+router.get('/', StoreController.getAllStores);
 router.get('/check-handle/:handle', StoreController.checkHandle);
 router.get('/:handle', StoreController.getStore);
 
