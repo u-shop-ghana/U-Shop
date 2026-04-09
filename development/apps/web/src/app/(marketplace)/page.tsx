@@ -173,8 +173,8 @@ export default async function HomePage() {
          </div>
       </section>
 
-      {/* Featured Categories Grid */}
-      <section className="py-16 bg-background">
+      {/* Featured Categories Grid — matching Figma: white bg, overlay image cards */}
+      <section className="py-16 bg-white">
          <div className="max-w-7xl mx-auto px-4 md:px-8">
             <div className="flex justify-between items-end mb-8">
                <div>
@@ -188,11 +188,12 @@ export default async function HomePage() {
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
                 {CATEGORIES.slice(0, 4).map((category) => (
                    <Link key={category.slug} href={`/categories/${category.slug}`}>
-                      <div className="group relative overflow-hidden aspect-square rounded-lg cursor-pointer">
-                         <Image fill src={CATEGORY_IMAGES[category.slug] || '/assets/images/defaults/placeholder.webp'} alt={category.name} className="object-cover group-hover:scale-110 transition-transform duration-500" />
-                         <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
+                      <div className="group relative overflow-hidden rounded-2xl cursor-pointer aspect-[4/5] shadow-md">
+                         <Image fill src={CATEGORY_IMAGES[category.slug] || '/assets/images/categories/laptop.jpg'} alt={category.name} className="object-cover group-hover:scale-110 transition-transform duration-500" />
+                         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
                          <div className="absolute bottom-4 left-4 text-white">
                             <h3 className="font-bold text-lg">{category.name}</h3>
+                            <p className="text-xs text-white/70 mt-0.5">Shop now →</p>
                          </div>
                       </div>
                    </Link>
@@ -201,8 +202,8 @@ export default async function HomePage() {
          </div>
       </section>
 
-      {/* Browse Universities */}
-      <section className="py-16 bg-white border-t border-slate-100">
+      {/* Browse Universities — matching Figma: white bg, logo cards with name + location */}
+      <section className="py-16 bg-[#f8fafc]">
          <div className="max-w-7xl mx-auto px-4 md:px-8">
             <div className="flex justify-between items-end mb-8">
                <div>
@@ -216,17 +217,18 @@ export default async function HomePage() {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                {data.universities.map((uni: UniversityOption) => (
                   <Link key={uni.id} href={`/universities/${uni.shortName.toLowerCase()}`}>
-                     <div className="group relative overflow-hidden rounded-xl cursor-pointer h-48 shadow-sm">
-                        <Image fill src={UNI_IMAGES[uni.shortName.toLowerCase()] || '/assets/images/defaults/placeholder.webp'} alt={uni.shortName} className="object-cover group-hover:scale-110 transition-transform duration-500" />
-                        <div className="absolute inset-0 bg-gradient-to-t from-ushop-purple/90 via-ushop-purple/40 to-transparent"></div>
-                        <div className="absolute bottom-4 left-4 text-white">
-                           <h3 className="font-bold text-lg">{uni.name}</h3>
-                           <div className="flex items-center gap-2 mt-1">
-                              <span className="text-xs text-white/80">{uni.shortName}</span>
-                              <span className="w-1 h-1 bg-white/40 rounded-full"></span>
-                              <span className="text-xs font-bold text-ushop-pink">Available</span>
-                           </div>
+                     <div className="group bg-white rounded-2xl border border-gray-200 p-6 hover:shadow-lg hover:-translate-y-1 transition-all flex flex-col items-center text-center">
+                        {/* University logo / image */}
+                        <div className="w-20 h-20 rounded-2xl overflow-hidden relative mb-4 bg-gray-100 border border-gray-200">
+                           <Image
+                             fill
+                             src={UNI_IMAGES[uni.shortName.toLowerCase()] || '/assets/images/universities/legon.jpg'}
+                             alt={uni.shortName}
+                             className="object-cover"
+                           />
                         </div>
+                        <h3 className="font-bold text-gray-900 group-hover:text-ushop-purple transition-colors">{uni.name}</h3>
+                        <p className="text-xs text-gray-500 mt-1">{uni.shortName}</p>
                      </div>
                   </Link>
                ))}
