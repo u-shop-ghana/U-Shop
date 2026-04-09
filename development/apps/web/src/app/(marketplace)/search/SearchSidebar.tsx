@@ -3,16 +3,17 @@
 import { useRouter } from "next/navigation";
 import { useState, FormEvent } from "react";
 
+// ─── Search Sidebar ─────────────────────────────────────────────
+// Matches Figma: white card with filter sections for University,
+// Category, Price Range, Condition. Includes Apply + Clear buttons.
+// All filter state is driven via URL search params for SSR compatibility.
+
 interface Category {
   name: string;
   slug: string;
 }
 
-// Search sidebar matching the Figma design — light theme with
-// university checkboxes, price range, condition radio buttons.
-export default function SearchSidebar({
-  currentParams,
-}: {
+interface SidebarProps {
   currentParams: {
     q?: string;
     category?: string;
@@ -23,41 +24,55 @@ export default function SearchSidebar({
     sort?: string;
   };
   categories?: Category[];
-}) {
+}
+
+export default function SearchSidebar({
+  currentParams,
+  categories = [],
+}: SidebarProps) {
   const router = useRouter();
-  
+
   const [q, setQ] = useState(currentParams.q || "");
+  const [category, setCategory] = useState(currentParams.category || "");
   const [minPrice, setMinPrice] = useState(currentParams.minPrice || "");
   const [maxPrice, setMaxPrice] = useState(currentParams.maxPrice || "");
   const [condition, setCondition] = useState(currentParams.condition || "");
-  const [sort, setSort] = useState(currentParams.sort || "newest");
-  const [buyerUniversity, setBuyerUniversity] = useState(currentParams.buyerUniversity || "");
+  const [sort, setSort] = useState(currentParams.sort || "relevant");
+  const [buyerUniversity, setBuyerUniversity] = useState(
+    currentParams.buyerUniversity || ""
+  );
 
-  // Build the search URL from all filter values and navigate
+  // Build the search URL from all filter values and navigate.
+  // Uses Next.js router.push for soft navigation (no full reload).
   const applyFilters = (e?: FormEvent) => {
     if (e) e.preventDefault();
-    
+
     const params = new URLSearchParams();
     if (q) params.set("q", q);
-    if (currentParams.category) params.set("category", currentParams.category);
+    if (category) params.set("category", category);
     if (minPrice) params.set("minPrice", minPrice);
     if (maxPrice) params.set("maxPrice", maxPrice);
     if (condition) params.set("condition", condition);
-    if (sort) params.set("sort", sort);
+    if (sort && sort !== "relevant") params.set("sort", sort);
     if (buyerUniversity) params.set("buyerUniversity", buyerUniversity);
 
     router.push(`/search?${params.toString()}`);
   };
 
+  // Clear all filters and navigate to bare /search
   const resetFilters = () => {
     setQ("");
+    setCategory("");
     setMinPrice("");
     setMaxPrice("");
     setCondition("");
-    setSort("newest");
+    setSort("relevant");
     setBuyerUniversity("");
     router.push("/search");
   };
+
+  // Count how many filters are active (for badge display)
+  const activeFilterCount = [category, minPrice || maxPrice, condition, buyerUniversity].filter(Boolean).length;
 
   const universities = [
     { value: "ug", label: "UG (Legon)" },
@@ -67,43 +82,128 @@ export default function SearchSidebar({
   ];
 
   const conditions = [
-    { value: "", label: "Any" },
-    { value: "BRAND_NEW", label: "New" },
+    { value: "", label: "Any Condition" },
+    { value: "BRAND_NEW", label: "Brand New" },
     { value: "LIKE_NEW", label: "Like New" },
     { value: "EXCELLENT", label: "Excellent" },
     { value: "GOOD", label: "Good" },
     { value: "FAIR", label: "Fair" },
+    { value: "REFURBISHED", label: "Refurbished" },
   ];
 
   return (
-    <div className="bg-white border border-gray-200 rounded-2xl p-6 sticky top-24 shadow-sm">
-      <form onSubmit={applyFilters} className="space-y-6">
-        {/* University — radio list matching Figma */}
+    <div className="bg-white border border-gray-200 rounded-2xl p-5 sticky top-24 shadow-sm">
+      <form onSubmit={applyFilters} className="space-y-5">
+        {/* Header with filter count + clear */}
+        <div className="flex items-center justify-between">
+          <h2 className="text-sm font-bold text-gray-900 uppercase tracking-wide flex items-center gap-2">
+            <span className="material-symbols-outlined text-base">
+              tune
+            </span>
+            Filters
+            {activeFilterCount > 0 && (
+              <span className="bg-ushop-purple text-white text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center">
+                {activeFilterCount}
+              </span>
+            )}
+          </h2>
+          {activeFilterCount > 0 && (
+            <button
+              type="button"
+              onClick={resetFilters}
+              className="text-xs text-red-500 hover:text-red-700 font-medium transition-colors"
+            >
+              Clear All
+            </button>
+          )}
+        </div>
+
+        {/* Category filter — scrollable list with radio buttons */}
+        {categories.length > 0 && (
+          <div>
+            <h3 className="text-xs font-bold text-gray-700 mb-2 uppercase tracking-wide">
+              Category
+            </h3>
+            <div className="space-y-2 max-h-48 overflow-y-auto">
+              <label className="flex items-center gap-2 cursor-pointer group">
+                <input
+                  type="radio"
+                  name="category"
+                  value=""
+                  checked={!category}
+                  onChange={() => setCategory("")}
+                  className="w-3.5 h-3.5 accent-ushop-purple"
+                />
+                <span className="text-sm text-gray-600 group-hover:text-gray-900">
+                  All Categories
+                </span>
+              </label>
+              {categories.map((cat) => (
+                <label
+                  key={cat.slug}
+                  className="flex items-center gap-2 cursor-pointer group"
+                >
+                  <input
+                    type="radio"
+                    name="category"
+                    value={cat.slug}
+                    checked={category === cat.slug}
+                    onChange={(e) => setCategory(e.target.value)}
+                    className="w-3.5 h-3.5 accent-ushop-purple"
+                  />
+                  <span className="text-sm text-gray-600 group-hover:text-gray-900">
+                    {cat.name}
+                  </span>
+                </label>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* University filter */}
         <div>
-          <h3 className="text-sm font-bold text-ushop-purple mb-3 flex items-center gap-2">
-            <span className="material-symbols-outlined text-base">school</span>
+          <h3 className="text-xs font-bold text-gray-700 mb-2 uppercase tracking-wide flex items-center gap-1">
+            <span className="material-symbols-outlined text-sm">school</span>
             University
           </h3>
-          <div className="space-y-2.5">
+          <div className="space-y-2">
+            <label className="flex items-center gap-2 cursor-pointer group">
+              <input
+                type="radio"
+                name="buyerUniversity"
+                value=""
+                checked={!buyerUniversity}
+                onChange={() => setBuyerUniversity("")}
+                className="w-3.5 h-3.5 accent-ushop-purple"
+              />
+              <span className="text-sm text-gray-600 group-hover:text-gray-900">
+                All Universities
+              </span>
+            </label>
             {universities.map((uni) => (
-              <label key={uni.value} className="flex items-center gap-2.5 cursor-pointer group">
+              <label
+                key={uni.value}
+                className="flex items-center gap-2 cursor-pointer group"
+              >
                 <input
                   type="radio"
                   name="buyerUniversity"
                   value={uni.value}
                   checked={buyerUniversity === uni.value}
                   onChange={(e) => setBuyerUniversity(e.target.value)}
-                  className="w-4 h-4 text-ushop-purple border-gray-300 focus:ring-ushop-purple accent-ushop-purple"
+                  className="w-3.5 h-3.5 accent-ushop-purple"
                 />
-                <span className="text-sm text-gray-700 group-hover:text-gray-900">{uni.label}</span>
+                <span className="text-sm text-gray-600 group-hover:text-gray-900">
+                  {uni.label}
+                </span>
               </label>
             ))}
           </div>
         </div>
 
-        {/* Price Range — matching Figma with min/max inputs */}
+        {/* Price Range */}
         <div>
-          <h3 className="text-sm font-bold text-ushop-purple mb-3">
+          <h3 className="text-xs font-bold text-gray-700 mb-2 uppercase tracking-wide">
             Price Range (GH₵)
           </h3>
           <div className="flex items-center gap-2">
@@ -112,46 +212,54 @@ export default function SearchSidebar({
               value={minPrice}
               onChange={(e) => setMinPrice(e.target.value)}
               placeholder="Min"
+              min="0"
               className="w-full border border-gray-200 text-gray-900 p-2.5 rounded-lg focus:ring-2 focus:ring-ushop-purple outline-none text-sm"
             />
-            <span className="text-gray-400">–</span>
+            <span className="text-gray-400 text-sm">–</span>
             <input
               type="number"
               value={maxPrice}
               onChange={(e) => setMaxPrice(e.target.value)}
               placeholder="Max"
+              min="0"
               className="w-full border border-gray-200 text-gray-900 p-2.5 rounded-lg focus:ring-2 focus:ring-ushop-purple outline-none text-sm"
             />
           </div>
         </div>
 
-        {/* Condition — radio buttons matching Figma */}
+        {/* Condition */}
         <div>
-          <h3 className="text-sm font-bold text-ushop-purple mb-3">
+          <h3 className="text-xs font-bold text-gray-700 mb-2 uppercase tracking-wide">
             Condition
           </h3>
-          <div className="space-y-2.5">
+          <div className="space-y-2">
             {conditions.map((cond) => (
-              <label key={cond.value} className="flex items-center gap-2.5 cursor-pointer group">
+              <label
+                key={cond.value}
+                className="flex items-center gap-2 cursor-pointer group"
+              >
                 <input
                   type="radio"
                   name="condition"
                   value={cond.value}
                   checked={condition === cond.value}
                   onChange={(e) => setCondition(e.target.value)}
-                  className="w-4 h-4 text-ushop-purple border-gray-300 focus:ring-ushop-purple accent-ushop-purple"
+                  className="w-3.5 h-3.5 accent-ushop-purple"
                 />
-                <span className="text-sm text-gray-700 group-hover:text-gray-900">{cond.label}</span>
+                <span className="text-sm text-gray-600 group-hover:text-gray-900">
+                  {cond.label}
+                </span>
               </label>
             ))}
           </div>
         </div>
 
-        {/* Apply Filters Button — matching Figma purple */}
+        {/* Apply Filter Button */}
         <button
           type="submit"
-          className="w-full py-3 bg-ushop-purple text-white text-sm font-bold rounded-xl hover:bg-ushop-purple/90 transition-colors"
+          className="w-full py-3 bg-ushop-purple text-white text-sm font-bold rounded-xl hover:bg-ushop-purple/90 transition-colors flex items-center justify-center gap-2"
         >
+          <span className="material-symbols-outlined text-base">search</span>
           Apply Filters
         </button>
       </form>

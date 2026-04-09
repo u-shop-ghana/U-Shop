@@ -1,7 +1,7 @@
 import { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
-import { apiFetch } from "@/lib/api-server";
+import { apiPublicFetch } from "@/lib/api-public";
 
 interface StoreOption {
   id: string;
@@ -24,10 +24,11 @@ export const dynamic = "force-dynamic";
 export default async function StoresPage({
   searchParams,
 }: {
-  searchParams: { [key: string]: string | string[] | undefined };
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
-  const page = searchParams.page ? parseInt(searchParams.page as string) : 1;
-  const res = await apiFetch(`/api/v1/stores?page=${page}&limit=24`);
+  const resolvedParams = await searchParams;
+  const page = resolvedParams.page ? parseInt(resolvedParams.page as string) : 1;
+  const res = await apiPublicFetch(`/api/v1/stores?page=${page}&limit=24`);
   const stores: StoreOption[] = res.success ? (res.data || []) : [];
 
   return (

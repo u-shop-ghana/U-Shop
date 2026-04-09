@@ -19,7 +19,7 @@ export async function GET(req: NextRequest) {
             flexDirection: "column",
             alignItems: "center",
             justifyContent: "center",
-            backgroundImage: "linear-gradient(to bottom right, #520f85, #d41295)",
+            backgroundImage: "linear-gradient(to bottom right, #6B1FA8, #D4009B)",
             color: "white",
             padding: "40px",
           }}
@@ -33,7 +33,7 @@ export async function GET(req: NextRequest) {
               height: "120px",
               borderRadius: "60px",
               backgroundColor: "white",
-              color: "#520f85",
+              color: "#6B1FA8",
               fontSize: "60px",
               fontWeight: "bold",
               marginBottom: "30px",

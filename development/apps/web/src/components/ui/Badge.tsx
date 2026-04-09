@@ -22,13 +22,13 @@ interface BadgeProps {
 }
 
 // Color mapping from the design tokens
-// Primary=#520f85, Secondary=#d41295, Success=#22c55e,
+// Primary=#6B1FA8, Secondary=#D4009B, Success=#22c55e,
 // Warning=#f59e0b, Error=#ef4444, Info=#3b82f6
 const variantStyles = {
   primary:
-    "bg-[#520f85]/15 text-[#520f85] border-[#520f85]/30",
+    "bg-[#6B1FA8]/15 text-[#6B1FA8] border-[#6B1FA8]/30",
   secondary:
-    "bg-[#d41295]/15 text-[#d41295] border-[#d41295]/30",
+    "bg-[#D4009B]/15 text-[#D4009B] border-[#D4009B]/30",
   success:
     "bg-emerald-100 text-emerald-700 border-emerald-300",
   warning:

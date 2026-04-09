@@ -40,7 +40,7 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
           className={`
             w-full rounded-xl border bg-white text-gray-900 transition-all
             placeholder:text-gray-400 resize-y min-h-[120px]
-            focus:outline-none focus:ring-2 focus:ring-[#520f85] focus:border-[#520f85]
+            focus:outline-none focus:ring-2 focus:ring-[#6B1FA8] focus:border-[#6B1FA8]
             disabled:bg-gray-50 disabled:text-gray-400 disabled:cursor-not-allowed
             ${error ? "border-red-400 focus:ring-red-400 focus:border-red-400" : "border-gray-200 hover:border-gray-300"}
             px-4 py-3 text-sm
