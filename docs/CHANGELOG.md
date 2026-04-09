@@ -45,6 +45,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   - **Homepage Universities**: Changed from small logo thumbnails to full image card grid matching the categories section layout.
 - **Resend Email Service** — Added `resend` SDK to the Express API and created `src/lib/email.ts` with a centralised `sendEmail()` function and pre-built branded templates for order confirmation, welcome, and store approval emails. Auth emails (signup, password reset) are handled by Supabase SMTP → Resend integration configured in the Supabase Dashboard.
 - **CRITICAL: Production Auth Fix** — `.env.production` was missing `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY`, causing the deployed Vercel build to use placeholder Supabase credentials. This resulted in 500 errors on all auth flows (signup, login, email confirmation) with the message "No API key found in request". Fixed by adding all public Supabase keys to `.env.production`.
+- **Auth Auto-Sync** — Added automatic DB record creation in `AuthProvider`. When `/auth/me` returns 401 (user exists in Supabase but not in our DB), the provider now auto-calls `/register` to create the internal User record, then retries `/me`. This fixes the permanent 401 loop for users who signed up when email confirmation was enabled (the `/register` call was skipped because `data.session` was null).
 
 ---
 ## [0.5.2] — 2026-04-06 — Category Seeding with Icons
