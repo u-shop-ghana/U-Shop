@@ -1,5 +1,5 @@
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
-import { logger } from './logger.js';
+import { logger } from './logger';
 
 // ─── Environment Validation ─────────────────────────────────────
 // We crash immediately on startup if critical Supabase env vars are
