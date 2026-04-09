@@ -1,4 +1,5 @@
 "use client";
+import Link from 'next/link';
 
 // ─── Marketplace Error Boundary ─────────────────────────────────
 // Next.js App Router error boundary. Catches any runtime errors in
@@ -47,12 +48,12 @@ export default function MarketplaceError({
           >
             Try Again
           </button>
-          <a
+          <Link
             href="/"
             className="px-6 py-3 border border-gray-300 text-gray-700 font-bold rounded-xl hover:bg-gray-50 transition-colors text-sm"
           >
             Go to Homepage
-          </a>
+          </Link>
         </div>
       </div>
     </main>
