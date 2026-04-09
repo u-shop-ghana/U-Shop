@@ -40,6 +40,15 @@ export default function RegisterPage() {
 
   const strengthColors = ["bg-status-error", "bg-status-warning", "bg-status-info", "bg-status-success"];
 
+  // Known disposable/temporary email domains that cause high bounce rates.
+  // These services create throwaway inboxes — emails to them are wasted.
+  const DISPOSABLE_DOMAINS = [
+    "mailinator.com", "guerrillamail.com", "tempmail.com", "throwaway.email",
+    "yopmail.com", "sharklasers.com", "trashmail.com", "10minutemail.com",
+    "temp-mail.org", "fakeinbox.com", "maildrop.cc", "dispostable.com",
+    "mailnesia.com", "tempr.email", "getnada.com",
+  ];
+
   // Handle email/password registration
   async function handleRegister(e: FormEvent) {
     e.preventDefault();
@@ -47,6 +56,28 @@ export default function RegisterPage() {
 
     if (!agreeTerms) {
       setError("You must agree to the Terms and Privacy Policy.");
+      return;
+    }
+
+    // ── Email validation to prevent high bounce rates ──────────
+    // Validate format: must match standard email pattern with a real TLD
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    if (!emailRegex.test(email)) {
+      setError("Please enter a valid email address (e.g., student@ug.edu.gh).");
+      return;
+    }
+
+    // Block disposable/temporary email services that cause bounces
+    const emailDomain = email.split("@")[1]?.toLowerCase();
+    if (emailDomain && DISPOSABLE_DOMAINS.includes(emailDomain)) {
+      setError("Temporary email addresses are not allowed. Please use your real email.");
+      return;
+    }
+
+    // Block obviously fake TLDs (single char or numeric-only)
+    const tld = emailDomain?.split(".").pop();
+    if (!tld || tld.length < 2 || /^\d+$/.test(tld)) {
+      setError("Please enter a valid email address with a real domain.");
       return;
     }
 

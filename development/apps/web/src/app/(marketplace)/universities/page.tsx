@@ -1,7 +1,7 @@
 import { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
-import { apiFetch } from "@/lib/api-server";
+import { apiPublicFetch } from "@/lib/api-public";
 
 interface UniversityOption {
   id: string;
@@ -33,10 +33,10 @@ export const metadata: Metadata = {
   description: "Explore campus-specific marketplaces across Ghana. Get delivery directly to your hostel or hall.",
 };
 
-export const dynamic = "force-dynamic";
+export const revalidate = 15; // Enable Incremental Static Regeneration caching
 
 export default async function UniversitiesPage() {
-  const res = await apiFetch("/api/v1/universities");
+  const res = await apiPublicFetch("/api/v1/universities");
   const universities: UniversityOption[] = res.success ? (res.data || []) : [];
 
   return (

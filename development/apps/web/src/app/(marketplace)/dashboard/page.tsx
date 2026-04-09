@@ -8,9 +8,19 @@ import Link from "next/link";
 // quick stats cards, and quick-action links tailored to the user's
 // role and verification status.
 export default function DashboardPage() {
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
 
-  if (!user) return null;
+  if (loading || !user) {
+    return (
+      <div className="space-y-8 animate-pulse min-h-[80vh]">
+        <div className="h-48 bg-ink-deep border border-white/5 rounded-2xl w-full" />
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {[1,2,3,4].map(i => <div key={i} className="h-32 bg-ink-deep rounded-xl w-full" />)}
+        </div>
+        <div className="h-64 bg-ink-deep rounded-xl w-full" />
+      </div>
+    );
+  }
 
   // Greeting based on time of day — small personalization touch
   const hour = new Date().getHours();

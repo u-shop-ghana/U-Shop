@@ -31,7 +31,7 @@ export function Footer() {
                 href="https://facebook.com"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-9 h-9 rounded-full bg-gray-800 flex items-center justify-center hover:bg-[#520f85] transition-colors"
+                className="w-9 h-9 rounded-full bg-gray-800 flex items-center justify-center hover:bg-[#6B1FA8] transition-colors"
                 aria-label="Facebook"
               >
                 <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
@@ -42,7 +42,7 @@ export function Footer() {
                 href="https://x.com"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-9 h-9 rounded-full bg-gray-800 flex items-center justify-center hover:bg-[#520f85] transition-colors"
+                className="w-9 h-9 rounded-full bg-gray-800 flex items-center justify-center hover:bg-[#6B1FA8] transition-colors"
                 aria-label="X (Twitter)"
               >
                 <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
@@ -53,7 +53,7 @@ export function Footer() {
                 href="https://instagram.com"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-9 h-9 rounded-full bg-gray-800 flex items-center justify-center hover:bg-[#520f85] transition-colors"
+                className="w-9 h-9 rounded-full bg-gray-800 flex items-center justify-center hover:bg-[#6B1FA8] transition-colors"
                 aria-label="Instagram"
               >
                 <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
@@ -64,7 +64,7 @@ export function Footer() {
                 href="https://linkedin.com"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-9 h-9 rounded-full bg-gray-800 flex items-center justify-center hover:bg-[#520f85] transition-colors"
+                className="w-9 h-9 rounded-full bg-gray-800 flex items-center justify-center hover:bg-[#6B1FA8] transition-colors"
                 aria-label="LinkedIn"
               >
                 <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
@@ -143,19 +143,19 @@ export function Footer() {
             <h3 className="text-white font-bold text-base mb-4">Contact Us</h3>
             <ul className="space-y-3">
               <li className="flex items-center gap-2 text-sm text-gray-400">
-                <span className="material-symbols-outlined text-base text-[#d41295]">
+                <span className="material-symbols-outlined text-base text-[#D4009B]">
                   call
                 </span>
                 +233 50 956 5794
               </li>
               <li className="flex items-center gap-2 text-sm text-gray-400">
-                <span className="material-symbols-outlined text-base text-[#d41295]">
+                <span className="material-symbols-outlined text-base text-[#D4009B]">
                   mail
                 </span>
                 support@ushop.com
               </li>
               <li className="flex items-center gap-2 text-sm text-gray-400">
-                <span className="material-symbols-outlined text-base text-[#d41295]">
+                <span className="material-symbols-outlined text-base text-[#D4009B]">
                   location_on
                 </span>
                 Accra, Ghana
@@ -174,8 +174,8 @@ export function Footer() {
         <div className="max-w-7xl mx-auto px-4 py-6">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-[#520f85]/20 flex items-center justify-center">
-                <span className="material-symbols-outlined text-[#d41295]">
+              <div className="w-10 h-10 rounded-full bg-[#6B1FA8]/20 flex items-center justify-center">
+                <span className="material-symbols-outlined text-[#D4009B]">
                   mail
                 </span>
               </div>
@@ -198,12 +198,12 @@ export function Footer() {
                 type="email"
                 placeholder="Email Address"
                 className="px-4 py-2.5 bg-gray-800 border border-gray-700 text-white text-sm rounded-l-xl
-                  placeholder:text-gray-500 focus:outline-none focus:ring-1 focus:ring-[#520f85]
+                  placeholder:text-gray-500 focus:outline-none focus:ring-1 focus:ring-[#6B1FA8]
                   w-full md:w-64"
               />
               <button
                 type="submit"
-                className="px-6 py-2.5 bg-[#d41295] text-white text-sm font-bold rounded-r-xl
+                className="px-6 py-2.5 bg-[#D4009B] text-white text-sm font-bold rounded-r-xl
                   hover:bg-[#b50f7e] transition-colors whitespace-nowrap"
               >
                 SUBSCRIBE

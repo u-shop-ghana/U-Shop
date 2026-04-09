@@ -42,7 +42,7 @@ export default async function PublicStorePage({ params }: { params: { handle: st
             priority
           />
         ) : (
-          <div className="w-full h-full bg-gradient-to-r from-[#520f85] to-[#d41295] opacity-80" />
+          <div className="w-full h-full bg-gradient-to-r from-[#6B1FA8] to-[#D4009B] opacity-80" />
         )}
       </div>
 
