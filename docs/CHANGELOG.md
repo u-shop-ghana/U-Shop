@@ -43,6 +43,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   - **Stores** (`/stores`): Dark hero banner with "Verified Marketplace" badge + gradient title, filter pills (All/Student Run/Elite), 4-col store cards with image headers and "Browse Store" CTAs, plus "Want to sell your products?" CTA section.
   - **Search** (`/search`): Light-themed sidebar with university radio list, price range, condition filters, and "Apply Filters" CTA. No-results state with tips cards and support links matching the Figma no-results screen.
   - **Homepage Universities**: Changed from small logo thumbnails to full image card grid matching the categories section layout.
+- **Resend Email Service** — Added `resend` SDK to the Express API and created `src/lib/email.ts` with a centralised `sendEmail()` function and pre-built branded templates for order confirmation, welcome, and store approval emails. Auth emails (signup, password reset) are handled by Supabase SMTP → Resend integration configured in the Supabase Dashboard.
 
 ---
 ## [0.5.2] — 2026-04-06 — Category Seeding with Icons
