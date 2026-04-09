@@ -60,19 +60,23 @@ async function getHomePageData() {
   };
 }
 
-// Map Figma's static category imagery dynamically to the Top 4 Array
+// Map category imagery to the local assets in /public/assets/images/categories/
 const CATEGORY_IMAGES: Record<string, string> = {
-  laptops: "https://lh3.googleusercontent.com/aida-public/AB6AXuB8o9UFBvF8YrrOwwhPsIraLinv3q4JYdd7y_qk2nVeWyzGU41KjszX-UgxJbqQhUirLspmW1EaDL1xU1h3Mi1a9O7jjAum8nLiHLnd_c47dDnkaN3MD7krRjkJCuYtaW1NEcEfqK3SGRAa7iV9_uJg-vL8sZhBelZPJNLu675ZKEuGyJaAJHMk7EFfGOq9EkJhMDWNKEY7dDZRZTR5ni3tEtcw2QY6FKqsrUBSvLAslzCqLMiArmrACZjfOkF6OKRnNWq-uDAjBTip",
-  phones: "https://lh3.googleusercontent.com/aida-public/AB6AXuCwVCnYU-hEQDIPkZk1hJ0HJctkL47Q_iKgGuUJeQFPie_jGOj-bFnR46msq-SEDxB6_7Xz1vZg3MrIuxl6XIcRr4exntBZ7r-ygrUFyVWBxcNAYCta1kB6QRNT8bJFzS9tinLBSyJiRv2ZpDICsTwOazc7AfN3RlJ06tXJdHiQPz1p_f3foyCyf3IECyXGOTPYjZ2BEldvF2LBFJGAOfJ-g_LoW8OtIXzYOx7uHDLDkwKSNYGCjPujYZWHw-EWGljS8rWshYZffpUS",
-  accessories: "https://lh3.googleusercontent.com/aida-public/AB6AXuB-3EQxB_ussuVVi18YDyweMvv_gHmw1dVMWAOmN23K_x7I2sGapO_FuQoJqoUVhIiGf3Jgdmw1-kyfAlycAZTytrrZtGcTKRkMXnTg98FgxzMMX_iyNOi0M7gY95i1xOolwt7hhyDRibmlKgchbRpiiznVMQGB5vGSFJ_-r-6yb45sJrxNJz9utH5cjRavpj_YpZjgBzxgzNm2IX71HrDpE8qOkMXJT0jZDpJ_FcPw7CmtoU1ZbKBzeLkWauzQ0Fo_GHWAJWUJ2sM7",
-  tablets: "https://lh3.googleusercontent.com/aida-public/AB6AXuAPTL0TwEeInxlRVwk4QWiE3X-qeLZuURu5eJwL2HHcl4De78CZwnvtUll-mok9dRCV3oJvJmNcdsREhUggLmawgxz7kti31v3ST3N2wQzBYT4fesbD63st8ukG-xApKpwDLSFP9hIVAMkCVGsyEDl6BSsDR3_IqxQ7MEmGMDTH8ONKvI6av7zJQIA3c0Wi0o7ruCADBZu5jXylp6xawq_zGGwJ98yXjzmrxR8i6pdGiP_R3SfTmAxW-ZgiinwYSWlProoyRWwKi9FY"
+  laptops: "/assets/images/categories/laptop.jpg",
+  phones: "/assets/images/categories/phone.png",
+  accessories: "/assets/images/categories/Accessories.png",
+  tablets: "/assets/images/categories/Tablet.png",
+  gaming: "/assets/images/categories/Gaming.png",
+  storage: "/assets/images/categories/storage.png",
 };
 
+// Map university imagery to the local assets in /public/assets/images/universities/
 const UNI_IMAGES: Record<string, string> = {
-  "ug": "https://lh3.googleusercontent.com/aida-public/AB6AXuB26A0x9-Y5Xlq3hV0E7u_9X2s1k5F5g2p5R8z8V8x6A1x8S2-Z0_9f6L5e_1r6k5D5X1x8R2-Z0_9f6L5e_1r6k5D",
-  "knust": "https://lh3.googleusercontent.com/aida-public/AB6AXuC9-X1v9-Z5Xlq3hV0E7u_9X2s1k5F5g2p5R8z8V8x6A1x8S2-Z0_9f6L5e_1r6k5D5X1x8R2-Z0_9f6L5e_1r6k5D",
-  "ucc": "https://lh3.googleusercontent.com/aida-public/AB6AXuD2-Z1v9-Z5Xlq3hV0E7u_9X2s1k5F5g2p5R8z8V8x6A1x8S2-Z0_9f6L5e_1r6k5D5X1x8R2-Z0_9f6L5e_1r6k5D",
-  "ashesi": "https://lh3.googleusercontent.com/aida-public/AB6AXuE2-Z1v9-Z5Xlq3hV0E7u_9X2s1k5F5g2p5R8z8V8x6A1x8S2-Z0_9f6L5e_1r6k5D5X1x8R2-Z0_9f6L5e_1r6k5D"
+  "ug": "/assets/images/universities/legon.jpg",
+  "knust": "/assets/images/universities/knust.jpg",
+  "ucc": "/assets/images/universities/ucc.jpg",
+  "gctu": "/assets/images/universities/gctu.jpg",
+  "umat": "/assets/images/universities/umat.jpeg",
 };
 
 export default async function HomePage() {
@@ -123,7 +127,7 @@ export default async function HomePage() {
             <div className="hidden md:block">
               <div className="relative">
                 <div className="w-full aspect-square max-w-md mx-auto rounded-2xl overflow-hidden border-4 border-white/20 shadow-xl transform rotate-2 hover:rotate-0 transition-transform duration-500">
-                  <Image fill priority src="https://lh3.googleusercontent.com/aida-public/AB6AXuCa-2zJ-fOX1H7fpRqYO2AEe6o7UIGHNPdY01Wm9dTD6SAEpLmf2yS0DoKQNrAWiUHNcRtsUPZDVhSQezzhtU0n-GAIzgkUegLViuqrL84FAgfkkeGar77RnEXXvtcbg3eT5Gcrv8drKZB_F59u4XSqr1lMRe-IZBzdVpJ3584FrYVvsd6y0bdKNuazrEf3U-7cSFLicrY6Ckt_gEAgnJ-2d3Cu86QdDkXX34I-DMIsMzeUpZ9XAlykn4q_B-QySaeavjWPsH3nLt88" alt="Tech Essentials" className="object-cover" />
+                  <Image fill priority src="/assets/images/hero/homepage.png" alt="Tech Essentials" className="object-cover" />
                 </div>
                 <div className="absolute -bottom-6 -left-6 bg-white rounded-lg shadow-xl p-6">
                    <p className="text-gray-600 text-sm">Starting from</p>
