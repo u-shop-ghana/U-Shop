@@ -8,9 +8,9 @@
 @theme inline {
   /* ── Brand Core ──────────────────────────────────────────────── */
   --color-ushop-red: #E8000B;
-  --color-ushop-purple: #520f85;
+  --color-ushop-purple: #6B1FA8;
   --color-ushop-magenta: #D4009B;
-  --color-ushop-pink: #d41295;
+  --color-ushop-pink: #D4009B;
 
   /* ── Dark Backgrounds (Ink System) ───────────────────────────── */
   --color-ink-void: #0A0A0A;
@@ -56,7 +56,7 @@
 :root {
   /* CSS properties for non-Tailwind usage */
   --gradient-brand: linear-gradient(90deg, #6B1FA8, #D4009B);
-  --gradient-brand-diagonal: linear-gradient(135deg, #520f85, #D4009B);
+  --gradient-brand-diagonal: linear-gradient(135deg, #6B1FA8, #D4009B);
   --gradient-campus: linear-gradient(to right, #c084fc, #f472b6);
 
   /* Typography scale custom properties */
@@ -94,7 +94,7 @@ body {
 
 /* Brand gradient button background */
 .bg-gradient-brand {
-  background: linear-gradient(135deg, #520f85 0%, #d41295 100%);
+  background: linear-gradient(135deg, #6B1FA8 0%, #D4009B 100%);
 }
 
 /* Purple to pink gradient button (Login page style) */

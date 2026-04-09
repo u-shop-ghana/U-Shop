@@ -143,7 +143,7 @@ export function ProductCard({
 
         {/* Product title */}
         <h3
-          className="text-sm font-bold text-gray-900 line-clamp-2 mb-1.5 cursor-pointer hover:text-[#520f85] transition-colors"
+          className="text-sm font-bold text-gray-900 line-clamp-2 mb-1.5 cursor-pointer hover:text-[#6B1FA8] transition-colors"
           onClick={() => onClick?.(id)}
         >
           {title}
@@ -159,7 +159,7 @@ export function ProductCard({
 
         {/* Price */}
         <div className="flex items-center gap-2 mb-3">
-          <span className="text-lg font-extrabold text-[#520f85]">
+          <span className="text-lg font-extrabold text-[#6B1FA8]">
             {formatPrice(price)}
           </span>
           {originalPrice && originalPrice > price && (

@@ -146,7 +146,7 @@ export default async function UniversityDealsPage({
                 id={item.id}
                 title={item.title}
                 slug={item.id}
-                price={item.price}
+                price={Number(item.price)}
                 condition={item.condition}
                 thumbnailUrl={item.images?.[0] || ""}
                 store={{
