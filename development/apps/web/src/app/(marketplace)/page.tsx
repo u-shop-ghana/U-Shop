@@ -1,7 +1,7 @@
 import { Metadata } from 'next';
 import Link from 'next/link';
 import Image from 'next/image';
-import { apiFetch } from '@/lib/api-server';
+import { apiPublicFetch } from '@/lib/api-public';
 import { ListingCard } from '@/components/ui/ListingCard';
 import { CATEGORIES } from '@ushop/shared';
 
@@ -27,6 +27,7 @@ interface ListingOption {
   title: string;
   price: number;
   condition: string;
+  stock?: number;
   images?: string[];
   store?: {
     handle: string;
@@ -42,14 +43,14 @@ export const metadata: Metadata = {
   description: 'The ultimate tech marketplace for Ghanaian students. Genuine gear, campus delivery, and student-first pricing.',
 };
 
-export const dynamic = 'force-dynamic';
+export const revalidate = 15; // Enable ISR (15s caching block) for instant TTFB Edge resolution
 
 async function getHomePageData() {
   const [unisRes, storesRes, featuredRes, trendingRes] = await Promise.all([
-    apiFetch('/api/v1/universities'),
-    apiFetch('/api/v1/stores?limit=4'),
-    apiFetch('/api/v1/listings?limit=4'), // Simulated featured
-    apiFetch('/api/v1/listings?sort=newest&limit=4'), // Simulated trending
+    apiPublicFetch('/api/v1/universities'),
+    apiPublicFetch('/api/v1/stores?limit=4'),
+    apiPublicFetch('/api/v1/listings?limit=4'), // Simulated featured
+    apiPublicFetch('/api/v1/listings?sort=newest&limit=4'), // Simulated trending
   ]);
 
   return {
@@ -98,9 +99,9 @@ export default async function HomePage() {
 
       {/* Hero Section */}
       <section className="relative bg-gradient-to-r from-ushop-purple to-[#3b0a63] text-white overflow-hidden">
-        <div className="absolute right-0 top-0 bottom-0 w-1/2 opacity-10">
+        <div className="hidden md:block absolute right-0 top-0 bottom-0 w-1/2 opacity-10">
           <svg className="w-full h-full" fill="none" viewBox="0 0 640 640">
-            <path d="M320 0C143.269 0 0 143.269 0 320C0 496.731 143.269 640 320 640C496.731 640 640 496.731 640 320C640 143.269 496.731 0 320 0Z" fill="#D41295"></path>
+            <path d="M320 0C143.269 0 0 143.269 0 320C0 496.731 143.269 640 320 640C496.731 640 640 496.731 640 320C640 143.269 496.731 0 320 0Z" fill="#D4009B"></path>
           </svg>
         </div>
         <div className="max-w-7xl mx-auto px-4 py-16 md:py-24 relative z-10">
@@ -303,8 +304,9 @@ export default async function HomePage() {
                           id={item.id}
                           title={item.title}
                           slug={item.id}
-                          price={item.price}
+                          price={Number(item.price)}
                           condition={item.condition}
+                          stock={item.stock}
                           thumbnailUrl={item.images?.[0] || ""}
                           store={{
                             handle: item.store?.handle || "unknown",
@@ -379,8 +381,9 @@ export default async function HomePage() {
                           id={item.id}
                           title={item.title}
                           slug={item.id}
-                          price={item.price}
+                          price={Number(item.price)}
                           condition={item.condition}
+                          stock={item.stock}
                           thumbnailUrl={item.images?.[0] || ""}
                           store={{
                             handle: item.store?.handle || "unknown",
