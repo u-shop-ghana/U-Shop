@@ -1,0 +1,611 @@
+<!DOCTYPE html><html class="light" lang="en"><head></head><body class="bg-background text-on-background antialiased flex flex-col min-h-screen">```html
+
+
+    <meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>U-Shop | Tech for Ghanaian Students</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#520f85",
+                        "secondary": "#d41295",
+                        "surface-container-high": "#e6e8f1",
+                        "on-background": "#181c22",
+                        "background": "#f9f9ff",
+                    },
+                    fontFamily: {
+                        "headline": ["Inter"],
+                        "body": ["Inter"],
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+<!-- Header -->
+<div class="bg-[#0f172a] text-white">
+<div class="max-w-[1280px] mx-auto px-4 py-2">
+<div class="flex items-center justify-between text-xs md:text-sm">
+<div class="flex items-center gap-4">
+<span class="flex items-center gap-1" style="">📞 +233 50 956 5794</span>
+<span class="hidden md:inline" style="">|</span>
+<span class="hidden md:inline" style="">support@ushop.com</span>
+</div>
+<div class="flex items-center gap-4">
+<a class="hover:text-[#d41295] transition-colors" href="#" style="">Sell on U-Shop</a>
+<span class="hidden md:inline" style="">|</span>
+<a class="hidden md:inline hover:text-[#d41295] transition-colors" href="#" style="">Track Order</a>
+</div>
+</div>
+</div>
+</div>
+<header class="bg-white shadow-sm sticky top-0 z-50">
+<div class="max-w-[1280px] mx-auto px-4 py-4">
+<div class="flex items-center justify-between gap-4">
+<a class="flex items-center gap-2" href="#" style="">
+<div class="flex items-center gap-1 text-2xl font-bold text-[#520f85]">
+<div class="w-10 h-10 bg-red-600 rounded-sm flex items-center justify-center text-white text-2xl" style="">U</div>
+<span class="font-['Inter'] tracking-tight" style="">shop</span>
+</div>
+</a>
+<form class="hidden md:flex flex-1 max-w-2xl">
+<div class="relative w-full">
+<input class="w-full px-4 py-2 pr-12 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#520f85]" placeholder="Search for products, categories..." type="text">
+<button class="absolute right-0 top-0 h-full px-4 bg-[#520f85] text-white rounded-r-lg hover:bg-[#3b0a63] transition-colors" type="submit" style="">
+<span class="material-symbols-outlined" style="">search</span>
+</button>
+</div>
+</form>
+<div class="flex items-center gap-2 md:gap-4">
+<button class="hidden md:flex items-center gap-2 px-4 py-2 hover:text-[#520f85] transition-colors" style="">
+<span class="material-symbols-outlined" style="">favorite</span>
+<span class="hidden lg:inline" style="">Wishlist</span>
+</button>
+<a class="relative flex items-center gap-2 px-4 py-2 hover:text-[#520f85] transition-colors" href="#" style="">
+<span class="material-symbols-outlined" style="">shopping_cart</span>
+<span class="hidden lg:inline" style="">Cart</span>
+</a>
+<div class="hidden md:flex items-center gap-2">
+<a class="px-4 py-2 text-sm font-medium text-[#520f85] hover:text-[#3b0a63] transition-colors" href="#" style="">Login</a>
+<a class="px-4 py-2 text-sm font-medium bg-[#d41295] text-white rounded-lg hover:bg-[#b91080] transition-colors" href="#" style="">Sign Up</a>
+</div>
+<button class="md:hidden p-2" style="">
+<span class="material-symbols-outlined" style="">menu</span>
+</button>
+</div>
+</div>
+<nav class="hidden md:flex items-center gap-6 mt-4 pt-4 border-t">
+<a class="text-sm font-medium hover:text-[#520f85] transition-colors" href="#" style="">Universities</a>
+<a class="text-sm font-medium hover:text-[#520f85] transition-colors" href="#" style="">Stores</a>
+<a class="text-sm font-medium hover:text-[#520f85] transition-colors" href="#" style="">Categories</a>
+<a class="text-sm font-medium hover:text-[#520f85] transition-colors" href="#" style="">All Products</a>
+<div class="flex-1"></div>
+<a class="text-sm text-[#d41295] font-bold hover:text-[#b91080] transition-colors" href="#" style="">🎓 Student Deals</a>
+</nav>
+</div>
+</header><div class="bg-emerald-950 text-emerald-400 py-2 px-4" id="escrow-banner">
+<div class="max-w-[1280px] mx-auto flex items-center justify-between">
+<div class="flex items-center gap-2 text-[10px] md:text-xs font-medium">
+<span class="flex items-center gap-2" style="">
+<span class="text-sm" style="">🔒</span>
+                Every purchase protected by escrow — pay safely, get your money back if anything's wrong.
+            </span>
+</div>
+<button aria-label="Dismiss banner" class="hover:text-white transition-colors flex items-center" onclick="this.closest('#escrow-banner').remove()" style="">
+<span class="material-symbols-outlined text-sm" style="">close</span>
+</button>
+</div>
+</div>
+<main>
+<!-- Hero Section -->
+<section class="relative bg-gradient-to-r from-[#520f85] to-[#3b0a63] text-white overflow-hidden">
+<div class="absolute right-0 top-0 bottom-0 w-1/2 opacity-10">
+<svg class="w-full h-full" fill="none" viewBox="0 0 640 640">
+<path d="M320 0C143.269 0 0 143.269 0 320C0 496.731 143.269 640 320 640C496.731 640 640 496.731 640 320C640 143.269 496.731 0 320 0Z" fill="#D41295"></path>
+</svg>
+</div>
+<div class="max-w-[1280px] mx-auto px-4 py-16 md:py-24 relative z-10">
+<div class="grid md:grid-cols-2 gap-12 items-center">
+<div class="space-y-6">
+<div class="inline-block bg-[#d41295] px-4 py-2 rounded-full text-sm font-bold uppercase tracking-wider" style="">
+                        CAMPUS TECH HUB
+                    </div>
+<h1 class="text-4xl md:text-5xl lg:text-7xl font-extrabold leading-tight" style="">
+                        Power Your <span class="text-transparent bg-clip-text bg-gradient-to-r from-[#d41295] to-[#1275e2]" style="">Academic Excellence</span>
+</h1>
+<p class="text-lg md:text-xl text-slate-300 max-w-lg" style="">
+                        The ultimate tech marketplace for Ghanaian students. Genuine gear, campus delivery, and student-first pricing.
+                    </p>
+<div class="flex flex-wrap gap-4 pt-4">
+<a class="bg-white text-[#520f85] px-8 py-4 rounded-lg font-bold hover:shadow-xl transition-all inline-flex items-center gap-2 group" href="#" style="">
+                            Shop Deals <span class="material-symbols-outlined group-hover:translate-x-1 transition-transform" style="">arrow_forward</span>
+</a>
+<a class="border-2 border-white text-white px-8 py-4 rounded-lg font-bold hover:bg-white hover:text-[#520f85] transition-all" href="#" style="">
+                            Sell Now
+                        </a>
+</div>
+</div>
+<div class="hidden md:block">
+<div class="relative">
+<div class="w-full aspect-square max-w-md mx-auto rounded-2xl overflow-hidden border-4 border-white/20 shadow-2xl transform rotate-2 hover:rotate-0 transition-transform duration-500">
+<img alt="Tech Essentials" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCa-2zJ-fOX1H7fpRqYO2AEe6o7UIGHNPdY01Wm9dTD6SAEpLmf2yS0DoKQNrAWiUHNcRtsUPZDVhSQezzhtU0n-GAIzgkUegLViuqrL84FAgfkkeGar77RnEXXvtcbg3eT5Gcrv8drKZB_F59u4XSqr1lMRe-IZBzdVpJ3584FrYVvsd6y0bdKNuazrEf3U-7cSFLicrY6Ckt_gEAgnJ-2d3Cu86QdDkXX34I-DMIsMzeUpZ9XAlykn4q_B-QySaeavjWPsH3nLt88" style="">
+</div>
+<div class="absolute -bottom-6 -left-6 bg-white rounded-lg shadow-xl p-6">
+<p class="text-gray-600 text-sm" style="">Starting from</p>
+<p class="text-[#520f85] text-2xl font-bold" style="">GH₵ 1,500</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Features Bar -->
+<section class="bg-white border-b py-10">
+<div class="max-w-[1280px] mx-auto px-4 grid grid-cols-2 md:grid-cols-4 gap-8">
+<div class="flex flex-col items-center text-center group">
+<div class="w-12 h-12 bg-purple-50 flex items-center justify-center rounded-full text-[#520f85] mb-4 group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-3xl" style="">verified_user</span>
+</div>
+<h4 class="font-bold text-gray-900 text-sm" style="">Secure Payment</h4>
+<p class="text-xs text-gray-500 mt-1" style="">Momo &amp; Card protection</p>
+</div>
+<div class="flex flex-col items-center text-center group">
+<div class="w-12 h-12 bg-purple-50 flex items-center justify-center rounded-full text-[#520f85] mb-4 group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-3xl" style="">verified</span>
+</div>
+<h4 class="font-bold text-gray-900 text-sm" style="">Verified Sellers</h4>
+<p class="text-xs text-gray-500 mt-1" style="">100% Genuine tech gear</p>
+</div>
+<div class="flex flex-col items-center text-center group">
+<div class="w-12 h-12 bg-purple-50 flex items-center justify-center rounded-full text-[#520f85] mb-4 group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-3xl" style="">local_shipping</span>
+</div>
+<h4 class="font-bold text-gray-900 text-sm" style="">Campus Delivery</h4>
+<p class="text-xs text-gray-500 mt-1" style="">Direct to your hostel</p>
+</div>
+<div class="flex flex-col items-center text-center group">
+<div class="w-12 h-12 bg-purple-50 flex items-center justify-center rounded-full text-[#520f85] mb-4 group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-3xl" style="">support_agent</span>
+</div>
+<h4 class="font-bold text-gray-900 text-sm" style="">Local Support</h4>
+<p class="text-xs text-gray-500 mt-1" style="">Call or WhatsApp 24/7</p>
+</div>
+</div>
+</section>
+<!-- Featured Categories Grid -->
+<section class="py-16 bg-background">
+<div class="max-w-[1280px] mx-auto px-4 md:px-8">
+<div class="flex justify-between items-end mb-8">
+<div>
+<h2 class="text-3xl font-bold text-gray-900" style="">Browse Categories</h2>
+<p class="text-gray-500" style="">Everything a student needs to succeed</p>
+</div>
+<a class="text-[#520f85] font-semibold flex items-center gap-1 hover:underline group" href="#" style="">
+                    View All <span class="material-symbols-outlined text-sm group-hover:translate-x-1 transition-transform" style="">arrow_forward</span>
+</a>
+</div>
+<div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+<!-- Laptop Category -->
+<div class="group relative overflow-hidden aspect-square rounded-lg cursor-pointer">
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB8o9UFBvF8YrrOwwhPsIraLinv3q4JYdd7y_qk2nVeWyzGU41KjszX-UgxJbqQhUirLspmW1EaDL1xU1h3Mi1a9O7jjAum8nLiHLnd_c47dDnkaN3MD7krRjkJCuYtaW1NEcEfqK3SGRAa7iV9_uJg-vL8sZhBelZPJNLu675ZKEuGyJaAJHMk7EFfGOq9EkJhMDWNKEY7dDZRZTR5ni3tEtcw2QY6FKqsrUBSvLAslzCqLMiArmrACZjfOkF6OKRnNWq-uDAjBTip" style="">
+<div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
+<div class="absolute bottom-4 left-4 text-white">
+<h3 class="font-bold text-lg" style="">Laptops</h3>
+<span class="text-xs text-slate-300" style="">540+ items</span>
+</div>
+</div>
+<!-- Phones Category -->
+<div class="group relative overflow-hidden aspect-square rounded-lg cursor-pointer">
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCwVCnYU-hEQDIPkZk1hJ0HJctkL47Q_iKgGuUJeQFPie_jGOj-bFnR46msq-SEDxB6_7Xz1vZg3MrIuxl6XIcRr4exntBZ7r-ygrUFyVWBxcNAYCta1kB6QRNT8bJFzS9tinLBSyJiRv2ZpDICsTwOazc7AfN3RlJ06tXJdHiQPz1p_f3foyCyf3IECyXGOTPYjZ2BEldvF2LBFJGAOfJ-g_LoW8OtIXzYOx7uHDLDkwKSNYGCjPujYZWHw-EWGljS8rWshYZffpUS" style="">
+<div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
+<div class="absolute bottom-4 left-4 text-white">
+<h3 class="font-bold text-lg" style="">Phones</h3>
+<span class="text-xs text-slate-300" style="">320+ items</span>
+</div>
+</div>
+<!-- Accessories Category -->
+<div class="group relative overflow-hidden aspect-square rounded-lg cursor-pointer">
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB-3EQxB_ussuVVi18YDyweMvv_gHmw1dVMWAOmN23K_x7I2sGapO_FuQoJqoUVhIiGf3Jgdmw1-kyfAlycAZTytrrZtGcTKRkMXnTg98FgxzMMX_iyNOi0M7gY95i1xOolwt7hhyDRibmlKgchbRpiiznVMQGB5vGSFJ_-r-6yb45sJrxNJz9utH5cjRavpj_YpZjgBzxgzNm2IX71HrDpE8qOkMXJT0jZDpJ_FcPw7CmtoU1ZbKBzeLkWauzQ0Fo_GHWAJWUJ2sM7" style="">
+<div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
+<div class="absolute bottom-4 left-4 text-white">
+<h3 class="font-bold text-lg" style="">Accessories</h3>
+<span class="text-xs text-slate-300" style="">1.2k+ items</span>
+</div>
+</div>
+<!-- Tablets Category -->
+<div class="group relative overflow-hidden aspect-square rounded-lg cursor-pointer">
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAPTL0TwEeInxlRVwk4QWiE3X-qeLZuURu5eJwL2HHcl4De78CZwnvtUll-mok9dRCV3oJvJmNcdsREhUggLmawgxz7kti31v3ST3N2wQzBYT4fesbD63st8ukG-xApKpwDLSFP9hIVAMkCVGsyEDl6BSsDR3_IqxQ7MEmGMDTH8ONKvI6av7zJQIA3c0Wi0o7ruCADBZu5jXylp6xawq_zGGwJ98yXjzmrxR8i6pdGiP_R3SfTmAxW-ZgiinwYSWlProoyRWwKi9FY" style="">
+<div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
+<div class="absolute bottom-4 left-4 text-white">
+<h3 class="font-bold text-lg" style="">Tablets</h3>
+<span class="text-xs text-slate-300" style="">180+ items</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- NEW SECTION: Browse Universities -->
+<section class="py-16 bg-white border-t border-slate-100">
+<div class="max-w-[1280px] mx-auto px-4 md:px-8">
+<div class="flex justify-between items-end mb-8">
+<div>
+<h2 class="text-3xl font-bold text-gray-900" style="">Browse Universities</h2>
+<p class="text-gray-500" style="">Find tech deals specifically for your campus</p>
+</div>
+<a class="text-[#520f85] font-semibold flex items-center gap-1 hover:underline group" href="#" style="">
+                    All Universities <span class="material-symbols-outlined text-sm group-hover:translate-x-1 transition-transform" style="">arrow_forward</span>
+</a>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+<!-- UG Legon -->
+<div class="group relative overflow-hidden rounded-xl cursor-pointer h-48 shadow-sm">
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB26A0x9-Y5Xlq3hV0E7u_9X2s1k5F5g2p5R8z8V8x6A1x8S2-Z0_9f6L5e_1r6k5D5X1x8R2-Z0_9f6L5e_1r6k5D" style="">
+<div class="absolute inset-0 bg-gradient-to-t from-[#520f85]/90 via-[#520f85]/40 to-transparent"></div>
+<div class="absolute bottom-4 left-4 text-white">
+<h3 class="font-bold text-lg" style="">University of Ghana</h3>
+<div class="flex items-center gap-2">
+<span class="text-xs text-white/80" style="">Legon, Accra</span>
+<span class="w-1 h-1 bg-white/40 rounded-full"></span>
+<span class="text-xs font-bold text-[#d41295]" style="">2.4k+ Products</span>
+</div>
+</div>
+</div>
+<!-- KNUST -->
+<div class="group relative overflow-hidden rounded-xl cursor-pointer h-48 shadow-sm">
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC9-X1v9-Z5Xlq3hV0E7u_9X2s1k5F5g2p5R8z8V8x6A1x8S2-Z0_9f6L5e_1r6k5D5X1x8R2-Z0_9f6L5e_1r6k5D" style="">
+<div class="absolute inset-0 bg-gradient-to-t from-[#520f85]/90 via-[#520f85]/40 to-transparent"></div>
+<div class="absolute bottom-4 left-4 text-white">
+<h3 class="font-bold text-lg" style="">KNUST</h3>
+<div class="flex items-center gap-2">
+<span class="text-xs text-white/80" style="">Kumasi</span>
+<span class="w-1 h-1 bg-white/40 rounded-full"></span>
+<span class="text-xs font-bold text-[#d41295]" style="">1.8k+ Products</span>
+</div>
+</div>
+</div>
+<!-- UCC -->
+<div class="group relative overflow-hidden rounded-xl cursor-pointer h-48 shadow-sm">
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD2-Z1v9-Z5Xlq3hV0E7u_9X2s1k5F5g2p5R8z8V8x6A1x8S2-Z0_9f6L5e_1r6k5D5X1x8R2-Z0_9f6L5e_1r6k5D" style="">
+<div class="absolute inset-0 bg-gradient-to-t from-[#520f85]/90 via-[#520f85]/40 to-transparent"></div>
+<div class="absolute bottom-4 left-4 text-white">
+<h3 class="font-bold text-lg" style="">University of Cape Coast</h3>
+<div class="flex items-center gap-2">
+<span class="text-xs text-white/80" style="">Cape Coast</span>
+<span class="w-1 h-1 bg-white/40 rounded-full"></span>
+<span class="text-xs font-bold text-[#d41295]" style="">1.2k+ Products</span>
+</div>
+</div>
+</div>
+<!-- Ashesi -->
+<div class="group relative overflow-hidden rounded-xl cursor-pointer h-48 shadow-sm">
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuE2-Z1v9-Z5Xlq3hV0E7u_9X2s1k5F5g2p5R8z8V8x6A1x8S2-Z0_9f6L5e_1r6k5D5X1x8R2-Z0_9f6L5e_1r6k5D" style="">
+<div class="absolute inset-0 bg-gradient-to-t from-[#520f85]/90 via-[#520f85]/40 to-transparent"></div>
+<div class="absolute bottom-4 left-4 text-white">
+<h3 class="font-bold text-lg" style="">Ashesi University</h3>
+<div class="flex items-center gap-2">
+<span class="text-xs text-white/80" style="">Berekuso</span>
+<span class="w-1 h-1 bg-white/40 rounded-full"></span>
+<span class="text-xs font-bold text-[#d41295]" style="">800+ Products</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- UPDATED SECTION: Browse Stores -->
+<section class="py-16 bg-[#f8fafc] border-y border-slate-100">
+<div class="max-w-[1280px] mx-auto px-4 md:px-8">
+<div class="flex justify-between items-end mb-10">
+<div>
+<h2 class="text-3xl font-bold text-gray-900" style="">Browse<span style="font-size: 1.875rem;">&nbsp;Stores</span></h2>
+<p class="text-gray-600" style="">Trusted local sellers from your university community</p>
+</div>
+<a class="text-[#520f85] font-semibold flex items-center gap-1 hover:underline group" href="#" style="">
+                    View All Stores <span class="material-symbols-outlined text-sm group-hover:translate-x-1 transition-transform" style="">arrow_forward</span>
+</a>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+<!-- Store Card 1 -->
+<div class="bg-white p-6 rounded-xl border border-slate-200 hover:shadow-lg transition-all group">
+<div class="flex items-center gap-4 mb-4">
+<div class="w-16 h-16 rounded-full overflow-hidden border-2 border-purple-50 group-hover:border-[#520f85] transition-colors">
+<img class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA4B8PsPEAYTXHGv83iT_Fa-fHh4vvx-WO3vSWt8XY55OQu6fiUdS5a7eOZyEYqnGUkgkoBoE7FdjKzLa4Jm9mjR73lv-2gS0iw390LR3kVgA6e7q-OiHWB-nZ2RNcIyqrL-gN7_L7qVu_mZse3_tHciW-Sup-QPsriRUtVVPPkLQOMYetyr5WjiP8ikww0LJthACVaS1s9SQXAT5jTgEtq1h6QmakGI5OJNs9EyIpsvoqc2AvN2lZHAjGKnQeBKU9-TD0vTUfLmdq1" style="">
+</div>
+<div>
+<h3 class="font-bold text-gray-900 group-hover:text-[#520f85] transition-colors" style="">Legon Tech Hub</h3>
+<div class="flex items-center gap-1 text-[#d41295]">
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: &quot;FILL&quot; 1;">star</span>
+<span class="text-xs font-bold" style="">4.9</span>
+<span class="text-[10px] text-gray-400 font-normal" style="">(1.2k)</span>
+</div>
+</div>
+</div>
+<div class="flex flex-wrap gap-2 mb-4">
+<span class="bg-purple-50 text-[#520f85] text-[10px] font-bold px-2 py-1 rounded" style="">UG LEGON</span>
+<span class="bg-slate-50 text-slate-500 text-[10px] font-bold px-2 py-1 rounded" style="">LAPTOPS</span>
+</div>
+<button class="w-full py-2 border-2 border-[#520f85] text-[#520f85] font-bold rounded-lg hover:bg-[#520f85] hover:text-white transition-all text-sm" style="">Visit Store</button>
+</div>
+<!-- Store Card 2 -->
+<div class="bg-white p-6 rounded-xl border border-slate-200 hover:shadow-lg transition-all group">
+<div class="flex items-center gap-4 mb-4">
+<div class="w-16 h-16 rounded-full overflow-hidden border-2 border-purple-50 group-hover:border-[#520f85] transition-colors">
+<img class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBWYw8UpQOZB4kr8CUQRI_YKxwWfaq0MycYRaRIsOz-71K2Jvbkd7YsM7mAB8jDSoxql1zxR7PuYiPqIMa6XAinIblIup_knxn_zWc4JgPqKpGFOgcDLLOkBNIzvUensiD30zsXzJxVBgEyDkn34G3NOS2RAdXANtQ5hSBAOtiP0qkMYF4gvD-3Wg08eO_LB0gkIh4Fw4jhYplGeAXig-2pxnufkXyXporNrHwf6B79mzdPAss4L3rpy5wpU8Uh2cjIBmW7mm1rG01J" style="">
+</div>
+<div>
+<h3 class="font-bold text-gray-900 group-hover:text-[#520f85] transition-colors" style="">KNUST Gadgets</h3>
+<div class="flex items-center gap-1 text-[#d41295]">
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: &quot;FILL&quot; 1;">star</span>
+<span class="text-xs font-bold" style="">4.8</span>
+<span class="text-[10px] text-gray-400 font-normal" style="">(850)</span>
+</div>
+</div>
+</div>
+<div class="flex flex-wrap gap-2 mb-4">
+<span class="bg-purple-50 text-[#520f85] text-[10px] font-bold px-2 py-1 rounded" style="">KNUST</span>
+<span class="bg-slate-50 text-slate-500 text-[10px] font-bold px-2 py-1 rounded" style="">PHONES</span>
+</div>
+<button class="w-full py-2 border-2 border-[#520f85] text-[#520f85] font-bold rounded-lg hover:bg-[#520f85] hover:text-white transition-all text-sm" style="">Visit Store</button>
+</div>
+<!-- Store Card 3 -->
+<div class="bg-white p-6 rounded-xl border border-slate-200 hover:shadow-lg transition-all group">
+<div class="flex items-center gap-4 mb-4">
+<div class="w-16 h-16 rounded-full overflow-hidden border-2 border-purple-50 group-hover:border-[#520f85] transition-colors">
+<img class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDLg79_kHUdIg4sEvk0hGN7jvaocPjwVfQ-t_gybuDP0GO2WtqnRCs5nXufIWTiKmKJ6WIZg1fWk62t6Ro3xO5qSQ8K89UXf1eaY5c4vVw4RNM7XVjVxWc6Cl3yOewtVJqXVjfLAtEJCWrKMZwW-d7L05h8ogT0RoYiKrSLIytI27X0lQmUEnTNcRmtCDP1iEg5-YCOZ_F4Zbsi95c6Y-4wWiWrqbsA2wc2dbBydnf1CEgzUSlTiz0vV1kTnSwy1l8qKqOKY1hsxJix" style="">
+</div>
+<div>
+<h3 class="font-bold text-gray-900 group-hover:text-[#520f85] transition-colors" style="">UCC Digital Hub</h3>
+<div class="flex items-center gap-1 text-[#d41295]">
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: &quot;FILL&quot; 1;">star</span>
+<span class="text-xs font-bold" style="">4.7</span>
+<span class="text-[10px] text-gray-400 font-normal" style="">(420)</span>
+</div>
+</div>
+</div>
+<div class="flex flex-wrap gap-2 mb-4">
+<span class="bg-purple-50 text-[#520f85] text-[10px] font-bold px-2 py-1 rounded" style="">UCC</span>
+<span class="bg-slate-50 text-slate-500 text-[10px] font-bold px-2 py-1 rounded" style="">ACCESSORIES</span>
+</div>
+<button class="w-full py-2 border-2 border-[#520f85] text-[#520f85] font-bold rounded-lg hover:bg-[#520f85] hover:text-white transition-all text-sm" style="">Visit Store</button>
+</div>
+<!-- Store Card 4 -->
+<div class="bg-white p-6 rounded-xl border border-slate-200 hover:shadow-lg transition-all group">
+<div class="flex items-center gap-4 mb-4">
+<div class="w-16 h-16 bg-[#520f85] rounded-full flex items-center justify-center text-white font-bold text-xl border-2 border-purple-50 group-hover:border-[#520f85] transition-colors" style="">AT</div>
+<div>
+<h3 class="font-bold text-gray-900 group-hover:text-[#520f85] transition-colors" style="">Ashesi Tech</h3>
+<div class="flex items-center gap-1 text-[#d41295]">
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: &quot;FILL&quot; 1;">star</span>
+<span class="text-xs font-bold" style="">4.9</span>
+<span class="text-[10px] text-gray-400 font-normal" style="">(210)</span>
+</div>
+</div>
+</div>
+<div class="flex flex-wrap gap-2 mb-4">
+<span class="bg-purple-50 text-[#520f85] text-[10px] font-bold px-2 py-1 rounded" style="">ASHESI</span>
+<span class="bg-slate-50 text-slate-500 text-[10px] font-bold px-2 py-1 rounded" style="">GAMING</span>
+</div>
+<button class="w-full py-2 border-2 border-[#520f85] text-[#520f85] font-bold rounded-lg hover:bg-[#520f85] hover:text-white transition-all text-sm" style="">Visit Store</button>
+</div>
+</div>
+</div>
+</section>
+<!-- Featured Deals -->
+<section class="py-16 bg-white">
+<div class="max-w-[1280px] mx-auto px-4 md:px-8">
+<div class="flex justify-between items-end mb-10">
+<div>
+<h2 class="text-3xl font-bold text-gray-900" style="">Featured Deals</h2>
+<p class="text-gray-600" style="">Top picks for students this semester</p>
+</div>
+<a class="text-[#520f85] font-semibold flex items-center gap-1 hover:underline" href="#" style="">
+                    See all <span class="material-symbols-outlined text-sm" style="">arrow_forward</span>
+</a>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+<!-- Product 1 -->
+<div class="group bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col">
+<div class="relative aspect-square overflow-hidden bg-gray-100">
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCeoY6GXyzDkH_uB6sgh-t2KXIm9Cv5PlV2zQlrdRRaGd74PMv-dP1w59d5aM_GJuU2nQk6QP8BhxCNgr_-jCKOvdfl8s6BRLaxI0SzdpGtG6iFzwfrY0OPakHqUc73OG884gBkw2q_Arg_kvRKY5Leu5Sugzydob9rQiuZlDWLdC37sW1owoIP-y_eT_IVyfajETwlsAcT0ZhIQx-47uYiZlxaZTm326iW10Na-Zo2vmMW0jfQ3x2xEF-jTjrgrg_Ati9p2WavwJwS" style="">
+<div class="absolute top-3 left-3 flex flex-col gap-1">
+<span class="bg-[#d41295] text-white text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-wider" style="">HOT</span>
+</div>
+<button class="absolute top-3 right-3 w-8 h-8 bg-white/90 backdrop-blur rounded-full flex items-center justify-center text-slate-400 hover:text-red-500 shadow-sm transition-colors" style="">
+<span class="material-symbols-outlined text-sm" style="">favorite</span>
+</button>
+</div>
+<div class="p-4 flex flex-col flex-grow">
+<p class="text-[10px] text-[#520f85] font-bold uppercase tracking-widest mb-1" style="">Apple</p>
+<h3 class="font-bold text-gray-900 line-clamp-2 mb-2 h-10" style="">MacBook Air M2 (2023)</h3>
+<div class="flex items-center gap-1 mb-4">
+<span class="material-symbols-outlined text-yellow-400 text-sm" style="font-variation-settings: &quot;FILL&quot; 1;">star</span>
+<span class="text-xs font-bold" style="">4.9</span>
+<span class="text-[10px] text-gray-400" style="">(42 Reviews)</span>
+</div>
+<div class="mt-auto flex items-center justify-between">
+<span class="text-xl font-extrabold text-[#520f85]" style="">GH₵ 12,499</span>
+<button class="bg-[#520f85] text-white p-2 rounded-lg hover:bg-[#3b0a63] transition-all" style="">
+<span class="material-symbols-outlined" style="">shopping_cart</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Product 2 -->
+<div class="group bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col">
+<div class="relative aspect-square overflow-hidden bg-gray-100">
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAma5jVIrPIYmzhcPZAqIL410BU9zCUZycE6n1f1jPzj3mUxZ0N8i_SIjc1HrUIG2TSBmmOizhXxIo6J-XlKpTve9GLvtE__5K9ALP0ZmUqoteI9ypPCrqVx9TNAVnsmid32Gf7XiDV8ZN3e_vWUhS-3rDZH3JSCKBZkC-6kvZv7STZe7d_ZaWULlr501O9YLz2KSW4TXlKLkOsR8gqcLbkiVPz4GfbSpSJlhtHQCOODOQrqLwgf2EC2Tc6VM4wuKrCuyk5lVjudG1j" style="">
+<div class="absolute top-3 left-3 flex flex-col gap-1">
+<span class="bg-green-500 text-white text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-wider" style="">NEW</span>
+</div>
+<button class="absolute top-3 right-3 w-8 h-8 bg-white/90 backdrop-blur rounded-full flex items-center justify-center text-slate-400 hover:text-red-500 shadow-sm transition-colors" style="">
+<span class="material-symbols-outlined text-sm" style="">favorite</span>
+</button>
+</div>
+<div class="p-4 flex flex-col flex-grow">
+<p class="text-[10px] text-[#520f85] font-bold uppercase tracking-widest mb-1" style="">Sony</p>
+<h3 class="font-bold text-gray-900 line-clamp-2 mb-2 h-10" style="">Sony WH-1000XM5</h3>
+<div class="flex items-center gap-1 mb-4">
+<span class="material-symbols-outlined text-yellow-400 text-sm" style="font-variation-settings: &quot;FILL&quot; 1;">star</span>
+<span class="text-xs font-bold" style="">4.8</span>
+<span class="text-[10px] text-gray-400" style="">(15 Reviews)</span>
+</div>
+<div class="mt-auto flex items-center justify-between">
+<span class="text-xl font-extrabold text-[#520f85]" style="">GH₵ 3,850</span>
+<button class="bg-[#520f85] text-white p-2 rounded-lg hover:bg-[#3b0a63] transition-all" style="">
+<span class="material-symbols-outlined" style="">shopping_cart</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Product 3 -->
+<div class="group bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col">
+<div class="relative aspect-square overflow-hidden bg-gray-100">
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCIMYa6F5sn1v4AkrJZtdrogBX3lJYorBLrrRUGK7uAtutucjg1SLpC84QcbdSNV1IkUqbC33tB84eWYCutrLSd6E7N_uTzpCUeWYHDoBqS7r4rTskBmZprqmOviLyaDgvM-TCpQWiZ_tHN_TqQFMRfbZTI4OI2Gt5Uwzh2Sx3HyNRfhx-ry2MPYE-p81wXGyLFLbtr4-8G963QZxx5rchpVFLoy3WrsVNJqQ98L_Y8ATHR3Ha7I4uAm68rPwX-eVnktaAgd9wpHBC3" style="">
+<div class="absolute top-3 left-3 flex flex-col gap-1">
+<span class="bg-blue-500 text-white text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-wider" style="">OFFER</span>
+</div>
+<button class="absolute top-3 right-3 w-8 h-8 bg-white/90 backdrop-blur rounded-full flex items-center justify-center text-slate-400 hover:text-red-500 shadow-sm transition-colors" style="">
+<span class="material-symbols-outlined text-sm" style="">favorite</span>
+</button>
+</div>
+<div class="p-4 flex flex-col flex-grow">
+<p class="text-[10px] text-[#520f85] font-bold uppercase tracking-widest mb-1" style="">Samsung</p>
+<h3 class="font-bold text-gray-900 line-clamp-2 mb-2 h-10" style="">Galaxy S23 Ultra</h3>
+<div class="flex items-center gap-1 mb-4">
+<span class="material-symbols-outlined text-yellow-400 text-sm" style="font-variation-settings: &quot;FILL&quot; 1;">star</span>
+<span class="text-xs font-bold" style="">4.7</span>
+<span class="text-[10px] text-gray-400" style="">(89 Reviews)</span>
+</div>
+<div class="mt-auto flex items-center justify-between">
+<span class="text-xl font-extrabold text-[#520f85]" style="">GH₵ 8,900</span>
+<button class="bg-[#520f85] text-white p-2 rounded-lg hover:bg-[#3b0a63] transition-all" style="">
+<span class="material-symbols-outlined" style="">shopping_cart</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Product 4 -->
+<div class="group bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col">
+<div class="relative aspect-square overflow-hidden bg-gray-100">
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCZ1cggbw6rQ8N3_3Ng2j7Doxzfw67aM96LhHtCoTYKhywV2F1V-r_5I2bj6X5E4A04xfArCNNduue44kO-XjF_8Hb27UEcZsVHnmviYIfiIs9LzY9REm4Tb-jsBMOjlVCNeItolpZz8BNBvl-FPaN4OPLs1eg6EXvOQyU4r8h_gTLn8Q-Nhvu166z_j4M-FrXwmjyiUEg_pBS-n8zcRQ7XCrtCqP1_tid2jb41PuYAxacDy0PouK1t7smiJc5EVOjIi5qk4Qm_E9ae" style="">
+<button class="absolute top-3 right-3 w-8 h-8 bg-white/90 backdrop-blur rounded-full flex items-center justify-center text-slate-400 hover:text-red-500 shadow-sm transition-colors" style="">
+<span class="material-symbols-outlined text-sm" style="">favorite</span>
+</button>
+</div>
+<div class="p-4 flex flex-col flex-grow">
+<p class="text-[10px] text-[#520f85] font-bold uppercase tracking-widest mb-1" style="">Xiaomi</p>
+<h3 class="font-bold text-gray-900 line-clamp-2 mb-2 h-10" style="">Redmi Watch 3 Active</h3>
+<div class="flex items-center gap-1 mb-4">
+<span class="material-symbols-outlined text-yellow-400 text-sm" style="font-variation-settings: &quot;FILL&quot; 1;">star</span>
+<span class="text-xs font-bold" style="">4.5</span>
+<span class="text-[10px] text-gray-400" style="">(120 Reviews)</span>
+</div>
+<div class="mt-auto flex items-center justify-between">
+<span class="text-xl font-extrabold text-[#520f85]" style="">GH₵ 650</span>
+<button class="bg-[#520f85] text-white p-2 rounded-lg hover:bg-[#3b0a63] transition-all" style="">
+<span class="material-symbols-outlined" style="">shopping_cart</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Student Deals (New Section) -->
+<section class="py-16 bg-[#520f85]">
+<div class="max-w-[1280px] mx-auto px-4 md:px-8">
+<div class="flex items-center gap-3 mb-10">
+<span class="material-symbols-outlined text-white text-3xl" style="">local_offer</span>
+<h2 class="text-3xl font-bold text-white" style="">Student Deals</h2>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+<div class="bg-gradient-to-br from-[#d41295] to-[#8c0a62] p-8 rounded-2xl relative overflow-hidden group shadow-lg">
+<div class="relative z-10">
+<span class="text-xs font-bold text-white/80 uppercase tracking-widest" style="">Exclusive</span>
+<h3 class="text-2xl font-black text-white mt-2 leading-tight" style="">University of Ghana Tech Fest</h3>
+<p class="text-white/90 mt-4 font-medium" style="">Up to 40% OFF on all accessories for Legon students.</p>
+<button class="mt-6 bg-white text-[#d41295] px-6 py-2 rounded-lg font-bold hover:scale-105 transition-transform" style="">Get Code</button>
+</div>
+<span class="material-symbols-outlined absolute -right-4 -bottom-4 text-[120px] text-white/10 rotate-12 group-hover:rotate-0 transition-transform" style="">school</span>
+</div>
+<div class="bg-gradient-to-br from-[#1275e2] to-[#0a4ea0] p-8 rounded-2xl relative overflow-hidden group shadow-lg">
+<div class="relative z-10">
+<span class="text-xs font-bold text-white/80 uppercase tracking-widest" style="">Limited Time</span>
+<h3 class="text-2xl font-black text-white mt-2 leading-tight" style="">KNUST Hostel Delivery Promo</h3>
+<p class="text-white/90 mt-4 font-medium" style="">FREE delivery to all KNUST hostels this week only!</p>
+<button class="mt-6 bg-white text-[#1275e2] px-6 py-2 rounded-lg font-bold hover:scale-105 transition-transform" style="">Claim Now</button>
+</div>
+<span class="material-symbols-outlined absolute -right-4 -bottom-4 text-[120px] text-white/10 rotate-12 group-hover:rotate-0 transition-transform" style="">local_shipping</span>
+</div>
+<div class="bg-gradient-to-br from-[#00c853] to-[#008c3a] p-8 rounded-2xl relative overflow-hidden group shadow-lg">
+<div class="relative z-10">
+<span class="text-xs font-bold text-white/80 uppercase tracking-widest" style="">Flash Sale</span>
+<h3 class="text-2xl font-black text-white mt-2 leading-tight" style="">UCC Freshers Laptop Bundle</h3>
+<p class="text-white/90 mt-4 font-medium" style="">Laptops + Wireless Mouse + Bag. Save GH₵ 800.</p>
+<button class="mt-6 bg-white text-[#00c853] px-6 py-2 rounded-lg font-bold hover:scale-105 transition-transform" style="">Shop Sale</button>
+</div>
+<span class="material-symbols-outlined absolute -right-4 -bottom-4 text-[120px] text-white/10 rotate-12 group-hover:rotate-0 transition-transform" style="">laptop_mac</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Trending Now Section -->
+<section class="py-16 bg-[#f8fafc]">
+<div class="max-w-[1280px] mx-auto px-4 md:px-8">
+<div class="flex justify-between items-end mb-10">
+<div>
+<h2 class="text-3xl font-bold text-gray-900" style="">Trending Now</h2>
+<p class="text-gray-600" style="">What students are buying this week</p>
+</div>
+<a class="text-[#520f85] font-semibold flex items-center gap-1 hover:underline" href="#" style="">
+                    View all <span class="material-symbols-outlined text-sm" style="">arrow_forward</span>
+</a>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+<!-- Product Card -->
+<div class="group bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col">
+<div class="relative aspect-square overflow-hidden bg-gray-100">
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAPTL0TwEeInxlRVwk4QWiE3X-qeLZuURu5eJwL2HHcl4De78CZwnvtUll-mok9dRCV3oJvJmNcdsREhUggLmawgxz7kti31v3ST3N2wQzBYT4fesbD63st8ukG-xApKpwDLSFP9hIVAMkCVGsyEDl6BSsDR3_IqxQ7MEmGMDTH8ONKvI6av7zJQIA3c0Wi0o7ruCADBZu5jXylp6xawq_zGGwJ98yXjzmrxR8i6pdGiP_R3SfTmAxW-ZgiinwYSWlProoyRWwKi9FY" style="">
+<button class="absolute top-3 right-3 w-8 h-8 bg-white/90 backdrop-blur rounded-full flex items-center justify-center text-slate-400 hover:text-red-500 shadow-sm transition-colors" style="">
+<span class="material-symbols-outlined text-sm" style="">favorite</span>
+</button>
+</div>
+<div class="p-4 flex flex-col flex-grow">
+<p class="text-[10px] text-[#520f85] font-bold uppercase tracking-widest mb-1" style="">Apple</p>
+<h3 class="font-bold text-gray-900 line-clamp-2 mb-2 h-10" style="">iPad Pro 11-inch (M2)</h3>
+<div class="flex items-center gap-1 mb-4">
+<span class="material-symbols-outlined text-yellow-400 text-sm" style="font-variation-settings: &quot;FILL&quot; 1;">star</span>
+<span class="text-xs font-bold" style="">4.9</span>
+<span class="text-[10px] text-gray-400" style="">(28 Reviews)</span>
+</div>
+<div class="mt-auto flex items-center justify-between">
+<span class="text-xl font-extrabold text-[#520f85]" style="">GH₵ 9,500</span>
+<button class="bg-[#520f85] text-white p-2 rounded-lg hover:bg-[#3b0a63] transition-all" style="">
+<span class="material-symbols-outlined" style="">shopping_cart</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Product Card -->
+<div class="group bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col">
+<div class="relative aspect-square overflow-hidden bg-gray-100">
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB-3EQxB_ussuVVi18YDyweMvv_gHmw1dVMWAOmN23K_x7I2sGapO_FuQoJqoUVhIiGf3Jgdmw1-kyfAlycAZTytrrZtGcTKRkMXnTg98FgxzMMX_iyNOi0M7gY95i1xOolwt7hhyDRibmlKgchbRpiiznVMQGB5vGSFJ_-r-6yb45sJrxNJz9utH5cjRavpj_YpZjgBzxgzNm2IX71HrDpE8qOkMXJT0jZDpJ_FcPw7CmtoU1ZbKBzeLkWauzQ0Fo_GHWAJWUJ2sM7" style="">
+<button class="absolute top-3 right-3 w-8 h-8 bg-white/90 backdrop-blur rounded-full flex items-center justify-center text-slate-400 hover:text-red-500 shadow-sm transition-colors" style="">
+<span class="material-symbols-outlined text-sm" style="">favorite</span>
+</button>
+</div>
+<div class="p-4 flex flex-col flex-grow">
+<p class="text-[10px] text-[#520f85] font-bold uppercase tracking-widest mb-1" style="">HP</p>
+</div></div></div></div></section></main></body></html>
