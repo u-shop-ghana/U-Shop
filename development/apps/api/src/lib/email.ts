@@ -48,26 +48,25 @@ export async function sendEmail(options: SendEmailOptions): Promise<string | nul
       to: Array.isArray(options.to) ? options.to : [options.to],
       subject: options.subject,
       html: options.html,
-      reply_to: options.replyTo,
+      replyTo: options.replyTo,
       tags: options.tags,
     });
 
     if (error) {
-      logger.error(`Resend email failed: ${error.message}`, { error, to: options.to });
+      logger.error({ error, to: options.to }, `Resend email failed: ${error.message}`);
       return null;
     }
 
-    logger.info(`Email sent successfully via Resend`, {
-      messageId: data?.id,
-      to: options.to,
-      subject: options.subject,
-    });
+    logger.info(
+      { messageId: data?.id, to: options.to, subject: options.subject },
+      'Email sent successfully via Resend'
+    );
 
     return data?.id || null;
   } catch (err: unknown) {
     // Network errors, invalid API key, etc.
     const message = err instanceof Error ? err.message : 'Unknown email error';
-    logger.error(`Resend email exception: ${message}`, { err, to: options.to });
+    logger.error({ err, to: options.to }, `Resend email exception: ${message}`);
     return null;
   }
 }
