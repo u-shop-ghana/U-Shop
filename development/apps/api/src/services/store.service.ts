@@ -143,6 +143,35 @@ export class StoreService {
   }
 
   /**
+   * Retrieves active stores mapped for exploration index
+   */
+  static async listStores(page: number, limit: number) {
+    const skip = (page - 1) * limit;
+
+    const stores = await prisma.store.findMany({
+      where: { isActive: true },
+      include: {
+        user: { select: { verificationStatus: true, universityName: true } },
+      },
+      orderBy: [
+        { averageRating: 'desc' },
+        { reviewCount: 'desc' },
+        { createdAt: 'desc' }
+      ],
+      skip,
+      take: limit,
+    });
+
+    const safeStores = stores.map(store => {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { pendingPolicyUpdates, ...safe } = store;
+      return safe;
+    });
+
+    return safeStores;
+  }
+
+  /**
    * Checks if a handle is strictly available.
    * @returns `true` if available, `false` otherwise
    */
