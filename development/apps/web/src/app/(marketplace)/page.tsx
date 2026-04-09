@@ -202,7 +202,7 @@ export default async function HomePage() {
          </div>
       </section>
 
-      {/* Browse Universities — matching Figma: white bg, logo cards with name + location */}
+      {/* Browse Universities — matching Figma: same image card grid as categories */}
       <section className="py-16 bg-[#f8fafc]">
          <div className="max-w-7xl mx-auto px-4 md:px-8">
             <div className="flex justify-between items-end mb-8">
@@ -214,21 +214,16 @@ export default async function HomePage() {
                   All Universities <span className="material-symbols-outlined text-sm group-hover:translate-x-1 transition-transform">arrow_forward</span>
                </Link>
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
                {data.universities.map((uni: UniversityOption) => (
                   <Link key={uni.id} href={`/universities/${uni.shortName.toLowerCase()}`}>
-                     <div className="group bg-white rounded-2xl border border-gray-200 p-6 hover:shadow-lg hover:-translate-y-1 transition-all flex flex-col items-center text-center">
-                        {/* University logo / image */}
-                        <div className="w-20 h-20 rounded-2xl overflow-hidden relative mb-4 bg-gray-100 border border-gray-200">
-                           <Image
-                             fill
-                             src={UNI_IMAGES[uni.shortName.toLowerCase()] || '/assets/images/universities/legon.jpg'}
-                             alt={uni.shortName}
-                             className="object-cover"
-                           />
+                     <div className="group relative overflow-hidden rounded-2xl cursor-pointer aspect-[4/5] shadow-md">
+                        <Image fill src={UNI_IMAGES[uni.shortName.toLowerCase()] || '/assets/images/universities/legon.jpg'} alt={uni.shortName} className="object-cover group-hover:scale-110 transition-transform duration-500" />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+                        <div className="absolute bottom-4 left-4 text-white">
+                           <h3 className="font-bold text-lg">{uni.name}</h3>
+                           <p className="text-xs text-white/70 mt-0.5">{uni.shortName}</p>
                         </div>
-                        <h3 className="font-bold text-gray-900 group-hover:text-ushop-purple transition-colors">{uni.name}</h3>
-                        <p className="text-xs text-gray-500 mt-1">{uni.shortName}</p>
                      </div>
                   </Link>
                ))}
