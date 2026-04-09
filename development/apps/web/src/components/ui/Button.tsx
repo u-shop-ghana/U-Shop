@@ -8,7 +8,7 @@ import { forwardRef, type ButtonHTMLAttributes, type ReactNode } from "react";
 // Supports: disabled state, loading spinner, full-width, icons
 //
 // Design reference: design/ui-kit/atoms/buttons.png
-// Colors: Primary=#520f85, Secondary=#d41295, Danger=#ef4444
+// Colors: Primary=#6B1FA8, Secondary=#D4009B, Danger=#ef4444
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: "primary" | "secondary" | "outline" | "ghost" | "danger";
@@ -27,11 +27,11 @@ const baseStyles =
 // Variant-specific styles matching the UI kit color tokens
 const variantStyles = {
   primary:
-    "bg-[#520f85] text-white hover:bg-[#420c6b] focus:ring-[#520f85] shadow-lg shadow-[#520f85]/20",
+    "bg-[#6B1FA8] text-white hover:bg-[#420c6b] focus:ring-[#6B1FA8] shadow-lg shadow-[#6B1FA8]/20",
   secondary:
-    "bg-[#d41295] text-white hover:bg-[#b50f7e] focus:ring-[#d41295] shadow-lg shadow-[#d41295]/20",
+    "bg-[#D4009B] text-white hover:bg-[#b50f7e] focus:ring-[#D4009B] shadow-lg shadow-[#D4009B]/20",
   outline:
-    "bg-transparent border-2 border-[#520f85] text-[#520f85] hover:bg-[#520f85]/10 focus:ring-[#520f85]",
+    "bg-transparent border-2 border-[#6B1FA8] text-[#6B1FA8] hover:bg-[#6B1FA8]/10 focus:ring-[#6B1FA8]",
   ghost:
     "bg-transparent text-gray-700 hover:bg-gray-100 focus:ring-gray-400",
   danger:
