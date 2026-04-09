@@ -40,7 +40,8 @@ app.use(helmet({
 // Vercel generates a unique subdomain for each deployment/branch,
 // so a single static origin string is insufficient.
 const allowedOrigins: string[] = [
-  process.env.FRONTEND_URL || 'http://localhost:3000',
+  process.env.FRONTEND_URL || 'https://u-shop-3eizbxn9j-qwecikuranchies-projects.vercel.app',
+  'https://u-shop-3eizbxn9j-qwecikuranchies-projects.vercel.app',
   'http://localhost:3000',
   'http://localhost:3001',
 ];
