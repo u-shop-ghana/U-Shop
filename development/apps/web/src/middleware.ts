@@ -44,7 +44,9 @@ export async function middleware(request: NextRequest) {
 
   // Define protected route patterns — routes that require authentication.
   // Auth routes (/login, /register, etc.) are NOT protected.
-  const protectedPaths = ["/dashboard", "/settings", "/orders", "/wallet", "/store"];
+  // Note: /store is NOT protected because /store/[handle] is a public storefront.
+  // Only /dashboard/store (the store management panel) is protected.
+  const protectedPaths = ["/dashboard", "/settings", "/orders", "/wallet"];
   const isProtectedRoute = protectedPaths.some((path) =>
     request.nextUrl.pathname.startsWith(path)
   );
@@ -65,16 +67,16 @@ export async function middleware(request: NextRequest) {
   );
 
   if (user && isAuthRoute) {
-    return NextResponse.redirect(new URL("/dashboard", request.url));
+    return NextResponse.redirect(new URL("/", request.url));
   }
 
   return supabaseResponse;
 }
 
 // Only run middleware on routes that need auth checking.
-// Skip static assets, images, favicon, and API routes.
+// Skip static assets, images, favicon, manifest.json, and API routes.
 export const config = {
   matcher: [
-    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
+    "/((?!_next/static|_next/image|favicon.ico|manifest.json|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico)$).*)",
   ],
 };
