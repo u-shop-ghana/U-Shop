@@ -82,7 +82,7 @@ function VerifyPageContent() {
     // Fetch the list of active universities from our Express API.
     // We don't need auth for this — it's a public endpoint.
     apiFetch("/api/v1/universities")
-      .then((data: any) => {
+      .then((data: { success: boolean; data: UniversityOption[] }) => {
         if (data.success) {
           setUniversities(data.data);
         }
@@ -148,16 +148,15 @@ function VerifyPageContent() {
       let frontUrl = "";
       try {
         frontUrl = await uploadFileToSupabase(idFront, "verification-docs", session.user.id);
-      } catch (err: any) {
+      } catch {
         setError("Failed to upload the front ID image. Please try again.");
         return;
       }
       
-      let backUrl = "";
       if (idBack) {
         try {
-          backUrl = await uploadFileToSupabase(idBack, "verification-docs", session.user.id);
-        } catch (err: any) {
+          await uploadFileToSupabase(idBack, "verification-docs", session.user.id);
+        } catch {
           setError("Failed to upload the back ID image. Please try again.");
           return;
         }
@@ -169,7 +168,7 @@ function VerifyPageContent() {
           imagePath: frontUrl,
           universityName: university,
         }),
-      }) as any;
+      }) as { success: boolean; error?: { message: string } };
 
       if (!res.success) {
         setError(res.error?.message || "Verification submission failed.");

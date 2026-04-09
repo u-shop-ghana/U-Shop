@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useState, FormEvent } from "react";
 import { Button } from "@/components/ui/Button";
 
@@ -11,7 +11,6 @@ interface Category {
 
 export default function SearchSidebar({
   currentParams,
-  categories,
 }: {
   currentParams: {
     q?: string;
@@ -22,7 +21,7 @@ export default function SearchSidebar({
     buyerUniversity?: string;
     sort?: string;
   };
-  categories: Category[];
+  categories?: Category[];
 }) {
   const router = useRouter();
   
