@@ -59,16 +59,10 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(loginUrl);
   }
 
-  // If user IS authenticated and tries to access auth pages,
-  // redirect them to the dashboard (they're already logged in)
-  const authPaths = ["/login", "/register"];
-  const isAuthRoute = authPaths.some((path) =>
-    request.nextUrl.pathname.startsWith(path)
-  );
-
-  if (user && isAuthRoute) {
-    return NextResponse.redirect(new URL("/", request.url));
-  }
+  // NOTE: We intentionally do NOT redirect authenticated users away from
+  // /login or /register. Stale Supabase cookies can make the middleware
+  // think a user is "logged in" even when the API session is expired.
+  // The auth pages themselves handle the UX for already-logged-in users.
 
   return supabaseResponse;
 }
