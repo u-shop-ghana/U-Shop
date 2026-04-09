@@ -35,8 +35,32 @@ app.use(helmet({
     },
   },
 }));
+// CORS: Allow the primary frontend URL, Vercel preview deployments,
+// and localhost for development. We use the callback pattern because
+// Vercel generates a unique subdomain for each deployment/branch,
+// so a single static origin string is insufficient.
+const allowedOrigins: string[] = [
+  process.env.FRONTEND_URL || 'http://localhost:3000',
+  'http://localhost:3000',
+  'http://localhost:3001',
+];
+
 app.use(cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:3000',
+  origin: (origin, callback) => {
+    // Allow requests with no origin (server-to-server, health checks, curl)
+    if (!origin) return callback(null, true);
+
+    // Check exact matches first (env-configured origins + localhost)
+    if (allowedOrigins.includes(origin)) return callback(null, true);
+
+    // Allow any Vercel preview/production deployment for this project.
+    // Vercel deploys use pattern: https://<project>-<hash>-<team>.vercel.app
+    // or the production domain like https://ushop.vercel.app
+    if (origin.endsWith('.vercel.app')) return callback(null, true);
+
+    // Block unknown origins
+    callback(new Error(`CORS: Origin ${origin} is not allowed`));
+  },
   credentials: true,
 }));
 
