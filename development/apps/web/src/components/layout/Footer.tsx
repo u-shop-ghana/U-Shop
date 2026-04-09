@@ -79,7 +79,7 @@ export function Footer() {
             <h3 className="text-white font-bold text-base mb-4">Quick Links</h3>
             <ul className="space-y-3">
               <li>
-                <Link href="/products" className="text-sm text-gray-400 hover:text-white transition-colors">
+                <Link href="/search" className="text-sm text-gray-400 hover:text-white transition-colors">
                   Shop All
                 </Link>
               </li>
@@ -89,8 +89,8 @@ export function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="/categories/smartphones" className="text-sm text-gray-400 hover:text-white transition-colors">
-                  Smartphones
+                <Link href="/categories/phones" className="text-sm text-gray-400 hover:text-white transition-colors">
+                  Phones
                 </Link>
               </li>
               <li>
@@ -116,7 +116,7 @@ export function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="/track" className="text-sm text-gray-400 hover:text-white transition-colors">
+                <Link href="/dashboard" className="text-sm text-gray-400 hover:text-white transition-colors">
                   Track Order
                 </Link>
               </li>
@@ -193,6 +193,8 @@ export function Footer() {
               onSubmit={(e) => e.preventDefault()}
             >
               <input
+                id="newsletter-email"
+                name="email"
                 type="email"
                 placeholder="Email Address"
                 className="px-4 py-2.5 bg-gray-800 border border-gray-700 text-white text-sm rounded-l-xl
