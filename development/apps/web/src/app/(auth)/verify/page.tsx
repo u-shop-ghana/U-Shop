@@ -81,10 +81,16 @@ function VerifyPageContent() {
   useEffect(() => {
     // Fetch the list of active universities from our Express API.
     // We don't need auth for this — it's a public endpoint.
+    // The client-side apiFetch returns the raw JSON from the API,
+    // which is { success: true, data: UniversityOption[] }.
     apiFetch("/api/v1/universities")
-      .then((data: { success: boolean; data: UniversityOption[] }) => {
-        if (data.success) {
-          setUniversities(data.data);
+      .then((response: { success?: boolean; data?: UniversityOption[] }) => {
+        // Handle both { success, data } and direct array responses
+        if (response.success && Array.isArray(response.data)) {
+          setUniversities(response.data);
+        } else if (Array.isArray(response)) {
+          // Fallback: in case the API shape changes
+          setUniversities(response as unknown as UniversityOption[]);
         }
       })
       .catch(() => {
