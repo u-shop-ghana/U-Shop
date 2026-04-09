@@ -3,12 +3,12 @@ import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
 import dotenv from 'dotenv';
-import { logger } from './lib/logger.js';
-import { errorHandler } from './middleware/error-handler.js';
-import { notFound } from './middleware/not-found.js';
-import { rateLimiter } from './middleware/rate-limiter.js';
-import authRouter from './routes/auth.js';
-import universitiesRouter from './routes/universities.js';
+import { logger } from './lib/logger';
+import { errorHandler } from './middleware/error-handler';
+import { notFound } from './middleware/not-found';
+import { rateLimiter } from './middleware/rate-limiter';
+import authRouter from './routes/auth';
+import universitiesRouter from './routes/universities';
 
 // Load environment variables
 dotenv.config();
@@ -70,9 +70,16 @@ app.use('/api/v1/auth', rateLimiter.auth, authRouter);
 // Universities is a public read-only endpoint — uses general rate limit.
 app.use('/api/v1/universities', universitiesRouter);
 
+import storesRouter from './routes/stores';
+import { userRoutes } from './routes/users';
+import listingsRouter from './routes/listings';
+import categoriesRouter from './routes/categories';
+
 // Routes to be added as we build each feature:
-// app.use('/api/v1/stores', storesRouter);
-// app.use('/api/v1/listings', listingsRouter);
+app.use('/api/v1/users', userRoutes);
+app.use('/api/v1/stores', storesRouter);
+app.use('/api/v1/listings', listingsRouter);
+app.use('/api/v1/categories', categoriesRouter);
 // app.use('/api/v1/orders', ordersRouter);
 // app.use('/api/v1/messages', messagesRouter);
 // app.use('/api/v1/reviews', reviewsRouter);

@@ -1,9 +1,9 @@
 import { Router, type Request, type Response, type NextFunction } from 'express';
-import { prisma } from '../lib/prisma.js';
-import { supabaseAdmin } from '../lib/supabase.js';
-import { logger } from '../lib/logger.js';
-import { authenticate } from '../middleware/authenticate.js';
-import { VerificationService } from '../services/verification.service.js';
+import { prisma } from '../lib/prisma';
+import { supabaseAdmin } from '../lib/supabase';
+import { logger } from '../lib/logger';
+import { authenticate } from '../middleware/authenticate';
+import { VerificationService } from '../services/verification.service';
 import { registerSchema } from '@ushop/shared';
 
 const router: Router = Router();
