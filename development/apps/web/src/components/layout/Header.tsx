@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { SearchBar } from "../cards/SearchBar";
 
 // ─── Header Component ───────────────────────────────────────────
@@ -10,6 +10,9 @@ import { SearchBar } from "../cards/SearchBar";
 //   Row 1 (topBar): Phone, email | Sell on U-Shop, Track Order
 //   Row 2 (main):   Logo, SearchBar, Wishlist, Cart, Login/SignUp
 //   Row 3 (nav):    All Products, Categories, Universities, Stores | Student Deals
+//
+// Responsive: Mobile hamburger shows full nav + wishlist/cart.
+// Auto-closes mobile menu on navigation.
 
 interface HeaderProps {
   cartCount?: number;
@@ -27,6 +30,7 @@ export function Header({
   onSearch,
 }: HeaderProps) {
   const router = useRouter();
+  const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   // Default search handler navigates to /search?q=...
@@ -36,7 +40,17 @@ export function Header({
     } else {
       router.push(`/search?q=${encodeURIComponent(query)}`);
     }
+    // Close mobile menu after search
+    setMobileMenuOpen(false);
   }
+
+  // Close mobile menu when a link is clicked
+  const closeMobileMenu = useCallback(() => {
+    setMobileMenuOpen(false);
+  }, []);
+
+  // Check if a nav link is the current page for active styling
+  const isActive = (href: string) => pathname === href;
 
   return (
     <header className="sticky top-0 z-40 bg-white shadow-sm">
@@ -49,27 +63,27 @@ export function Header({
               className="flex items-center gap-1 hover:text-gray-300 transition-colors"
             >
               <span className="material-symbols-outlined text-sm">call</span>
-              +233 50 956 5794
+              <span className="hidden sm:inline">+233 50 956 5794</span>
             </a>
-            <span className="text-gray-600">|</span>
+            <span className="text-gray-600 hidden sm:inline">|</span>
             <a
               href="mailto:support@ushop.com"
-              className="hover:text-gray-300 transition-colors"
+              className="hover:text-gray-300 transition-colors hidden sm:inline"
             >
               support@ushop.com
             </a>
           </div>
-          <div className="hidden md:flex items-center gap-4">
+          <div className="flex items-center gap-4">
             <Link
               href="/dashboard/store/create"
               className="hover:text-gray-300 transition-colors"
             >
               Sell on U-Shop
             </Link>
-            <span className="text-gray-600">|</span>
+            <span className="text-gray-600 hidden sm:inline">|</span>
             <Link
               href="/dashboard"
-              className="font-bold hover:text-gray-300 transition-colors"
+              className="font-bold hover:text-gray-300 transition-colors hidden sm:inline"
             >
               Track Order
             </Link>
@@ -79,13 +93,15 @@ export function Header({
 
       {/* ── Row 2: Main bar ── */}
       <div className="max-w-7xl mx-auto px-4 py-3">
-        <div className="flex items-center gap-6">
+        <div className="flex items-center gap-4 md:gap-6">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-0 shrink-0">
-            <div className="bg-red-600 w-9 h-9 flex items-center justify-center rounded-lg">
-              <span className="text-white font-extrabold text-lg">U</span>
+            <div className="bg-red-600 w-8 h-8 md:w-9 md:h-9 flex items-center justify-center rounded-lg">
+              <span className="text-white font-extrabold text-base md:text-lg">
+                U
+              </span>
             </div>
-            <span className="text-[#0f172a] font-extrabold text-xl ml-1">
+            <span className="text-[#0f172a] font-extrabold text-lg md:text-xl ml-1">
               shop
             </span>
           </Link>
@@ -96,11 +112,11 @@ export function Header({
           </div>
 
           {/* Right-side actions */}
-          <div className="flex items-center gap-4 ml-auto md:ml-0">
-            {/* Wishlist */}
+          <div className="flex items-center gap-3 md:gap-4 ml-auto md:ml-0">
+            {/* Wishlist — hidden on mobile (shown in hamburger) */}
             <Link
               href="/wishlist"
-              className="relative flex items-center gap-1 text-gray-600 hover:text-[#520f85] transition-colors"
+              className="relative hidden sm:flex items-center gap-1 text-gray-600 hover:text-[#6B1FA8] transition-colors"
             >
               <span className="material-symbols-outlined text-2xl">
                 favorite
@@ -118,7 +134,7 @@ export function Header({
             {/* Cart */}
             <Link
               href="/cart"
-              className="relative flex items-center gap-1 text-gray-600 hover:text-[#520f85] transition-colors"
+              className="relative flex items-center gap-1 text-gray-600 hover:text-[#6B1FA8] transition-colors"
             >
               <span className="material-symbols-outlined text-2xl">
                 shopping_cart
@@ -137,7 +153,7 @@ export function Header({
             {isLoggedIn ? (
               <Link
                 href="/dashboard"
-                className="flex items-center gap-2 text-sm font-medium text-gray-600 hover:text-[#520f85] transition-colors"
+                className="flex items-center gap-2 text-sm font-medium text-gray-600 hover:text-[#6B1FA8] transition-colors"
               >
                 <span className="material-symbols-outlined text-2xl">
                   account_circle
@@ -147,16 +163,16 @@ export function Header({
                 </span>
               </Link>
             ) : (
-              <div className="flex items-center gap-2">
+              <div className="hidden sm:flex items-center gap-2">
                 <Link
                   href="/login"
-                  className="text-sm font-bold text-gray-700 hover:text-[#520f85] transition-colors"
+                  className="text-sm font-bold text-gray-700 hover:text-[#6B1FA8] transition-colors"
                 >
                   Login
                 </Link>
                 <Link
                   href="/register"
-                  className="bg-[#d41295] text-white text-sm font-bold px-5 py-2.5 rounded-xl hover:bg-[#b50f7e] transition-colors"
+                  className="bg-[#D4009B] text-white text-sm font-bold px-4 py-2 md:px-5 md:py-2.5 rounded-xl hover:bg-[#b50f7e] transition-colors"
                 >
                   Sign Up
                 </Link>
@@ -167,7 +183,8 @@ export function Header({
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               className="md:hidden text-gray-600"
-              aria-label="Toggle menu"
+              aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
+              aria-expanded={mobileMenuOpen}
             >
               <span className="material-symbols-outlined text-2xl">
                 {mobileMenuOpen ? "close" : "menu"}
@@ -189,38 +206,73 @@ export function Header({
             className={`${
               mobileMenuOpen ? "flex" : "hidden"
             } md:flex items-center justify-between py-2`}
+            aria-label="Main navigation"
           >
-            <div className="flex flex-col md:flex-row items-start md:items-center gap-1 md:gap-6">
-              <Link
-                href="/search"
-                className="text-sm font-medium text-gray-700 hover:text-[#520f85] transition-colors py-1"
-              >
-                All Products
-              </Link>
-              <Link
-                href="/categories"
-                className="text-sm font-medium text-gray-700 hover:text-[#520f85] transition-colors py-1"
-              >
-                Categories
-              </Link>
-              <Link
-                href="/universities"
-                className="text-sm font-medium text-gray-700 hover:text-[#520f85] transition-colors py-1"
-              >
-                Universities
-              </Link>
-              <Link
-                href="/stores"
-                className="text-sm font-medium text-gray-700 hover:text-[#520f85] transition-colors py-1"
-              >
-                Stores
-              </Link>
+            <div className="flex flex-col md:flex-row items-start md:items-center gap-1 md:gap-6 w-full md:w-auto">
+              {/* Navigation links — close menu on click for mobile */}
+              {[
+                { href: "/search", label: "All Products" },
+                { href: "/categories", label: "Categories" },
+                { href: "/universities", label: "Universities" },
+                { href: "/stores", label: "Stores" },
+              ].map((link) => (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  onClick={closeMobileMenu}
+                  className={`text-sm font-medium transition-colors py-2 md:py-1 w-full md:w-auto ${
+                    isActive(link.href)
+                      ? "text-[#6B1FA8] font-bold"
+                      : "text-gray-700 hover:text-[#6B1FA8]"
+                  }`}
+                >
+                  {link.label}
+                </Link>
+              ))}
+
+              {/* Mobile-only: Wishlist, Login/SignUp inside hamburger */}
+              <div className="md:hidden flex flex-col gap-1 border-t border-gray-100 mt-2 pt-2 w-full">
+                <Link
+                  href="/wishlist"
+                  onClick={closeMobileMenu}
+                  className="flex items-center gap-2 text-sm font-medium text-gray-700 hover:text-[#6B1FA8] py-2 transition-colors"
+                >
+                  <span className="material-symbols-outlined text-lg">
+                    favorite
+                  </span>
+                  Wishlist
+                  {wishlistCount > 0 && (
+                    <span className="ml-auto bg-red-500 text-white text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center">
+                      {wishlistCount}
+                    </span>
+                  )}
+                </Link>
+                {!isLoggedIn && (
+                  <>
+                    <Link
+                      href="/login"
+                      onClick={closeMobileMenu}
+                      className="text-sm font-bold text-gray-700 hover:text-[#6B1FA8] py-2 transition-colors"
+                    >
+                      Login
+                    </Link>
+                    <Link
+                      href="/register"
+                      onClick={closeMobileMenu}
+                      className="text-sm font-bold text-[#D4009B] hover:text-[#6B1FA8] py-2 transition-colors"
+                    >
+                      Sign Up
+                    </Link>
+                  </>
+                )}
+              </div>
             </div>
 
             {/* Student Deals — highlighted */}
             <Link
               href="/student-deals"
-              className="flex items-center gap-1 text-sm font-bold text-[#d41295] hover:text-[#520f85] transition-colors py-1"
+              onClick={closeMobileMenu}
+              className="flex items-center gap-1 text-sm font-bold text-[#D4009B] hover:text-[#6B1FA8] transition-colors py-2 md:py-1 mt-2 md:mt-0"
             >
               <span className="material-symbols-outlined text-base">
                 school
