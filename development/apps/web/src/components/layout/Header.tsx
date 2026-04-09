@@ -61,14 +61,14 @@ export function Header({
           </div>
           <div className="hidden md:flex items-center gap-4">
             <Link
-              href="/sell"
+              href="/dashboard/store/create"
               className="hover:text-gray-300 transition-colors"
             >
               Sell on U-Shop
             </Link>
             <span className="text-gray-600">|</span>
             <Link
-              href="/track"
+              href="/dashboard"
               className="font-bold hover:text-gray-300 transition-colors"
             >
               Track Order
@@ -192,7 +192,7 @@ export function Header({
           >
             <div className="flex flex-col md:flex-row items-start md:items-center gap-1 md:gap-6">
               <Link
-                href="/products"
+                href="/search"
                 className="text-sm font-medium text-gray-700 hover:text-[#520f85] transition-colors py-1"
               >
                 All Products
