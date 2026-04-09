@@ -29,6 +29,27 @@ async function main() {
   }
 
   console.log(`\n🎉 Seeded ${CATEGORIES.length} categories.`);
+
+  // Seed Universities
+  console.log('\n🌱 Seeding universities...');
+  const universities = [
+    { name: "University of Ghana", shortName: "UG", slug: "ug", domain: "ug.edu.gh" },
+    { name: "Kwame Nkrumah University of Science and Technology", shortName: "KNUST", slug: "knust", domain: "knust.edu.gh" },
+    { name: "University of Cape Coast", shortName: "UCC", slug: "ucc", domain: "ucc.edu.gh" },
+    { name: "Ghana Communication Technology University", shortName: "GCTU", slug: "gctu", domain: "gctu.edu.gh" },
+    { name: "University of Mines and Technology", shortName: "UMAT", slug: "umat", domain: "umat.edu.gh" },
+  ];
+
+  for (const uni of universities) {
+    await prisma.university.upsert({
+      where: { slug: uni.slug },
+      update: uni,
+      create: uni,
+    });
+    console.log(`  ✅ ${uni.shortName}`);
+  }
+
+  console.log(`\n🎉 Seeded ${universities.length} universities.`);
 }
 
 main()

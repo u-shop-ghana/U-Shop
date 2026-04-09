@@ -1,5 +1,5 @@
 import type { Request, Response, NextFunction } from 'express';
-import { logger } from '../lib/logger.js';
+import { logger } from '../lib/logger';
 
 // ─── Rate Limiter Middleware ────────────────────────────────────
 // A simple in-memory sliding-window rate limiter. This is suitable
