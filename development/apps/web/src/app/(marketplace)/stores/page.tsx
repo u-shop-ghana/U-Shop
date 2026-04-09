@@ -15,8 +15,8 @@ interface StoreOption {
 }
 
 export const metadata: Metadata = {
-  title: "Stores Directory | U-Shop",
-  description: "Browse verified student stores offering tech across campus.",
+  title: "Campus Stores | U-Shop",
+  description: "Shop directly from verified student entrepreneurs and local tech hubs at your favorite university campus.",
 };
 
 export const dynamic = "force-dynamic";
@@ -31,63 +31,162 @@ export default async function StoresPage({
   const stores: StoreOption[] = res.success ? (res.data || []) : [];
 
   return (
-    <main className="min-h-screen bg-white py-16">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="mb-12 text-center">
-          <h1 className="text-4xl md:text-5xl font-black text-gray-900 tracking-tight mb-4">
-            All Stores
-          </h1>
-          <p className="text-gray-500 text-lg max-w-2xl mx-auto font-medium">
-            Discover trusted student sellers across campuses. Look for the <span className="text-green-600 font-bold">Verified</span> badge.
-          </p>
+    <main className="min-h-screen bg-white">
+      {/* Hero Banner — matching Figma: dark image overlay with title + search */}
+      <section className="relative bg-[#0f172a] overflow-hidden">
+        <div className="absolute inset-0">
+          <Image
+            src="/assets/images/hero/all stores.png"
+            alt="Campus stores"
+            fill
+            className="object-cover opacity-30"
+            priority
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-[#0f172a]/50 to-[#0f172a]/90" />
         </div>
+        <div className="relative z-10 max-w-4xl mx-auto px-4 py-20 md:py-28 text-center">
+          {/* Badge */}
+          <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-sm border border-white/10 rounded-full mb-6">
+            <div className="w-2 h-2 bg-green-400 rounded-full" />
+            <span className="text-sm text-white/90 font-medium">Verified Marketplace</span>
+          </div>
+          <h1 className="text-4xl md:text-6xl font-black text-white tracking-tight mb-2">
+            Discover Ghana&apos;s
+          </h1>
+          <h1 className="text-4xl md:text-6xl font-black mb-4">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-ushop-purple to-ushop-pink">Elite Campus Stores</span>
+          </h1>
+          <p className="text-white/70 text-lg max-w-2xl mx-auto mb-8">
+            Shop directly from verified student entrepreneurs and local tech hubs at your favorite university campus.
+          </p>
+          {/* Search bar matching Figma */}
+          <form action="/search" method="GET" className="flex max-w-xl mx-auto">
+            <div className="flex-1 relative">
+              <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">search</span>
+              <input
+                type="text"
+                name="q"
+                id="stores-search"
+                placeholder="Search by store name, university, or gear..."
+                className="w-full pl-12 pr-4 py-4 bg-white rounded-l-xl text-gray-900 placeholder:text-gray-400 focus:outline-none text-sm"
+              />
+            </div>
+            <button
+              type="submit"
+              className="px-8 py-4 bg-ushop-purple text-white font-bold rounded-r-xl hover:bg-ushop-purple/90 transition-colors text-sm"
+            >
+              Search
+            </button>
+          </form>
+        </div>
+      </section>
 
+      {/* Section Title + Filters */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div>
+            <div className="flex items-center gap-2 mb-1">
+              <div className="w-1 h-6 bg-ushop-purple rounded-full" />
+              <h2 className="text-2xl font-black text-gray-900">Verified Stores</h2>
+            </div>
+            <p className="text-gray-500 text-sm ml-3">
+              Find the perfect gadget from our curated list of student-run and campus-based tech stores.
+            </p>
+          </div>
+          <div className="flex items-center gap-3">
+            {/* Filter pills */}
+            <div className="flex items-center gap-1 bg-gray-100 rounded-full p-1">
+              <button className="px-4 py-1.5 bg-ushop-purple text-white text-xs font-bold rounded-full">All Stores</button>
+              <button className="px-4 py-1.5 text-gray-500 text-xs font-medium rounded-full hover:bg-gray-200 transition-colors">Student Run</button>
+              <button className="px-4 py-1.5 text-gray-500 text-xs font-medium rounded-full hover:bg-gray-200 transition-colors">Elite</button>
+            </div>
+            <div className="inline-flex items-center gap-2 text-sm text-gray-500 border border-gray-200 rounded-lg px-4 py-2">
+              Sort: Default
+              <span className="material-symbols-outlined text-base">expand_more</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Store Cards Grid — matching Figma: 4-col cards with ratings and badges */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
         {stores.length === 0 ? (
-           <div className="w-full py-20 flex flex-col items-center justify-center bg-gray-50 border border-gray-200 rounded-2xl">
-             <span className="material-symbols-outlined text-6xl text-gray-300 mb-4">storefront</span>
-             <h3 className="text-2xl font-bold text-gray-900 mb-2">No stores active right now</h3>
-             <p className="text-gray-500">Check back later or be the first to open a store!</p>
-           </div>
+          <div className="w-full py-20 flex flex-col items-center justify-center bg-gray-50 border border-gray-200 rounded-2xl">
+            <span className="material-symbols-outlined text-6xl text-gray-300 mb-4">storefront</span>
+            <h3 className="text-2xl font-bold text-gray-900 mb-2">No stores active right now</h3>
+            <p className="text-gray-500">Check back later or be the first to open a store!</p>
+          </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             {stores.map((store: StoreOption) => (
-               <Link key={store.id} href={`/store/${store.handle}`}>
-                 <div className="group bg-white border border-gray-200 rounded-2xl p-6 hover:shadow-lg hover:-translate-y-1 transition-all flex flex-col items-center text-center h-full">
-                    {/* Store Logo */}
-                    <div className="w-20 h-20 rounded-full border-2 border-gray-100 bg-gray-50 overflow-hidden relative mb-4">
-                       {store.logoUrl ? (
-                         <Image src={store.logoUrl} alt={store.name} fill className="object-cover group-hover:scale-110 transition-transform" />
-                       ) : (
-                         <span className="material-symbols-outlined text-3xl text-gray-400 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">storefront</span>
-                       )}
+              <Link key={store.id} href={`/store/${store.handle}`}>
+                <div className="group bg-white border border-gray-200 rounded-2xl overflow-hidden shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all h-full flex flex-col">
+                  {/* Store header image area — uses logo or campus placeholder */}
+                  <div className="relative aspect-[16/9] bg-gray-100 overflow-hidden">
+                    {store.logoUrl ? (
+                      <Image src={store.logoUrl} alt={store.name} fill className="object-cover group-hover:scale-105 transition-transform duration-500" />
+                    ) : (
+                      <div className="w-full h-full bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
+                        <span className="material-symbols-outlined text-5xl text-gray-300">storefront</span>
+                      </div>
+                    )}
+                    {/* Storefront icon badge */}
+                    <div className="absolute bottom-3 left-3 bg-white/90 backdrop-blur-sm rounded-lg p-2">
+                      <span className="material-symbols-outlined text-ushop-purple text-lg">storefront</span>
                     </div>
-                    <h3 className="text-lg font-bold text-gray-900 group-hover:text-ushop-purple transition-colors">{store.name}</h3>
-                    <p className="text-gray-500 text-sm mb-3">@{store.handle}</p>
-                    
-                    {/* Badges */}
-                    <div className="flex flex-wrap gap-2 justify-center mt-auto">
-                       {store.user?.verificationStatus === "VERIFIED" && (
-                         <span className="px-2 py-1 bg-green-50 text-green-600 text-xs font-bold rounded-full flex items-center gap-1">
-                           <span className="material-symbols-outlined text-[12px]" style={{fontVariationSettings: '"FILL" 1'}}>verified</span> Verified
-                         </span>
-                       )}
-                       {store.user?.universityName && (
-                         <span className="px-2 py-1 bg-purple-50 text-ushop-purple text-xs font-bold rounded-full">
-                           {store.user.universityName.toUpperCase()}
-                         </span>
-                       )}
+                  </div>
+
+                  {/* Card body */}
+                  <div className="p-5 flex flex-col flex-grow">
+                    <div className="flex items-center gap-2 mb-1">
+                      <h3 className="font-bold text-gray-900 group-hover:text-ushop-purple transition-colors">{store.name}</h3>
+                      {store.user?.verificationStatus === "VERIFIED" && (
+                        <span className="material-symbols-outlined text-sm text-green-500" style={{fontVariationSettings: '"FILL" 1'}}>verified</span>
+                      )}
+                    </div>
+                    <p className="text-xs text-gray-500 mb-3">@{store.handle}</p>
+
+                    {/* Tags */}
+                    <div className="flex flex-wrap gap-1.5 mb-4 mt-auto">
+                      {store.user?.universityName && (
+                        <span className="inline-flex items-center gap-1 px-2 py-1 bg-gray-100 text-gray-600 text-[10px] font-bold uppercase tracking-wider rounded">
+                          <span className="text-gray-400 text-[8px]">●</span> University
+                          <span className="text-gray-800 ml-0.5">{store.user.universityName}</span>
+                        </span>
+                      )}
                     </div>
 
-                    {/* Visit Store CTA */}
-                    <div className="mt-4 pt-4 border-t border-gray-100 w-full">
-                       <span className="text-ushop-purple font-semibold text-sm group-hover:underline">Visit Store &rarr;</span>
-                    </div>
-                 </div>
-               </Link>
+                    {/* Browse Store CTA */}
+                    <button className="w-full py-2.5 bg-ushop-purple text-white text-sm font-bold rounded-xl group-hover:bg-ushop-purple/90 transition-colors flex items-center justify-center gap-1">
+                      Browse Store <span className="material-symbols-outlined text-sm">arrow_forward</span>
+                    </button>
+                  </div>
+                </div>
+              </Link>
             ))}
           </div>
         )}
       </div>
+
+      {/* CTA Section — "Want to sell your products?" matching Figma */}
+      <section className="bg-gray-50 mx-4 sm:mx-8 lg:mx-auto max-w-7xl rounded-3xl mb-16 border border-gray-200">
+        <div className="px-8 py-14 flex flex-col md:flex-row items-center justify-between gap-8">
+          <div>
+            <h2 className="text-3xl md:text-4xl font-black text-gray-900 mb-3">
+              Want to sell<br />your products?
+            </h2>
+            <p className="text-gray-500 text-lg max-w-md">
+              Join hundreds of student entrepreneurs. Create your store in minutes and reach thousands of students across Ghana.
+            </p>
+          </div>
+          <Link
+            href="/dashboard/store/create"
+            className="bg-ushop-pink text-white font-bold px-10 py-4 rounded-2xl hover:bg-ushop-pink/90 transition-colors text-lg inline-flex items-center gap-2 whitespace-nowrap"
+          >
+            Open Your Store <span className="material-symbols-outlined">arrow_forward</span>
+          </Link>
+        </div>
+      </section>
     </main>
   );
 }
