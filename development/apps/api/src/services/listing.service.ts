@@ -90,8 +90,7 @@ export class ListingService {
     // Verified Stores + Local Availability + Price Competitiveness
     
     // Add logic params for equation
-    let qParamIndex = '0';
-    if (q) qParamIndex = '1';
+    // qParamIndex is not needed — the ts_rank ternary references $1 directly when q is present.
 
     let uniParamIndex = '0';
     if (buyerUniversity) {
