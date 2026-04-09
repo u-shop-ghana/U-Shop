@@ -16,7 +16,14 @@ export class ListingController {
         return;
       }
 
-      const listings = await ListingService.searchListings(queryParams.data);
+      // Inject additional properties seamlessly from request mapping
+      const extendedParams = {
+        ...queryParams.data,
+        categorySlug: req.query.categorySlug as string | undefined,
+        buyerUniversity: req.query.buyerUniversity as string | undefined,
+      };
+
+      const listings = await ListingService.searchListings(extendedParams);
       res.json({ success: true, data: listings });
     } catch (error: unknown) {
       const msg = error instanceof Error ? error.message : "Unknown error";

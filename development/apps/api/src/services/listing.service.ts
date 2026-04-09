@@ -7,110 +7,152 @@ export class ListingService {
    * Retrieves paginated listings executing exact match checks and text-vector
    * searches strictly mapping database limits.
    */
-  static async searchListings(params: SearchListingsInput) {
+  static async searchListings(params: SearchListingsInput & { buyerUniversity?: string; categorySlug?: string }) {
     const {
       q,
       category,
+      categorySlug,
       condition,
       minPrice,
       maxPrice,
       sellerType,
       storeId,
-      sort = 'newest',
+      sort, // ignoring native sorts if custom ranking applies, else we override
       limit = 20,
       cursor,
+      buyerUniversity
     } = params;
 
-    // Use Prisma Query builder natively unless full-text is executed mapping custom properties
+    const queryParams: unknown[] = [];
+    let paramCount = 0;
+
+    let sqlConditions = `WHERE l."status" = 'ACTIVE' AND l."stock" > 0`;
+
+    // 1. Text Search Filtering
     if (q) {
-      // Execute raw tsvector query
       const formattedQuery = q.trim().split(' ').map(term => `${term}:*`).join(' & ');
-      
-      const queryParams: unknown[] = [formattedQuery];
-      let sqlConditions = `WHERE "status" = 'ACTIVE' AND "stock" > 0 AND "searchVector" @@ to_tsquery($1)`;
-      
-      let paramCount = 1;
-
-      if (category) {
-        paramCount++;
-        sqlConditions += ` AND "categoryId" = $${paramCount}`;
-        queryParams.push(category);
-      }
-
-      if (condition) {
-        paramCount++;
-        sqlConditions += ` AND "condition" = $${paramCount}::"ListingCondition"`;
-        queryParams.push(condition);
-      }
-
-      if (storeId) {
-        paramCount++;
-        sqlConditions += ` AND "storeId" = $${paramCount}`;
-        queryParams.push(storeId);
-      }
-
-      if (minPrice) {
-        paramCount++;
-        sqlConditions += ` AND "price" >= $${paramCount}`;
-        queryParams.push(minPrice);
-      }
-
-      if (maxPrice) {
-        paramCount++;
-        sqlConditions += ` AND "price" <= $${paramCount}`;
-        queryParams.push(maxPrice);
-      }
-
-      let orderBy = `ORDER BY "createdAt" DESC`;
-      if (sort === 'price_asc') orderBy = `ORDER BY "price" ASC`;
-      if (sort === 'price_desc') orderBy = `ORDER BY "price" DESC`;
-
-      const listings = await prisma.$queryRawUnsafe(
-        `SELECT id, "storeId", "categoryId", title, description, price, condition, images, "createdAt" 
-         FROM "Listing" 
-         ${sqlConditions}
-         ${orderBy} 
-         LIMIT ${limit}`
-      , ...queryParams);
-      
-      return listings;
+      paramCount++;
+      sqlConditions += ` AND l."searchVector" @@ to_tsquery($${paramCount})`;
+      queryParams.push(formattedQuery);
     }
 
-    // Standard Prisma native querying (when Q is absent)
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const where: any = {
-      status: 'ACTIVE',
-      stock: { gt: 0 },
-    };
+    // 2. Exact Filters
+    if (category) {
+      paramCount++;
+      sqlConditions += ` AND l."categoryId" = $${paramCount}`;
+      queryParams.push(category);
+    }
 
-    if (category) where.categoryId = category;
-    if (condition) where.condition = condition;
-    if (storeId) where.storeId = storeId;
-    if (minPrice || maxPrice) {
-      where.price = {};
-      if (minPrice) where.price.gte = minPrice;
-      if (maxPrice) where.price.lte = maxPrice;
+    if (categorySlug) {
+      paramCount++;
+      sqlConditions += ` AND l."categoryId" IN (SELECT id FROM "Category" WHERE slug = $${paramCount})`;
+      queryParams.push(categorySlug);
+    }
+
+    if (condition) {
+      paramCount++;
+      sqlConditions += ` AND l."condition" = $${paramCount}::"ListingCondition"`;
+      queryParams.push(condition);
+    }
+
+    if (storeId) {
+      paramCount++;
+      sqlConditions += ` AND l."storeId" = $${paramCount}`;
+      queryParams.push(storeId);
+    }
+
+    if (minPrice) {
+      paramCount++;
+      sqlConditions += ` AND l."price" >= $${paramCount}`;
+      queryParams.push(minPrice);
+    }
+
+    if (maxPrice) {
+      paramCount++;
+      sqlConditions += ` AND l."price" <= $${paramCount}`;
+      queryParams.push(maxPrice);
     }
 
     if (sellerType) {
-      where.store = { sellerType: sellerType === 'student' ? 'STUDENT' : 'RESELLER' };
+      paramCount++;
+      sqlConditions += ` AND s."sellerType" = $${paramCount}::"SellerType"`;
+      queryParams.push(sellerType === 'student' ? 'STUDENT' : 'RESELLER');
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    let orderBy: any = { createdAt: 'desc' };
-    if (sort === 'price_asc') orderBy = { price: 'asc' };
-    if (sort === 'price_desc') orderBy = { price: 'desc' };
-    // We mock "rating" since it's mapped to the Store actually
+    // Cursor pagination (using ID simply)
+    if (cursor) {
+      paramCount++;
+      sqlConditions += ` AND l."id" < $${paramCount}`; // Assuming ID descending or we use createdAt
+      queryParams.push(cursor);
+    }
+
+    // 3. Custom Algorithmic Sorting
+    // Verified Stores + Local Availability + Price Competitiveness
     
-    return await prisma.listing.findMany({
-      where,
-      orderBy,
-      take: limit,
-      ...(cursor && { cursor: { id: cursor }, skip: 1 }),
-      include: {
-        store: { select: { handle: true, name: true, logoUrl: true, user: { select: { verificationStatus: true } } } },
+    // Add logic params for equation
+    let qParamIndex = '0';
+    if (q) qParamIndex = '1';
+
+    let uniParamIndex = '0';
+    if (buyerUniversity) {
+      paramCount++;
+      queryParams.push(buyerUniversity);
+      uniParamIndex = `$${paramCount}`;
+    } else {
+      // Dummy param to prevent syntax error, never matched because index 0 doesn't exist
+    }
+
+    const rankingEquation = `
+      (
+        ${q ? `(ts_rank(l."searchVector", to_tsquery($1)) * 50)` : '0'} +
+        (CASE WHEN u."verificationStatus" = 'VERIFIED' THEN 20 ELSE 0 END) +
+        (CASE WHEN ${buyerUniversity ? `u."universityName" = ${uniParamIndex}` : 'false'} THEN 15 ELSE 0 END) +
+        (10000.0 / (l.price + 1))
+      )
+    `;
+
+    // 4. Overrides
+    let orderBy = `ORDER BY ranking_score DESC, l."createdAt" DESC`;
+    if (sort === 'price_asc') orderBy = `ORDER BY l."price" ASC`;
+    if (sort === 'price_desc') orderBy = `ORDER BY l."price" DESC`;
+    if (sort === 'newest') orderBy = `ORDER BY l."createdAt" DESC`;
+
+    const rawSql = `
+      SELECT 
+        l.id, l."storeId", l."categoryId", l.title, l.description, l.price, l.condition, l.images, l."createdAt",
+        s.handle as "storeHandle", s.name as "storeName", s."logoUrl" as "storeLogo",
+        u."verificationStatus" as "storeVerification",
+        ${rankingEquation} as ranking_score
+      FROM "Listing" l
+      JOIN "Store" s ON l."storeId" = s.id
+      JOIN "User" u ON s."userId" = u.id
+      ${sqlConditions}
+      ${orderBy}
+      LIMIT ${limit}
+    `;
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const records: any[] = await prisma.$queryRawUnsafe(rawSql, ...queryParams);
+    
+    // Auto-map records to standard Prisma output shape so the frontend doesn't break
+    return records.map(r => ({
+      id: r.id,
+      storeId: r.storeId,
+      categoryId: r.categoryId,
+      title: r.title,
+      description: r.description,
+      price: r.price,
+      condition: r.condition,
+      images: r.images,
+      createdAt: r.createdAt,
+      ranking_score: r.ranking_score,
+      store: {
+         handle: r.storeHandle,
+         name: r.storeName,
+         logoUrl: r.storeLogo,
+         user: { verificationStatus: r.storeVerification }
       }
-    });
+    }));
   }
 
   /**

@@ -6,6 +6,8 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { STUDENT_EMAIL_DOMAINS } from "@/lib/student-domains";
+import { apiFetch } from "@/lib/api-client";
+import { uploadFileToSupabase } from "@/lib/supabase/storage";
 
 // ─── Verify Page Wrapper ────────────────────────────────────────
 // useSearchParams() requires a Suspense boundary at the page level
@@ -77,13 +79,10 @@ function VerifyPageContent() {
   const [universitiesLoading, setUniversitiesLoading] = useState(true);
 
   useEffect(() => {
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
-
     // Fetch the list of active universities from our Express API.
     // We don't need auth for this — it's a public endpoint.
-    fetch(`${apiUrl}/api/v1/universities`)
-      .then((res) => res.json())
-      .then((data: { success: boolean; data: UniversityOption[] }) => {
+    apiFetch("/api/v1/universities")
+      .then((data: any) => {
         if (data.success) {
           setUniversities(data.data);
         }
@@ -146,28 +145,34 @@ function VerifyPageContent() {
       }
 
       // Upload student ID photos to Supabase Storage
-      // We use client-side upload with the user's own token,
-      // so the RLS policy on the storage bucket validates ownership.
-      const apiUrl =
-        process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
+      let frontUrl = "";
+      try {
+        frontUrl = await uploadFileToSupabase(idFront, "verification-docs", session.user.id);
+      } catch (err: any) {
+        setError("Failed to upload the front ID image. Please try again.");
+        return;
+      }
+      
+      let backUrl = "";
+      if (idBack) {
+        try {
+          backUrl = await uploadFileToSupabase(idBack, "verification-docs", session.user.id);
+        } catch (err: any) {
+          setError("Failed to upload the back ID image. Please try again.");
+          return;
+        }
+      }
 
-      const formData = new FormData();
-      formData.append("studentEmail", studentEmail);
-      formData.append("university", university);
-      formData.append("idFront", idFront);
-      if (idBack) formData.append("idBack", idBack);
-
-      const res = await fetch(`${apiUrl}/api/v1/auth/verify/submit`, {
+      const res = await apiFetch("/api/v1/auth/verify/upload", {
         method: "POST",
-        headers: {
-          Authorization: `Bearer ${session.access_token}`,
-        },
-        body: formData,
-      });
+        body: JSON.stringify({
+          imagePath: frontUrl,
+          universityName: university,
+        }),
+      }) as any;
 
-      if (!res.ok) {
-        const data = await res.json();
-        setError(data.error || "Verification submission failed.");
+      if (!res.success) {
+        setError(res.error?.message || "Verification submission failed.");
         return;
       }
 
