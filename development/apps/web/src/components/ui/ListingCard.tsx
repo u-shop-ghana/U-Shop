@@ -1,6 +1,8 @@
 import Link from "next/link";
 import Image from "next/image";
 import { formatCurrency } from "@/lib/utils";
+import { WishlistButton } from "./WishlistButton";
+import { AddToCartButtonCard } from "./AddToCartButtonCard";
 
 // ─── Product Card Props ─────────────────────────────────────────
 // Matches the Figma component design/ui-kit/organisms/Product card.png
@@ -134,19 +136,8 @@ export function ListingCard({
           </div>
 
           {/* Wishlist heart — top right (visual only placeholder) */}
-          <button
-            type="button"
-            className="absolute top-3 right-3 z-10 w-8 h-8 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center shadow-sm hover:bg-white transition-colors"
-            aria-label="Add to wishlist"
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-            }}
-          >
-            <span className="material-symbols-outlined text-gray-400 text-lg hover:text-red-500 transition-colors">
-              favorite
-            </span>
-          </button>
+          {/* Wishlist heart — top right (visual only placeholder) */}
+          <WishlistButton />
 
           {/* Out of stock overlay */}
           {isOutOfStock && (
@@ -209,25 +200,7 @@ export function ListingCard({
           </div>
 
           {/* ADD TO CART button — matches Figma: full width, purple with cart icon */}
-          <button
-            type="button"
-            disabled={isOutOfStock}
-            className={`w-full py-2.5 rounded-lg text-sm font-bold uppercase tracking-wide flex items-center justify-center gap-2 transition-all ${
-              isOutOfStock
-                ? "bg-gray-200 text-gray-400 cursor-not-allowed"
-                : "bg-ushop-purple text-white hover:bg-ushop-purple/90 active:scale-[0.98]"
-            }`}
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              // TODO: Wire to cart API once cart feature is implemented
-            }}
-          >
-            <span className="material-symbols-outlined text-base">
-              {isOutOfStock ? "remove_shopping_cart" : "shopping_cart"}
-            </span>
-            {isOutOfStock ? "Out of Stock" : "Add to Cart"}
-          </button>
+          <AddToCartButtonCard isOutOfStock={isOutOfStock} />
         </div>
       </div>
     </div>
