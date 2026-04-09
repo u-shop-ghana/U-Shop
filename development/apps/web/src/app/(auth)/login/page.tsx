@@ -124,7 +124,7 @@ export default function LoginPage() {
               {[1, 2, 3].map((i) => (
                 <div
                   key={i}
-                  className="w-10 h-10 rounded-full border-2 border-purple-600 bg-campus-card flex items-center justify-center text-xs text-white/60 font-medium"
+                  className="w-10 h-10 rounded-full border-2 border-ushop-purple bg-campus-card flex items-center justify-center text-xs text-white/60 font-medium"
                 >
                   {String.fromCharCode(64 + i)}
                 </div>
@@ -170,7 +170,7 @@ export default function LoginPage() {
 
               {/* Login / Sign Up Tabs */}
               <div className="flex gap-1 p-1 bg-black/20 rounded-xl mb-8">
-                <button className="flex-1 py-2.5 text-sm font-semibold text-white bg-purple-600 rounded-lg shadow-sm transition-all">
+                <button className="flex-1 py-2.5 text-sm font-semibold text-white bg-ushop-purple rounded-lg shadow-sm transition-all">
                   Login
                 </button>
                 <Link
@@ -205,7 +205,7 @@ export default function LoginPage() {
                       type="email"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      className="w-full pl-12 pr-4 py-3.5 bg-black/20 border border-white/10 rounded-xl text-white placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent transition-all text-sm"
+                      className="w-full pl-12 pr-4 py-3.5 bg-black/20 border border-white/10 rounded-xl text-white placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-ushop-purple focus:border-transparent transition-all text-sm"
                       placeholder="student@ug.edu.gh"
                       required
                       autoComplete="email"
@@ -236,7 +236,7 @@ export default function LoginPage() {
                       type={showPassword ? "text" : "password"}
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
-                      className="w-full pl-12 pr-12 py-3.5 bg-black/20 border border-white/10 rounded-xl text-white placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent transition-all text-sm"
+                      className="w-full pl-12 pr-12 py-3.5 bg-black/20 border border-white/10 rounded-xl text-white placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-ushop-purple focus:border-transparent transition-all text-sm"
                       placeholder="••••••••"
                       required
                       autoComplete="current-password"
@@ -261,7 +261,7 @@ export default function LoginPage() {
                     type="checkbox"
                     checked={rememberMe}
                     onChange={(e) => setRememberMe(e.target.checked)}
-                    className="h-4 w-4 bg-black/20 border-white/10 rounded text-purple-600 focus:ring-purple-600 focus:ring-offset-campus-card"
+                    className="h-4 w-4 bg-black/20 border-white/10 rounded text-ushop-purple focus:ring-ushop-purple focus:ring-offset-campus-card"
                   />
                   <label
                     htmlFor="remember"
@@ -275,7 +275,7 @@ export default function LoginPage() {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full py-4 px-4 bg-gradient-cta text-white font-bold rounded-xl shadow-lg shadow-purple-600/20 flex items-center justify-center gap-2 transition-all active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full py-4 px-4 bg-gradient-cta text-white font-bold rounded-xl shadow-lg shadow-ushop-purple/20 flex items-center justify-center gap-2 transition-all active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <span>{loading ? "Logging in..." : "Log In"}</span>
                   {!loading && (

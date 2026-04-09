@@ -1,194 +1,594 @@
-import { Metadata } from 'next';
-import Image from 'next/image';
-import Link from 'next/link';
-import { notFound } from 'next/navigation';
-import { apiFetch } from '@/lib/api-server';
-import { formatCurrency } from '@/lib/utils';
-import { Badge } from '@/components/ui/Badge';
+import { Metadata } from "next";
+import Image from "next/image";
+import Link from "next/link";
+import { notFound } from "next/navigation";
+import { apiPublicFetch } from "@/lib/api-public";
+import { formatCurrency } from "@/lib/utils";
+import { ImageGallery } from "@/components/ui/ImageGallery";
+import { QuantitySelector } from "@/components/ui/QuantitySelector";
+import { ProductTabs } from "@/components/ui/ProductTabs";
+import { ListingCard } from "@/components/ui/ListingCard";
 
-export const dynamic = 'force-dynamic';
+export const revalidate = 15;
 
-export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
+// ─── Types ──────────────────────────────────────────────────────
+// These match the API response shape from GET /api/v1/listings/:id
+interface ListingDetail {
+  id: string;
+  title: string;
+  description: string;
+  price: number;
+  condition: string;
+  stock: number;
+  images: string[];
+  createdAt: string;
+  store: {
+    name: string;
+    handle: string;
+    logoUrl: string | null;
+    averageRating: number;
+    reviewCount: number;
+    totalSales: number;
+    returnWindow: string;
+    sellerType: string;
+    user: { verificationStatus: string };
+  };
+  category: {
+    name: string;
+    slug: string;
+  };
+}
+
+interface ReviewData {
+  id: string;
+  rating: number;
+  comment: string | null;
+  createdAt: string;
+  author: {
+    fullName: string;
+    universityName: string | null;
+  };
+}
+
+interface SimilarListing {
+  id: string;
+  title: string;
+  price: number;
+  condition: string;
+  images: string[];
+  store: {
+    handle: string;
+    name: string;
+    user?: { verificationStatus: string };
+  };
+}
+
+// ─── SEO Metadata ───────────────────────────────────────────────
+// Generate dynamic SEO meta tags from the listing data.
+// OpenGraph image uses the first product image for social previews.
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}): Promise<Metadata> {
   const resolvedParams = await params;
-  const res = await apiFetch(`/api/v1/listings/${resolvedParams.id}`);
-  
+  const res = await apiPublicFetch(`/api/v1/listings/${resolvedParams.id}`);
+
   if (!res.success || !res.data) {
-    return { title: 'Product Not Found | U-Shop' };
+    return { title: "Product Not Found | U-Shop" };
   }
-  
+
   const listing = res.data;
   return {
     title: `${listing.title} | U-Shop`,
     description: listing.description.substring(0, 160),
     openGraph: {
       images: listing.images?.[0] ? [listing.images[0]] : [],
-    }
+    },
   };
 }
 
-export default async function ListingDetailPage({ params }: { params: Promise<{ id: string }> }) {
-  const resolvedParams = await params;
-  const res = await apiFetch(`/api/v1/listings/${resolvedParams.id}`);
+// Format condition text: BRAND_NEW → "Brand New"
+function formatCondition(str: string) {
+  return str.replace(/_/g, " ").replace(/\b\w/g, (l: string) => l.toUpperCase());
+}
 
-  if (!res.success || !res.data) {
+// Format return window codes: 7D → "7 Days", NO_RETURNS → "No Returns"
+function formatReturnWindow(code: string) {
+  if (code === "NO_RETURNS") return "No Returns";
+  const match = code.match(/^(\d+)D$/);
+  return match ? `${match[1]} Days` : code;
+}
+
+// ─── Star Rating Display ────────────────────────────────────────
+function StarDisplay({ rating, size = "sm" }: { rating: number; size?: "sm" | "md" }) {
+  const starSize = size === "md" ? "text-lg" : "text-sm";
+  return (
+    <div className="flex">
+      {[1, 2, 3, 4, 5].map((star) => (
+        <span
+          key={star}
+          className={`${starSize} ${
+            star <= Math.round(rating) ? "text-yellow-400" : "text-gray-300"
+          }`}
+          style={{ fontVariationSettings: '"FILL" 1' }}
+        >
+          ★
+        </span>
+      ))}
+    </div>
+  );
+}
+
+// ─── Product Detail Page ────────────────────────────────────────
+// Matches Figma: design/ui-kit/Screens/desktop/Product detail.png
+// Layout: breadcrumb → 2-col (gallery + checkout) → tabs → reviews → similar
+export default async function ListingDetailPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const resolvedParams = await params;
+
+  // Fetch listing detail and reviews in parallel for performance
+  const [listingRes, reviewsRes] = await Promise.all([
+    apiPublicFetch(`/api/v1/listings/${resolvedParams.id}`),
+    apiPublicFetch(`/api/v1/stores/reviews?listingId=${resolvedParams.id}`).catch(
+      () => ({ success: false, data: [] })
+    ),
+  ]);
+
+  if (!listingRes.success || !listingRes.data) {
     notFound();
   }
 
-  const listing = res.data;
+  const listing: ListingDetail = listingRes.data;
+  const reviews: ReviewData[] = reviewsRes.success ? reviewsRes.data || [] : [];
   const store = listing.store;
-  const isStudentSeller = store.sellerType === 'STUDENT';
+  const isVerified = store.user?.verificationStatus === "VERIFIED";
+  const isInStock = listing.stock > 0;
+
+  // Fetch similar listings from same category (excluding this one)
+  const similarRes = await apiPublicFetch(
+    `/api/v1/listings?categorySlug=${listing.category.slug}&limit=4`
+  ).catch(() => ({ success: false, data: [] }));
+  const similarListings: SimilarListing[] = (
+    similarRes.success ? similarRes.data || [] : []
+  ).filter((l: SimilarListing) => l.id !== listing.id).slice(0, 4);
 
   return (
-    <main className="min-h-screen bg-campus-dark text-white pt-24 pb-16">
+    <main className="min-h-screen bg-white pt-4 pb-16">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        
-        {/* Breadcrumb Navigation */}
-        <nav className="flex items-center text-sm text-gray-400 mb-8 border-b border-white/10 pb-4">
-          <Link href="/" className="hover:text-white transition-colors">Home</Link>
-          <span className="mx-2 material-symbols-outlined text-[16px]">chevron_right</span>
-          <Link href={`/categories/${listing.category.slug}`} className="hover:text-white transition-colors">{listing.category.name}</Link>
-          <span className="mx-2 material-symbols-outlined text-[16px]">chevron_right</span>
-          <span className="text-gray-300 truncate">{listing.title}</span>
+        {/* ── Breadcrumb Navigation ── */}
+        <nav
+          className="flex items-center text-sm text-gray-500 mb-6 py-3"
+          aria-label="Breadcrumb"
+        >
+          <Link href="/" className="hover:text-ushop-purple transition-colors">
+            Home
+          </Link>
+          <span className="mx-2 text-gray-300">›</span>
+          <Link
+            href={`/categories/${listing.category.slug}`}
+            className="hover:text-ushop-purple transition-colors"
+          >
+            {listing.category.name}
+          </Link>
+          <span className="mx-2 text-gray-300">›</span>
+          <span className="text-gray-900 font-medium truncate max-w-[200px]">
+            {listing.title}
+          </span>
         </nav>
 
-        <div className="flex flex-col lg:flex-row gap-12">
-          {/* Left Column: Image Gallery MVP */}
-          <div className="w-full lg:w-3/5 space-y-4">
-            <div className="relative aspect-square md:aspect-[4/3] w-full bg-black/50 border border-white/5 rounded-3xl overflow-hidden shadow-xl">
-               <Image 
-                  src={listing.images[0] || '/assets/images/defaults/placeholder.webp'}
-                  alt={listing.title}
-                  fill
-                  className="object-contain"
-                  priority
-               />
-               <div className="absolute top-4 left-4 z-10 flex gap-2">
-                 <Badge variant="info">
-                   {listing.condition.replace(/_/g, ' ')}
-                 </Badge>
-                 {listing.stock === 0 && (
-                   <Badge variant="error">OUT OF STOCK</Badge>
-                 )}
-               </div>
-            </div>
-            
-            {/* Thumbnails (if > 1) */}
-            {listing.images.length > 1 && (
-              <div className="flex gap-4 overflow-x-auto pb-4 snap-x">
-                {listing.images.map((img: string, idx: number) => (
-                  <div key={idx} className="relative w-24 h-24 rounded-xl border-2 border-transparent hover:border-ushop-purple cursor-pointer overflow-hidden flex-shrink-0 bg-black/50 snap-center transition-colors">
-                     <Image src={img} alt={`Gallery ${idx}`} fill className="object-cover" />
-                  </div>
-                ))}
-              </div>
-            )}
+        {/* ── Main Content: 2-Column Layout ── */}
+        <div className="flex flex-col lg:flex-row gap-10 mb-12">
+          {/* Left Column: Image Gallery */}
+          <div className="w-full lg:w-3/5">
+            <ImageGallery images={listing.images} title={listing.title} />
           </div>
 
-          {/* Right Column: Checkout & Details */}
-          <div className="w-full lg:w-2/5 flex flex-col pt-2">
-            
-            <h1 className="text-3xl md:text-4xl font-extrabold text-white leading-tight mb-4">
-              {listing.title}
-            </h1>
-            
-            <div className="text-4xl font-black text-transparent bg-clip-text bg-gradient-brand mb-6">
-              {formatCurrency(listing.price)}
+          {/* Right Column: Product Info + CTAs */}
+          <div className="w-full lg:w-2/5">
+            {/* Badges: Verified Seller + Stock Status */}
+            <div className="flex items-center gap-3 mb-3">
+              {isVerified && (
+                <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-ushop-purple/10 text-ushop-purple text-xs font-bold rounded-full uppercase tracking-wide">
+                  <span
+                    className="material-symbols-outlined text-xs"
+                    style={{ fontVariationSettings: '"FILL" 1' }}
+                  >
+                    verified
+                  </span>
+                  Verified Seller
+                </span>
+              )}
+              <span
+                className={`inline-flex items-center gap-1 text-xs font-bold ${
+                  isInStock ? "text-green-600" : "text-red-500"
+                }`}
+              >
+                <span className="w-2 h-2 rounded-full bg-current" />
+                {isInStock ? "In Stock" : "Out of Stock"}
+              </span>
             </div>
 
-            {/* Store Card Badge */}
-            <Link href={`/store/${store.handle}`} className="group block mb-8">
-              <div className="flex items-center gap-4 p-4 bg-white/5 border border-white/10 rounded-2xl group-hover:bg-white/10 transition-colors cursor-pointer">
-                <div className="w-14 h-14 rounded-full bg-gray-800 border border-gray-600 overflow-hidden relative shadow-inner">
-                  {store.logoUrl ? (
-                    <Image src={store.logoUrl} alt={store.name} fill className="object-cover" sizes="56px" />
-                  ) : (
-                    <span className="material-symbols-outlined absolute inset-0 flex items-center justify-center text-gray-500">store</span>
-                  )}
-                </div>
-                <div>
-                  <div className="flex items-center gap-1.5 mb-1">
-                    <h3 className="font-bold text-white text-lg leading-none">{store.name}</h3>
-                    {store.user?.verificationStatus === 'VERIFIED' && (
-                      <span className="material-symbols-outlined text-status-success text-[18px]" title="Identity Verified">verified</span>
+            {/* Product Title */}
+            <h1 className="text-2xl md:text-3xl font-extrabold text-gray-900 leading-tight mb-3">
+              {listing.title}
+            </h1>
+
+            {/* Rating + Sales Count */}
+            <div className="flex items-center gap-3 mb-5">
+              <StarDisplay rating={store.averageRating} size="md" />
+              <span className="text-sm text-gray-600">
+                {store.averageRating.toFixed(1)} ({store.reviewCount} Reviews)
+              </span>
+              {store.totalSales > 0 && (
+                <>
+                  <span className="text-gray-300">|</span>
+                  <span className="text-sm text-gray-500">
+                    Sold {store.totalSales}+
+                  </span>
+                </>
+              )}
+            </div>
+
+            {/* ── Price Block ── */}
+            <div className="bg-gray-50 rounded-xl p-4 mb-5">
+              <div className="flex items-baseline gap-3">
+                <span className="text-3xl font-black text-ushop-purple">
+                  {formatCurrency(Number(listing.price))}
+                </span>
+              </div>
+              <p className="text-xs text-gray-500 mt-1">
+                Price inclusive of all taxes. Delivery fees calculated at
+                checkout.
+              </p>
+            </div>
+
+            {/* ── Store Card ── */}
+            <Link href={`/store/${store.handle}`} className="block mb-5">
+              <div className="flex items-center justify-between p-4 border border-gray-200 rounded-xl hover:border-ushop-purple/30 hover:bg-gray-50 transition-all">
+                <div className="flex items-center gap-3">
+                  <div className="w-12 h-12 rounded-full bg-gray-100 border border-gray-200 overflow-hidden relative flex-shrink-0">
+                    {store.logoUrl ? (
+                      <Image
+                        src={store.logoUrl}
+                        alt={store.name}
+                        fill
+                        className="object-cover"
+                        sizes="48px"
+                      />
+                    ) : (
+                      <span className="material-symbols-outlined absolute inset-0 flex items-center justify-center text-gray-400">
+                        store
+                      </span>
                     )}
                   </div>
-                  <div className="flex items-center gap-2 text-sm text-gray-400">
-                     <span className="flex items-center text-status-warning text-xs font-bold gap-0.5">
-                       <span className="material-symbols-outlined text-[14px]">star</span>
-                       {store.averageRating.toFixed(1)}
-                     </span>
-                     <span>• {store.reviewCount} reviews</span>
-                     {isStudentSeller && (
-                        <span className="px-2 py-0.5 ml-2 bg-ushop-purple/20 text-ushop-purple rounded-full text-[10px] font-bold uppercase tracking-wider">
-                           Student Auth
-                        </span>
-                     )}
+                  <div>
+                    <h3 className="font-bold text-gray-900 text-sm">
+                      {store.name}
+                    </h3>
+                    <div className="flex items-center gap-2 text-xs text-gray-500">
+                      <span className="flex items-center gap-0.5 text-yellow-500 font-bold">
+                        ★ {store.averageRating.toFixed(1)}
+                      </span>
+                      <span>
+                        ({store.totalSales}+ sales)
+                      </span>
+                    </div>
                   </div>
                 </div>
+                <span className="text-sm font-bold text-ushop-purple border border-ushop-purple rounded-lg px-3 py-1.5 hover:bg-ushop-purple hover:text-white transition-colors">
+                  Visit Store
+                </span>
               </div>
             </Link>
 
-            {/* Checkout / CTA */}
-            <div className="space-y-4 mb-10 pt-6 border-t border-white/10">
-              <button 
-                disabled={listing.stock === 0}
-                className="w-full py-4 rounded-xl bg-gradient-brand text-white font-bold text-lg shadow-xl hover:shadow-ushop-purple/30 active:scale-[0.98] transition-all disabled:opacity-50 disabled:grayscale"
+            {/* ── Quantity Selector ── */}
+            {isInStock && (
+              <div className="mb-5">
+                <QuantitySelector max={listing.stock} />
+              </div>
+            )}
+
+            {/* ── CTA Buttons ── */}
+            <div className="space-y-3 mb-5">
+              {/* Buy Now — primary purple gradient */}
+              <button
+                type="button"
+                disabled={!isInStock}
+                className="w-full py-3.5 rounded-xl bg-gradient-brand text-white font-bold text-base flex items-center justify-center gap-2 shadow-md hover:shadow-lg active:scale-[0.98] transition-all disabled:opacity-50 disabled:grayscale disabled:cursor-not-allowed"
               >
-                {listing.stock > 0 ? 'Buy via U-Shop Escrow' : 'Out of Stock'}
+                <span className="material-symbols-outlined text-lg">
+                  shopping_bag
+                </span>
+                {isInStock ? "Buy Now" : "Out of Stock"}
               </button>
-              
-              <button 
-                className="w-full py-4 rounded-xl bg-black/40 border border-white/10 text-white font-bold hover:bg-white/5 active:scale-[0.98] transition-all flex items-center justify-center gap-2"
+
+              {/* Add to Cart — outline secondary */}
+              <button
+                type="button"
+                disabled={!isInStock}
+                className="w-full py-3.5 rounded-xl border-2 border-ushop-purple text-ushop-purple font-bold text-base flex items-center justify-center gap-2 hover:bg-ushop-purple/5 active:scale-[0.98] transition-all disabled:opacity-40 disabled:cursor-not-allowed"
               >
-                <span className="material-symbols-outlined text-[20px]">add_shopping_cart</span>
+                <span className="material-symbols-outlined text-lg">
+                  shopping_cart
+                </span>
                 Add to Cart
               </button>
-
-              {/* Escrow Disclaimer */}
-              <div className="flex items-center gap-3 p-4 bg-status-success/10 border border-status-success/20 rounded-xl mt-4">
-                 <span className="material-symbols-outlined text-status-success text-[24px]">verified_user</span>
-                 <p className="text-xs text-status-success font-medium">
-                   <strong className="block mb-0.5">Protected by U-Shop Escrow.</strong>
-                   Seller doesn&apos;t get paid until you confirm receipt.
-                 </p>
-              </div>
             </div>
 
-            {/* Specifics & Description */}
-            <div className="space-y-8 pb-10">
+            {/* ── Free Campus Delivery Banner ── */}
+            <div className="flex items-start gap-3 p-4 bg-green-50 border border-green-100 rounded-xl">
+              <span className="material-symbols-outlined text-green-600 text-xl mt-0.5">
+                local_shipping
+              </span>
               <div>
-                <h3 className="text-xl font-bold text-white mb-4">Item Specifications</h3>
-                <div className="grid grid-cols-2 gap-4 text-sm">
-                  <div className="p-4 bg-black/30 rounded-xl border border-white/5">
-                    <p className="text-gray-500 mb-1">Condition</p>
-                    <p className="font-semibold text-gray-200">{listing.condition.replace(/_/g, ' ')}</p>
-                  </div>
-                  <div className="p-4 bg-black/30 rounded-xl border border-white/5">
-                    <p className="text-gray-500 mb-1">Stock Left</p>
-                    <p className="font-semibold text-gray-200">{listing.stock}</p>
-                  </div>
-                  <div className="p-4 bg-black/30 rounded-xl border border-white/5">
-                    <p className="text-gray-500 mb-1">Return Window</p>
-                    <p className="font-semibold text-gray-200">{store.returnWindow} Days</p>
-                  </div>
-                  <div className="p-4 bg-black/30 rounded-xl border border-white/5">
-                    <p className="text-gray-500 mb-1">Posted On</p>
-                    <p className="font-semibold text-gray-200">{new Date(listing.createdAt).toLocaleDateString()}</p>
-                  </div>
-                </div>
-              </div>
-
-              <div>
-                <h3 className="text-xl font-bold text-white mb-4">Description</h3>
-                <div className="prose prose-invert max-w-none text-gray-300 leading-relaxed whitespace-pre-wrap">
-                  {listing.description}
-                </div>
+                <p className="text-sm font-bold text-green-700">
+                  Free Campus Delivery
+                </p>
+                <p className="text-xs text-green-600">
+                  Available for UG, KNUST, and UCC campuses within 24 hours.
+                </p>
               </div>
             </div>
-
           </div>
         </div>
 
+        {/* ── Tabs Section + Reviews ── */}
+        <div className="flex flex-col lg:flex-row gap-10 mb-16">
+          {/* Left: Tabbed Content */}
+          <div className="w-full lg:w-3/5">
+            <ProductTabs
+              tabs={[
+                {
+                  label: "Description",
+                  content: (
+                    <div>
+                      <h2 className="text-xl font-bold text-gray-900 mb-4">
+                        Product Description
+                      </h2>
+                      <div className="prose max-w-none text-gray-600 leading-relaxed whitespace-pre-wrap mb-8">
+                        {listing.description}
+                      </div>
+
+                      {/* Specifications Table — matches Figma layout */}
+                      <table className="w-full text-sm border-collapse">
+                        <tbody>
+                          <tr className="border-b border-gray-100">
+                            <td className="py-3 pr-4 font-medium text-gray-500 w-40">
+                              Condition
+                            </td>
+                            <td className="py-3 text-gray-900">
+                              {formatCondition(listing.condition)}
+                            </td>
+                          </tr>
+                          <tr className="border-b border-gray-100">
+                            <td className="py-3 pr-4 font-medium text-gray-500">
+                              Category
+                            </td>
+                            <td className="py-3 text-gray-900">
+                              {listing.category.name}
+                            </td>
+                          </tr>
+                          <tr className="border-b border-gray-100">
+                            <td className="py-3 pr-4 font-medium text-gray-500">
+                              Stock Available
+                            </td>
+                            <td className="py-3 text-gray-900">
+                              {listing.stock}
+                            </td>
+                          </tr>
+                          <tr>
+                            <td className="py-3 pr-4 font-medium text-gray-500">
+                              Listed On
+                            </td>
+                            <td className="py-3 text-gray-900">
+                              {new Date(listing.createdAt).toLocaleDateString(
+                                "en-GB",
+                                { day: "numeric", month: "long", year: "numeric" }
+                              )}
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  ),
+                },
+                {
+                  label: "Specifications",
+                  content: (
+                    <div className="space-y-4">
+                      <h2 className="text-xl font-bold text-gray-900 mb-4">
+                        Technical Specifications
+                      </h2>
+                      <p className="text-gray-500 text-sm">
+                        Detailed technical specifications are provided by the
+                        seller. Contact the store for additional details.
+                      </p>
+                      <table className="w-full text-sm border-collapse">
+                        <tbody>
+                          <tr className="border-b border-gray-100">
+                            <td className="py-3 pr-4 font-medium text-gray-500 w-40">
+                              Condition
+                            </td>
+                            <td className="py-3 text-gray-900">
+                              {formatCondition(listing.condition)}
+                            </td>
+                          </tr>
+                          <tr className="border-b border-gray-100">
+                            <td className="py-3 pr-4 font-medium text-gray-500">
+                              Seller Type
+                            </td>
+                            <td className="py-3 text-gray-900 capitalize">
+                              {store.sellerType.toLowerCase()}
+                            </td>
+                          </tr>
+                          <tr>
+                            <td className="py-3 pr-4 font-medium text-gray-500">
+                              Return Window
+                            </td>
+                            <td className="py-3 text-gray-900">
+                              {formatReturnWindow(store.returnWindow)}
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  ),
+                },
+                {
+                  label: "Warranty & Shipping",
+                  content: (
+                    <div className="space-y-6">
+                      <div>
+                        <h2 className="text-xl font-bold text-gray-900 mb-3">
+                          Return Policy
+                        </h2>
+                        <div className="bg-gray-50 rounded-xl p-4 space-y-3 text-sm">
+                          <div className="flex justify-between">
+                            <span className="text-gray-500">
+                              Return Window
+                            </span>
+                            <span className="font-medium text-gray-900">
+                              {formatReturnWindow(store.returnWindow)}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                      <div>
+                        <h2 className="text-xl font-bold text-gray-900 mb-3">
+                          Shipping
+                        </h2>
+                        <div className="bg-green-50 rounded-xl p-4 text-sm">
+                          <p className="text-green-700 font-medium">
+                            Free campus delivery available for UG, KNUST, and
+                            UCC. Other locations may incur delivery fees
+                            calculated at checkout.
+                          </p>
+                        </div>
+                      </div>
+                      {/* Escrow protection notice */}
+                      <div className="flex items-start gap-3 p-4 bg-ushop-purple/5 border border-ushop-purple/10 rounded-xl">
+                        <span className="material-symbols-outlined text-ushop-purple text-xl mt-0.5">
+                          verified_user
+                        </span>
+                        <div>
+                          <p className="text-sm font-bold text-ushop-purple">
+                            Protected by U-Shop Escrow
+                          </p>
+                          <p className="text-xs text-gray-600">
+                            The seller doesn&apos;t get paid until you
+                            confirm receipt. Your money is safe.
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  ),
+                },
+              ]}
+            />
+          </div>
+
+          {/* Right: Student Reviews — matches Figma */}
+          <div className="w-full lg:w-2/5">
+            <h2 className="text-xl font-bold text-gray-900 mb-4">
+              Student Reviews
+            </h2>
+            {reviews.length === 0 ? (
+              <div className="border border-gray-200 rounded-xl p-6 text-center">
+                <span className="material-symbols-outlined text-4xl text-gray-300 mb-2 block">
+                  rate_review
+                </span>
+                <p className="text-sm text-gray-500">
+                  No reviews yet. Be the first to review after purchase!
+                </p>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {reviews.slice(0, 3).map((review) => (
+                  <div
+                    key={review.id}
+                    className="border border-gray-200 rounded-xl p-5"
+                  >
+                    <StarDisplay rating={review.rating} />
+                    {review.comment && (
+                      <p className="text-sm text-gray-700 mt-2 italic">
+                        &ldquo;{review.comment}&rdquo;
+                      </p>
+                    )}
+                    <div className="flex items-center gap-2 mt-3">
+                      {/* Author initials avatar */}
+                      <div className="w-7 h-7 rounded-full bg-ushop-purple/10 text-ushop-purple text-xs font-bold flex items-center justify-center">
+                        {review.author.fullName
+                          .split(" ")
+                          .map((n: string) => n[0])
+                          .join("")
+                          .slice(0, 2)
+                          .toUpperCase()}
+                      </div>
+                      <div>
+                        <p className="text-xs font-medium text-gray-900">
+                          {review.author.fullName}
+                        </p>
+                        {review.author.universityName && (
+                          <p className="text-[10px] text-gray-400">
+                            {review.author.universityName}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+                {reviews.length > 3 && (
+                  <button
+                    type="button"
+                    className="w-full py-2.5 border border-gray-200 rounded-xl text-sm font-bold text-gray-700 hover:bg-gray-50 transition-colors"
+                  >
+                    See All Reviews ({reviews.length})
+                  </button>
+                )}
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* ── Similar Products Carousel ── */}
+        {similarListings.length > 0 && (
+          <section className="mb-16">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-xl font-bold text-gray-900">
+                Similar {listing.category.name}
+              </h2>
+              <Link
+                href={`/search?categorySlug=${listing.category.slug}`}
+                className="text-sm font-bold text-ushop-purple hover:underline"
+              >
+                View All {listing.category.name}
+              </Link>
+            </div>
+            <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+              {similarListings.map((item) => (
+                <ListingCard
+                  key={item.id}
+                  id={item.id}
+                  title={item.title}
+                  slug={item.id}
+                  price={Number(item.price)}
+                  condition={item.condition}
+                  thumbnailUrl={item.images?.[0] || ""}
+                  store={{
+                    handle: item.store?.handle || "unknown",
+                    name: item.store?.name || "Unknown Store",
+                    isVerified:
+                      item.store?.user?.verificationStatus === "VERIFIED",
+                  }}
+                />
+              ))}
+            </div>
+          </section>
+        )}
       </div>
     </main>
   );
