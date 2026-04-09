@@ -1,6 +1,6 @@
 import { createClient } from './client';
 
-export type BuketName = 'store-assets' | 'product-images';
+export type BuketName = 'store-assets' | 'product-images' | 'verification-docs';
 
 /**
  * Uploads a raw browser File to Supabase Storage using the active session.

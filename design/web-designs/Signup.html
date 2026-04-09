@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Sign Up | Ushop Ghana</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "tertiary-fixed": "#ffdbc9",
+              "tertiary-container": "#c05900",
+              "surface-container-low": "#f1f3fc",
+              "secondary-fixed": "#d6e3ff",
+              "on-secondary-container": "#3f5881",
+              "surface-container-highest": "#e0e2eb",
+              "outline-variant": "#c1c6d5",
+              "on-error-container": "#93000a",
+              "tertiary": "#9a4600",
+              "on-tertiary-container": "#0d0300",
+              "tertiary-fixed-dim": "#ffb68c",
+              "on-tertiary": "#ffffff",
+              "primary-fixed-dim": "#aac7ff",
+              "primary": "#005cb8",
+              "surface-container-high": "#e6e8f1",
+              "on-tertiary-fixed": "#321200",
+              "background": "#f9f9ff",
+              "primary-container": "#1275e2",
+              "on-secondary": "#ffffff",
+              "surface-tint": "#005db8",
+              "surface-container-lowest": "#ffffff",
+              "outline": "#717785",
+              "on-secondary-fixed-variant": "#2d476f",
+              "surface-dim": "#d7dae3",
+              "on-primary-fixed": "#001b3e",
+              "surface-bright": "#f9f9ff",
+              "secondary-container": "#b6d0ff",
+              "primary-fixed": "#d6e3ff",
+              "on-tertiary-fixed-variant": "#763400",
+              "on-error": "#ffffff",
+              "on-primary-fixed-variant": "#00458d",
+              "inverse-on-surface": "#eef0fa",
+              "secondary-fixed-dim": "#aec7f7",
+              "surface-container": "#ebedf7",
+              "on-background": "#181c22",
+              "error": "#ba1a1a",
+              "on-surface": "#181c22",
+              "on-secondary-fixed": "#001b3d",
+              "on-primary-container": "#000512",
+              "error-container": "#ffdad6",
+              "on-surface-variant": "#414753",
+              "surface-variant": "#e0e2eb",
+              "surface": "#f9f9ff",
+              "inverse-primary": "#aac7ff",
+              "on-primary": "#ffffff",
+              "secondary": "#465f88",
+              "inverse-surface": "#2d3037",
+              "ushop-purple": "#520f85",
+              "ushop-pink": "#d41295"
+            },
+            fontFamily: {
+              "headline": ["Inter"],
+              "body": ["Inter"],
+              "label": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .ushop-logo-u { background-color: #ff0000; }
+        .split-screen-height { min-height: calc(100vh - 64px); }
+    </style>
+</head>
+<body class="bg-surface text-on-surface">
+<!-- TopAppBar (Logo Only Version for Transactional Page) -->
+<main class="flex flex-col md:flex-row flex-grow min-h-screen">
+<!-- Left: Student Hero Banner -->
+<section class="relative w-full md:w-1/2 bg-ushop-purple overflow-hidden flex items-center justify-center p-8 md:p-16">
+<div class="absolute inset-0 z-0">
+<img alt="Ghanaian students studying together" class="w-full h-full object-cover opacity-40 mix-blend-overlay" data-alt="Group of diverse Ghanaian university students smiling and studying together in a bright outdoor campus environment with laptops and notebooks" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB7Wu_9VNiZf0qn534_LWcpQli7GE99e6I9B4GiQUn5-Wfe_cVDRvR_jO2cQPVC0E75K_WYK9fKJdyiHii3xKZlEgO3xMY32yqaqEiytmwj5kj1dmd_HaT6kGIoiTxmIpMDQz-cMRcH6SV-B8AsM3haWVE2igIMdp38_TkKxaZGPGCUAHH62yb1pnZXXF2rBMYMzw3G3b9oDE_E8frY90CQnsblbKatf3uNAh93v-CtOqWEb-HK2Qqtvmr-hWEK4DLWomFnOKLDbbNA"/>
+<div class="absolute inset-0 bg-gradient-to-br from-ushop-purple/80 via-ushop-purple/40 to-ushop-pink/60"></div>
+</div>
+<div class="relative z-10 text-white max-w-lg"><a class="flex items-center gap-1 text-3xl font-bold tracking-tight text-white mb-12" href="/">
+<div class="w-12 h-12 ushop-logo-u rounded-none flex items-center justify-center text-white text-3xl">U</div>
+<span class="text-white">shop</span>
+</a>
+<div class="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md px-4 py-2 rounded-full mb-6 border border-white/20">
+<span class="material-symbols-outlined text-sm">child_hat</span>
+<span class="text-xs font-bold tracking-widest uppercase">Student Exclusive</span>
+</div>
+<h1 class="text-4xl md:text-6xl font-extrabold leading-tight mb-6">Empowering <span class="text-ushop-pink">Ghanaian Students</span> with Affordable Tech.</h1>
+<p class="text-lg text-white/80 mb-8 leading-relaxed">Join thousands of students from UG, KNUST, and UCC getting the best deals on laptops, smartphones, and essentials.</p>
+<div class="grid grid-cols-2 gap-4">
+<div class="flex items-start gap-3">
+<span class="material-symbols-outlined text-ushop-pink">verified</span>
+<div>
+<p class="font-bold text-sm">Verified Sellers</p>
+<p class="text-xs text-white/60">Shop with confidence</p>
+</div>
+</div>
+<div class="flex items-start gap-3">
+<span class="material-symbols-outlined text-ushop-pink">local_shipping</span>
+<div>
+<p class="font-bold text-sm">Campus Delivery</p>
+<p class="text-xs text-white/60">Straight to your hostel</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Right: Dark-themed Registration Form -->
+<section class="w-full md:w-1/2 bg-[#0f172a] flex items-center justify-center p-6 md:p-12">
+<div class="w-full max-w-md space-y-8">
+<div>
+<h2 class="text-3xl font-bold text-white mb-2">Create Account</h2>
+<p class="text-gray-400">Join the U-Shop community today.</p>
+</div>
+<form class="space-y-6">
+<div class="space-y-2">
+<label class="text-sm font-medium text-gray-300">Full Name</label>
+<div class="relative">
+<span class="absolute left-3 top-1/2 -translate-y-1/2 material-symbols-outlined text-gray-500 text-xl">person</span>
+<input class="w-full pl-10 pr-4 py-3 bg-[#1e293b] border border-gray-700 rounded-none text-white focus:ring-2 focus:ring-ushop-purple focus:border-ushop-purple outline-none transition-all placeholder:text-gray-600" placeholder="John Doe" type="text"/>
+</div>
+</div>
+<div class="space-y-2">
+<label class="text-sm font-medium text-gray-300">Email or Phone</label>
+<div class="relative">
+<span class="absolute left-3 top-1/2 -translate-y-1/2 material-symbols-outlined text-gray-500 text-xl">alternate_email</span>
+<input class="w-full pl-10 pr-4 py-3 bg-[#1e293b] border border-gray-700 rounded-none text-white focus:ring-2 focus:ring-ushop-purple focus:border-ushop-purple outline-none transition-all placeholder:text-gray-600" placeholder="example@st.ug.edu.gh" type="text"/>
+</div>
+</div>
+<div class="space-y-2">
+<label class="text-sm font-medium text-gray-300">Password</label>
+<div class="relative">
+<span class="absolute left-3 top-1/2 -translate-y-1/2 material-symbols-outlined text-gray-500 text-xl">lock</span>
+<input class="w-full pl-10 pr-4 py-3 bg-[#1e293b] border border-gray-700 rounded-none text-white focus:ring-2 focus:ring-ushop-purple focus:border-ushop-purple outline-none transition-all placeholder:text-gray-600" placeholder="••••••••" type="password"/>
+</div>
+</div>
+<!-- Verify as Student Toggle -->
+<div class="flex items-center justify-between p-4 bg-ushop-purple/10 border border-ushop-purple/30">
+<div class="flex gap-3 items-center">
+<span class="material-symbols-outlined text-ushop-purple" data-weight="fill">school</span>
+<div>
+<p class="text-sm font-bold text-white">Verify as Student</p>
+<p class="text-xs text-gray-400">Unlock student-only prices</p>
+</div>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-11 h-6 bg-gray-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-ushop-purple"></div>
+</label>
+</div>
+<div class="flex items-start gap-3">
+<input class="mt-1 w-4 h-4 text-ushop-purple bg-[#1e293b] border-gray-700 rounded-none focus:ring-ushop-purple" id="terms" type="checkbox"/>
+<label class="text-sm text-gray-400 leading-tight" for="terms">I agree to the <a class="text-ushop-pink hover:underline" href="#">Terms and Conditions</a> and <a class="text-ushop-pink hover:underline" href="#">Privacy Policy</a> of U-Shop Ghana.</label>
+</div>
+<button class="w-full bg-[#1275e2] hover:bg-ushop-purple text-white font-bold py-4 transition-all active:scale-[0.98] shadow-lg shadow-blue-500/20" type="submit">
+                        Create Account
+                    </button>
+<div class="relative flex items-center gap-4">
+<div class="flex-grow h-px bg-gray-800"></div>
+<span class="text-gray-500 text-xs uppercase tracking-widest font-bold">OR</span>
+<div class="flex-grow h-px bg-gray-800"></div>
+</div>
+<button class="w-full bg-transparent border border-gray-700 text-white font-semibold py-4 flex items-center justify-center gap-3 hover:bg-gray-800 transition-colors" type="button">
+<svg class="w-5 h-5" viewbox="0 0 24 24">
+<path d="M12 5c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 1.68 14.91 1 12 1 7.48 1 3.65 3.59 1.81 7.39l3.7 2.87C6.38 7.47 9 5 12 5z" fill="#EA4335"></path>
+<path d="M23.49 12.27c0-.79-.07-1.54-.19-2.27H12v4.51h6.47c-.29 1.48-1.14 2.73-2.4 3.58l3.7 2.88c2.16-1.99 3.42-4.93 3.42-8.7z" fill="#4285F4"></path>
+<path d="M5.51 14.74c-.28-.85-.44-1.76-.44-2.74 0-.98.16-1.89.44-2.74L1.81 7.39C.66 9.77 0 12.39 0 15.22c0 2.83.66 5.45 1.81 7.83l3.7-2.87c-.28-.85-.44-1.76-.44-2.74z" fill="#FBBC05"></path>
+<path d="M12 23c3.12 0 5.73-1.03 7.64-2.8l-3.7-2.88c-1.05.7-2.39 1.12-3.94 1.12-3 0-5.53-2.03-6.44-4.76l-3.7 2.87C3.65 20.41 7.48 23 12 23z" fill="#34A853"></path>
+</svg>
+                        Sign up with Google
+                    </button><div class="text-center mt-6">
+<p class="text-gray-400 text-sm">
+    Already have an account? 
+    <a class="text-ushop-pink font-bold hover:underline transition-all" href="/login">Log in</a>
+</p>
+</div>
+</form>
+</div>
+</section>
+</main>
+<!-- Footer -->
+</body></html>
