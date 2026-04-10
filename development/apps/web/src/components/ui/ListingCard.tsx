@@ -122,7 +122,7 @@ export function ListingCard({
           <div className="absolute top-3 left-3 z-10 flex flex-col gap-1">
             <span
               className={`px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider rounded ${
-                CONDITION_STYLES[condition] || "bg-gray-600 text-white"
+                CONDITION_STYLES[condition.toUpperCase().replace(/\s+/g, "_")] || "bg-gray-600 text-white"
               }`}
             >
               {formatCondition(condition)}
