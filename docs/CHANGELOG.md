@@ -5,6 +5,18 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [0.6.3] — 2026-04-10 — Dynamic Marketplace Directories & Responsive UI
+
+### Added
+- **Global Search & Sort Functionally** — Transformed `/categories`, `/universities`, and `/stores` from statically hardcoded grids (mocks) to fully functional client/server components. Added rigorous multi-parameter search mapping and dynamic sorting algorithms (A-Z, Newest, Ratings, Elite/Student-Run).
+- **Client Route State Navigation** — Built `<StoreFilters />` natively mapping query objects across the Next.js App Router for server-rendered `?q=` handling on the fast Express DB API.
+- **Backend Search Integration** — Expanded the Express `StoreService.listStores()` to natively intercept `search` parameters searching `name`, `bio`, `handle` and relations via robust Prisma `OR` query statements. Also seamlessly mapped sorting string types directly into complex `orderBy` cascades over Prisma schemas.
+- **Client Search Fallbacks** — Built `<ClientCategoryList />` and `<ClientUniversityList />` handling immediate `O(n)` array filtration instantly via React Context for lightweight static models eliminating lag time entirely for non-paginated lists.
+
+### Changed
+- **Mobile Responsive Typography** — Implemented highly strict CSS tailwind layouts `flex-col sm:flex-row`, text shrinking utilities on mobile nodes (`text-sm` and `text-xs`) eliminating UI/UX clipping breakage.
+- **"Back to Home" Strict Alignment** — Completely removed `text-center` alignment flows off navigation wrappers on Category, University, and Store nodes resulting in beautiful top-left absolute alignment matching precise UX directives.
+
 ## [0.6.2] — 2026-04-09 — Vercel Speed Insights Optimizations
 
 ### Changed

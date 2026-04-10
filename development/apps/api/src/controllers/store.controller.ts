@@ -9,8 +9,10 @@ export class StoreController {
     try {
       const page = parseInt(req.query.page as string) || 1;
       const limit = parseInt(req.query.limit as string) || 20;
+      const search = req.query.q as string | undefined;
+      const sort = req.query.sort as string | undefined;
       
-      const stores = await StoreService.listStores(page, limit);
+      const stores = await StoreService.listStores(page, limit, search, sort);
       
       res.status(200).json({
         success: true,
