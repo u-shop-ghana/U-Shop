@@ -177,12 +177,12 @@ export default async function HomePage() {
       {/* Featured Categories Grid — matching Figma: white bg, overlay image cards */}
       <section className="py-16 bg-white">
          <div className="max-w-7xl mx-auto px-4 md:px-8">
-            <div className="flex justify-between items-end mb-8">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-3 sm:gap-0 mb-6 md:mb-8">
                <div>
-                  <h2 className="text-3xl font-bold text-gray-900">Browse Categories</h2>
-                  <p className="text-gray-500">Everything a student needs to succeed</p>
+                  <h2 className="text-2xl md:text-3xl font-bold text-gray-900">Browse Categories</h2>
+                  <p className="text-sm md:text-base text-gray-500">Everything a student needs to succeed</p>
                </div>
-               <Link href="/categories" className="text-ushop-purple font-semibold flex items-center gap-1 hover:underline group">
+               <Link href="/categories" className="text-sm md:text-base text-ushop-purple font-semibold flex items-center gap-1 hover:underline group">
                   View All <span className="material-symbols-outlined text-sm group-hover:translate-x-1 transition-transform">arrow_forward</span>
                </Link>
             </div>
@@ -206,12 +206,12 @@ export default async function HomePage() {
       {/* Browse Universities — matching Figma: same image card grid as categories */}
       <section className="py-16 bg-[#f8fafc]">
          <div className="max-w-7xl mx-auto px-4 md:px-8">
-            <div className="flex justify-between items-end mb-8">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-3 sm:gap-0 mb-6 md:mb-8">
                <div>
-                  <h2 className="text-3xl font-bold text-gray-900">Browse Universities</h2>
-                  <p className="text-gray-500">Find tech deals specifically for your campus</p>
+                  <h2 className="text-2xl md:text-3xl font-bold text-gray-900">Browse Universities</h2>
+                  <p className="text-sm md:text-base text-gray-500">Find tech deals specifically for your campus</p>
                </div>
-               <Link href="/universities" className="text-ushop-purple font-semibold flex items-center gap-1 hover:underline group">
+               <Link href="/universities" className="text-sm md:text-base text-ushop-purple font-semibold flex items-center gap-1 hover:underline group">
                   All Universities <span className="material-symbols-outlined text-sm group-hover:translate-x-1 transition-transform">arrow_forward</span>
                </Link>
             </div>
@@ -235,12 +235,12 @@ export default async function HomePage() {
       {/* Browse Stores */}
       <section className="py-16 bg-[#f8fafc] border-y border-slate-100">
          <div className="max-w-7xl mx-auto px-4 md:px-8">
-            <div className="flex justify-between items-end mb-10">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-3 sm:gap-0 mb-6 md:mb-10">
                <div>
-                  <h2 className="text-3xl font-bold text-gray-900">Browse Stores</h2>
-                  <p className="text-gray-600">Trusted local sellers from your university community</p>
+                  <h2 className="text-2xl md:text-3xl font-bold text-gray-900">Browse Stores</h2>
+                  <p className="text-sm md:text-base text-gray-600">Trusted local sellers from your university community</p>
                </div>
-               <Link href="/stores" className="text-ushop-purple font-semibold flex items-center gap-1 hover:underline group">
+               <Link href="/stores" className="text-sm md:text-base text-ushop-purple font-semibold flex items-center gap-1 hover:underline group">
                   View All Stores <span className="material-symbols-outlined text-sm group-hover:translate-x-1 transition-transform">arrow_forward</span>
                </Link>
             </div>
@@ -285,19 +285,19 @@ export default async function HomePage() {
       {/* Featured Deals */}
       <section className="py-16 bg-white">
          <div className="max-w-7xl mx-auto px-4 md:px-8">
-            <div className="flex justify-between items-end mb-10">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-3 sm:gap-0 mb-6 md:mb-10">
                <div>
-                  <h2 className="text-3xl font-bold text-gray-900">Featured Deals</h2>
-                  <p className="text-gray-600">Top picks for students this semester</p>
+                  <h2 className="text-2xl md:text-3xl font-bold text-gray-900">Featured Deals</h2>
+                  <p className="text-sm md:text-base text-gray-600">Top picks for students this semester</p>
                </div>
-               <Link href="/search" className="text-ushop-purple font-semibold flex items-center gap-1 hover:underline">
+               <Link href="/search" className="text-sm md:text-base text-ushop-purple font-semibold flex items-center gap-1 hover:underline">
                   See all <span className="material-symbols-outlined text-sm">arrow_forward</span>
                </Link>
             </div>
             {data.featured.length === 0 ? (
                 <div className="text-center py-10 text-gray-500 bg-gray-50 rounded-xl">No active listings available.</div>
             ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
                    {data.featured.map((item: ListingOption) => (
                       <ListingCard
                           key={item.id}
@@ -323,9 +323,9 @@ export default async function HomePage() {
       {/* Student Deals Promo Section */}
       <section className="py-16 bg-ushop-purple">
          <div className="max-w-7xl mx-auto px-4 md:px-8">
-            <div className="flex items-center gap-3 mb-10">
-               <span className="material-symbols-outlined text-white text-3xl">local_offer</span>
-               <h2 className="text-3xl font-bold text-white">Student Deals</h2>
+            <div className="flex items-center gap-2 sm:gap-3 mb-6 md:mb-10">
+               <span className="material-symbols-outlined text-white text-2xl md:text-3xl">local_offer</span>
+               <h2 className="text-2xl md:text-3xl font-bold text-white">Student Deals</h2>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                <div className="bg-gradient-to-br from-ushop-pink to-[#8c0a62] p-8 rounded-2xl relative overflow-hidden group shadow-lg">
@@ -362,19 +362,19 @@ export default async function HomePage() {
       {/* Trending Now */}
       <section className="py-16 bg-[#f8fafc]">
          <div className="max-w-7xl mx-auto px-4 md:px-8">
-            <div className="flex justify-between items-end mb-10">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-3 sm:gap-0 mb-6 md:mb-10">
                <div>
-                  <h2 className="text-3xl font-bold text-gray-900">Trending Now</h2>
-                  <p className="text-gray-600">What students are buying this week</p>
+                  <h2 className="text-2xl md:text-3xl font-bold text-gray-900">Trending Now</h2>
+                  <p className="text-sm md:text-base text-gray-600">What students are buying this week</p>
                </div>
-               <Link href="/search" className="text-ushop-purple font-semibold flex items-center gap-1 hover:underline">
+               <Link href="/search" className="text-sm md:text-base text-ushop-purple font-semibold flex items-center gap-1 hover:underline">
                   View all <span className="material-symbols-outlined text-sm">arrow_forward</span>
                </Link>
             </div>
             {data.trending.length === 0 ? (
                 <div className="text-center py-10 text-gray-500 bg-gray-50 rounded-xl">No trending listings available.</div>
             ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
                    {data.trending.map((item: ListingOption) => (
                       <ListingCard
                           key={item.id}
