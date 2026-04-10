@@ -148,7 +148,9 @@ export class StoreService {
   static async listStores(page: number, limit: number, search?: string, sort?: string) {
     const skip = (page - 1) * limit;
 
-    const where: Prisma.StoreWhereInput = { isActive: true };
+    type StoreFindManyArgs = NonNullable<Parameters<typeof prisma.store.findMany>[0]>;
+
+    const where: StoreFindManyArgs['where'] = { isActive: true };
 
     if (search) {
       where.OR = [
@@ -159,7 +161,7 @@ export class StoreService {
       ];
     }
 
-    let orderBy: Prisma.StoreOrderByWithRelationInput[] = [
+    let orderBy: StoreFindManyArgs['orderBy'] = [
       { averageRating: 'desc' },
       { reviewCount: 'desc' },
       { createdAt: 'desc' }

@@ -153,14 +153,15 @@ export function ListingCard({
       {/* Content Area */}
       <div className="p-4 flex flex-col flex-grow">
         {/* Vendor name — uppercase, small, gray */}
-        <Link href={`/store/${store.handle}`} className="flex items-center gap-1 mb-1">
-          <span className="text-[11px] font-semibold text-gray-400 uppercase tracking-wide truncate hover:text-ushop-purple transition-colors">
+        <Link href={`/store/${store.handle}`} className="flex items-center gap-1 mb-1 py-1 -mt-1" aria-label={`View ${store.name} store`}>
+          <span className="text-[11px] font-semibold text-gray-600 uppercase tracking-wide truncate group-hover:text-ushop-purple transition-colors">
             {store.name}
           </span>
           {store.isVerified && (
             <span
-              className="material-symbols-outlined text-green-500 text-xs"
+              className="material-symbols-outlined text-green-700 text-xs"
               style={{ fontVariationSettings: '"FILL" 1' }}
+              aria-label="Verified Store"
             >
               verified
             </span>
@@ -168,7 +169,7 @@ export function ListingCard({
         </Link>
 
         {/* Product title */}
-        <Link href={`/listing/${id}`}>
+        <Link href={`/listing/${id}`} className="block py-1 -my-1">
           <h3 className="text-xs sm:text-sm font-bold text-gray-900 leading-snug line-clamp-2 mb-1 group-hover:text-ushop-purple transition-colors">
             {title}
           </h3>
