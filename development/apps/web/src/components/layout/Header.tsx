@@ -247,7 +247,18 @@ export function Header({
                     </span>
                   )}
                 </Link>
-                {!isLoggedIn && (
+                {isLoggedIn ? (
+                  <Link
+                    href="/dashboard"
+                    onClick={closeMobileMenu}
+                    className="flex items-center gap-2 text-sm font-bold text-gray-700 hover:text-[#6B1FA8] py-2 transition-colors"
+                  >
+                    <span className="material-symbols-outlined text-lg">
+                      account_circle
+                    </span>
+                    {userName || "Profile Dashboard"}
+                  </Link>
+                ) : (
                   <>
                     <Link
                       href="/login"
