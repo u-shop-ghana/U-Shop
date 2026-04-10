@@ -169,29 +169,31 @@ export function ListingCard({
 
         {/* Product title */}
         <Link href={`/listing/${id}`}>
-          <h3 className="text-sm font-bold text-gray-900 leading-snug line-clamp-2 mb-1.5 group-hover:text-ushop-purple transition-colors">
+          <h3 className="text-xs sm:text-sm font-bold text-gray-900 leading-snug line-clamp-2 mb-1 group-hover:text-ushop-purple transition-colors">
             {title}
           </h3>
         </Link>
 
         {/* Star rating — if available */}
         {rating !== undefined && reviewCount !== undefined && (
-          <StarRating rating={rating} count={reviewCount} />
+          <div className="hidden sm:block">
+            <StarRating rating={rating} count={reviewCount} />
+          </div>
         )}
 
-        <div className="mt-auto pt-3">
+        <div className="mt-auto pt-2 sm:pt-3">
           {/* Price block — current price + original (strikethrough) */}
-          <div className="flex items-baseline gap-2 mb-3">
-            <span className="text-lg font-extrabold text-ushop-purple">
+          <div className="flex flex-wrap items-baseline gap-1 sm:gap-2 mb-2 sm:mb-3">
+            <span className="text-base sm:text-lg font-extrabold text-ushop-purple">
               {formatCurrency(price)}
             </span>
             {originalPrice && originalPrice > price && (
               <>
-                <span className="text-sm text-gray-400 line-through">
+                <span className="text-xs sm:text-sm text-gray-400 line-through">
                   {formatCurrency(originalPrice)}
                 </span>
                 {discountPercent && (
-                  <span className="text-[10px] font-bold text-white bg-green-500 px-1.5 py-0.5 rounded">
+                  <span className="text-[9px] sm:text-[10px] font-bold text-white bg-green-500 px-1 sm:px-1.5 py-0.5 rounded">
                     -{discountPercent}%
                   </span>
                 )}
