@@ -2,6 +2,7 @@ import { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
 import { apiPublicFetch } from "@/lib/api-public";
+import { StoreFilters } from "@/components/ui/StoreFilters";
 
 interface StoreOption {
   id: string;
@@ -28,7 +29,16 @@ export default async function StoresPage({
 }) {
   const resolvedParams = await searchParams;
   const page = resolvedParams.page ? parseInt(resolvedParams.page as string) : 1;
-  const res = await apiPublicFetch(`/api/v1/stores?page=${page}&limit=24`);
+  const qStr = resolvedParams.q ? `&q=${encodeURIComponent(resolvedParams.q as string)}` : '';
+  
+  let sortStr = '';
+  if (resolvedParams.sort && resolvedParams.sort !== 'default') {
+    sortStr = `&sort=${encodeURIComponent(resolvedParams.sort as string)}`;
+  } else if (resolvedParams.type && resolvedParams.type !== 'all') {
+    sortStr = `&sort=${encodeURIComponent(resolvedParams.type as string)}`; // store backend treats student/elite as sort/filter
+  }
+
+  const res = await apiPublicFetch(`/api/v1/stores?page=${page}&limit=24${qStr}${sortStr}`);
   const stores: StoreOption[] = res.success ? (res.data || []) : [];
 
   return (
@@ -45,36 +55,41 @@ export default async function StoresPage({
           />
           <div className="absolute inset-0 bg-gradient-to-b from-[#0f172a]/50 to-[#0f172a]/90" />
         </div>
-        <div className="relative z-10 max-w-4xl mx-auto px-4 py-20 md:py-28 text-center">
+        <div className="relative z-10 max-w-4xl mx-auto px-4 py-16 md:py-24 text-center">
+          <Link href="/" className="inline-flex flex-col sm:flex-row items-center sm:self-start justify-center sm:justify-start gap-1 text-white/70 hover:text-white transition-colors text-sm mb-6 mr-full md:mr-auto sm:-ml-[35vw] xl:-ml-[15vw] md:absolute md:left-0">
+            <div className="flex items-center gap-1"><span className="material-symbols-outlined text-base">arrow_back</span> Back to Home</div>
+          </Link>
+
           {/* Badge */}
           <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-sm border border-white/10 rounded-full mb-6">
             <div className="w-2 h-2 bg-green-400 rounded-full" />
             <span className="text-sm text-white/90 font-medium">Verified Marketplace</span>
           </div>
-          <h1 className="text-4xl md:text-6xl font-black text-white tracking-tight mb-2">
+          <h1 className="text-3xl md:text-5xl lg:text-6xl font-black text-white tracking-tight mb-2">
             Discover Ghana&apos;s
           </h1>
-          <h1 className="text-4xl md:text-6xl font-black mb-4">
+          <h1 className="text-3xl md:text-5xl lg:text-6xl font-black mb-4">
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-ushop-purple to-ushop-pink">Elite Campus Stores</span>
           </h1>
-          <p className="text-white/70 text-lg max-w-2xl mx-auto mb-8">
+          <p className="text-white/70 text-base md:text-lg max-w-2xl mx-auto mb-8">
             Shop directly from verified student entrepreneurs and local tech hubs at your favorite university campus.
           </p>
           {/* Search bar matching Figma */}
-          <form action="/search" method="GET" className="flex max-w-xl mx-auto">
+          <form action="/stores" method="GET" className="flex max-w-xl mx-auto">
             <div className="flex-1 relative">
               <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">search</span>
               <input
                 type="text"
                 name="q"
+                defaultValue={(resolvedParams.q as string) || ""}
                 id="stores-search"
                 placeholder="Search by store name, university, or gear..."
-                className="w-full pl-12 pr-4 py-4 bg-white rounded-l-xl text-gray-900 placeholder:text-gray-400 focus:outline-none text-sm"
+                className="w-full pl-12 pr-4 py-3 md:py-4 bg-white rounded-l-xl text-gray-900 placeholder:text-gray-400 focus:outline-none text-sm md:text-base shadow-lg"
               />
             </div>
             <button
               type="submit"
-              className="px-8 py-4 bg-ushop-purple text-white font-bold rounded-r-xl hover:bg-ushop-purple/90 transition-colors text-sm"
+              className="px-6 md:px-8 py-3 md:py-4 bg-ushop-purple text-white font-bold rounded-r-xl hover:bg-ushop-purple/90 transition-colors text-sm"
             >
               Search
             </button>
@@ -84,7 +99,7 @@ export default async function StoresPage({
 
       {/* Section Title + Filters */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
           <div>
             <div className="flex items-center gap-2 mb-1">
               <div className="w-1 h-6 bg-ushop-purple rounded-full" />
@@ -94,17 +109,8 @@ export default async function StoresPage({
               Find the perfect gadget from our curated list of student-run and campus-based tech stores.
             </p>
           </div>
-          <div className="flex items-center gap-3">
-            {/* Filter pills */}
-            <div className="flex items-center gap-1 bg-gray-100 rounded-full p-1">
-              <button className="px-4 py-1.5 bg-ushop-purple text-white text-xs font-bold rounded-full">All Stores</button>
-              <button className="px-4 py-1.5 text-gray-500 text-xs font-medium rounded-full hover:bg-gray-200 transition-colors">Student Run</button>
-              <button className="px-4 py-1.5 text-gray-500 text-xs font-medium rounded-full hover:bg-gray-200 transition-colors">Elite</button>
-            </div>
-            <div className="inline-flex items-center gap-2 text-sm text-gray-500 border border-gray-200 rounded-lg px-4 py-2">
-              Sort: Default
-              <span className="material-symbols-outlined text-base">expand_more</span>
-            </div>
+          <div className="flex items-center gap-3 w-full lg:w-auto overflow-hidden">
+            <StoreFilters />
           </div>
         </div>
       </div>

@@ -20,7 +20,7 @@ export function WishlistButton() {
         console.log("Wishlist placeholder clicked");
       }}
     >
-      <span className="material-symbols-outlined text-gray-400 text-lg hover:text-red-500 transition-colors">
+      <span className="material-symbols-outlined text-gray-400 text-lg hover:text-red-500 transition-colors" aria-hidden="true">
         favorite
       </span>
     </button>

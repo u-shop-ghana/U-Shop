@@ -145,19 +145,59 @@ export class StoreService {
   /**
    * Retrieves active stores mapped for exploration index
    */
-  static async listStores(page: number, limit: number) {
+  static async listStores(page: number, limit: number, search?: string, sort?: string) {
     const skip = (page - 1) * limit;
 
+    interface StoreSearchQuery {
+      isActive?: boolean;
+      sellerType?: 'STUDENT' | 'RESELLER';
+      OR?: Array<{
+        name?: { contains: string; mode: 'insensitive' };
+        handle?: { contains: string; mode: 'insensitive' };
+        bio?: { contains: string; mode: 'insensitive' };
+        user?: { universityName: { contains: string; mode: 'insensitive' } };
+      }>;
+    }
+
+    const where: StoreSearchQuery = { isActive: true };
+
+    if (search) {
+      where.OR = [
+        { name: { contains: search, mode: 'insensitive' } },
+        { handle: { contains: search, mode: 'insensitive' } },
+        { bio: { contains: search, mode: 'insensitive' } },
+        { user: { universityName: { contains: search, mode: 'insensitive' } } },
+      ];
+    }
+
+    let orderBy: Record<string, 'asc' | 'desc'>[] = [
+      { averageRating: 'desc' },
+      { reviewCount: 'desc' },
+      { createdAt: 'desc' }
+    ];
+
+    if (sort === 'newest') {
+      orderBy = [{ createdAt: 'desc' }];
+    } else if (sort === 'oldest') {
+      orderBy = [{ createdAt: 'asc' }];
+    } else if (sort === 'rating') {
+      orderBy = [{ averageRating: 'desc' }, { reviewCount: 'desc' }];
+    } else if (sort === 'a-z') {
+      orderBy = [{ name: 'asc' }];
+    } else if (sort === 'z-a') {
+      orderBy = [{ name: 'desc' }];
+    } else if (sort === 'student') {
+       where.sellerType = 'STUDENT';
+    } else if (sort === 'elite') {
+       where.sellerType = 'RESELLER'; // Note: mapping elite to reseller logically based on app rules
+    }
+
     const stores = await prisma.store.findMany({
-      where: { isActive: true },
+      where,
       include: {
         user: { select: { verificationStatus: true, universityName: true } },
       },
-      orderBy: [
-        { averageRating: 'desc' },
-        { reviewCount: 'desc' },
-        { createdAt: 'desc' }
-      ],
+      orderBy,
       skip,
       take: limit,
     });
