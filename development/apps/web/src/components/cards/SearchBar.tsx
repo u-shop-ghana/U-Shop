@@ -62,7 +62,7 @@ export function SearchBar({
       <form onSubmit={handleSubmit} className="flex">
         {/* Search icon */}
         <div className="relative flex-1">
-          <span className="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-gray-400 text-xl">
+          <span className="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-gray-500 text-xl" aria-hidden="true">
             search
           </span>
           <input
@@ -74,7 +74,7 @@ export function SearchBar({
             }}
             onFocus={() => query.length > 0 && setShowSuggestions(true)}
             className="w-full pl-12 pr-4 py-3 bg-white border border-gray-200 rounded-l-xl
-              text-gray-900 text-sm placeholder:text-gray-400
+              text-gray-900 text-sm placeholder:text-gray-500
               focus:outline-none focus:ring-2 focus:ring-[#6B1FA8] focus:border-[#6B1FA8]
               transition-all"
             placeholder={placeholder}
@@ -86,9 +86,9 @@ export function SearchBar({
           type="submit"
           className="px-6 bg-[#6B1FA8] text-white rounded-r-xl hover:bg-[#420c6b]
             transition-colors flex items-center justify-center"
-          aria-label="Search"
+          aria-label="Submit search"
         >
-          <span className="material-symbols-outlined text-xl">search</span>
+          <span className="material-symbols-outlined text-xl" aria-hidden="true">search</span>
         </button>
       </form>
 
@@ -102,7 +102,7 @@ export function SearchBar({
               className="w-full text-left px-4 py-3 text-sm text-gray-700
                 hover:bg-gray-50 transition-colors flex items-center gap-3"
             >
-              <span className="material-symbols-outlined text-gray-400 text-base">
+              <span className="material-symbols-outlined text-gray-500 text-base" aria-hidden="true">
                 search
               </span>
               {suggestion}
