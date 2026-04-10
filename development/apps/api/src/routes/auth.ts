@@ -68,8 +68,7 @@ router.post(
       }
 
       // Idempotency: if a User record already exists for this Supabase ID,
-      // return it instead of failing with a unique constraint error.
-      // This handles the case where the frontend retries after a network error.
+      // return it instead of failing.
       const existingUser = await prisma.user.findUnique({
         where: { supabaseId: supabaseUser.id },
         select: {
@@ -85,9 +84,32 @@ router.post(
         return;
       }
 
+      // SupabaseId doesn't exist. Check if Email already exists (to prevent P2002 500 crash)
+      // This happens if a user signs up via OAuth to an email that existed before, or if their
+      // Supabase auth record was reset but the DB row persisted. We link the new Supabase ID.
+      const existingEmailUser = await prisma.user.findUnique({
+        where: { email },
+        select: { id: true }
+      });
+
+      if (existingEmailUser) {
+        const reLinkedUser = await prisma.user.update({
+          where: { id: existingEmailUser.id },
+          data: { supabaseId: supabaseUser.id, fullName: fullName },
+          select: {
+            id: true,
+            email: true,
+            role: true,
+            verificationStatus: true,
+          }
+        });
+        
+        logger.info({ userId: reLinkedUser.id, email }, 'Existing user re-linked to new Supabase Auth ID');
+        res.status(200).json({ success: true, data: reLinkedUser });
+        return;
+      }
+
       // Create our internal User record.
-      // Everyone starts as BUYER + UNVERIFIED. Student verification
-      // is a separate, explicit user action (not auto-triggered by email domain).
       const newUser = await prisma.user.create({
         data: {
           supabaseId: supabaseUser.id,
