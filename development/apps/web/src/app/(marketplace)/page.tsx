@@ -147,28 +147,28 @@ export default async function HomePage() {
                <div className="w-12 h-12 bg-purple-50 flex items-center justify-center rounded-full text-ushop-purple mb-4 group-hover:scale-110 transition-transform">
                   <span className="material-symbols-outlined text-3xl" aria-hidden="true">security</span>
                </div>
-               <h3 className="font-bold text-gray-900 text-sm">Secure Payment</h3>
+               <h2 className="font-bold text-gray-900 text-sm">Secure Payment</h2>
                <p className="text-xs text-gray-600 mt-1">Momo & Card protection</p>
             </div>
             <div className="flex flex-col items-center text-center group">
                <div className="w-12 h-12 bg-purple-50 flex items-center justify-center rounded-full text-ushop-purple mb-4 group-hover:scale-110 transition-transform">
                   <span className="material-symbols-outlined text-3xl" aria-hidden="true">verified</span>
                </div>
-               <h3 className="font-bold text-gray-900 text-sm">Verified Sellers</h3>
+               <h2 className="font-bold text-gray-900 text-sm">Verified Sellers</h2>
                <p className="text-xs text-gray-500 mt-1">100% Genuine tech gear</p>
             </div>
             <div className="flex flex-col items-center text-center group">
                <div className="w-12 h-12 bg-purple-50 flex items-center justify-center rounded-full text-ushop-purple mb-4 group-hover:scale-110 transition-transform">
                   <span className="material-symbols-outlined text-3xl" aria-hidden="true">local_shipping</span>
                </div>
-               <h3 className="font-bold text-gray-900 text-sm">Campus Delivery</h3>
+               <h2 className="font-bold text-gray-900 text-sm">Campus Delivery</h2>
                <p className="text-xs text-gray-500 mt-1">Direct to your hostel</p>
             </div>
             <div className="flex flex-col items-center text-center group">
                <div className="w-12 h-12 bg-purple-50 flex items-center justify-center rounded-full text-ushop-purple mb-4 group-hover:scale-110 transition-transform">
                   <span className="material-symbols-outlined text-3xl" aria-hidden="true">support_agent</span>
                </div>
-               <h3 className="font-bold text-gray-900 text-sm">Local Support</h3>
+               <h2 className="font-bold text-gray-900 text-sm">Local Support</h2>
                <p className="text-xs text-gray-500 mt-1">Call or WhatsApp 24/7</p>
             </div>
          </div>
@@ -244,12 +244,12 @@ export default async function HomePage() {
                   View All Stores <span className="material-symbols-outlined text-sm group-hover:translate-x-1 transition-transform">arrow_forward</span>
                </Link>
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-6">
                {data.stores.map((store: StoreOption) => (
-                  <div key={store.id} className="bg-white p-6 rounded-xl border border-slate-200 hover:shadow-lg transition-all group flex flex-col justify-between">
+                  <div key={store.id} className="bg-white p-3 sm:p-6 rounded-xl border border-slate-200 hover:shadow-lg transition-all group flex flex-col justify-between">
                      <div>
-                        <div className="flex items-center gap-4 mb-4">
-                           <div className="w-16 h-16 relative rounded-full overflow-hidden border-2 border-purple-50 group-hover:border-ushop-purple transition-colors bg-gray-100 flex items-center justify-center">
+                        <div className="flex flex-col sm:flex-row items-center sm:items-center gap-2 sm:gap-4 mb-2 sm:mb-4 text-center sm:text-left">
+                           <div className="w-12 h-12 sm:w-16 sm:h-16 relative rounded-full overflow-hidden border-2 border-purple-50 group-hover:border-ushop-purple transition-colors bg-gray-100 flex items-center justify-center shrink-0">
                               {store.logoUrl ? (
                                  <Image fill src={store.logoUrl} alt={store.name} className="object-cover" />
                               ) : (
@@ -297,7 +297,7 @@ export default async function HomePage() {
             {data.featured.length === 0 ? (
                 <div className="text-center py-10 text-gray-500 bg-gray-50 rounded-xl">No active listings available.</div>
             ) : (
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-6">
                    {data.featured.map((item: ListingOption) => (
                       <ListingCard
                           key={item.id}
@@ -327,33 +327,39 @@ export default async function HomePage() {
                <span className="material-symbols-outlined text-white text-2xl md:text-3xl">local_offer</span>
                <h2 className="text-2xl md:text-3xl font-bold text-white">Student Deals</h2>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-               <div className="bg-gradient-to-br from-ushop-pink to-[#8c0a62] p-8 rounded-2xl relative overflow-hidden group shadow-lg">
-                  <div className="relative z-10">
-                     <span className="text-xs font-bold text-white/80 uppercase tracking-widest">Exclusive</span>
-                     <h3 className="text-2xl font-black text-white mt-2 leading-tight">University of Ghana Tech Fest</h3>
-                     <p className="text-white/90 mt-4 font-medium">Up to 40% OFF on all accessories for Legon students.</p>
-                     <Link href="/student-deals" className="mt-6 inline-block bg-white text-ushop-pink px-6 py-2 rounded-lg font-bold hover:scale-105 transition-transform">Get Code</Link>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+               <div className="bg-gradient-to-br from-ushop-pink to-[#8c0a62] p-5 sm:p-8 rounded-xl sm:rounded-2xl relative overflow-hidden group shadow-lg">
+                  <div className="relative z-10 flex flex-col h-full justify-between">
+                     <div>
+                        <span className="text-[10px] sm:text-xs font-bold text-white/80 uppercase tracking-widest">Exclusive</span>
+                        <h3 className="text-lg sm:text-2xl font-black text-white mt-1 sm:mt-2 leading-tight">University of Ghana Tech Fest</h3>
+                        <p className="text-xs sm:text-base text-white/90 mt-2 sm:mt-4 font-medium line-clamp-2">Up to 40% OFF on all accessories for Legon students.</p>
+                     </div>
+                     <Link href="/student-deals" className="mt-4 sm:mt-6 inline-block bg-white text-ushop-pink px-4 sm:px-6 py-2 rounded-lg font-bold text-xs sm:text-base hover:scale-105 transition-transform self-start">Get Code</Link>
                   </div>
-                  <span className="material-symbols-outlined absolute -right-4 -bottom-4 text-[120px] text-white/10 rotate-12 group-hover:rotate-0 transition-transform">school</span>
+                  <span className="material-symbols-outlined absolute -right-4 -bottom-4 text-[80px] sm:text-[120px] text-white/10 rotate-12 group-hover:rotate-0 transition-transform">school</span>
                </div>
-               <div className="bg-gradient-to-br from-[#0b5ed7] to-[#0a4ea0] p-8 rounded-2xl relative overflow-hidden group shadow-lg">
-                  <div className="relative z-10">
-                     <span className="text-xs font-bold text-white/80 uppercase tracking-widest">Limited Time</span>
-                     <h3 className="text-2xl font-black text-white mt-2 leading-tight">KNUST Hostel Delivery Promo</h3>
-                     <p className="text-white/90 mt-4 font-medium">FREE delivery to all KNUST hostels this week only!</p>
-                     <Link href="/student-deals" className="mt-6 inline-block bg-white text-[#0b5ed7] px-6 py-2 rounded-lg font-bold hover:scale-105 transition-transform">Claim Now</Link>
+               <div className="bg-gradient-to-br from-[#0b5ed7] to-[#0a4ea0] p-5 sm:p-8 rounded-xl sm:rounded-2xl relative overflow-hidden group shadow-lg">
+                  <div className="relative z-10 flex flex-col h-full justify-between">
+                     <div>
+                        <span className="text-[10px] sm:text-xs font-bold text-white/80 uppercase tracking-widest">Limited Time</span>
+                        <h3 className="text-lg sm:text-2xl font-black text-white mt-1 sm:mt-2 leading-tight">KNUST Hostel Delivery Promo</h3>
+                        <p className="text-xs sm:text-base text-white/90 mt-2 sm:mt-4 font-medium line-clamp-2">FREE delivery to all KNUST hostels this week only!</p>
+                     </div>
+                     <Link href="/student-deals" className="mt-4 sm:mt-6 inline-block bg-white text-[#0b5ed7] px-4 sm:px-6 py-2 rounded-lg font-bold text-xs sm:text-base hover:scale-105 transition-transform self-start">Claim Now</Link>
                   </div>
-                  <span className="material-symbols-outlined absolute -right-4 -bottom-4 text-[120px] text-white/10 rotate-12 group-hover:rotate-0 transition-transform" aria-hidden="true">local_shipping</span>
+                  <span className="material-symbols-outlined absolute -right-4 -bottom-4 text-[80px] sm:text-[120px] text-white/10 rotate-12 group-hover:rotate-0 transition-transform" aria-hidden="true">local_shipping</span>
                </div>
-               <div className="bg-gradient-to-br from-[#118134] to-[#008c3a] p-8 rounded-2xl relative overflow-hidden group shadow-lg">
-                  <div className="relative z-10">
-                     <span className="text-xs font-bold text-white/80 uppercase tracking-widest">Flash Sale</span>
-                     <h3 className="text-2xl font-black text-white mt-2 leading-tight">UCC Freshers Laptop Bundle</h3>
-                     <p className="text-white/90 mt-4 font-medium">Laptops + Wireless Mouse + Bag. Save GH₵ 800.</p>
-                     <Link href="/student-deals" className="mt-6 inline-block bg-white text-[#118134] px-6 py-2 rounded-lg font-bold hover:scale-105 transition-transform">Shop Sale</Link>
+               <div className="bg-gradient-to-br from-[#118134] to-[#008c3a] p-5 sm:p-8 rounded-xl sm:rounded-2xl relative overflow-hidden group shadow-lg">
+                  <div className="relative z-10 flex flex-col h-full justify-between">
+                     <div>
+                        <span className="text-[10px] sm:text-xs font-bold text-white/80 uppercase tracking-widest">Flash Sale</span>
+                        <h3 className="text-lg sm:text-2xl font-black text-white mt-1 sm:mt-2 leading-tight">UCC Freshers Laptop Bundle</h3>
+                        <p className="text-xs sm:text-base text-white/90 mt-2 sm:mt-4 font-medium line-clamp-2">Laptops + Wireless Mouse + Bag. Save GH₵ 800.</p>
+                     </div>
+                     <Link href="/student-deals" className="mt-4 sm:mt-6 inline-block bg-white text-[#118134] px-4 sm:px-6 py-2 rounded-lg font-bold text-xs sm:text-base hover:scale-105 transition-transform self-start">Shop Sale</Link>
                   </div>
-                  <span className="material-symbols-outlined absolute -right-4 -bottom-4 text-[120px] text-white/10 rotate-12 group-hover:rotate-0 transition-transform" aria-hidden="true">laptop_mac</span>
+                  <span className="material-symbols-outlined absolute -right-4 -bottom-4 text-[80px] sm:text-[120px] text-white/10 rotate-12 group-hover:rotate-0 transition-transform" aria-hidden="true">laptop_mac</span>
                </div>
             </div>
          </div>
