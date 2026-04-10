@@ -42,7 +42,7 @@ export default async function UniversitiesPage() {
   const universities: UniversityOption[] = res.success ? (res.data || []) : [];
 
   return (
-    <main className="min-h-screen bg-neutral-900 relative">
+    <main className="min-h-screen bg-white relative">
       <div className="absolute top-0 w-full h-[50vh] bg-[#0f172a] overflow-hidden">
         <Image
           src="/assets/images/hero/universities directory.png"
