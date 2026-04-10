@@ -145,30 +145,30 @@ export default async function HomePage() {
          <div className="max-w-7xl mx-auto px-4 grid grid-cols-2 md:grid-cols-4 gap-8">
             <div className="flex flex-col items-center text-center group">
                <div className="w-12 h-12 bg-purple-50 flex items-center justify-center rounded-full text-ushop-purple mb-4 group-hover:scale-110 transition-transform">
-                  <span className="material-symbols-outlined text-3xl">verified_user</span>
+                  <span className="material-symbols-outlined text-3xl" aria-hidden="true">security</span>
                </div>
-               <h4 className="font-bold text-gray-900 text-sm">Secure Payment</h4>
-               <p className="text-xs text-gray-500 mt-1">Momo & Card protection</p>
+               <h3 className="font-bold text-gray-900 text-sm">Secure Payment</h3>
+               <p className="text-xs text-gray-600 mt-1">Momo & Card protection</p>
             </div>
             <div className="flex flex-col items-center text-center group">
                <div className="w-12 h-12 bg-purple-50 flex items-center justify-center rounded-full text-ushop-purple mb-4 group-hover:scale-110 transition-transform">
-                  <span className="material-symbols-outlined text-3xl">verified</span>
+                  <span className="material-symbols-outlined text-3xl" aria-hidden="true">verified</span>
                </div>
-               <h4 className="font-bold text-gray-900 text-sm">Verified Sellers</h4>
+               <h3 className="font-bold text-gray-900 text-sm">Verified Sellers</h3>
                <p className="text-xs text-gray-500 mt-1">100% Genuine tech gear</p>
             </div>
             <div className="flex flex-col items-center text-center group">
                <div className="w-12 h-12 bg-purple-50 flex items-center justify-center rounded-full text-ushop-purple mb-4 group-hover:scale-110 transition-transform">
-                  <span className="material-symbols-outlined text-3xl">local_shipping</span>
+                  <span className="material-symbols-outlined text-3xl" aria-hidden="true">local_shipping</span>
                </div>
-               <h4 className="font-bold text-gray-900 text-sm">Campus Delivery</h4>
+               <h3 className="font-bold text-gray-900 text-sm">Campus Delivery</h3>
                <p className="text-xs text-gray-500 mt-1">Direct to your hostel</p>
             </div>
             <div className="flex flex-col items-center text-center group">
                <div className="w-12 h-12 bg-purple-50 flex items-center justify-center rounded-full text-ushop-purple mb-4 group-hover:scale-110 transition-transform">
-                  <span className="material-symbols-outlined text-3xl">support_agent</span>
+                  <span className="material-symbols-outlined text-3xl" aria-hidden="true">support_agent</span>
                </div>
-               <h4 className="font-bold text-gray-900 text-sm">Local Support</h4>
+               <h3 className="font-bold text-gray-900 text-sm">Local Support</h3>
                <p className="text-xs text-gray-500 mt-1">Call or WhatsApp 24/7</p>
             </div>
          </div>
@@ -337,23 +337,23 @@ export default async function HomePage() {
                   </div>
                   <span className="material-symbols-outlined absolute -right-4 -bottom-4 text-[120px] text-white/10 rotate-12 group-hover:rotate-0 transition-transform">school</span>
                </div>
-               <div className="bg-gradient-to-br from-[#1275e2] to-[#0a4ea0] p-8 rounded-2xl relative overflow-hidden group shadow-lg">
+               <div className="bg-gradient-to-br from-[#0b5ed7] to-[#0a4ea0] p-8 rounded-2xl relative overflow-hidden group shadow-lg">
                   <div className="relative z-10">
                      <span className="text-xs font-bold text-white/80 uppercase tracking-widest">Limited Time</span>
                      <h3 className="text-2xl font-black text-white mt-2 leading-tight">KNUST Hostel Delivery Promo</h3>
                      <p className="text-white/90 mt-4 font-medium">FREE delivery to all KNUST hostels this week only!</p>
-                     <Link href="/student-deals" className="mt-6 inline-block bg-white text-[#1275e2] px-6 py-2 rounded-lg font-bold hover:scale-105 transition-transform">Claim Now</Link>
+                     <Link href="/student-deals" className="mt-6 inline-block bg-white text-[#0b5ed7] px-6 py-2 rounded-lg font-bold hover:scale-105 transition-transform">Claim Now</Link>
                   </div>
-                  <span className="material-symbols-outlined absolute -right-4 -bottom-4 text-[120px] text-white/10 rotate-12 group-hover:rotate-0 transition-transform">local_shipping</span>
+                  <span className="material-symbols-outlined absolute -right-4 -bottom-4 text-[120px] text-white/10 rotate-12 group-hover:rotate-0 transition-transform" aria-hidden="true">local_shipping</span>
                </div>
-               <div className="bg-gradient-to-br from-[#00c853] to-[#008c3a] p-8 rounded-2xl relative overflow-hidden group shadow-lg">
+               <div className="bg-gradient-to-br from-[#118134] to-[#008c3a] p-8 rounded-2xl relative overflow-hidden group shadow-lg">
                   <div className="relative z-10">
                      <span className="text-xs font-bold text-white/80 uppercase tracking-widest">Flash Sale</span>
                      <h3 className="text-2xl font-black text-white mt-2 leading-tight">UCC Freshers Laptop Bundle</h3>
                      <p className="text-white/90 mt-4 font-medium">Laptops + Wireless Mouse + Bag. Save GH₵ 800.</p>
-                     <Link href="/student-deals" className="mt-6 inline-block bg-white text-[#00c853] px-6 py-2 rounded-lg font-bold hover:scale-105 transition-transform">Shop Sale</Link>
+                     <Link href="/student-deals" className="mt-6 inline-block bg-white text-[#118134] px-6 py-2 rounded-lg font-bold hover:scale-105 transition-transform">Shop Sale</Link>
                   </div>
-                  <span className="material-symbols-outlined absolute -right-4 -bottom-4 text-[120px] text-white/10 rotate-12 group-hover:rotate-0 transition-transform">laptop_mac</span>
+                  <span className="material-symbols-outlined absolute -right-4 -bottom-4 text-[120px] text-white/10 rotate-12 group-hover:rotate-0 transition-transform" aria-hidden="true">laptop_mac</span>
                </div>
             </div>
          </div>
