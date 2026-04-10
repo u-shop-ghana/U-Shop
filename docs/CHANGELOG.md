@@ -5,6 +5,16 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [0.6.5] — 2026-04-10 — Mobile Grid Layout & Dynamic Real-time Counts
+
+### Added
+- **Dynamic Category Stock Enumeration** — Replaced hardcoded category counts on `/categories` with absolute real-time metrics integrating `_count.listings` fetched dynamically via Prisma endpoints directly mapped into `ClientCategoryList`.
+
+### Changed
+- **E-commerce Grid Parity (Mobile)** — Overhauled massive structural grid defects mapping `grid-cols-2` natively onto Homepage Browse Stores & Promotional Deals. Replaced `flex-col` stack flows explicitly ordering Listing Payloads _above_ the sidebars sequentially on Mobile formats matching global standard UX rendering.
+- **Micro-Component Detail Polishing** — Scaled the internal spacing boundaries on `AddToCartButtonCard` ensuring tight vertical sizing under 375px display widths. Sourced explicit `CONDITION_STYLES` format mappings to safely display dynamically colored tokens strictly next to Stock Availability elements on the Detail schemas.
+- **Background Bleed Annihilations** — Safely resolved strict `bg-neutral-900` bleeding defects escaping padding bounds inside `universities/page.tsx` resulting in ugly root-black structural renders under custom colored UI nodes.
+
 ## [0.6.4] — 2026-04-10 — Mobile Accessibility & WCAG Compliance
 
 ### Changed
