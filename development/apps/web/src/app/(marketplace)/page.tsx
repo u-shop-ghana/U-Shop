@@ -145,30 +145,30 @@ export default async function HomePage() {
          <div className="max-w-7xl mx-auto px-4 grid grid-cols-2 md:grid-cols-4 gap-8">
             <div className="flex flex-col items-center text-center group">
                <div className="w-12 h-12 bg-purple-50 flex items-center justify-center rounded-full text-ushop-purple mb-4 group-hover:scale-110 transition-transform">
-                  <span className="material-symbols-outlined text-3xl">verified_user</span>
+                  <span className="material-symbols-outlined text-3xl" aria-hidden="true">security</span>
                </div>
-               <h4 className="font-bold text-gray-900 text-sm">Secure Payment</h4>
-               <p className="text-xs text-gray-500 mt-1">Momo & Card protection</p>
+               <h2 className="font-bold text-gray-900 text-sm">Secure Payment</h2>
+               <p className="text-xs text-gray-600 mt-1">Momo & Card protection</p>
             </div>
             <div className="flex flex-col items-center text-center group">
                <div className="w-12 h-12 bg-purple-50 flex items-center justify-center rounded-full text-ushop-purple mb-4 group-hover:scale-110 transition-transform">
-                  <span className="material-symbols-outlined text-3xl">verified</span>
+                  <span className="material-symbols-outlined text-3xl" aria-hidden="true">verified</span>
                </div>
-               <h4 className="font-bold text-gray-900 text-sm">Verified Sellers</h4>
+               <h2 className="font-bold text-gray-900 text-sm">Verified Sellers</h2>
                <p className="text-xs text-gray-500 mt-1">100% Genuine tech gear</p>
             </div>
             <div className="flex flex-col items-center text-center group">
                <div className="w-12 h-12 bg-purple-50 flex items-center justify-center rounded-full text-ushop-purple mb-4 group-hover:scale-110 transition-transform">
-                  <span className="material-symbols-outlined text-3xl">local_shipping</span>
+                  <span className="material-symbols-outlined text-3xl" aria-hidden="true">local_shipping</span>
                </div>
-               <h4 className="font-bold text-gray-900 text-sm">Campus Delivery</h4>
+               <h2 className="font-bold text-gray-900 text-sm">Campus Delivery</h2>
                <p className="text-xs text-gray-500 mt-1">Direct to your hostel</p>
             </div>
             <div className="flex flex-col items-center text-center group">
                <div className="w-12 h-12 bg-purple-50 flex items-center justify-center rounded-full text-ushop-purple mb-4 group-hover:scale-110 transition-transform">
-                  <span className="material-symbols-outlined text-3xl">support_agent</span>
+                  <span className="material-symbols-outlined text-3xl" aria-hidden="true">support_agent</span>
                </div>
-               <h4 className="font-bold text-gray-900 text-sm">Local Support</h4>
+               <h2 className="font-bold text-gray-900 text-sm">Local Support</h2>
                <p className="text-xs text-gray-500 mt-1">Call or WhatsApp 24/7</p>
             </div>
          </div>
@@ -177,12 +177,12 @@ export default async function HomePage() {
       {/* Featured Categories Grid — matching Figma: white bg, overlay image cards */}
       <section className="py-16 bg-white">
          <div className="max-w-7xl mx-auto px-4 md:px-8">
-            <div className="flex justify-between items-end mb-8">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-3 sm:gap-0 mb-6 md:mb-8">
                <div>
-                  <h2 className="text-3xl font-bold text-gray-900">Browse Categories</h2>
-                  <p className="text-gray-500">Everything a student needs to succeed</p>
+                  <h2 className="text-2xl md:text-3xl font-bold text-gray-900">Browse Categories</h2>
+                  <p className="text-sm md:text-base text-gray-500">Everything a student needs to succeed</p>
                </div>
-               <Link href="/categories" className="text-ushop-purple font-semibold flex items-center gap-1 hover:underline group">
+               <Link href="/categories" className="text-sm md:text-base text-ushop-purple font-semibold flex items-center gap-1 hover:underline group">
                   View All <span className="material-symbols-outlined text-sm group-hover:translate-x-1 transition-transform">arrow_forward</span>
                </Link>
             </div>
@@ -206,12 +206,12 @@ export default async function HomePage() {
       {/* Browse Universities — matching Figma: same image card grid as categories */}
       <section className="py-16 bg-[#f8fafc]">
          <div className="max-w-7xl mx-auto px-4 md:px-8">
-            <div className="flex justify-between items-end mb-8">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-3 sm:gap-0 mb-6 md:mb-8">
                <div>
-                  <h2 className="text-3xl font-bold text-gray-900">Browse Universities</h2>
-                  <p className="text-gray-500">Find tech deals specifically for your campus</p>
+                  <h2 className="text-2xl md:text-3xl font-bold text-gray-900">Browse Universities</h2>
+                  <p className="text-sm md:text-base text-gray-500">Find tech deals specifically for your campus</p>
                </div>
-               <Link href="/universities" className="text-ushop-purple font-semibold flex items-center gap-1 hover:underline group">
+               <Link href="/universities" className="text-sm md:text-base text-ushop-purple font-semibold flex items-center gap-1 hover:underline group">
                   All Universities <span className="material-symbols-outlined text-sm group-hover:translate-x-1 transition-transform">arrow_forward</span>
                </Link>
             </div>
@@ -235,21 +235,21 @@ export default async function HomePage() {
       {/* Browse Stores */}
       <section className="py-16 bg-[#f8fafc] border-y border-slate-100">
          <div className="max-w-7xl mx-auto px-4 md:px-8">
-            <div className="flex justify-between items-end mb-10">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-3 sm:gap-0 mb-6 md:mb-10">
                <div>
-                  <h2 className="text-3xl font-bold text-gray-900">Browse Stores</h2>
-                  <p className="text-gray-600">Trusted local sellers from your university community</p>
+                  <h2 className="text-2xl md:text-3xl font-bold text-gray-900">Browse Stores</h2>
+                  <p className="text-sm md:text-base text-gray-600">Trusted local sellers from your university community</p>
                </div>
-               <Link href="/stores" className="text-ushop-purple font-semibold flex items-center gap-1 hover:underline group">
+               <Link href="/stores" className="text-sm md:text-base text-ushop-purple font-semibold flex items-center gap-1 hover:underline group">
                   View All Stores <span className="material-symbols-outlined text-sm group-hover:translate-x-1 transition-transform">arrow_forward</span>
                </Link>
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-6">
                {data.stores.map((store: StoreOption) => (
-                  <div key={store.id} className="bg-white p-6 rounded-xl border border-slate-200 hover:shadow-lg transition-all group flex flex-col justify-between">
+                  <div key={store.id} className="bg-white p-3 sm:p-6 rounded-xl border border-slate-200 hover:shadow-lg transition-all group flex flex-col justify-between">
                      <div>
-                        <div className="flex items-center gap-4 mb-4">
-                           <div className="w-16 h-16 relative rounded-full overflow-hidden border-2 border-purple-50 group-hover:border-ushop-purple transition-colors bg-gray-100 flex items-center justify-center">
+                        <div className="flex flex-col sm:flex-row items-center sm:items-center gap-2 sm:gap-4 mb-2 sm:mb-4 text-center sm:text-left">
+                           <div className="w-12 h-12 sm:w-16 sm:h-16 relative rounded-full overflow-hidden border-2 border-purple-50 group-hover:border-ushop-purple transition-colors bg-gray-100 flex items-center justify-center shrink-0">
                               {store.logoUrl ? (
                                  <Image fill src={store.logoUrl} alt={store.name} className="object-cover" />
                               ) : (
@@ -285,19 +285,19 @@ export default async function HomePage() {
       {/* Featured Deals */}
       <section className="py-16 bg-white">
          <div className="max-w-7xl mx-auto px-4 md:px-8">
-            <div className="flex justify-between items-end mb-10">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-3 sm:gap-0 mb-6 md:mb-10">
                <div>
-                  <h2 className="text-3xl font-bold text-gray-900">Featured Deals</h2>
-                  <p className="text-gray-600">Top picks for students this semester</p>
+                  <h2 className="text-2xl md:text-3xl font-bold text-gray-900">Featured Deals</h2>
+                  <p className="text-sm md:text-base text-gray-600">Top picks for students this semester</p>
                </div>
-               <Link href="/search" className="text-ushop-purple font-semibold flex items-center gap-1 hover:underline">
+               <Link href="/search" className="text-sm md:text-base text-ushop-purple font-semibold flex items-center gap-1 hover:underline">
                   See all <span className="material-symbols-outlined text-sm">arrow_forward</span>
                </Link>
             </div>
             {data.featured.length === 0 ? (
                 <div className="text-center py-10 text-gray-500 bg-gray-50 rounded-xl">No active listings available.</div>
             ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-6">
                    {data.featured.map((item: ListingOption) => (
                       <ListingCard
                           key={item.id}
@@ -323,37 +323,43 @@ export default async function HomePage() {
       {/* Student Deals Promo Section */}
       <section className="py-16 bg-ushop-purple">
          <div className="max-w-7xl mx-auto px-4 md:px-8">
-            <div className="flex items-center gap-3 mb-10">
-               <span className="material-symbols-outlined text-white text-3xl">local_offer</span>
-               <h2 className="text-3xl font-bold text-white">Student Deals</h2>
+            <div className="flex items-center gap-2 sm:gap-3 mb-6 md:mb-10">
+               <span className="material-symbols-outlined text-white text-2xl md:text-3xl">local_offer</span>
+               <h2 className="text-2xl md:text-3xl font-bold text-white">Student Deals</h2>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-               <div className="bg-gradient-to-br from-ushop-pink to-[#8c0a62] p-8 rounded-2xl relative overflow-hidden group shadow-lg">
-                  <div className="relative z-10">
-                     <span className="text-xs font-bold text-white/80 uppercase tracking-widest">Exclusive</span>
-                     <h3 className="text-2xl font-black text-white mt-2 leading-tight">University of Ghana Tech Fest</h3>
-                     <p className="text-white/90 mt-4 font-medium">Up to 40% OFF on all accessories for Legon students.</p>
-                     <Link href="/student-deals" className="mt-6 inline-block bg-white text-ushop-pink px-6 py-2 rounded-lg font-bold hover:scale-105 transition-transform">Get Code</Link>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+               <div className="bg-gradient-to-br from-ushop-pink to-[#8c0a62] p-5 sm:p-8 rounded-xl sm:rounded-2xl relative overflow-hidden group shadow-lg">
+                  <div className="relative z-10 flex flex-col h-full justify-between">
+                     <div>
+                        <span className="text-[10px] sm:text-xs font-bold text-white/80 uppercase tracking-widest">Exclusive</span>
+                        <h3 className="text-lg sm:text-2xl font-black text-white mt-1 sm:mt-2 leading-tight">University of Ghana Tech Fest</h3>
+                        <p className="text-xs sm:text-base text-white/90 mt-2 sm:mt-4 font-medium line-clamp-2">Up to 40% OFF on all accessories for Legon students.</p>
+                     </div>
+                     <Link href="/student-deals" className="mt-4 sm:mt-6 inline-block bg-white text-ushop-pink px-4 sm:px-6 py-2 rounded-lg font-bold text-xs sm:text-base hover:scale-105 transition-transform self-start">Get Code</Link>
                   </div>
-                  <span className="material-symbols-outlined absolute -right-4 -bottom-4 text-[120px] text-white/10 rotate-12 group-hover:rotate-0 transition-transform">school</span>
+                  <span className="material-symbols-outlined absolute -right-4 -bottom-4 text-[80px] sm:text-[120px] text-white/10 rotate-12 group-hover:rotate-0 transition-transform">school</span>
                </div>
-               <div className="bg-gradient-to-br from-[#1275e2] to-[#0a4ea0] p-8 rounded-2xl relative overflow-hidden group shadow-lg">
-                  <div className="relative z-10">
-                     <span className="text-xs font-bold text-white/80 uppercase tracking-widest">Limited Time</span>
-                     <h3 className="text-2xl font-black text-white mt-2 leading-tight">KNUST Hostel Delivery Promo</h3>
-                     <p className="text-white/90 mt-4 font-medium">FREE delivery to all KNUST hostels this week only!</p>
-                     <Link href="/student-deals" className="mt-6 inline-block bg-white text-[#1275e2] px-6 py-2 rounded-lg font-bold hover:scale-105 transition-transform">Claim Now</Link>
+               <div className="bg-gradient-to-br from-[#0b5ed7] to-[#0a4ea0] p-5 sm:p-8 rounded-xl sm:rounded-2xl relative overflow-hidden group shadow-lg">
+                  <div className="relative z-10 flex flex-col h-full justify-between">
+                     <div>
+                        <span className="text-[10px] sm:text-xs font-bold text-white/80 uppercase tracking-widest">Limited Time</span>
+                        <h3 className="text-lg sm:text-2xl font-black text-white mt-1 sm:mt-2 leading-tight">KNUST Hostel Delivery Promo</h3>
+                        <p className="text-xs sm:text-base text-white/90 mt-2 sm:mt-4 font-medium line-clamp-2">FREE delivery to all KNUST hostels this week only!</p>
+                     </div>
+                     <Link href="/student-deals" className="mt-4 sm:mt-6 inline-block bg-white text-[#0b5ed7] px-4 sm:px-6 py-2 rounded-lg font-bold text-xs sm:text-base hover:scale-105 transition-transform self-start">Claim Now</Link>
                   </div>
-                  <span className="material-symbols-outlined absolute -right-4 -bottom-4 text-[120px] text-white/10 rotate-12 group-hover:rotate-0 transition-transform">local_shipping</span>
+                  <span className="material-symbols-outlined absolute -right-4 -bottom-4 text-[80px] sm:text-[120px] text-white/10 rotate-12 group-hover:rotate-0 transition-transform" aria-hidden="true">local_shipping</span>
                </div>
-               <div className="bg-gradient-to-br from-[#00c853] to-[#008c3a] p-8 rounded-2xl relative overflow-hidden group shadow-lg">
-                  <div className="relative z-10">
-                     <span className="text-xs font-bold text-white/80 uppercase tracking-widest">Flash Sale</span>
-                     <h3 className="text-2xl font-black text-white mt-2 leading-tight">UCC Freshers Laptop Bundle</h3>
-                     <p className="text-white/90 mt-4 font-medium">Laptops + Wireless Mouse + Bag. Save GH₵ 800.</p>
-                     <Link href="/student-deals" className="mt-6 inline-block bg-white text-[#00c853] px-6 py-2 rounded-lg font-bold hover:scale-105 transition-transform">Shop Sale</Link>
+               <div className="bg-gradient-to-br from-[#118134] to-[#008c3a] p-5 sm:p-8 rounded-xl sm:rounded-2xl relative overflow-hidden group shadow-lg">
+                  <div className="relative z-10 flex flex-col h-full justify-between">
+                     <div>
+                        <span className="text-[10px] sm:text-xs font-bold text-white/80 uppercase tracking-widest">Flash Sale</span>
+                        <h3 className="text-lg sm:text-2xl font-black text-white mt-1 sm:mt-2 leading-tight">UCC Freshers Laptop Bundle</h3>
+                        <p className="text-xs sm:text-base text-white/90 mt-2 sm:mt-4 font-medium line-clamp-2">Laptops + Wireless Mouse + Bag. Save GH₵ 800.</p>
+                     </div>
+                     <Link href="/student-deals" className="mt-4 sm:mt-6 inline-block bg-white text-[#118134] px-4 sm:px-6 py-2 rounded-lg font-bold text-xs sm:text-base hover:scale-105 transition-transform self-start">Shop Sale</Link>
                   </div>
-                  <span className="material-symbols-outlined absolute -right-4 -bottom-4 text-[120px] text-white/10 rotate-12 group-hover:rotate-0 transition-transform">laptop_mac</span>
+                  <span className="material-symbols-outlined absolute -right-4 -bottom-4 text-[80px] sm:text-[120px] text-white/10 rotate-12 group-hover:rotate-0 transition-transform" aria-hidden="true">laptop_mac</span>
                </div>
             </div>
          </div>
@@ -362,19 +368,19 @@ export default async function HomePage() {
       {/* Trending Now */}
       <section className="py-16 bg-[#f8fafc]">
          <div className="max-w-7xl mx-auto px-4 md:px-8">
-            <div className="flex justify-between items-end mb-10">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-3 sm:gap-0 mb-6 md:mb-10">
                <div>
-                  <h2 className="text-3xl font-bold text-gray-900">Trending Now</h2>
-                  <p className="text-gray-600">What students are buying this week</p>
+                  <h2 className="text-2xl md:text-3xl font-bold text-gray-900">Trending Now</h2>
+                  <p className="text-sm md:text-base text-gray-600">What students are buying this week</p>
                </div>
-               <Link href="/search" className="text-ushop-purple font-semibold flex items-center gap-1 hover:underline">
+               <Link href="/search" className="text-sm md:text-base text-ushop-purple font-semibold flex items-center gap-1 hover:underline">
                   View all <span className="material-symbols-outlined text-sm">arrow_forward</span>
                </Link>
             </div>
             {data.trending.length === 0 ? (
                 <div className="text-center py-10 text-gray-500 bg-gray-50 rounded-xl">No trending listings available.</div>
             ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
                    {data.trending.map((item: ListingOption) => (
                       <ListingCard
                           key={item.id}

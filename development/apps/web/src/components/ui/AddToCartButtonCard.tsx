@@ -14,9 +14,9 @@ export function AddToCartButtonCard({ isOutOfStock }: AddToCartButtonCardProps) 
     <button
       type="button"
       disabled={isOutOfStock}
-      className={`w-full py-2.5 rounded-lg text-sm font-bold uppercase tracking-wide flex items-center justify-center gap-2 transition-all ${
+      className={`w-full py-1.5 sm:py-2 rounded-lg text-xs sm:text-sm font-bold uppercase tracking-wider flex items-center justify-center gap-1.5 sm:gap-2 transition-all shadow-sm ${
         isOutOfStock
-          ? "bg-gray-200 text-gray-400 cursor-not-allowed"
+          ? "bg-gray-100 text-gray-400 cursor-not-allowed border border-gray-200"
           : "bg-ushop-purple text-white hover:bg-ushop-purple/90 active:scale-[0.98]"
       }`}
       onClick={(e) => {
