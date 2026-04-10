@@ -18,7 +18,7 @@ export async function apiPublicFetch(endpoint: string, options: ApiOptions = {})
       ...options, 
       next: nextOptions 
     });
-  } catch (error) {
+  } catch {
     // Next.js prerendering hits ECONNREFUSED if the backend isn't 
     // running during the build pipeline. We gracefully catch this here 
     // so the static pages build as empty skeletons and ISR rehydrates them later.

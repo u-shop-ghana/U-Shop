@@ -189,12 +189,12 @@ export default async function ListingDetailPage({
 
           {/* Right Column: Product Info + CTAs */}
           <div className="w-full lg:w-2/5">
-            {/* Badges: Verified Seller + Stock Status */}
-            <div className="flex items-center gap-3 mb-3">
+            {/* Badges: Verified Seller + Stock Status + Condition */}
+            <div className="flex flex-wrap items-center gap-2 sm:gap-3 mb-3">
               {isVerified && (
-                <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-ushop-purple/10 text-ushop-purple text-xs font-bold rounded-full uppercase tracking-wide">
+                <span className="inline-flex items-center gap-1 px-2 py-1 sm:px-2.5 sm:py-1 bg-ushop-purple/10 text-ushop-purple text-[10px] sm:text-xs font-bold rounded-full uppercase tracking-wide">
                   <span
-                    className="material-symbols-outlined text-xs"
+                    className="material-symbols-outlined text-[10px] sm:text-xs"
                     style={{ fontVariationSettings: '"FILL" 1' }}
                   >
                     verified
@@ -203,17 +203,31 @@ export default async function ListingDetailPage({
                 </span>
               )}
               <span
-                className={`inline-flex items-center gap-1 text-xs font-bold ${
+                className={`inline-flex items-center gap-1 text-[10px] sm:text-xs font-bold ${
                   isInStock ? "text-green-600" : "text-red-500"
                 }`}
               >
-                <span className="w-2 h-2 rounded-full bg-current" />
+                <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-current" />
                 {isInStock ? "In Stock" : "Out of Stock"}
+              </span>
+              <span
+                className={`px-2 py-1 text-[10px] sm:text-xs font-bold uppercase tracking-wider rounded ${
+                  {
+                    BRAND_NEW: "bg-green-600 text-white",
+                    LIKE_NEW: "bg-ushop-purple text-white",
+                    EXCELLENT: "bg-blue-600 text-white",
+                    GOOD: "bg-gray-600 text-white",
+                    FAIR: "bg-yellow-500 text-gray-900",
+                    REFURBISHED: "bg-cyan-600 text-white",
+                  }[listing.condition.toUpperCase().replace(/\s+/g, "_")] || "bg-gray-600 text-white"
+                }`}
+              >
+                {formatCondition(listing.condition)}
               </span>
             </div>
 
             {/* Product Title */}
-            <h1 className="text-2xl md:text-3xl font-extrabold text-gray-900 leading-tight mb-3">
+            <h1 className="text-xl sm:text-2xl md:text-3xl font-extrabold text-gray-900 leading-tight mb-3">
               {listing.title}
             </h1>
 

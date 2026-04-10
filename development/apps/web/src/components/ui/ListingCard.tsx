@@ -122,7 +122,7 @@ export function ListingCard({
           <div className="absolute top-3 left-3 z-10 flex flex-col gap-1">
             <span
               className={`px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider rounded ${
-                CONDITION_STYLES[condition] || "bg-gray-600 text-white"
+                CONDITION_STYLES[condition.toUpperCase().replace(/\s+/g, "_")] || "bg-gray-600 text-white"
               }`}
             >
               {formatCondition(condition)}
@@ -153,14 +153,15 @@ export function ListingCard({
       {/* Content Area */}
       <div className="p-4 flex flex-col flex-grow">
         {/* Vendor name — uppercase, small, gray */}
-        <Link href={`/store/${store.handle}`} className="flex items-center gap-1 mb-1">
-          <span className="text-[11px] font-semibold text-gray-400 uppercase tracking-wide truncate hover:text-ushop-purple transition-colors">
+        <Link href={`/store/${store.handle}`} className="flex items-center gap-1 mb-1 py-1 -mt-1" aria-label={`View ${store.name} store`}>
+          <span className="text-[11px] font-semibold text-gray-600 uppercase tracking-wide truncate group-hover:text-ushop-purple transition-colors">
             {store.name}
           </span>
           {store.isVerified && (
             <span
-              className="material-symbols-outlined text-green-500 text-xs"
+              className="material-symbols-outlined text-green-700 text-xs"
               style={{ fontVariationSettings: '"FILL" 1' }}
+              aria-label="Verified Store"
             >
               verified
             </span>
@@ -168,30 +169,32 @@ export function ListingCard({
         </Link>
 
         {/* Product title */}
-        <Link href={`/listing/${id}`}>
-          <h3 className="text-sm font-bold text-gray-900 leading-snug line-clamp-2 mb-1.5 group-hover:text-ushop-purple transition-colors">
+        <Link href={`/listing/${id}`} className="block py-1 -my-1">
+          <h3 className="text-xs sm:text-sm font-bold text-gray-900 leading-snug line-clamp-2 mb-1 group-hover:text-ushop-purple transition-colors">
             {title}
           </h3>
         </Link>
 
         {/* Star rating — if available */}
         {rating !== undefined && reviewCount !== undefined && (
-          <StarRating rating={rating} count={reviewCount} />
+          <div className="hidden sm:block">
+            <StarRating rating={rating} count={reviewCount} />
+          </div>
         )}
 
-        <div className="mt-auto pt-3">
+        <div className="mt-auto pt-2 sm:pt-3">
           {/* Price block — current price + original (strikethrough) */}
-          <div className="flex items-baseline gap-2 mb-3">
-            <span className="text-lg font-extrabold text-ushop-purple">
+          <div className="flex flex-wrap items-baseline gap-1 sm:gap-2 mb-2 sm:mb-3">
+            <span className="text-base sm:text-lg font-extrabold text-ushop-purple">
               {formatCurrency(price)}
             </span>
             {originalPrice && originalPrice > price && (
               <>
-                <span className="text-sm text-gray-400 line-through">
+                <span className="text-xs sm:text-sm text-gray-400 line-through">
                   {formatCurrency(originalPrice)}
                 </span>
                 {discountPercent && (
-                  <span className="text-[10px] font-bold text-white bg-green-500 px-1.5 py-0.5 rounded">
+                  <span className="text-[9px] sm:text-[10px] font-bold text-white bg-green-500 px-1 sm:px-1.5 py-0.5 rounded">
                     -{discountPercent}%
                   </span>
                 )}
