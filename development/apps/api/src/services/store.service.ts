@@ -148,9 +148,18 @@ export class StoreService {
   static async listStores(page: number, limit: number, search?: string, sort?: string) {
     const skip = (page - 1) * limit;
 
-    type StoreFindManyArgs = NonNullable<Parameters<typeof prisma.store.findMany>[0]>;
+    interface StoreSearchQuery {
+      isActive?: boolean;
+      sellerType?: 'STUDENT' | 'RESELLER';
+      OR?: Array<{
+        name?: { contains: string; mode: 'insensitive' };
+        handle?: { contains: string; mode: 'insensitive' };
+        bio?: { contains: string; mode: 'insensitive' };
+        user?: { universityName: { contains: string; mode: 'insensitive' } };
+      }>;
+    }
 
-    const where: StoreFindManyArgs['where'] = { isActive: true };
+    const where: StoreSearchQuery = { isActive: true };
 
     if (search) {
       where.OR = [
@@ -161,7 +170,7 @@ export class StoreService {
       ];
     }
 
-    let orderBy: StoreFindManyArgs['orderBy'] = [
+    let orderBy: Record<string, 'asc' | 'desc'>[] = [
       { averageRating: 'desc' },
       { reviewCount: 'desc' },
       { createdAt: 'desc' }

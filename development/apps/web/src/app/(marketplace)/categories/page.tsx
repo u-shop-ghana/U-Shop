@@ -30,7 +30,22 @@ const CATEGORY_DESCRIPTIONS: Record<string, string> = {
   storage: "External SSDs, Hard drives & Flash drives.",
 };
 
-export default function CategoriesPage() {
+import { apiPublicFetch } from "@/lib/api-public";
+
+export default async function CategoriesPage() {
+  // Fetch real-time categories (which now includes _count.listings from the backend)
+  const res = await apiPublicFetch("/api/v1/categories");
+  // Fallback to static CATEGORIES if API fails, but map them to the same shape
+  const activeCategories = res.success && res.data ? res.data : CATEGORIES.map(c => ({ ...c, _count: { listings: 0 } }));
+
+  // We map the database categories to the Client props shape and inject real-time counts!
+  const mappedCategories = activeCategories.map((cat: any) => ({
+    name: cat.name,
+    slug: cat.slug,
+    iconUrl: cat.iconUrl,
+    count: cat._count?.listings || 0
+  }));
+
   return (
     <main className="min-h-screen bg-neutral-900 relative">
       <div className="absolute top-0 w-full h-[50vh] bg-[#0f172a] overflow-hidden">
@@ -45,7 +60,7 @@ export default function CategoriesPage() {
       </div>
 
       <ClientCategoryList 
-        categories={CATEGORIES}
+        categories={mappedCategories}
         images={CATEGORY_IMAGES}
         descriptions={CATEGORY_DESCRIPTIONS}
       />

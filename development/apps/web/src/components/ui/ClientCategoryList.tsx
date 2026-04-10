@@ -8,6 +8,7 @@ interface Category {
   name: string;
   slug: string;
   iconUrl?: string | null;
+  count?: number;
 }
 
 interface ClientCategoryListProps {
@@ -107,7 +108,7 @@ export function ClientCategoryList({ categories, images, descriptions, searchQue
                     {/* Product count badge */}
                     <div className="absolute top-4 left-4">
                       <span className="bg-ushop-purple text-white text-[10px] font-bold uppercase tracking-wider px-3 py-1.5 rounded-md">
-                        {cat.slug === "accessories" ? "1.2k+" : cat.slug === "phones" ? "285" : cat.slug === "laptops" ? "142" : cat.slug === "tablets" ? "96" : cat.slug === "gaming" ? "78" : "110"} Products
+                        {cat.count === 0 ? "Empty" : `${cat.count} Products`}
                       </span>
                     </div>
 

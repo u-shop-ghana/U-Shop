@@ -99,10 +99,10 @@ export default async function PublicStorePage({ params }: { params: { handle: st
         </div>
 
         {/* Layout Grid */}
-        <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="mt-8 flex flex-col md:flex-row gap-8">
           
           {/* Sidebar */}
-          <div className="md:col-span-1 space-y-6">
+          <div className="w-full md:w-1/3 order-2 md:order-1 space-y-6">
             <div className="bg-white rounded-2xl shadow-sm border p-6">
               <h3 className="font-bold text-gray-900 mb-3 text-lg">About Store</h3>
               <p className="text-gray-600 text-sm whitespace-pre-wrap leading-relaxed">
@@ -126,7 +126,7 @@ export default async function PublicStorePage({ params }: { params: { handle: st
           </div>
 
           {/* Listings Payload Grid */}
-          <div className="md:col-span-2">
+          <div className="w-full md:w-2/3 order-1 md:order-2">
             <div className="bg-white rounded-2xl shadow-sm border p-6 text-center py-20">
               <span className="material-symbols-outlined text-4xl text-gray-300 mb-3 block">inventory</span>
               <h3 className="font-bold text-gray-900">Listings Integration Pending</h3>
