@@ -1,5 +1,4 @@
 import { Metadata } from "next";
-import Link from "next/link";
 import Image from "next/image";
 import { CATEGORIES } from "@ushop/shared";
 
@@ -32,6 +31,15 @@ const CATEGORY_DESCRIPTIONS: Record<string, string> = {
 
 import { apiPublicFetch } from "@/lib/api-public";
 
+interface CategoryData {
+  name: string;
+  slug: string;
+  iconUrl?: string | null;
+  _count?: {
+    listings: number;
+  };
+}
+
 export default async function CategoriesPage() {
   // Fetch real-time categories (which now includes _count.listings from the backend)
   const res = await apiPublicFetch("/api/v1/categories");
@@ -39,7 +47,7 @@ export default async function CategoriesPage() {
   const activeCategories = res.success && res.data ? res.data : CATEGORIES.map(c => ({ ...c, _count: { listings: 0 } }));
 
   // We map the database categories to the Client props shape and inject real-time counts!
-  const mappedCategories = activeCategories.map((cat: any) => ({
+  const mappedCategories = activeCategories.map((cat: CategoryData) => ({
     name: cat.name,
     slug: cat.slug,
     iconUrl: cat.iconUrl,
