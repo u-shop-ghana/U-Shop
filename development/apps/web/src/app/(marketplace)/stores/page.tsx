@@ -56,9 +56,11 @@ export default async function StoresPage({
           <div className="absolute inset-0 bg-gradient-to-b from-[#0f172a]/50 to-[#0f172a]/90" />
         </div>
         <div className="relative z-10 max-w-4xl mx-auto px-4 py-16 md:py-24 text-center">
-          <Link href="/" className="inline-flex flex-col sm:flex-row items-center sm:self-start justify-center sm:justify-start gap-1 text-white/70 hover:text-white transition-colors text-sm mb-6 mr-full md:mr-auto sm:-ml-[35vw] xl:-ml-[15vw] md:absolute md:left-0">
-            <div className="flex items-center gap-1"><span className="material-symbols-outlined text-base">arrow_back</span> Back to Home</div>
-          </Link>
+          <div className="md:absolute top-8 left-4 md:left-8 mb-6 md:mb-0 w-full md:w-auto text-left">
+            <Link href="/" className="inline-flex items-center gap-1 text-white/70 hover:text-white transition-colors text-sm">
+              <span className="material-symbols-outlined text-base">arrow_back</span> Back to Home
+            </Link>
+          </div>
 
           {/* Badge */}
           <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-sm border border-white/10 rounded-full mb-6">
@@ -175,25 +177,7 @@ export default async function StoresPage({
         )}
       </div>
 
-      {/* CTA Section — "Want to sell your products?" matching Figma */}
-      <section className="bg-gray-50 mx-4 sm:mx-8 lg:mx-auto max-w-7xl rounded-3xl mb-16 border border-gray-200">
-        <div className="px-8 py-14 flex flex-col md:flex-row items-center justify-between gap-8">
-          <div>
-            <h2 className="text-3xl md:text-4xl font-black text-gray-900 mb-3">
-              Want to sell<br />your products?
-            </h2>
-            <p className="text-gray-500 text-lg max-w-md">
-              Join hundreds of student entrepreneurs. Create your store in minutes and reach thousands of students across Ghana.
-            </p>
-          </div>
-          <Link
-            href="/dashboard/store/create"
-            className="bg-ushop-pink text-white font-bold px-10 py-4 rounded-2xl hover:bg-ushop-pink/90 transition-colors text-lg inline-flex items-center gap-2 whitespace-nowrap"
-          >
-            Open Your Store <span className="material-symbols-outlined">arrow_forward</span>
-          </Link>
-        </div>
-      </section>
+
     </main>
   );
 }
