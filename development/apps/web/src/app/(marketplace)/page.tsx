@@ -85,18 +85,6 @@ export default async function HomePage() {
 
   return (
     <main className="bg-background text-on-background flex flex-col min-h-screen">
-      {/* Escrow Banner */}
-      <div id="escrow-banner" className="bg-emerald-950 text-emerald-400 py-2 px-4 shadow-sm">
-        <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <div className="flex items-center gap-2 text-[10px] md:text-xs font-medium">
-            <span className="flex items-center gap-2">
-              <span className="text-sm">🔒</span>
-              Every purchase protected by escrow — pay safely, get your money back if anything&apos;s wrong.
-            </span>
-          </div>
-        </div>
-      </div>
-
       {/* Hero Section */}
       <section className="relative bg-gradient-to-r from-ushop-purple to-[#3b0a63] text-white overflow-hidden">
         <div className="hidden md:block absolute right-0 top-0 bottom-0 w-1/2 opacity-10">
@@ -107,8 +95,14 @@ export default async function HomePage() {
         <div className="max-w-7xl mx-auto px-4 py-16 md:py-24 relative z-10">
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <div className="space-y-6">
-              <div className="inline-block bg-ushop-pink px-4 py-2 rounded-full text-sm font-bold uppercase tracking-wider">
-                CAMPUS TECH HUB
+              <div className="flex flex-wrap items-center gap-3">
+                <div className="inline-flex bg-ushop-pink px-4 py-2 rounded-full text-xs md:text-sm font-bold uppercase tracking-wider">
+                  Campus Tech Hub
+                </div>
+                <div className="inline-flex items-center gap-1.5 bg-emerald-500/20 text-emerald-100 border border-emerald-500/40 px-3 py-1.5 rounded-full text-xs font-semibold tracking-wide backdrop-blur-sm">
+                  <span className="material-symbols-outlined text-[14px]">gpp_good</span>
+                  Escrow Protected
+                </div>
               </div>
               <h1 className="text-4xl md:text-5xl lg:text-7xl font-extrabold leading-tight">
                 Power Your <span className="text-transparent bg-clip-text bg-gradient-to-r from-ushop-pink to-[#1275e2]">Academic Excellence</span>
@@ -215,25 +209,32 @@ export default async function HomePage() {
                   All Universities <span className="material-symbols-outlined text-sm group-hover:translate-x-1 transition-transform">arrow_forward</span>
                </Link>
             </div>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-               {data.universities.map((uni: UniversityOption) => (
-                  <Link key={uni.id} href={`/universities/${uni.shortName.toLowerCase()}`}>
-                     <div className="group relative overflow-hidden rounded-2xl cursor-pointer aspect-[4/5] shadow-md">
-                        <Image fill src={UNI_IMAGES[uni.shortName.toLowerCase()] || '/assets/images/universities/legon.jpg'} alt={uni.shortName} className="object-cover group-hover:scale-110 transition-transform duration-500" />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
-                        <div className="absolute bottom-4 left-4 text-white">
-                           <h3 className="font-bold text-lg">{uni.name}</h3>
-                           <p className="text-xs text-white/70 mt-0.5">{uni.shortName}</p>
+            {data.universities.length === 0 ? (
+               <div className="py-16 text-center text-slate-500 bg-white border border-slate-200 rounded-3xl shadow-sm">
+                 <span className="material-symbols-outlined text-4xl text-slate-300 mb-2">school</span>
+                 <p className="font-medium">No universities listed yet.</p>
+               </div>
+            ) : (
+               <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+                  {data.universities.map((uni: UniversityOption) => (
+                     <Link key={uni.id} href={`/universities/${uni.shortName.toLowerCase()}`}>
+                        <div className="group relative overflow-hidden rounded-2xl cursor-pointer aspect-[4/5] shadow-md border border-slate-100">
+                           <Image fill src={UNI_IMAGES[uni.shortName.toLowerCase()] || '/assets/images/universities/legon.jpg'} alt={uni.shortName} className="object-cover group-hover:scale-110 transition-transform duration-700 ease-out" />
+                           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+                           <div className="absolute bottom-4 left-4 right-4 text-white">
+                              <h3 className="font-bold text-base md:text-lg leading-tight drop-shadow-md">{uni.name}</h3>
+                              <p className="text-xs md:text-sm text-white/80 mt-1 uppercase tracking-wider font-semibold drop-shadow">{uni.shortName}</p>
+                           </div>
                         </div>
-                     </div>
-                  </Link>
-               ))}
-            </div>
+                     </Link>
+                  ))}
+               </div>
+            )}
          </div>
       </section>
 
       {/* Browse Stores */}
-      <section className="py-16 bg-[#f8fafc] border-y border-slate-100">
+      <section className="py-16 md:py-24 bg-[#f8fafc] border-y border-slate-100">
          <div className="max-w-7xl mx-auto px-4 md:px-8">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-3 sm:gap-0 mb-6 md:mb-10">
                <div>
@@ -244,16 +245,22 @@ export default async function HomePage() {
                   View All Stores <span className="material-symbols-outlined text-sm group-hover:translate-x-1 transition-transform">arrow_forward</span>
                </Link>
             </div>
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-6">
-               {data.stores.map((store: StoreOption) => (
-                  <div key={store.id} className="bg-white p-3 sm:p-6 rounded-xl border border-slate-200 hover:shadow-lg transition-all group flex flex-col justify-between">
-                     <div>
-                        <div className="flex flex-col sm:flex-row items-center sm:items-center gap-2 sm:gap-4 mb-2 sm:mb-4 text-center sm:text-left">
-                           <div className="w-12 h-12 sm:w-16 sm:h-16 relative rounded-full overflow-hidden border-2 border-purple-50 group-hover:border-ushop-purple transition-colors bg-gray-100 flex items-center justify-center shrink-0">
-                              {store.logoUrl ? (
-                                 <Image fill src={store.logoUrl} alt={store.name} className="object-cover" />
-                              ) : (
-                                 <span className="font-bold text-ushop-purple text-xl">{store.name.substring(0, 2).toUpperCase()}</span>
+            {data.stores.length === 0 ? (
+               <div className="py-16 text-center text-slate-500 bg-white border border-slate-200 rounded-3xl shadow-sm">
+                 <span className="material-symbols-outlined text-4xl text-slate-300 mb-2">storefront</span>
+                 <p className="font-medium">No active stores available.</p>
+               </div>
+            ) : (
+               <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
+                  {data.stores.map((store: StoreOption) => (
+                     <div key={store.id} className="bg-white p-4 sm:p-6 rounded-2xl border border-slate-200 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group flex flex-col justify-between">
+                        <div>
+                           <div className="flex flex-col items-start gap-4 mb-4">
+                              <div className="w-14 h-14 sm:w-16 sm:h-16 relative rounded-2xl overflow-hidden shadow-sm group-hover:shadow-md transition-shadow bg-slate-50 flex items-center justify-center shrink-0">
+                                 {store.logoUrl ? (
+                                    <Image fill src={store.logoUrl} alt={store.name} className="object-cover" />
+                                 ) : (
+                                    <span className="font-bold text-ushop-purple text-xl">{store.name.substring(0, 2).toUpperCase()}</span>
                               )}
                            </div>
                            <div>
@@ -276,9 +283,10 @@ export default async function HomePage() {
                      <Link href={`/store/${store.handle}`} className="block w-full py-2 text-center border-2 border-ushop-purple text-ushop-purple font-bold rounded-lg hover:bg-ushop-purple hover:text-white transition-all text-sm mt-4">
                         Visit Store
                      </Link>
-                  </div>
-               ))}
+                   </div>
+                ))}
             </div>
+            )}
          </div>
       </section>
 
