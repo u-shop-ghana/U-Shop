@@ -4,6 +4,7 @@ import { apiPublicFetch } from "@/lib/api-public";
 import { ListingCard } from "@/components/ui/ListingCard";
 import { CATEGORIES } from "@ushop/shared";
 import SearchSidebar from "./SearchSidebar";
+import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 
 // ─── Types ──────────────────────────────────────────────────────
 interface ListingOption {
@@ -98,8 +99,14 @@ export default async function SearchPage({
     : null;
 
   return (
-    <main className="min-h-screen bg-white py-8">
+    <main className="min-h-screen bg-white py-4">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <Breadcrumbs 
+          items={[
+             { label: "Search" }
+          ]} 
+          className="mb-4"
+        />
         {/* Results header */}
         <div className="mb-6 border-b border-gray-200 pb-4">
           <h1 className="text-2xl md:text-3xl font-black text-gray-900">
