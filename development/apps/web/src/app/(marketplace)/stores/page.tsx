@@ -3,6 +3,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { apiPublicFetch } from "@/lib/api-public";
 import { StoreFilters } from "@/components/ui/StoreFilters";
+import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 
 interface StoreOption {
   id: string;
@@ -100,7 +101,15 @@ export default async function StoresPage({
       </section>
 
       {/* Section Title + Filters */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4">
+        <Breadcrumbs 
+          items={[
+             { label: "Stores" }
+          ]} 
+          className="!py-2 mb-4 border-b border-gray-100"
+        />
+      </div>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-8">
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
           <div>
             <div className="flex items-center gap-2 mb-1">
