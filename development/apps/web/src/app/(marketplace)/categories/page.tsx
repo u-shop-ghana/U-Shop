@@ -56,17 +56,6 @@ export default async function CategoriesPage() {
 
   return (
     <main className="min-h-screen bg-neutral-900 relative">
-      <div className="absolute top-0 w-full h-[50vh] bg-[#0f172a] overflow-hidden">
-        <Image
-          src="/assets/images/hero/categories browsing.png"
-          alt="Tech categories"
-          fill
-          className="object-cover opacity-30"
-          priority
-        />
-        <div className="absolute inset-0 bg-gradient-to-b from-[#0f172a]/50 to-[#0f172a]/90" />
-      </div>
-
       <ClientCategoryList 
         categories={mappedCategories}
         images={CATEGORY_IMAGES}

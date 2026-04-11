@@ -42,7 +42,7 @@ export default async function StoresPage({
   const stores: StoreOption[] = res.success ? (res.data || []) : [];
 
   return (
-    <main className="min-h-screen bg-white">
+    <main className="min-h-screen bg-white pb-16">
       {/* Hero Banner — matching Figma: dark image overlay with title + search */}
       <section className="relative bg-[#0f172a] overflow-hidden">
         <div className="absolute inset-0">
@@ -56,9 +56,11 @@ export default async function StoresPage({
           <div className="absolute inset-0 bg-gradient-to-b from-[#0f172a]/50 to-[#0f172a]/90" />
         </div>
         <div className="relative z-10 max-w-4xl mx-auto px-4 py-16 md:py-24 text-center">
-          <Link href="/" className="inline-flex flex-col sm:flex-row items-center sm:self-start justify-center sm:justify-start gap-1 text-white/70 hover:text-white transition-colors text-sm mb-6 mr-full md:mr-auto sm:-ml-[35vw] xl:-ml-[15vw] md:absolute md:left-0">
-            <div className="flex items-center gap-1"><span className="material-symbols-outlined text-base">arrow_back</span> Back to Home</div>
-          </Link>
+          <div className="md:absolute top-8 left-4 md:left-8 mb-6 md:mb-0 w-full md:w-auto text-left">
+            <Link href="/" className="inline-flex items-center gap-1 text-white/70 hover:text-white transition-colors text-sm">
+              <span className="material-symbols-outlined text-base">arrow_back</span> Back to Home
+            </Link>
+          </div>
 
           {/* Badge */}
           <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-sm border border-white/10 rounded-full mb-6">
@@ -175,25 +177,28 @@ export default async function StoresPage({
         )}
       </div>
 
-      {/* CTA Section — "Want to sell your products?" matching Figma */}
-      <section className="bg-gray-50 mx-4 sm:mx-8 lg:mx-auto max-w-7xl rounded-3xl mb-16 border border-gray-200">
-        <div className="px-8 py-14 flex flex-col md:flex-row items-center justify-between gap-8">
-          <div>
-            <h2 className="text-3xl md:text-4xl font-black text-gray-900 mb-3">
-              Want to sell<br />your products?
+      {/* CTA Section */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-16">
+        <div className="mt-32 relative group">
+          <div className="absolute -inset-1 bg-gradient-to-r from-ushop-purple to-ushop-pink rounded-[3rem] blur-xl opacity-10"></div>
+          <div className="relative flex flex-col md:flex-row items-center gap-12 bg-white p-12 md:p-20 rounded-[3rem] border border-slate-100 overflow-hidden shadow-xl">
+          <div className="absolute top-0 right-0 w-96 h-96 bg-ushop-purple/5 rounded-full blur-[100px] -mr-48 -mt-48"></div>
+          <div className="flex-1 relative z-10">
+            <h2 className="text-4xl md:text-5xl font-black text-slate-900 mb-8 tracking-tight leading-tight">
+              Want to sell <br/> your products?
             </h2>
-            <p className="text-gray-500 text-lg max-w-md">
+            <p className="text-xl text-slate-600 mb-0 leading-relaxed max-w-xl font-medium">
               Join hundreds of student entrepreneurs. Create your store in minutes and reach thousands of students across Ghana.
             </p>
           </div>
-          <Link
-            href="/dashboard/store/create"
-            className="bg-ushop-pink text-white font-bold px-10 py-4 rounded-2xl hover:bg-ushop-pink/90 transition-colors text-lg inline-flex items-center gap-2 whitespace-nowrap"
-          >
-            Open Your Store <span className="material-symbols-outlined">arrow_forward</span>
+          <Link href="/dashboard/store/create" className="relative z-10 h-16 px-12 bg-ushop-pink text-white rounded-2xl font-black text-lg hover:scale-105 shadow-2xl shadow-ushop-pink/20 transition-all shrink-0 flex items-center gap-3 group/cta">
+            Open Your Store
+            <span className="material-symbols-outlined text-2xl transition-transform group-hover/cta:translate-x-1">arrow_forward</span>
           </Link>
         </div>
-      </section>
+      </div>
+      </div>
+
     </main>
   );
 }

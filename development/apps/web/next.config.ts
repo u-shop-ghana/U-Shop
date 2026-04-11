@@ -7,6 +7,23 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   transpilePackages: ["@ushop/shared"],
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'sghnfxwkyrxqciogtodq.supabase.co',
+        port: '',
+        pathname: '/storage/v1/object/public/**',
+      },
+      // Allow Google public images used in seed data too
+      {
+        protocol: 'https',
+        hostname: 'lh3.googleusercontent.com',
+        port: '',
+        pathname: '/**',
+      }
+    ],
+  },
   turbopack: {
     resolveExtensions: [".tsx", ".ts", ".jsx", ".js", ".mjs", ".json"]
   },

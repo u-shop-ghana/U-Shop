@@ -40,30 +40,46 @@ export function ClientCategoryList({ categories, images, descriptions, searchQue
 
   return (
     <div className="w-full">
-      {/* Search Section integrated into hero logic, communicating with state */}
-      <div className="relative z-10 max-w-4xl mx-auto px-4 py-16 md:py-24 text-center">
-        <Link href="/" className="inline-flex flex-col sm:flex-row items-center sm:self-start justify-center sm:justify-start gap-1 text-white/70 hover:text-white transition-colors text-sm mb-6 mr-full md:mr-auto sm:-ml-[35vw] xl:-ml-[15vw] md:absolute md:left-0">
-          <div className="flex items-center gap-1"><span className="material-symbols-outlined text-base">arrow_back</span> Back to Home</div>
-        </Link>
-        <h1 className="text-3xl md:text-5xl lg:text-6xl font-black text-white tracking-tight mb-4">
-          Explore Categories
-        </h1>
-        <p className="text-white/70 text-base md:text-lg max-w-2xl mx-auto mb-8">
-          Find the best tech essentials for your academic journey. From high-performance laptops to campus-ready accessories.
-        </p>
-        <div className="flex max-w-xl mx-auto relative">
-          <div className="flex-1 relative">
-            <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">search</span>
-            <input
-              type="text"
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder="What tech are you looking for today?"
-              className="w-full pl-12 pr-4 py-3 md:py-4 bg-white rounded-xl text-gray-900 placeholder:text-gray-400 focus:outline-none text-sm md:text-base shadow-lg"
-            />
+      {/* Responsive Hero Section */}
+      <section className="relative bg-[#0f172a] overflow-hidden">
+        <div className="absolute inset-0">
+          <Image
+            src="/assets/images/hero/categories browsing.png"
+            alt="Tech categories"
+            fill
+            className="object-cover opacity-30"
+            priority
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-[#0f172a]/50 to-[#0f172a]/90" />
+        </div>
+        
+        <div className="relative z-10 max-w-4xl mx-auto px-4 py-16 md:py-24 text-center">
+          <div className="md:absolute top-8 left-4 md:left-8 mb-6 md:mb-0 w-full md:w-auto text-left">
+            <Link href="/" className="inline-flex items-center gap-1 text-white/70 hover:text-white transition-colors text-sm">
+              <span className="material-symbols-outlined text-base">arrow_back</span> Back to Home
+            </Link>
+          </div>
+          
+          <h1 className="text-3xl md:text-5xl lg:text-6xl font-black text-white tracking-tight mb-4">
+            Explore Categories
+          </h1>
+          <p className="text-white/70 text-base md:text-lg max-w-2xl mx-auto mb-8">
+            Find the best tech essentials for your academic journey. From high-performance laptops to campus-ready accessories.
+          </p>
+          <div className="flex max-w-xl mx-auto relative">
+            <div className="flex-1 relative">
+              <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">search</span>
+              <input
+                type="text"
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                placeholder="What tech are you looking for today?"
+                className="w-full pl-12 pr-4 py-3 md:py-4 bg-white rounded-xl text-gray-900 placeholder:text-gray-400 focus:outline-none text-sm md:text-base shadow-lg"
+              />
+            </div>
           </div>
         </div>
-      </div>
+      </section>
 
       <div className="bg-white">
         {/* Sort Bar */}
