@@ -41,7 +41,7 @@ export default async function UniversitiesPage() {
   const universities: UniversityOption[] = res.success ? (res.data || []) : [];
 
   return (
-    <main className="min-h-screen bg-white relative">
+    <main className="min-h-screen bg-white relative pb-16">
       <ClientUniversityList 
         universities={universities}
         images={UNI_IMAGES}

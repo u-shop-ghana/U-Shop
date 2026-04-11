@@ -42,7 +42,7 @@ export default async function StoresPage({
   const stores: StoreOption[] = res.success ? (res.data || []) : [];
 
   return (
-    <main className="min-h-screen bg-white">
+    <main className="min-h-screen bg-white pb-16">
       {/* Hero Banner — matching Figma: dark image overlay with title + search */}
       <section className="relative bg-[#0f172a] overflow-hidden">
         <div className="absolute inset-0">
