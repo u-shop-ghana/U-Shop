@@ -28,13 +28,13 @@ export interface ListingCardProps {
 }
 
 // Condition badge colors matching UI Kit atoms
-const CONDITION_STYLES: Record<string, string> = {
-  BRAND_NEW: "bg-green-100 text-green-800",
-  LIKE_NEW: "bg-cyan-100 text-cyan-800",
-  EXCELLENT: "bg-blue-100 text-blue-800",
-  GOOD: "bg-gray-100 text-gray-800",
-  FAIR: "bg-yellow-100 text-yellow-800",
-  REFURBISHED: "bg-red-100 text-red-800", // Maps conceptually to FOR_PARTS
+const CONDITION_STYLES: Record<string, { backgroundColor: string; color: string }> = {
+  BRAND_NEW: { backgroundColor: "#E8F5E9", color: "#1B5E20" },
+  LIKE_NEW: { backgroundColor: "#E0F2F1", color: "#004D40" },
+  EXCELLENT: { backgroundColor: "#E3F2FD", color: "#0D47A1" },
+  GOOD: { backgroundColor: "#F3E5F5", color: "#4A148C" },
+  FAIR: { backgroundColor: "#FFF3E0", color: "#E65100" },
+  REFURBISHED: { backgroundColor: "#FFFDE7", color: "#F57F17" },
 };
 
 // Format condition text: BRAND_NEW → "Brand New"
@@ -121,9 +121,8 @@ export function ListingCard({
           {/* Condition badge — top left, always visible */}
           <div className="absolute top-3 left-3 z-10 flex flex-col gap-1">
             <span
-              className={`px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider rounded ${
-                CONDITION_STYLES[condition.toUpperCase().replace(/\s+/g, "_")] || "bg-gray-600 text-white"
-              }`}
+              className="px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider rounded"
+              style={CONDITION_STYLES[condition.toUpperCase().replace(/\s+/g, "_")]}
             >
               {formatCondition(condition)}
             </span>
