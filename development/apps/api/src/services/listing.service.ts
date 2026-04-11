@@ -180,12 +180,27 @@ export class ListingService {
       throw new Error("You must create a store before publishing listings.");
     }
 
+    // Find category resolving slug dynamically from frontend components or raw ID
+    const category = await prisma.category.findFirst({
+      where: {
+        OR: [
+          { id: data.categoryId },
+          { slug: data.categoryId }
+        ]
+      },
+      select: { id: true }
+    });
+
+    if (!category) {
+      throw new Error(`Invalid category reference: ${data.categoryId}`);
+    }
+
     // We use a transaction to insert the DB and artificially inject the search Vector
     return await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
       const listing = await tx.listing.create({
         data: {
           storeId: store.id,
-          categoryId: data.categoryId,
+          categoryId: category.id,
           title: data.title,
           description: data.description,
           price: data.price,
