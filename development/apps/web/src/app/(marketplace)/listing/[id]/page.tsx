@@ -93,6 +93,16 @@ function formatCondition(str: string) {
   return str.replace(/_/g, " ").replace(/\b\w/g, (l: string) => l.toUpperCase());
 }
 
+// Condition badge colors matching UI Kit atoms
+const CONDITION_STYLES: Record<string, { backgroundColor: string; color: string }> = {
+  BRAND_NEW: { backgroundColor: "#E8F5E9", color: "#1B5E20" },
+  LIKE_NEW: { backgroundColor: "#E0F2F1", color: "#004D40" },
+  EXCELLENT: { backgroundColor: "#E3F2FD", color: "#0D47A1" },
+  GOOD: { backgroundColor: "#F3E5F5", color: "#4A148C" },
+  FAIR: { backgroundColor: "#FFF3E0", color: "#E65100" },
+  REFURBISHED: { backgroundColor: "#FFFDE7", color: "#F57F17" },
+};
+
 // Format return window codes: 7D → "7 Days", NO_RETURNS → "No Returns"
 function formatReturnWindow(code: string) {
   if (code === "NO_RETURNS") return "No Returns";
@@ -204,23 +214,23 @@ export default async function ListingDetailPage({
               )}
               <span
                 className={`inline-flex items-center gap-1 text-[10px] sm:text-xs font-bold ${
-                  isInStock ? "text-green-600" : "text-red-500"
+                  listing.stock > 10
+                    ? "text-green-600"
+                    : listing.stock > 0
+                    ? "text-amber-600"
+                    : "text-red-500"
                 }`}
               >
                 <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-current" />
-                {isInStock ? "In Stock" : "Out of Stock"}
+                {listing.stock > 10
+                  ? "In Stock"
+                  : listing.stock > 0
+                  ? `Only ${listing.stock} left`
+                  : "Out of Stock"}
               </span>
               <span
-                className={`px-2 py-1 text-[10px] sm:text-xs font-bold uppercase tracking-wider rounded ${
-                  {
-                    BRAND_NEW: "bg-green-100 text-green-800",
-                    LIKE_NEW: "bg-cyan-100 text-cyan-800",
-                    EXCELLENT: "bg-blue-100 text-blue-800",
-                    GOOD: "bg-gray-100 text-gray-800",
-                    FAIR: "bg-yellow-100 text-yellow-800",
-                    REFURBISHED: "bg-red-100 text-red-800",
-                  }[listing.condition.toUpperCase().replace(/\s+/g, "_")] || "bg-gray-100 text-gray-800"
-                }`}
+                className="px-2 py-1 text-[10px] sm:text-xs font-bold uppercase tracking-wider rounded"
+                style={CONDITION_STYLES[listing.condition.toUpperCase().replace(/\s+/g, "_")]}
               >
                 {formatCondition(listing.condition)}
               </span>

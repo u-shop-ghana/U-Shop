@@ -33,12 +33,16 @@ export function Header({
   const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  // Default search handler navigates to /search?q=...
+  // Default search handler navigates to /search?q=... or bare /search
   function handleSearch(query: string) {
     if (onSearch) {
       onSearch(query);
     } else {
-      router.push(`/search?q=${encodeURIComponent(query)}`);
+      if (query) {
+        router.push(`/search?q=${encodeURIComponent(query)}`);
+      } else {
+        router.push(`/search`);
+      }
     }
     // Close mobile menu after search
     setMobileMenuOpen(false);

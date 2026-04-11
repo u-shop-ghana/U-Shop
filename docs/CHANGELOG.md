@@ -5,6 +5,16 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [0.7.0] — 2026-04-11 — Marketplace Inventory Logic & Brand Alignment
+
+### Added
+- **Dynamic Stock Availability** — Implemented a real-world multi-tier inventory logic system in the `ListingDetailPage`. The indicator now dynamically reflects item quantity with urgency-driving states: "In Stock" (>10), "Only X Left" (1-10) for conversion boost, and "Out of Stock" (0).
+- **Global "All Products" Access** — Upgraded the `Header` and `SearchBar` components to support empty query handling. Selecting "All Products" from navigation or submitting an empty search now correctly routes to a global `/search` results view displaying the full marketplace catalog.
+
+### Fixed
+- **Premium Condition Badge Implementation** — Upgraded and standardized the marketplace condition badges to use a high-contrast hex code palette (`#E8F5E9`, `#0D47A1`, etc.) as defined in the UI Kit. This replaces inconsistent Tailwind classes and ensures professional brand-alignment across all listing cards and dynamic detail pages.
+
+
 ## [0.6.9] — 2026-04-11 — Mobile Breadcrumbs & Form Overhaul
 
 ### Added
