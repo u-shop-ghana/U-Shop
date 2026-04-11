@@ -45,10 +45,8 @@ export function SearchBar({
 
   function handleSubmit(e: FormEvent) {
     e.preventDefault();
-    if (query.trim()) {
-      onSearch(query.trim());
-      setShowSuggestions(false);
-    }
+    onSearch(query.trim());
+    setShowSuggestions(false);
   }
 
   function handleSuggestionClick(suggestion: string) {
