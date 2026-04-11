@@ -27,14 +27,14 @@ export interface ListingCardProps {
   className?: string;
 }
 
-// Condition badge colors — green for new, purple for like-new, etc.
+// Condition badge colors matching UI Kit atoms
 const CONDITION_STYLES: Record<string, string> = {
-  BRAND_NEW: "bg-green-600 text-white",
-  LIKE_NEW: "bg-ushop-purple text-white",
-  EXCELLENT: "bg-blue-600 text-white",
-  GOOD: "bg-gray-600 text-white",
-  FAIR: "bg-yellow-500 text-gray-900",
-  REFURBISHED: "bg-cyan-600 text-white",
+  BRAND_NEW: "bg-green-100 text-green-800",
+  LIKE_NEW: "bg-cyan-100 text-cyan-800",
+  EXCELLENT: "bg-blue-100 text-blue-800",
+  GOOD: "bg-gray-100 text-gray-800",
+  FAIR: "bg-yellow-100 text-yellow-800",
+  REFURBISHED: "bg-red-100 text-red-800", // Maps conceptually to FOR_PARTS
 };
 
 // Format condition text: BRAND_NEW → "Brand New"
