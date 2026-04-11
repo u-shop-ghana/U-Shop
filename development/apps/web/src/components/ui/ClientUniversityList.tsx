@@ -40,30 +40,46 @@ export function ClientUniversityList({ universities, images, locations }: Client
 
   return (
     <div className="w-full">
-      {/* Hero Header integrated inside */}
-      <div className="relative z-10 max-w-4xl mx-auto px-4 py-16 md:py-24 text-center">
-        <Link href="/" className="inline-flex flex-col sm:flex-row items-center sm:self-start justify-center sm:justify-start gap-1 text-white/70 hover:text-white transition-colors text-sm mb-6 mr-full md:mr-auto sm:-ml-[35vw] xl:-ml-[15vw] md:absolute md:left-0">
-          <div className="flex items-center gap-1"><span className="material-symbols-outlined text-base">arrow_back</span> Back to Home</div>
-        </Link>
-        <h1 className="text-3xl md:text-5xl lg:text-6xl font-black text-white tracking-tight mb-4">
-          Partner Universities
-        </h1>
-        <p className="text-white/70 text-base md:text-lg max-w-2xl mx-auto mb-8">
-          Explore campus-specific marketplaces across Ghana. Get delivery directly to your hostel or hall.
-        </p>
-        <div className="flex max-w-xl mx-auto relative">
-          <div className="flex-1 relative">
-            <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">search</span>
-            <input
-              type="text"
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder="Search for your university or campus store..."
-              className="w-full pl-12 pr-4 py-3 md:py-4 bg-white rounded-xl text-gray-900 placeholder:text-gray-400 focus:outline-none text-sm md:text-base shadow-lg"
-            />
+      {/* Responsive Hero Section */}
+      <section className="relative bg-[#0f172a] overflow-hidden">
+        <div className="absolute inset-0">
+          <Image
+            src="/assets/images/hero/universities directory.png"
+            alt="University campus"
+            fill
+            className="object-cover opacity-30"
+            priority
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-[#0f172a]/50 to-[#0f172a]/90" />
+        </div>
+        
+        <div className="relative z-10 max-w-4xl mx-auto px-4 py-16 md:py-24 text-center">
+          <div className="md:absolute top-8 left-4 md:left-8 mb-6 md:mb-0 w-full md:w-auto text-left">
+            <Link href="/" className="inline-flex items-center gap-1 text-white/70 hover:text-white transition-colors text-sm">
+              <span className="material-symbols-outlined text-base">arrow_back</span> Back to Home
+            </Link>
+          </div>
+          
+          <h1 className="text-3xl md:text-5xl lg:text-6xl font-black text-white tracking-tight mb-4">
+            Partner Universities
+          </h1>
+          <p className="text-white/70 text-base md:text-lg max-w-2xl mx-auto mb-8">
+            Explore campus-specific marketplaces across Ghana. Get delivery directly to your hostel or hall.
+          </p>
+          <div className="flex max-w-xl mx-auto relative">
+            <div className="flex-1 relative">
+              <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">search</span>
+              <input
+                type="text"
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                placeholder="Search for your university or campus store..."
+                className="w-full pl-12 pr-4 py-3 md:py-4 bg-white rounded-xl text-gray-900 placeholder:text-gray-400 focus:outline-none text-sm md:text-base shadow-lg"
+              />
+            </div>
           </div>
         </div>
-      </div>
+      </section>
 
       <div className="bg-white">
         {/* Info Bar — campus count + sort */}
@@ -144,6 +160,29 @@ export function ClientUniversityList({ universities, images, locations }: Client
               ))}
             </div>
           )}
+          
+          {/* Invite Section */}
+          <div className="mt-20 bg-gradient-to-br from-ushop-purple to-[#3b0a63] rounded-[2.5rem] p-8 md:p-12 text-center text-white relative overflow-hidden">
+            <div className="absolute top-0 left-0 w-full h-full opacity-10 pointer-events-none">
+              <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-white blur-[120px]"></div>
+              <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] rounded-full bg-ushop-pink blur-[120px]"></div>
+            </div>
+            <div className="relative z-10 max-w-2xl mx-auto">
+              <h2 className="text-3xl md:text-4xl font-bold mb-6">Don&apos;t see your university?</h2>
+              <p className="text-lg text-purple-100 mb-10 leading-relaxed">
+                We&apos;re rapidly expanding to more campuses across Ghana. Partner with us to bring U-Shop to your university today.
+              </p>
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+                <Link href="/contact" className="bg-white text-ushop-purple px-8 py-4 rounded-2xl font-bold hover:bg-purple-50 transition-all active:scale-95 w-full sm:w-auto shadow-lg">
+                  Suggest University
+                </Link>
+                <Link href="/contact" className="bg-transparent border-2 border-white/30 text-white px-8 py-4 rounded-2xl font-bold hover:bg-white/10 transition-all active:scale-95 w-full sm:w-auto">
+                  Become an Ambassador
+                </Link>
+              </div>
+            </div>
+          </div>
+
         </div>
       </div>
     </div>

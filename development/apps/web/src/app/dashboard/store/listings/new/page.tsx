@@ -9,11 +9,12 @@ import { uploadFileToSupabase } from "@/lib/supabase/storage";
 import { apiFetch } from "@/lib/api-client";
 
 const CONDITIONS = [
-  { value: "BRAND_NEW", label: "Brand New" },
+  { value: "NEW", label: "Brand New" },
   { value: "LIKE_NEW", label: "Like New" },
+  { value: "EXCELLENT", label: "Excellent" },
   { value: "GOOD", label: "Good" },
   { value: "FAIR", label: "Fair" },
-  { value: "REFURBISHED", label: "Refurbished" },
+  { value: "FOR_PARTS", label: "For Parts" },
 ];
 
 export default function CreateListingPage() {
@@ -25,7 +26,7 @@ export default function CreateListingPage() {
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState("");
   const [categoryId, setCategoryId] = useState("");
-  const [condition, setCondition] = useState("BRAND_NEW");
+  const [condition, setCondition] = useState("NEW");
   const [stock, setStock] = useState("1");
   const [tags, setTags] = useState("");
 

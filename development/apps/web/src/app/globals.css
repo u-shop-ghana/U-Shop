@@ -82,6 +82,10 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+h1, h2, h3, h4, h5, h6 {
+  line-height: var(--leading-heading);
+}
+
 /* ─── Utility Classes ──────────────────────────────────────────── */
 
 /* Brand gradient text — used for hero headlines */
