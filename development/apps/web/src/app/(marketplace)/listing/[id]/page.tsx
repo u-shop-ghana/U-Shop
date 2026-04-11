@@ -161,21 +161,21 @@ export default async function ListingDetailPage({
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* ── Breadcrumb Navigation ── */}
         <nav
-          className="flex items-center text-sm text-gray-500 mb-6 py-3"
+          className="flex flex-wrap items-center text-sm text-gray-500 mb-6 py-3 overflow-x-auto scrollbar-hide"
           aria-label="Breadcrumb"
         >
-          <Link href="/" className="hover:text-ushop-purple transition-colors">
+          <Link href="/" className="hover:text-ushop-purple transition-colors whitespace-nowrap">
             Home
           </Link>
           <span className="mx-2 text-gray-300">›</span>
           <Link
             href={`/categories/${listing.category.slug}`}
-            className="hover:text-ushop-purple transition-colors"
+            className="hover:text-ushop-purple transition-colors whitespace-nowrap"
           >
             {listing.category.name}
           </Link>
           <span className="mx-2 text-gray-300">›</span>
-          <span className="text-gray-900 font-medium truncate max-w-[200px]">
+          <span className="text-gray-900 font-medium truncate max-w-[150px] sm:max-w-[250px]">
             {listing.title}
           </span>
         </nav>
@@ -183,7 +183,7 @@ export default async function ListingDetailPage({
         {/* ── Main Content: 2-Column Layout ── */}
         <div className="flex flex-col lg:flex-row gap-10 mb-12">
           {/* Left Column: Image Gallery */}
-          <div className="w-full lg:w-3/5">
+          <div className="w-full lg:w-3/5 overflow-hidden">
             <ImageGallery images={listing.images} title={listing.title} />
           </div>
 
@@ -213,13 +213,13 @@ export default async function ListingDetailPage({
               <span
                 className={`px-2 py-1 text-[10px] sm:text-xs font-bold uppercase tracking-wider rounded ${
                   {
-                    BRAND_NEW: "bg-green-600 text-white",
-                    LIKE_NEW: "bg-ushop-purple text-white",
-                    EXCELLENT: "bg-blue-600 text-white",
-                    GOOD: "bg-gray-600 text-white",
-                    FAIR: "bg-yellow-500 text-gray-900",
-                    REFURBISHED: "bg-cyan-600 text-white",
-                  }[listing.condition.toUpperCase().replace(/\s+/g, "_")] || "bg-gray-600 text-white"
+                    BRAND_NEW: "bg-green-100 text-green-800",
+                    LIKE_NEW: "bg-cyan-100 text-cyan-800",
+                    EXCELLENT: "bg-blue-100 text-blue-800",
+                    GOOD: "bg-gray-100 text-gray-800",
+                    FAIR: "bg-yellow-100 text-yellow-800",
+                    REFURBISHED: "bg-red-100 text-red-800",
+                  }[listing.condition.toUpperCase().replace(/\s+/g, "_")] || "bg-gray-100 text-gray-800"
                 }`}
               >
                 {formatCondition(listing.condition)}
