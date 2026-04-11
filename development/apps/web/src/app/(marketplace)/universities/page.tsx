@@ -3,6 +3,7 @@ import Image from "next/image";
 import { apiPublicFetch } from "@/lib/api-public";
 
 import { ClientUniversityList } from "@/components/ui/ClientUniversityList";
+import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 
 interface UniversityOption {
   id: string;

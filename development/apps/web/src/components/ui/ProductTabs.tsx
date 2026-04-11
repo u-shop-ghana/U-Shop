@@ -20,7 +20,7 @@ export function ProductTabs({ tabs }: ProductTabsProps) {
   return (
     <div>
       {/* Tab headers — horizontal with underline indicator */}
-      <div className="flex gap-0 border-b border-gray-200">
+      <div className="flex gap-0 border-b border-gray-200 overflow-x-auto whitespace-nowrap scrollbar-hide">
         {tabs.map((tab, idx) => (
           <button
             key={idx}
