@@ -95,12 +95,12 @@ function formatCondition(str: string) {
 
 // Condition badge colors matching UI Kit atoms
 const CONDITION_STYLES: Record<string, { backgroundColor: string; color: string }> = {
-  BRAND_NEW: { backgroundColor: "#E8F5E9", color: "#1B5E20" },
+  NEW: { backgroundColor: "#E8F5E9", color: "#1B5E20" },
   LIKE_NEW: { backgroundColor: "#E0F2F1", color: "#004D40" },
   EXCELLENT: { backgroundColor: "#E3F2FD", color: "#0D47A1" },
   GOOD: { backgroundColor: "#F3E5F5", color: "#4A148C" },
   FAIR: { backgroundColor: "#FFF3E0", color: "#E65100" },
-  REFURBISHED: { backgroundColor: "#FFFDE7", color: "#F57F17" },
+  FOR_PARTS: { backgroundColor: "#FFFDE7", color: "#F57F17" },
 };
 
 // Format return window codes: 7D → "7 Days", NO_RETURNS → "No Returns"
