@@ -10,6 +10,7 @@
     "test": "echo 'No tests yet'"
   },
   "dependencies": {
+    "@sentry/nextjs": "10",
     "@supabase/ssr": "^0.10.0",
     "@supabase/supabase-js": "^2.101.1",
     "@ushop/shared": "workspace:*",

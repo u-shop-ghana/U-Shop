@@ -5,6 +5,15 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [0.6.8] — 2026-04-11 — Application Monitoring & CI/CD Telemetry
+
+### Added
+- **Production Error Tracking** — Successfully initialized and configured `@sentry/nextjs` telemetry tracking across the `apps/web` environment. Edge, Client, and Server environments now pipe real-time crash reports and performance tracing directly to the `ushop-uy/sentry-ushop` Sentry project.
+- **GitHub Actions Security** — Injected `SENTRY_AUTH_TOKEN` safely into the standard `.github/workflows/ci.yml` pipeline leveraging encrypted GitHub Secrets mapping to avoid leaking organizational tokens in plaintext environment commits.
+
+### Fixed
+- **Root Workspace Decoupling** — Safely uninstalled isolated Sentry wizard configurations (e.g., `sentry.edge.config.ts`, `instrumentation.ts`) that were erroneously deployed into the root Turborepo scaffold directory. Cleared stray `@sentry/nextjs` node dependencies cleanly scaling the package structure back exclusively to the Next.js target module.
+
 ## [0.6.7] — 2026-04-11 — UI Production Standardization & Layout Reliability
 
 ### Added
