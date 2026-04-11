@@ -5,6 +5,20 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [0.6.6] — 2026-04-11 — Listing API Integrity & Database Security
+
+### Added
+- **Comprehensive Row Level Security (RLS)** — Drafted and securely mapped complete zero-trust access control schemas executing strict `auth.uid()` boundaries directly targeting native Prisma endpoints locking the `Listing`, `Order`, `Store`, and Storage Layer assets.
+
+### Changed
+- **Mobile Container Mechanics** — Overhauled the Universities directory rendering tree scaling correctly on mobile by destroying explicitly bounded `h-[50vh]` wrappers cutting beneath absolute parent bounds. Remapped weird boundary-pushing lateral margin flows tracking `Back to Home` elements efficiently into native relative CSS flow. 
+- **CTA Component Purge** — Severed redundant secondary colored informational section bands targeting `stores/page.tsx` and `universities/page.tsx` mapping to drastically clean interface real estate.
+
+### Fixed
+- **Listing Form Native Mappings** — Prevented HTTP 400 validation failures against `createListingSchema` when creating production items restricting structural condition mapping conflicts safely inside `@ushop/shared`.
+- **Dynamic Category Mapping Logic** — Relocated absolute Prisma relations to resolve natively by `slug` on creation to prevent bypassing frontend URL selections from crashing the underlying backend API architecture. 
+- **Type Checking Stability** — Reorganized hanging interface typings solving core `@typescript-eslint` leakage errors guaranteeing pure TS Next.JS production server compilation bounds natively (`next/link` extraction).
+
 ## [0.6.5] — 2026-04-10 — Mobile Grid Layout & Dynamic Real-time Counts
 
 ### Added
