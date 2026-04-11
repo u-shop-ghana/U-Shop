@@ -5,6 +5,16 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [0.6.9] — 2026-04-11 — Mobile Breadcrumbs & Form Overhaul
+
+### Added
+- **Global Breadcrumb Navigation** — Developed a reusable sticky horizontal-scrolling `<Breadcrumbs />` core component deployed deeply across all generalized root paths (`Universities`, `Stores`, `Categories`, `Search`, and complex dynamic `[id]` pages) mapping clean hierarchical paths safely escaping grid collisions natively on narrow mobile viewports.
+- **Accordion Logic (Mobile Only)** — Rewrote standard inline `<form>` Search Sidebar components tracking reactive `<button onClick={}>` event states explicitly scaling massive multi-checkbox lists underneath expandable chevron arrows saving 100%+ vertical screen real-estate exclusively when rendering across smaller bounds safely ignoring client state unhooked cleanly on standard desktops. 
+
+### Fixed
+- **Condition Badge Normalization** — Synced the core global design language strictly replacing generalized fallback CSS with unified `UI Kit` variables across exact specific mapped conditions mapping gracefully rendering `bg-color-100 text-color-800` values inside both the standard Grid card loops (`ListingCard`) and dynamic PDPs (`ListingDetailPage`).
+- **Tab Layout Overflow** — Embedded CSS `scrollbar-hide` boundaries and mapped container overflow handling preventing tab labels from clipping forcefully out of mobile viewport structures.
+
 ## [0.6.8] — 2026-04-11 — Application Monitoring & CI/CD Telemetry
 
 ### Added

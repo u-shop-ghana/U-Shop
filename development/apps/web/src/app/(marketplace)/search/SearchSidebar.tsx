@@ -91,12 +91,38 @@ export default function SearchSidebar({
     { value: "REFURBISHED", label: "Refurbished" },
   ];
 
+  const [isMobileOpen, setIsMobileOpen] = useState(false);
+
   return (
-    <div className="bg-white border border-gray-200 rounded-2xl p-5 sticky top-24 shadow-sm">
-      <form onSubmit={applyFilters} className="space-y-5">
-        {/* Header with filter count + clear */}
-        <div className="flex items-center justify-between">
-          <h2 className="text-sm font-bold text-gray-900 uppercase tracking-wide flex items-center gap-2">
+    <div className="bg-white border text-gray-900 border-gray-200 rounded-2xl md:p-5 md:sticky md:top-24 md:shadow-sm">
+      {/* Mobile Toggle Button */}
+      <button 
+        type="button"
+        onClick={() => setIsMobileOpen(!isMobileOpen)}
+        className="w-full flex items-center justify-between p-4 md:hidden"
+      >
+        <span className="text-sm font-bold uppercase tracking-wide flex items-center gap-2">
+          <span className="material-symbols-outlined text-base">tune</span>
+          Filters
+          {activeFilterCount > 0 && (
+            <span className="bg-ushop-purple text-white text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center">
+              {activeFilterCount}
+            </span>
+          )}
+        </span>
+        <span className={`material-symbols-outlined transition-transform duration-300 ${isMobileOpen ? "rotate-180" : ""}`}>
+          expand_more
+        </span>
+      </button>
+
+      {/* Main Form content — collapsable on mobile, always visible on desktop */}
+      <form 
+        onSubmit={applyFilters} 
+        className={`space-y-5 px-4 pb-4 md:px-0 md:pb-0 border-t border-gray-200 md:border-none pt-4 md:pt-0 ${isMobileOpen ? "block" : "hidden md:block"}`}
+      >
+        {/* Desktop Header with filter count + clear */}
+        <div className="hidden md:flex items-center justify-between">
+          <h2 className="text-sm font-bold uppercase tracking-wide flex items-center gap-2">
             <span className="material-symbols-outlined text-base">
               tune
             </span>
