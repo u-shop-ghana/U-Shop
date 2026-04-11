@@ -178,9 +178,10 @@ export default async function StoresPage({
       </div>
 
       {/* CTA Section */}
-      <div className="mt-32 relative group max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-16">
-        <div className="absolute inset-0 bg-gradient-to-r from-ushop-purple to-ushop-pink rounded-[3rem] blur-xl opacity-10"></div>
-        <div className="relative flex flex-col md:flex-row items-center gap-12 bg-white p-12 md:p-20 rounded-[3rem] border border-slate-100 overflow-hidden shadow-xl">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-16">
+        <div className="mt-32 relative group">
+          <div className="absolute -inset-1 bg-gradient-to-r from-ushop-purple to-ushop-pink rounded-[3rem] blur-xl opacity-10"></div>
+          <div className="relative flex flex-col md:flex-row items-center gap-12 bg-white p-12 md:p-20 rounded-[3rem] border border-slate-100 overflow-hidden shadow-xl">
           <div className="absolute top-0 right-0 w-96 h-96 bg-ushop-purple/5 rounded-full blur-[100px] -mr-48 -mt-48"></div>
           <div className="flex-1 relative z-10">
             <h2 className="text-4xl md:text-5xl font-black text-slate-900 mb-8 tracking-tight leading-tight">
@@ -195,6 +196,7 @@ export default async function StoresPage({
             <span className="material-symbols-outlined text-2xl transition-transform group-hover/cta:translate-x-1">arrow_forward</span>
           </Link>
         </div>
+      </div>
       </div>
 
     </main>
