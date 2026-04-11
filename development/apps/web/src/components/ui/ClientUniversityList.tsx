@@ -160,6 +160,29 @@ export function ClientUniversityList({ universities, images, locations }: Client
               ))}
             </div>
           )}
+          
+          {/* Invite Section */}
+          <div className="mt-20 bg-gradient-to-br from-ushop-purple to-[#3b0a63] rounded-[2.5rem] p-8 md:p-12 text-center text-white relative overflow-hidden">
+            <div className="absolute top-0 left-0 w-full h-full opacity-10 pointer-events-none">
+              <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-white blur-[120px]"></div>
+              <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] rounded-full bg-ushop-pink blur-[120px]"></div>
+            </div>
+            <div className="relative z-10 max-w-2xl mx-auto">
+              <h2 className="text-3xl md:text-4xl font-bold mb-6">Don&apos;t see your university?</h2>
+              <p className="text-lg text-purple-100 mb-10 leading-relaxed">
+                We&apos;re rapidly expanding to more campuses across Ghana. Partner with us to bring U-Shop to your university today.
+              </p>
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+                <Link href="/contact" className="bg-white text-ushop-purple px-8 py-4 rounded-2xl font-bold hover:bg-purple-50 transition-all active:scale-95 w-full sm:w-auto shadow-lg">
+                  Suggest University
+                </Link>
+                <Link href="/contact" className="bg-transparent border-2 border-white/30 text-white px-8 py-4 rounded-2xl font-bold hover:bg-white/10 transition-all active:scale-95 w-full sm:w-auto">
+                  Become an Ambassador
+                </Link>
+              </div>
+            </div>
+          </div>
+
         </div>
       </div>
     </div>
