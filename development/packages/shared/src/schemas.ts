@@ -52,10 +52,10 @@ export const createListingSchema = z.object({
   title: z.string().min(5, 'Title must be at least 5 characters').max(200),
   description: z.string().min(20, 'Description must be at least 20 characters').max(5000),
   price: z.number().positive('Price must be positive').max(99999.99),
-  categoryId: z.string().cuid(),
+  categoryId: z.string().min(2, 'Category is required'),
   condition: z.enum(['NEW', 'LIKE_NEW', 'EXCELLENT', 'GOOD', 'FAIR', 'FOR_PARTS']),
   stock: z.number().int().positive().max(999).default(1),
-  images: z.array(z.string().url()).min(3, 'At least 3 photos required').max(6),
+  images: z.array(z.string().url()).min(1, 'At least 1 photo required').max(6),
 });
 
 export const updateListingSchema = createListingSchema.partial();
