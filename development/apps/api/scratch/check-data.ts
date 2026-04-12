@@ -11,7 +11,7 @@ async function checkListings() {
 
   console.log(`Found ${listings.length} listings.`);
   listings.forEach((l, i) => {
-    console.log(`${i+1}. Title: ${l.title}, Status: ${l.status}, Stock: ${l.stock}, Vector: ${l.searchVector ? 'Populated' : 'NULL'}`);
+    console.log(`${i+1}. Title: ${l.title}, Status: ${l.status}, Stock: ${l.stock}`);
   });
 }
 
