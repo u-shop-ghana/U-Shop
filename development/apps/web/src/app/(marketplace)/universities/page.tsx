@@ -1,5 +1,4 @@
 import { Metadata } from "next";
-import Image from "next/image";
 import { apiPublicFetch } from "@/lib/api-public";
 
 import { ClientUniversityList } from "@/components/ui/ClientUniversityList";
@@ -43,6 +42,15 @@ export default async function UniversitiesPage() {
 
   return (
     <main className="min-h-screen bg-white relative pb-16">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4">
+        <Breadcrumbs 
+          items={[
+            { label: "Home", href: "/" },
+            { label: "Universities", href: "/universities" }
+          ]} 
+          className="!py-2 mb-4 border-b border-gray-100"
+        />
+      </div>
       <ClientUniversityList 
         universities={universities}
         images={UNI_IMAGES}

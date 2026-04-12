@@ -19,8 +19,9 @@ async function getStore(handle: string) {
   }
 }
 
-export default async function PublicStorePage({ params }: { params: { handle: string } }) {
-  const store = await getStore(params.handle);
+export default async function PublicStorePage({ params }: { params: Promise<{ handle: string }> }) {
+  const { handle } = await params;
+  const store = await getStore(handle);
 
   if (!store) {
     notFound();
