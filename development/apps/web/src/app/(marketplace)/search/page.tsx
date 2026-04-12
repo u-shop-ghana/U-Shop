@@ -23,6 +23,13 @@ interface ListingOption {
   };
 }
 
+interface UniversityData {
+  id: string;
+  name: string;
+  shortName: string;
+  slug: string;
+}
+
 export const metadata: Metadata = {
   title: "Search Results | U-Shop",
   description: "Find the best student tech deals on U-Shop.",
@@ -72,6 +79,14 @@ export default async function SearchPage({
   const res = await apiPublicFetch(`/api/v1/listings${queryString ? `?${queryString}` : ""}`);
   const listings: ListingOption[] = res.success ? res.data || [] : [];
 
+  // Fetch real university metadata dynamically for the filters
+  const uniRes = await apiPublicFetch('/api/v1/universities');
+  const dbUniversities = uniRes.success ? (uniRes.data || []) : [];
+  const universities = dbUniversities.map((u: UniversityData) => ({
+    value: u.shortName.toLowerCase(),
+    label: u.name
+  }));
+
   // Collect active filters for display as removable pills
   const activeFilters: { label: string; removeUrl: string }[] = [];
   const buildRemoveUrl = (keyToRemove: string) => {
@@ -88,7 +103,10 @@ export default async function SearchPage({
   };
 
   if (condition) activeFilters.push({ label: `Condition: ${condition.replace(/_/g, " ")}`, removeUrl: buildRemoveUrl("condition") });
-  if (buyerUniversity) activeFilters.push({ label: `University: ${buyerUniversity.toUpperCase()}`, removeUrl: buildRemoveUrl("buyerUniversity") });
+  if (buyerUniversity) {
+    const uniName = dbUniversities.find((u: UniversityData) => u.shortName.toLowerCase() === buyerUniversity.toLowerCase())?.shortName || buyerUniversity.toUpperCase();
+    activeFilters.push({ label: `University: ${uniName}`, removeUrl: buildRemoveUrl("buyerUniversity") });
+  }
   if (minPrice || maxPrice) activeFilters.push({ label: `Price: GH₵${minPrice || "0"} – GH₵${maxPrice || "∞"}`, removeUrl: buildRemoveUrl("price") });
 
   // Find category name for display
@@ -205,6 +223,7 @@ export default async function SearchPage({
                 sort,
               }}
               categories={CATEGORIES.map((c) => ({ name: c.name, slug: c.slug }))}
+              universities={universities}
             />
           </aside>
 
