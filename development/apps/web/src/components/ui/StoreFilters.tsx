@@ -3,12 +3,13 @@
 import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback } from "react";
 
-export function StoreFilters() {
+export function StoreFilters({ universities = [] }: { universities?: { value: string; label: string }[] }) {
   const router = useRouter();
   const searchParams = useSearchParams();
   
   const currentSort = searchParams.get("sort") || "default";
   const currentType = searchParams.get("type") || "all";
+  const currentUniversity = searchParams.get("university") || "";
 
   const createQueryString = useCallback(
     (name: string, value: string) => {
@@ -24,9 +25,9 @@ export function StoreFilters() {
   );
 
   return (
-    <div className="flex flex-col sm:flex-row items-center gap-3 w-full justify-between sm:justify-end">
+    <div className="flex flex-col md:flex-row items-center gap-3 w-full justify-between">
       {/* Filter pills */}
-      <div className="flex items-center gap-1 bg-gray-100 rounded-full p-1 w-full sm:w-auto overflow-x-auto scroolbar-hide">
+      <div className="flex items-center gap-1 bg-gray-100 rounded-full p-1 w-full md:w-auto overflow-x-auto scrollbar-hide">
         <button 
           onClick={() => router.push(`?${createQueryString("type", "all")}`)}
           className={`px-3 md:px-4 py-1.5 text-xs font-bold rounded-full whitespace-nowrap transition-colors ${currentType === "all" ? "bg-ushop-purple text-white" : "text-gray-500 hover:bg-gray-200"}`}
@@ -47,21 +48,41 @@ export function StoreFilters() {
         </button>
       </div>
 
-      <div className="relative inline-block w-full sm:w-auto">
-        <select
-          value={currentSort}
-          onChange={(e) => router.push(`?${createQueryString("sort", e.target.value)}`)}
-          className="w-full sm:w-auto appearance-none bg-white border border-gray-200 text-gray-700 py-2 pl-4 pr-10 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-ushop-purple cursor-pointer transition-colors"
-        >
-          <option value="default">Sort: Default</option>
-          <option value="newest">Newest First</option>
-          <option value="oldest">Oldest First</option>
-          <option value="rating">Highest Rated</option>
-          <option value="a-z">Alphabetical (A-Z)</option>
-          <option value="z-a">Alphabetical (Z-A)</option>
-        </select>
-        <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-500">
-          <span className="material-symbols-outlined text-base">expand_more</span>
+      <div className="flex flex-col sm:flex-row items-center gap-3 w-full md:w-auto">
+        {/* University Selector */}
+        <div className="relative inline-block w-full sm:w-48">
+          <select
+            value={currentUniversity}
+            onChange={(e) => router.push(`?${createQueryString("university", e.target.value)}`)}
+            className="w-full appearance-none bg-white border border-gray-200 text-gray-700 py-2 pl-4 pr-10 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-ushop-purple cursor-pointer transition-colors"
+          >
+            <option value="">All Universities</option>
+            {universities.map(uni => (
+              <option key={uni.value} value={uni.value}>{uni.label}</option>
+            ))}
+          </select>
+          <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-500">
+            <span className="material-symbols-outlined text-base">school</span>
+          </div>
+        </div>
+
+        {/* Sort Selector */}
+        <div className="relative inline-block w-full sm:w-auto">
+          <select
+            value={currentSort}
+            onChange={(e) => router.push(`?${createQueryString("sort", e.target.value)}`)}
+            className="w-full sm:w-auto appearance-none bg-white border border-gray-200 text-gray-700 py-2 pl-4 pr-10 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-ushop-purple cursor-pointer transition-colors"
+          >
+            <option value="default">Sort: Default</option>
+            <option value="newest">Newest First</option>
+            <option value="oldest">Oldest First</option>
+            <option value="rating">Highest Rated</option>
+            <option value="a-z">Alphabetical (A-Z)</option>
+            <option value="z-a">Alphabetical (Z-A)</option>
+          </select>
+          <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-500">
+            <span className="material-symbols-outlined text-base">expand_more</span>
+          </div>
         </div>
       </div>
     </div>
