@@ -1,5 +1,4 @@
 import { Metadata } from "next";
-import Image from "next/image";
 import { apiPublicFetch } from "@/lib/api-public";
 
 import { ClientUniversityList } from "@/components/ui/ClientUniversityList";
