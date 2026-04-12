@@ -24,11 +24,13 @@ interface SidebarProps {
     sort?: string;
   };
   categories?: Category[];
+  universities?: { value: string; label: string }[];
 }
 
 export default function SearchSidebar({
   currentParams,
   categories = [],
+  universities = [],
 }: SidebarProps) {
   const router = useRouter();
 
@@ -74,21 +76,14 @@ export default function SearchSidebar({
   // Count how many filters are active (for badge display)
   const activeFilterCount = [category, minPrice || maxPrice, condition, buyerUniversity].filter(Boolean).length;
 
-  const universities = [
-    { value: "ug", label: "UG (Legon)" },
-    { value: "knust", label: "KNUST" },
-    { value: "ucc", label: "UCC" },
-    { value: "gctu", label: "GCTU" },
-  ];
-
   const conditions = [
     { value: "", label: "Any Condition" },
-    { value: "BRAND_NEW", label: "Brand New" },
+    { value: "NEW", label: "Brand New" },
     { value: "LIKE_NEW", label: "Like New" },
     { value: "EXCELLENT", label: "Excellent" },
     { value: "GOOD", label: "Good" },
     { value: "FAIR", label: "Fair" },
-    { value: "REFURBISHED", label: "Refurbished" },
+    { value: "FOR_PARTS", label: "For Parts / Faulty" },
   ];
 
   const [isMobileOpen, setIsMobileOpen] = useState(false);
@@ -101,15 +96,29 @@ export default function SearchSidebar({
         onClick={() => setIsMobileOpen(!isMobileOpen)}
         className="w-full flex items-center justify-between p-4 md:hidden"
       >
-        <span className="text-sm font-bold uppercase tracking-wide flex items-center gap-2">
-          <span className="material-symbols-outlined text-base">tune</span>
-          Filters
+        <div className="flex items-center gap-2">
+          <span className="text-sm font-bold uppercase tracking-wide flex items-center gap-2">
+            <span className="material-symbols-outlined text-base">tune</span>
+            Filters
+            {activeFilterCount > 0 && (
+              <span className="bg-ushop-purple text-white text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center">
+                {activeFilterCount}
+              </span>
+            )}
+          </span>
           {activeFilterCount > 0 && (
-            <span className="bg-ushop-purple text-white text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center">
-              {activeFilterCount}
-            </span>
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                resetFilters();
+              }}
+              className="text-xs text-red-500 font-medium ml-2"
+            >
+              Clear
+            </button>
           )}
-        </span>
+        </div>
         <span className={`material-symbols-outlined transition-transform duration-300 ${isMobileOpen ? "rotate-180" : ""}`}>
           expand_more
         </span>
