@@ -5,6 +5,32 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [0.7.2] — 2026-04-12 — Next.js 16 Alignment & Dynamic Filtering
+
+### Fixed
+- **Next.js 16 Promise Params Crash** — Resolved critical `TypeError` crashes on `universities/[slug]`, `categories/[slug]`, and `store/[handle]` pages by awaiting `params` and `searchParams` Promises as required by the latest Next.js 16.2.1 runtime.
+- **Defensive Metadata Generation** — Implemented robust null-checking for university `shortName` fields in metadata generation, preventing production crashes if backend data is malformed.
+
+### Changed
+- **Database-Driven Campus Filters** — Fully decoupled the marketplace from hardcoded university lists. The `/stores` and `/search` pages now dynamically fetch campuses from the DB, ensuring immediate updates when new universities are added.
+- **Enhanced Search Pill UI** — Refactored search result pins (pills) to use dynamic university names from the database instead of force-uppercased slugs.
+
+
+---
+
+## [0.7.1] — 2026-04-12 — Search Resilience & Campus Store Discovery
+
+### Added
+- **University Filter for Stores** — Implemented a dedicated university selection dropdown on the `/stores` page. Users can now filter verified shops by their specific campus (UG, KNUST, UCC, GCTU) using dynamic URL search parameters.
+- **Enhanced Breadcrumb Navigation** — Added hierarchical breadcrumbs to the `Categories` and `Universities` pages, ensuring consistent site-wide navigation and easier "Back to Home" flows for mobile users.
+
+### Fixed
+- **Search Robustness & Empty State Handling** — Refactored the backend `ListingService` to handle null `searchVector` fields using `COALESCE` and added a title-based `ILIKE` fallback. Submitting an empty search or selecting "All Products" now reliably displays the full marketplace catalog as expected.
+- **Vibrant Condition Badge Styling** — Overhauled the condition badges on `ListingCard` and `ListingDetailPage` with premium, vibrant semantic colors from the U-Shop design system (Emerald for New, Amber for Good, Rose for For Parts, etc.), improving visual hierarchy and readability.
+- **Mobile Filter UX** — Enhanced the mobile search sidebar with a "Clear All" functionality in the mobile dropdown view, allowing users to reset complex filters with a single tap.
+
+---
+
 ## [0.7.0] — 2026-04-11 — Marketplace Inventory Logic & Brand Alignment
 
 ### Added

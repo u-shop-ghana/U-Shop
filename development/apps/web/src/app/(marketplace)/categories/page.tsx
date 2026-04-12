@@ -40,6 +40,8 @@ interface CategoryData {
   };
 }
 
+import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
+
 export default async function CategoriesPage() {
   // Fetch real-time categories (which now includes _count.listings from the backend)
   const res = await apiPublicFetch("/api/v1/categories");
@@ -56,6 +58,15 @@ export default async function CategoriesPage() {
 
   return (
     <main className="min-h-screen bg-neutral-900 relative">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4">
+        <Breadcrumbs 
+          items={[
+            { label: "Home", href: "/" },
+            { label: "Categories", href: "/categories" }
+          ]} 
+          className="!py-2 mb-4 border-b border-gray-800 text-gray-400"
+        />
+      </div>
       <ClientCategoryList 
         categories={mappedCategories}
         images={CATEGORY_IMAGES}
