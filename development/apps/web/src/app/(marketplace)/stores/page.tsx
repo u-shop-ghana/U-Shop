@@ -31,6 +31,7 @@ export default async function StoresPage({
   const resolvedParams = await searchParams;
   const page = resolvedParams.page ? parseInt(resolvedParams.page as string) : 1;
   const qStr = resolvedParams.q ? `&q=${encodeURIComponent(resolvedParams.q as string)}` : '';
+  const universityStr = resolvedParams.university ? `&university=${encodeURIComponent(resolvedParams.university as string)}` : '';
   
   let sortStr = '';
   if (resolvedParams.sort && resolvedParams.sort !== 'default') {
@@ -39,8 +40,18 @@ export default async function StoresPage({
     sortStr = `&sort=${encodeURIComponent(resolvedParams.type as string)}`; // store backend treats student/elite as sort/filter
   }
 
-  const res = await apiPublicFetch(`/api/v1/stores?page=${page}&limit=24${qStr}${sortStr}`);
+  const res = await apiPublicFetch(`/api/v1/stores?page=${page}&limit=24${qStr}${sortStr}${universityStr}`);
   const stores: StoreOption[] = res.success ? (res.data || []) : [];
+
+  // Fetch real university metadata dynamically from the DB
+  const uniRes = await apiPublicFetch('/api/v1/universities');
+  const dbUniversities = uniRes.success ? (uniRes.data || []) : [];
+  
+  // Map DB records to the format expected by StoreFilters { value, label }
+  const universities = dbUniversities.map((uni: any) => ({
+    value: uni.shortName.toLowerCase(),
+    label: uni.name
+  }));
 
   return (
     <main className="min-h-screen bg-white pb-16">
@@ -121,7 +132,7 @@ export default async function StoresPage({
             </p>
           </div>
           <div className="flex items-center gap-3 w-full lg:w-auto overflow-hidden">
-            <StoreFilters />
+            <StoreFilters universities={universities} />
           </div>
         </div>
       </div>
