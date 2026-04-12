@@ -22,8 +22,9 @@ interface ListingOption {
   };
 }
 
-export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
-  const category = CATEGORIES.find(c => c.slug === params.slug);
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const resolvedParams = await params;
+  const category = CATEGORIES.find(c => c.slug === resolvedParams.slug);
   if (!category) return { title: "Category Not Found | U-Shop" };
   
   return {
@@ -38,23 +39,25 @@ export default async function CategorySlugPage({
   params,
   searchParams,
 }: {
-  params: { slug: string };
-  searchParams: { [key: string]: string | string[] | undefined };
+  params: Promise<{ slug: string }>;
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
-  const category = CATEGORIES.find(c => c.slug === params.slug);
+  const resolvedParams = await params;
+  const resolvedSearchParams = await searchParams;
+  const category = CATEGORIES.find(c => c.slug === resolvedParams.slug);
   if (!category) {
     notFound();
   }
 
-  const q = searchParams.q as string | undefined;
-  const minPrice = searchParams.minPrice as string | undefined;
-  const maxPrice = searchParams.maxPrice as string | undefined;
-  const condition = searchParams.condition as string | undefined;
-  const buyerUniversity = searchParams.buyerUniversity as string | undefined;
-  const sort = searchParams.sort as string | undefined;
+  const q = resolvedSearchParams.q as string | undefined;
+  const minPrice = resolvedSearchParams.minPrice as string | undefined;
+  const maxPrice = resolvedSearchParams.maxPrice as string | undefined;
+  const condition = resolvedSearchParams.condition as string | undefined;
+  const buyerUniversity = resolvedSearchParams.buyerUniversity as string | undefined;
+  const sort = resolvedSearchParams.sort as string | undefined;
 
   const queryObj = new URLSearchParams();
-  queryObj.append("categorySlug", params.slug); // Using specific override
+  queryObj.append("categorySlug", resolvedParams.slug); // Using specific override
   if (q) queryObj.append("q", q);
   if (minPrice) queryObj.append("minPrice", minPrice);
   if (maxPrice) queryObj.append("maxPrice", maxPrice);
@@ -79,7 +82,7 @@ export default async function CategorySlugPage({
         <SearchSidebar
           currentParams={{
             q,
-            category: params.slug,
+            category: resolvedParams.slug,
             minPrice,
             maxPrice,
             condition,
