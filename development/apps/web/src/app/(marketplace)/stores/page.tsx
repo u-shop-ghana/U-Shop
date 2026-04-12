@@ -16,6 +16,13 @@ interface StoreOption {
   };
 }
 
+interface UniversityData {
+  id: string;
+  name: string;
+  shortName: string;
+  slug: string;
+}
+
 export const metadata: Metadata = {
   title: "Campus Stores | U-Shop",
   description: "Shop directly from verified student entrepreneurs and local tech hubs at your favorite university campus.",
@@ -48,7 +55,7 @@ export default async function StoresPage({
   const dbUniversities = uniRes.success ? (uniRes.data || []) : [];
   
   // Map DB records to the format expected by StoreFilters { value, label }
-  const universities = dbUniversities.map((uni: any) => ({
+  const universities = dbUniversities.map((uni: UniversityData) => ({
     value: uni.shortName.toLowerCase(),
     label: uni.name
   }));
