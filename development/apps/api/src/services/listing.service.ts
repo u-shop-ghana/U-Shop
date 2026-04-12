@@ -29,11 +29,15 @@ export class ListingService {
     let sqlConditions = `WHERE l."status" = 'ACTIVE' AND l."stock" > 0`;
 
     // 1. Text Search Filtering
-    if (q) {
-      const formattedQuery = q.trim().split(' ').map(term => `${term}:*`).join(' & ');
+    if (q && q.trim() !== '') {
+      const formattedQuery = q.trim().split(' ').map(term => `${term.replace(/[^a-zA-Z0-9]/g, '')}:*`).join(' & ');
       paramCount++;
-      sqlConditions += ` AND l."searchVector" @@ to_tsquery($${paramCount})`;
+      // We use COALESCE to ensure that even if searchVector is NULL (legacy data), we don't break the query.
+      // However, we want to match only if the vector exists or if we fall back to title ILIKE.
+      sqlConditions += ` AND (l."searchVector" @@ to_tsquery($${paramCount}) OR l."title" ILIKE $${paramCount + 1})`;
       queryParams.push(formattedQuery);
+      queryParams.push(`%${q.trim()}%`);
+      paramCount++;
     }
 
     // 2. Exact Filters
