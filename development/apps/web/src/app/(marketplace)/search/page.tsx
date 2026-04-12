@@ -23,6 +23,13 @@ interface ListingOption {
   };
 }
 
+interface UniversityData {
+  id: string;
+  name: string;
+  shortName: string;
+  slug: string;
+}
+
 export const metadata: Metadata = {
   title: "Search Results | U-Shop",
   description: "Find the best student tech deals on U-Shop.",
@@ -75,7 +82,7 @@ export default async function SearchPage({
   // Fetch real university metadata dynamically for the filters
   const uniRes = await apiPublicFetch('/api/v1/universities');
   const dbUniversities = uniRes.success ? (uniRes.data || []) : [];
-  const universities = dbUniversities.map((u: any) => ({
+  const universities = dbUniversities.map((u: UniversityData) => ({
     value: u.shortName.toLowerCase(),
     label: u.name
   }));
@@ -97,7 +104,7 @@ export default async function SearchPage({
 
   if (condition) activeFilters.push({ label: `Condition: ${condition.replace(/_/g, " ")}`, removeUrl: buildRemoveUrl("condition") });
   if (buyerUniversity) {
-    const uniName = dbUniversities.find((u: any) => u.shortName.toLowerCase() === buyerUniversity.toLowerCase())?.shortName || buyerUniversity.toUpperCase();
+    const uniName = dbUniversities.find((u: UniversityData) => u.shortName.toLowerCase() === buyerUniversity.toLowerCase())?.shortName || buyerUniversity.toUpperCase();
     activeFilters.push({ label: `University: ${uniName}`, removeUrl: buildRemoveUrl("buyerUniversity") });
   }
   if (minPrice || maxPrice) activeFilters.push({ label: `Price: GH₵${minPrice || "0"} – GH₵${maxPrice || "∞"}`, removeUrl: buildRemoveUrl("price") });

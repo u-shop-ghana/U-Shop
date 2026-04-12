@@ -1,5 +1,4 @@
 import { Metadata } from "next";
-import Image from "next/image";
 import { CATEGORIES } from "@ushop/shared";
 
 import { ClientCategoryList } from "@/components/ui/ClientCategoryList";
