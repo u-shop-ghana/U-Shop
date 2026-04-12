@@ -28,11 +28,15 @@ interface ListingOption {
   };
 }
 
-export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const resolvedParams = await params;
   // Try fetching the university to get real name
   const res = await apiFetch(`/api/v1/universities`);
   const unis: UniversityOption[] = res.success ? res.data : [];
-  const university = unis.find((u) => u.shortName.toLowerCase() === params.slug.toLowerCase() || u.slug === params.slug);
+  const university = unis.find((u) => 
+    (u.shortName?.toLowerCase() === resolvedParams.slug.toLowerCase()) || 
+    (u.slug === resolvedParams.slug)
+  );
   
   if (!university) return { title: "Campus Not Found | U-Shop" };
   
@@ -48,12 +52,18 @@ export default async function UniversityDealsPage({
   params,
   searchParams,
 }: {
-  params: { slug: string };
-  searchParams: { [key: string]: string | string[] | undefined };
+  params: Promise<{ slug: string }>;
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
+  const resolvedParams = await params;
+  const resolvedSearchParams = await searchParams;
+  
   const getUniRes = await apiFetch(`/api/v1/universities`);
   const unis: UniversityOption[] = getUniRes.success ? (getUniRes.data || []) : [];
-  const university = unis.find((u) => u.shortName.toLowerCase() === params.slug.toLowerCase() || u.slug === params.slug);
+  const university = unis.find((u) => 
+    (u.shortName?.toLowerCase() === resolvedParams.slug.toLowerCase()) || 
+    (u.slug === resolvedParams.slug)
+  );
 
   if (!university) {
     notFound();
@@ -61,12 +71,12 @@ export default async function UniversityDealsPage({
 
   const shortNameValue = university.shortName.toLowerCase();
 
-  const q = searchParams.q as string | undefined;
-  const category = searchParams.category as string | undefined;
-  const minPrice = searchParams.minPrice as string | undefined;
-  const maxPrice = searchParams.maxPrice as string | undefined;
-  const condition = searchParams.condition as string | undefined;
-  const sort = searchParams.sort as string | undefined;
+  const q = resolvedSearchParams.q as string | undefined;
+  const category = resolvedSearchParams.category as string | undefined;
+  const minPrice = resolvedSearchParams.minPrice as string | undefined;
+  const maxPrice = resolvedSearchParams.maxPrice as string | undefined;
+  const condition = resolvedSearchParams.condition as string | undefined;
+  const sort = resolvedSearchParams.sort as string | undefined;
 
   const queryObj = new URLSearchParams();
   queryObj.append("buyerUniversity", shortNameValue); // Locked
@@ -102,6 +112,7 @@ export default async function UniversityDealsPage({
             sort,
           }}
           categories={CATEGORIES.map(c => ({ name: c.name, slug: c.slug }))}
+          universities={unis.map(u => ({ value: u.shortName.toLowerCase(), label: u.name }))}
         />
       </aside>
 
