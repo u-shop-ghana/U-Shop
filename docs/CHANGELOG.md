@@ -3,6 +3,19 @@
 All notable changes to U-Shop are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [0.8.2] — 2026-04-13 — Auth Flow Hardening & UI Refinements
+
+### Added
+- **Dynamic OAuth Redirects** — Integrated `NEXT_PUBLIC_SITE_URL` across all Google Sign-In and Email confirmation flows, ensuring successful redirections dynamically adapt to both local and production environments.
+- **Auto-Sync Google Signups** — Updated `callback/route.ts` and Express signup endpoints to automatically map Google users into the database with their respective avatar data (`avatarUrl`), immediately upon successful authentication.
+- **PKCE Password Reset Integration** — Refactored the `forgot-password` module to properly funnel users through the `callback?next=/reset-password` exchange rather than blindly navigating to `/reset-password` without session verification.
+
+### Changed
+- **Official Brand Assets** — Stripped rudimentary SVG drawings within the `/login` and `/register` components in favor of the authentic Google "G" Vector path.
+- **Search Logic Transparency** — Updated the `SearchSidebar` active filter from "Most Relevant" to "All" across the global UI to match standardized marketplace patterns.
+
+---
+
 ## [0.8.1] — 2026-04-13 — Redis Caching Integration
 
 ### Added
