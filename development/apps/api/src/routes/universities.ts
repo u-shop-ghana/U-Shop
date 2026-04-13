@@ -1,5 +1,5 @@
 import { Router, type Request, type Response, type NextFunction } from 'express';
-import { type University } from '@prisma/client';
+import { Prisma } from '@prisma/client';
 import { prisma } from '../lib/prisma';
 import { logger } from '../lib/logger';
 import { CacheService } from '../services/cache.service';
@@ -7,7 +7,7 @@ import { CacheService } from '../services/cache.service';
 const router: Router = Router();
 
 // Define exactly what we store in the cache to avoid 'any'
-type CachedUniversity = Pick<University, 'id' | 'name' | 'shortName' | 'slug' | 'domain' | 'logoUrl'>;
+type CachedUniversity = Pick<Prisma.UniversityGetPayload<Record<string, never>>, 'id' | 'name' | 'shortName' | 'slug' | 'domain' | 'logoUrl'>;
 
 // ─── GET /api/v1/universities ───────────────────────────────────
 // Returns all active universities. Public endpoint — no auth required.
