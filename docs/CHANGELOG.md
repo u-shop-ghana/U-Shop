@@ -10,6 +10,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - **University & Category Caching** — Implemented long-term caching (12-24h) for campus and taxonomy lists, significantly reducing database load on navigation and onboarding.
 - **Search Result Caching** — Added short-term (5m) caching for listing searches, accelerating repeated queries and improving marketplace responsiveness.
 - **CacheService Utility** — Developed a robust backend service for standardized cache management with TTL and automatic JSON handling.
+- **CI Build & Lint Resolutions** — Fixed type mismatches in the Upstash Redis client and resolved `no-explicit-any` linting violations across the Express API to ensure robust build pipeline compliance.
 
 ### Changed
 - **Performance Optimization** — Shifted frequently accessed static-ish data from PostgreSQL queries to Redis memory lookups.

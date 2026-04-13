@@ -12,7 +12,7 @@ export class ListingService {
     // 1. Try to fetch from cache first
     // We stringify the params to create a unique ID for this specific search query
     const cacheId = JSON.stringify(params);
-    const cachedResults = await CacheService.get<any[]>('search', cacheId);
+    const cachedResults = await CacheService.get<unknown[]>('search', cacheId);
     
     if (cachedResults) {
       return cachedResults;
@@ -144,8 +144,24 @@ export class ListingService {
       LIMIT ${limit}
     `;
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const records: any[] = await prisma.$queryRawUnsafe(rawSql, ...queryParams);
+    interface RawListingResult {
+      id: string;
+      storeId: string;
+      categoryId: string;
+      title: string;
+      description: string;
+      price: number;
+      condition: string;
+      images: string[];
+      createdAt: Date;
+      ranking_score: number;
+      storeHandle: string;
+      storeName: string;
+      storeLogo: string | null;
+      storeVerification: string;
+    }
+
+    const records = (await prisma.$queryRawUnsafe(rawSql, ...queryParams)) as RawListingResult[];
     
     // Auto-map records to standard Prisma output shape so the frontend doesn't break
     const results = records.map(r => ({
