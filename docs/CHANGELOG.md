@@ -10,6 +10,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ### Fixed
 - **Next.js 16 Promise Params Crash** — Resolved critical `TypeError` crashes on `universities/[slug]`, `categories/[slug]`, and `store/[handle]` pages by awaiting `params` and `searchParams` Promises as required by the latest Next.js 16.2.1 runtime.
 - **Defensive Metadata Generation** — Implemented robust null-checking for university `shortName` fields in metadata generation, preventing production crashes if backend data is malformed.
+- **Hydration Error (Nested Buttons)** — Resolved a React hydration error in `SearchSidebar.tsx` where a mobile "Clear" button was nested inside the main toggle button, violating HTML specifications.
 
 ### Changed
 - **Database-Driven Campus Filters** — Fully decoupled the marketplace from hardcoded university lists. The `/stores` and `/search` pages now dynamically fetch campuses from the DB, ensuring immediate updates when new universities are added.

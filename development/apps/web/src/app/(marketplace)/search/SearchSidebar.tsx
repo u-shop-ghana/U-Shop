@@ -91,10 +91,17 @@ export default function SearchSidebar({
   return (
     <div className="bg-white border text-gray-900 border-gray-200 rounded-2xl md:p-5 md:sticky md:top-24 md:shadow-sm">
       {/* Mobile Toggle Button */}
-      <button 
-        type="button"
+      <div 
         onClick={() => setIsMobileOpen(!isMobileOpen)}
-        className="w-full flex items-center justify-between p-4 md:hidden"
+        className="w-full flex items-center justify-between p-4 md:hidden cursor-pointer"
+        role="button"
+        tabIndex={0}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            setIsMobileOpen(!isMobileOpen);
+          }
+        }}
       >
         <div className="flex items-center gap-2">
           <span className="text-sm font-bold uppercase tracking-wide flex items-center gap-2">
@@ -113,7 +120,7 @@ export default function SearchSidebar({
                 e.stopPropagation();
                 resetFilters();
               }}
-              className="text-xs text-red-500 font-medium ml-2"
+              className="text-xs text-red-500 font-medium ml-2 relative z-10"
             >
               Clear
             </button>
@@ -122,7 +129,7 @@ export default function SearchSidebar({
         <span className={`material-symbols-outlined transition-transform duration-300 ${isMobileOpen ? "rotate-180" : ""}`}>
           expand_more
         </span>
-      </button>
+      </div>
 
       {/* Main Form content — collapsable on mobile, always visible on desktop */}
       <form 
@@ -228,7 +235,7 @@ export default function SearchSidebar({
                   onChange={(e) => setBuyerUniversity(e.target.value)}
                   className="w-3.5 h-3.5 accent-ushop-purple"
                 />
-                <span className="text-sm text-gray-600 group-hover:text-gray-900">
+                <span className="text-sm text-gray-600 group-hover:text-gray-900 truncate">
                   {uni.label}
                 </span>
               </label>
