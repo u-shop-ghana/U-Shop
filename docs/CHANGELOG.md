@@ -3,7 +3,32 @@
 All notable changes to U-Shop are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [0.8.1] — 2026-04-13 — Redis Caching Integration
+
+### Added
+- **Upstash Redis Integration** — Connected the Express API to Upstash Redis (via Vercel service) for high-performance data caching.
+- **University & Category Caching** — Implemented long-term caching (12-24h) for campus and taxonomy lists, significantly reducing database load on navigation and onboarding.
+- **Search Result Caching** — Added short-term (5m) caching for listing searches, accelerating repeated queries and improving marketplace responsiveness.
+- **CacheService Utility** — Developed a robust backend service for standardized cache management with TTL and automatic JSON handling.
+
+### Changed
+- **Performance Optimization** — Shifted frequently accessed static-ish data from PostgreSQL queries to Redis memory lookups.
+
 ---
+
+## [0.8.0] — 2026-04-13 — Firebase Integration & Push Notifications
+
+### Added
+- **Firebase Core & Analytics** — Integrated Firebase Web SDK to provide advanced campus usage analytics and performance monitoring.
+- **Push Notification Support (FCM)** — Implemented Firebase Cloud Messaging with background service worker and permission management.
+- **Firebase Admin SDK** — Initialized the Backend SDK in the Express API to allow server-triggered push notifications.
+- **Google Sign-In (Supabase)** — Verified and ensured Google OAuth via Supabase is functional for high-speed student onboarding.
+
+### Changed
+- **App Layout Refactor** — Wrapped the root application in a `FirebaseProvider` to handle notification registration and analytics lifecycle.
+
+---
+
 
 ## [0.7.2] — 2026-04-12 — Next.js 16 Alignment & Dynamic Filtering
 

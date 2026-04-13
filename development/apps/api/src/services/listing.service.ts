@@ -1,6 +1,46 @@
 import { prisma } from '../lib/prisma';
 import { Prisma } from '@prisma/client';
 import type { CreateListingInput, SearchListingsInput, UpdateListingInput } from '@ushop/shared';
+import { CacheService } from './cache.service';
+
+export interface MappedListing {
+  id: string;
+  storeId: string;
+  categoryId: string;
+  title: string;
+  description: string | null;
+  price: number;
+  condition: string;
+  images: string[];
+  createdAt: Date;
+  ranking_score: number;
+  store: {
+    handle: string;
+    name: string;
+    logoUrl: string | null;
+    user: { verificationStatus: string };
+  };
+}
+
+/**
+ * Raw database record shape returned from queryRawUnsafe
+ */
+interface RawListingResult {
+  id: string;
+  storeId: string;
+  categoryId: string;
+  title: string;
+  description: string | null;
+  price: number;
+  condition: string;
+  images: string[];
+  createdAt: Date;
+  storeHandle: string;
+  storeName: string;
+  storeLogo: string | null;
+  storeVerification: string;
+  ranking_score: number;
+}
 
 export class ListingService {
   /**
@@ -8,6 +48,15 @@ export class ListingService {
    * searches strictly mapping database limits.
    */
   static async searchListings(params: SearchListingsInput & { buyerUniversity?: string; categorySlug?: string }) {
+    // 1. Try to fetch from cache first
+    // We stringify the params to create a unique ID for this specific search query
+    const cacheId = JSON.stringify(params);
+    const cachedResults = await CacheService.get<MappedListing[]>('search', cacheId);
+    
+    if (cachedResults) {
+      return cachedResults;
+    }
+
     const {
       q,
       category,
@@ -30,7 +79,7 @@ export class ListingService {
 
     // 1. Text Search Filtering
     if (q && q.trim() !== '') {
-      const formattedQuery = q.trim().split(' ').map(term => `${term.replace(/[^a-zA-Z0-9]/g, '')}:*`).join(' & ');
+      const formattedQuery = q.trim().split(' ').map((term: string) => `${term.replace(/[^a-zA-Z0-9]/g, '')}:*`).join(' & ');
       paramCount++;
       // We use COALESCE to ensure that even if searchVector is NULL (legacy data), we don't break the query.
       // However, we want to match only if the vector exists or if we fall back to title ILIKE.
@@ -134,11 +183,10 @@ export class ListingService {
       LIMIT ${limit}
     `;
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const records: any[] = await prisma.$queryRawUnsafe(rawSql, ...queryParams);
+    const records = await prisma.$queryRawUnsafe<RawListingResult[]>(rawSql, ...queryParams);
     
     // Auto-map records to standard Prisma output shape so the frontend doesn't break
-    return records.map(r => ({
+    const results = records.map((r: RawListingResult) => ({
       id: r.id,
       storeId: r.storeId,
       categoryId: r.categoryId,
@@ -156,6 +204,14 @@ export class ListingService {
          user: { verificationStatus: r.storeVerification }
       }
     }));
+
+    // 2. Store in cache for 5 minutes (300 seconds)
+    // We only cache if we have results (optional, but prevents caching empty states unnecessarily)
+    if (results.length > 0) {
+      await CacheService.set('search', cacheId, results, 300);
+    }
+
+    return results;
   }
 
   /**

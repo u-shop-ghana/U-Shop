@@ -1,8 +1,13 @@
 import { Router, type Request, type Response, type NextFunction } from 'express';
+import { type University } from '@prisma/client';
 import { prisma } from '../lib/prisma';
 import { logger } from '../lib/logger';
+import { CacheService } from '../services/cache.service';
 
 const router: Router = Router();
+
+// Define exactly what we store in the cache to avoid 'any'
+type CachedUniversity = Pick<University, 'id' | 'name' | 'shortName' | 'slug' | 'domain' | 'logoUrl'>;
 
 // ─── GET /api/v1/universities ───────────────────────────────────
 // Returns all active universities. Public endpoint — no auth required.
@@ -16,8 +21,19 @@ router.get(
   '/',
   async (_req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
+      // 1. Try to fetch from cache first
+      const cachedUniversities = await CacheService.get<CachedUniversity[]>('universities', 'all');
+      if (cachedUniversities) {
+        res.json({
+          success: true,
+          data: cachedUniversities,
+          meta: { total: cachedUniversities.length, cached: true },
+        });
+        return;
+      }
+
+      // 2. Cache MISS: Fetch from DB
       // Fetch only active universities, ordered alphabetically.
-      // We select only fields needed by the frontend to minimize payload.
       const universities = await prisma.university.findMany({
         where: { isActive: true },
         select: {
@@ -31,10 +47,13 @@ router.get(
         orderBy: { name: 'asc' },
       });
 
+      // 3. Store in cache for 12 hours (43200 seconds)
+      await CacheService.set('universities', 'all', universities, 43200);
+
       res.json({
         success: true,
         data: universities,
-        meta: { total: universities.length },
+        meta: { total: universities.length, cached: false },
       });
     } catch (err) {
       // Pass to centralized error handler — never swallow errors
