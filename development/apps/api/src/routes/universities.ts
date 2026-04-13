@@ -13,12 +13,21 @@ const router: Router = Router();
 // Why not hardcode? The university list lives in the DB so admins can
 // add/deactivate universities without a code deploy. The seed script
 // created the initial 5 (GCTU, UG, UCC, KNUST, UMAT).
+interface UniversityBase {
+  id: string;
+  name: string;
+  shortName: string;
+  slug: string;
+  domain: string | null;
+  logoUrl: string | null;
+}
+
 router.get(
   '/',
   async (_req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       // 1. Try to fetch from cache first
-      const cachedUniversities = await CacheService.get<any[]>('universities', 'all');
+      const cachedUniversities = await CacheService.get<UniversityBase[]>('universities', 'all');
       if (cachedUniversities) {
         res.json({
           success: true,
