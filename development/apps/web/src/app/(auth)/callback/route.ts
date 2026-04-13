@@ -81,8 +81,11 @@ export async function GET(request: NextRequest) {
       // Otherwise, send them to the home page.
       const wantsVerification =
         data.user.user_metadata?.wants_student_verification === true;
+      const nextParam = searchParams.get("next");
 
-      if (wantsVerification) {
+      if (nextParam) {
+        redirectPath = nextParam;
+      } else if (wantsVerification) {
         redirectPath = "/verify?type=student";
       } else {
         redirectPath = "/";

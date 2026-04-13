@@ -93,9 +93,14 @@ router.post(
       });
 
       if (existingEmailUser) {
+        const avatarUrl = supabaseUser.user_metadata?.avatar_url || null;
         const reLinkedUser = await prisma.user.update({
           where: { id: existingEmailUser.id },
-          data: { supabaseId: supabaseUser.id, fullName: fullName },
+          data: { 
+            supabaseId: supabaseUser.id, 
+            fullName: fullName,
+            ...(avatarUrl ? { avatarUrl } : {})
+          },
           select: {
             id: true,
             email: true,
@@ -110,11 +115,13 @@ router.post(
       }
 
       // Create our internal User record.
+      const avatarUrl = supabaseUser.user_metadata?.avatar_url || null;
       const newUser = await prisma.user.create({
         data: {
           supabaseId: supabaseUser.id,
           email,
           fullName,
+          avatarUrl,
           role: 'BUYER',
           verificationStatus: 'UNVERIFIED',
         },
