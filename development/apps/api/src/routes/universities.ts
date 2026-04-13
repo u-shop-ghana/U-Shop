@@ -1,13 +1,9 @@
 import { Router, type Request, type Response, type NextFunction } from 'express';
-import { Prisma } from '@prisma/client';
 import { prisma } from '../lib/prisma';
 import { logger } from '../lib/logger';
 import { CacheService } from '../services/cache.service';
 
 const router: Router = Router();
-
-// Define exactly what we store in the cache to avoid 'any'
-type CachedUniversity = Pick<Prisma.UniversityGetPayload<Record<string, never>>, 'id' | 'name' | 'shortName' | 'slug' | 'domain' | 'logoUrl'>;
 
 // ─── GET /api/v1/universities ───────────────────────────────────
 // Returns all active universities. Public endpoint — no auth required.
@@ -22,7 +18,7 @@ router.get(
   async (_req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       // 1. Try to fetch from cache first
-      const cachedUniversities = await CacheService.get<CachedUniversity[]>('universities', 'all');
+      const cachedUniversities = await CacheService.get<any[]>('universities', 'all');
       if (cachedUniversities) {
         res.json({
           success: true,
