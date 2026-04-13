@@ -183,7 +183,7 @@ export class ListingService {
       LIMIT ${limit}
     `;
 
-    const records = await prisma.$queryRawUnsafe<RawListingResult[]>(rawSql, ...queryParams);
+    const records = (await prisma.$queryRawUnsafe(rawSql, ...queryParams)) as RawListingResult[];
     
     // Auto-map records to standard Prisma output shape so the frontend doesn't break
     const results = records.map((r: RawListingResult) => ({
