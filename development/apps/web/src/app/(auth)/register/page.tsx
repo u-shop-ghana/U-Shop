@@ -101,7 +101,7 @@ export default function RegisterPage() {
             full_name: fullName,
             wants_student_verification: verifyAsStudent,
           },
-          emailRedirectTo: `${window.location.origin}/callback`,
+          emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || window.location.origin}/callback`,
         },
       });
 
@@ -170,7 +170,7 @@ export default function RegisterPage() {
     const { error: authError } = await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
-        redirectTo: `${window.location.origin}/callback`,
+        redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || window.location.origin}/callback`,
       },
     });
 
@@ -462,23 +462,12 @@ export default function RegisterPage() {
               onClick={handleGoogleSignup}
               className="w-full bg-transparent border border-gray-700 text-white font-semibold py-4 rounded-xl flex items-center justify-center gap-3 hover:bg-gray-800 transition-colors"
             >
-              <svg className="w-5 h-5" viewBox="0 0 24 24">
-                <path
-                  d="M12 5c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 1.68 14.91 1 12 1 7.48 1 3.65 3.59 1.81 7.39l3.7 2.87C6.38 7.47 9 5 12 5z"
-                  fill="#EA4335"
-                />
-                <path
-                  d="M23.49 12.27c0-.79-.07-1.54-.19-2.27H12v4.51h6.47c-.29 1.48-1.14 2.73-2.4 3.58l3.7 2.88c2.16-1.99 3.42-4.93 3.42-8.7z"
-                  fill="#4285F4"
-                />
-                <path
-                  d="M5.51 14.74c-.28-.85-.44-1.76-.44-2.74 0-.98.16-1.89.44-2.74L1.81 7.39C.66 9.77 0 12.39 0 15.22c0 2.83.66 5.45 1.81 7.83l3.7-2.87c-.28-.85-.44-1.76-.44-2.74z"
-                  fill="#FBBC05"
-                />
-                <path
-                  d="M12 23c3.12 0 5.73-1.03 7.64-2.8l-3.7-2.88c-1.05.7-2.39 1.12-3.94 1.12-3 0-5.53-2.03-6.44-4.76l-3.7 2.87C3.65 20.41 7.48 23 12 23z"
-                  fill="#34A853"
-                />
+              <svg className="w-5 h-5" viewBox="0 0 48 48">
+                <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z" />
+                <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z" />
+                <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z" />
+                <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z" />
+                <path fill="none" d="M0 0h48v48H0z" />
               </svg>
               Sign up with Google
             </button>

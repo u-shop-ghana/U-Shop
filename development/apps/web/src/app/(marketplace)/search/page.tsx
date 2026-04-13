@@ -39,7 +39,7 @@ export const dynamic = "force-dynamic";
 
 // ─── Sort option labels for display
 const SORT_LABELS: Record<string, string> = {
-  relevant: "Most Relevant",
+  relevant: "All",
   newest: "Newest First",
   price_asc: "Price: Low to High",
   price_desc: "Price: High to Low",
