@@ -126,7 +126,7 @@ export default async function UniversityDealsPage({
                      <span className="text-sm font-bold tracking-wider">{university.shortName}</span>
                  </div>
               </div>
-            <h1 className="text-3xl font-black text-white">
+            <h1 className="text-2xl sm:text-3xl font-black text-white">
                {university.name} Deals
             </h1>
             <p className="text-gray-400 mt-1 font-medium">
