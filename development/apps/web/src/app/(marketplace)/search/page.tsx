@@ -159,8 +159,8 @@ export default async function SearchPage({
                   href={f.removeUrl}
                   className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-ushop-purple/10 text-ushop-purple text-xs font-medium rounded-full hover:bg-ushop-purple/20 transition-colors"
                 >
-                  {f.label}
-                  <span className="material-symbols-outlined text-xs">
+                  <span className="truncate max-w-[150px] sm:max-w-[250px]">{f.label}</span>
+                  <span className="material-symbols-outlined text-xs flex-shrink-0">
                     close
                   </span>
                 </Link>
