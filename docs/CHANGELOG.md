@@ -3,7 +3,17 @@
 All notable changes to U-Shop are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
-## [0.8.2] — 2026-04-13 — Auth Flow Hardening & UI Refinements
+## [0.8.3] — 2026-04-14 — Global Security Remediation & History Sanitization
+
+### Security
+- **Definitive History Scrubbing** — Successfully executed a global, multi-pass sanitization of the entire Git repository history across all branches using binary-aware redaction. Permanently eliminated leaked PostgreSQL credentials, Supabase Service Role keys, and JWT fragments from 500+ commits.
+- **Credential Rotation** — Rotated all production database passwords and Supabase keys. Secured the infrastructure by transitioning from hardcoded secrets in `docker-compose.yml` and `railway.toml` to dynamic environment variable injections.
+- **Repository Realignment** — Force-pushed the sanitized, high-integrity history to the `develop` and `staging` branches, resolving critical GitGuardian security blocks and satisfying automated compliance checks.
+- **Git Hygiene Architecture** — Implemented enhanced `.gitignore` rules for `.turbo` build caches and established new protocols for staging environment variables to prevent future secret exposure.
+
+---
+
+
 
 ### Added
 - **Dynamic OAuth Redirects** — Integrated `NEXT_PUBLIC_SITE_URL` across all Google Sign-In and Email confirmation flows, ensuring successful redirections dynamically adapt to both local and production environments.
