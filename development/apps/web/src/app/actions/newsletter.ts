@@ -33,7 +33,7 @@ export async function subscribeToNewsletter(formData: FormData) {
 
     // Return success
     return { success: true, message: "Successfully subscribed!" };
-  } catch (error) {
+  } catch {
     return { error: "Failed to subscribe. Please try again later." };
   }
 }

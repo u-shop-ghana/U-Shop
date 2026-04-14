@@ -36,6 +36,8 @@ export function Footer() {
        setMessage(result.message || "Subscribed successfully!");
     }
   };
+
+  return (
     <footer className="bg-[#0f172a] text-gray-300 mt-auto">
       {/* Main footer content */}
       <div className="max-w-7xl mx-auto px-4 py-12">
