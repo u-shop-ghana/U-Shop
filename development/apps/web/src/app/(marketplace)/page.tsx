@@ -3,6 +3,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { apiPublicFetch } from '@/lib/api-public';
 import { ListingCard } from '@/components/ui/ListingCard';
+import { HeroSlider } from '@/components/ui/HeroSlider';
 import { CATEGORIES } from '@ushop/shared';
 
 interface UniversityOption {
@@ -86,53 +87,7 @@ export default async function HomePage() {
   return (
     <main className="bg-background text-on-background flex flex-col min-h-screen">
       {/* Hero Section */}
-      <section className="relative bg-gradient-to-r from-ushop-purple to-[#3b0a63] text-white overflow-hidden">
-        <div className="hidden md:block absolute right-0 top-0 bottom-0 w-1/2 opacity-10">
-          <svg className="w-full h-full" fill="none" viewBox="0 0 640 640">
-            <path d="M320 0C143.269 0 0 143.269 0 320C0 496.731 143.269 640 320 640C496.731 640 640 496.731 640 320C640 143.269 496.731 0 320 0Z" fill="#D4009B"></path>
-          </svg>
-        </div>
-        <div className="max-w-7xl mx-auto px-4 py-16 md:py-24 relative z-10">
-          <div className="grid md:grid-cols-2 gap-12 items-center">
-            <div className="space-y-6">
-              <div className="flex flex-wrap items-center gap-3">
-                <div className="inline-flex bg-ushop-pink px-4 py-2 rounded-full text-xs md:text-sm font-bold uppercase tracking-wider">
-                  Campus Tech Hub
-                </div>
-                <div className="inline-flex items-center gap-1.5 bg-emerald-500/20 text-emerald-100 border border-emerald-500/40 px-3 py-1.5 rounded-full text-xs font-semibold tracking-wide backdrop-blur-sm">
-                  <span className="material-symbols-outlined text-[14px]">gpp_good</span>
-                  Escrow Protected
-                </div>
-              </div>
-              <h1 className="text-4xl md:text-5xl lg:text-7xl font-extrabold leading-tight">
-                Power Your <span className="text-transparent bg-clip-text bg-gradient-to-r from-ushop-pink to-[#1275e2]">Academic Excellence</span>
-              </h1>
-              <p className="text-lg md:text-xl text-slate-300 max-w-lg">
-                The ultimate tech marketplace for Ghanaian students. Genuine gear, campus delivery, and student-first pricing.
-              </p>
-              <div className="flex flex-wrap gap-4 pt-4">
-                <Link href="/search" className="bg-white text-ushop-purple px-8 py-4 rounded-lg font-bold hover:shadow-xl transition-all inline-flex items-center gap-2 group">
-                  Shop Deals <span className="material-symbols-outlined group-hover:translate-x-1 transition-transform">arrow_forward</span>
-                </Link>
-                <Link href="/dashboard/store/create" className="border-2 border-white text-white px-8 py-4 rounded-lg font-bold hover:bg-white hover:text-ushop-purple transition-all">
-                  Sell Now
-                </Link>
-              </div>
-            </div>
-            <div className="hidden md:block">
-              <div className="relative">
-                <div className="w-full aspect-square max-w-md mx-auto rounded-2xl overflow-hidden border-4 border-white/20 shadow-xl transform rotate-2 hover:rotate-0 transition-transform duration-500">
-                  <Image fill priority src="/assets/images/hero/homepage.png" alt="Tech Essentials" className="object-cover" />
-                </div>
-                <div className="absolute -bottom-6 -left-6 bg-white rounded-lg shadow-xl p-6">
-                   <p className="text-gray-600 text-sm">Starting from</p>
-                   <p className="text-ushop-purple text-2xl font-bold">GH₵ 1,500</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+      <HeroSlider />
 
       {/* Features Bar */}
       <section className="bg-white border-b py-10">
