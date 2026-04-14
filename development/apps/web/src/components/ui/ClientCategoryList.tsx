@@ -83,14 +83,6 @@ export function ClientCategoryList({ categories, images, descriptions, searchQue
       </section>
 
       <div className="bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4">
-          <Breadcrumbs 
-            items={[
-               { label: "Categories" }
-            ]} 
-            className="!py-2 mb-2 border-b border-gray-100"
-          />
-        </div>
         {/* Sort Bar */}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-6 pt-2 flex justify-end">
           <div className="relative inline-block">

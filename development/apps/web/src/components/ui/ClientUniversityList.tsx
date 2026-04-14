@@ -84,14 +84,6 @@ export function ClientUniversityList({ universities, images, locations }: Client
 
       <div className="bg-white">
         {/* Info Bar — campus count + sort */}
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4">
-          <Breadcrumbs 
-            items={[
-               { label: "Universities" }
-            ]} 
-            className="!py-2 border-b border-gray-100"
-          />
-        </div>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2 text-sm text-gray-500 w-full sm:w-auto overflow-hidden">
             <span className="material-symbols-outlined text-base text-ushop-pink flex-shrink-0">location_on</span>
