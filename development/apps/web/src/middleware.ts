@@ -35,6 +35,18 @@ export async function middleware(request: NextRequest) {
     }
   );
 
+  // ─── Static Assets Exemption ────────────────────────────────────
+  // Explicitly skip middleware for manifest.json and common static files.
+  // This is a safety layer on top of the matcher.
+  if (
+    request.nextUrl.pathname === "/manifest.json" ||
+    request.nextUrl.pathname === "/favicon.ico" ||
+    request.nextUrl.pathname.startsWith("/_next") ||
+    request.nextUrl.pathname.includes(".") // Catch all files with extensions
+  ) {
+    return supabaseResponse;
+  }
+
   // Refresh the token — this is the critical operation.
   // If the token is valid, this is a no-op. If expired, it refreshes
   // using the refresh token in the cookie and sets new cookies.
@@ -68,9 +80,17 @@ export async function middleware(request: NextRequest) {
 }
 
 // Only run middleware on routes that need auth checking.
-// Skip static assets, images, favicon, manifest.json, and API routes.
+// We keep the matcher simple to avoid regex issues with root files.
 export const config = {
   matcher: [
-    "/((?!_next/static|_next/image|favicon.ico|manifest.json|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico)$).*)",
+    /*
+     * Match all request paths except for the ones starting with:
+     * - api (API routes)
+     * - _next/static (static files)
+     * - _next/image (image optimization files)
+     * - favicon.ico (favicon file)
+     * - manifest.json (PWA manifest)
+     */
+    "/((?!api|_next/static|_next/image|favicon.ico|manifest.json).*)",
   ],
 };
