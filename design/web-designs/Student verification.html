@@ -1,0 +1,187 @@
+<!DOCTYPE html><html class="light" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Student Verification | U-shop</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "on-surface-variant": "#414753",
+                        "on-primary-fixed": "#001b3e",
+                        "on-tertiary-fixed": "#321200",
+                        "secondary-fixed": "#d6e3ff",
+                        "primary-container": "#1275e2",
+                        "on-tertiary-fixed-variant": "#763400",
+                        "background": "#f9f9ff",
+                        "tertiary-container": "#c05900",
+                        "on-secondary-fixed-variant": "#2d476f",
+                        "surface-tint": "#005db8",
+                        "secondary-fixed-dim": "#aec7f7",
+                        "inverse-on-surface": "#eef0fa",
+                        "tertiary-fixed-dim": "#ffb68c",
+                        "surface-bright": "#f9f9ff",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-container-low": "#f1f3fc",
+                        "on-secondary": "#ffffff",
+                        "primary": "#005cb8",
+                        "on-secondary-container": "#3f5881",
+                        "on-tertiary": "#ffffff",
+                        "secondary-container": "#b6d0ff",
+                        "surface-variant": "#e0e2eb",
+                        "error-container": "#ffdad6",
+                        "tertiary": "#9a4600",
+                        "surface-container-high": "#e6e8f1",
+                        "on-primary": "#ffffff",
+                        "primary-fixed-dim": "#aac7ff",
+                        "on-surface": "#181c22",
+                        "on-primary-fixed-variant": "#00458d",
+                        "inverse-primary": "#aac7ff",
+                        "on-secondary-fixed": "#001b3d",
+                        "outline": "#717785",
+                        "inverse-surface": "#2d3037",
+                        "on-background": "#181c22",
+                        "on-primary-container": "#000512",
+                        "surface": "#f9f9ff",
+                        "error": "#ba1a1a",
+                        "surface-container": "#ebedf7",
+                        "on-error-container": "#93000a",
+                        "surface-dim": "#d7dae3",
+                        "primary-fixed": "#d6e3ff",
+                        "on-error": "#ffffff",
+                        "tertiary-fixed": "#ffdbc9",
+                        "surface-container-highest": "#e0e2eb",
+                        "outline-variant": "#c1c6d5",
+                        "on-tertiary-container": "#0d0300",
+                        "secondary": "#465f88"
+                    },
+                    fontFamily: {
+                        "headline": ["Inter"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .brand-gradient-btn {
+            background: linear-gradient(135deg, #520f85 0%, #1275e2 100%);
+        }
+    </style>
+</head>
+<body class="bg-background font-body text-on-background min-h-screen">
+<!-- TopNavBar Suppression: Linear/Transactional Flow -->
+<main class="min-h-screen flex flex-col md:flex-row overflow-hidden">
+<!-- Left Side: Hero Section -->
+<section class="relative w-full md:w-1/2 min-h-[409px] md:min-h-screen bg-[#1a0c12] flex items-center justify-center overflow-hidden">
+<!-- Background Image with Overlay -->
+<div class="absolute inset-0 z-0">
+<img alt="Ghanaian students studying together on campus" class="w-full h-full object-cover opacity-40" data-alt="Ghanaian students studying together on campus" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA7lLLtJy3BR8blX14dRF4H_XUCqgnSLb9bjCwsOJL3JDup7jCaoxXtxv6Kkpr4CRqUD3P-TYikoQHYrtkd7ND_hBlo4oDUoOy3wLz1OfP22l2JoclTeDllkGShcFkiN56M0nyVKPwaXo-Sjd_cMFyi4RS9U4kn8qDHXmscJtdzO003C76_6stVIo9aDFW9D9PGZ8Bgsh2w21roY11mMkjebaVsWF8aNtIKw5WIXOq5GO39zYJSQWYi2cV7tuP1F_RtVICeiVbPql6H" style="">
+<div class="absolute inset-0 bg-gradient-to-t from-[#1a0c12] via-transparent to-[#1a0c12]/50"></div>
+<div class="absolute inset-0 bg-gradient-to-r from-[#520f85]/20 to-transparent"></div>
+</div>
+<div class="relative z-10 p-8 md:p-16 max-w-xl">
+<div class="flex items-center gap-2 mb-8">
+<div class="w-10 h-10 bg-red-600 rounded-none flex items-center justify-center text-white text-2xl font-bold" style="">U</div>
+<span class="text-white text-2xl font-bold tracking-tight" style="">shop</span>
+</div>
+<h1 class="text-4xl md:text-6xl font-extrabold text-white mb-6 leading-tight" style="">
+                    Verify Your <span class="text-primary-container" style="">Student</span> Status.
+                </h1>
+<p class="text-xl text-gray-300 mb-8 leading-relaxed" style="">
+                    Unlock exclusive deals and campus delivery. Join thousands of students getting the best tech at U-Shop.
+                </p>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+<div class="flex items-center gap-3 bg-white/10 backdrop-blur-md p-4 rounded-none border border-white/10">
+<span class="material-symbols-outlined text-primary-container" data-icon="school" style="">school</span>
+<span class="text-sm text-white font-medium" style="">Student Pricing</span>
+</div>
+<div class="flex items-center gap-3 bg-white/10 backdrop-blur-md p-4 rounded-none border border-white/10">
+<span class="material-symbols-outlined text-primary-container" data-icon="local_shipping" style="">local_shipping</span>
+<span class="text-sm text-white font-medium" style="">Free Campus Delivery</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Right Side: Dark-themed Form Section -->
+<section class="w-full md:w-1/2 bg-[#0f172a] p-8 md:p-16 lg:p-24 flex flex-col justify-center">
+<div class="max-w-md mx-auto w-full">
+<div class="mb-10 text-center md:text-left">
+<h2 class="text-3xl font-bold text-white mb-2" style="">Verification</h2>
+<p class="text-gray-400" style="">Please provide your institutional details to continue.</p>
+</div>
+<form class="space-y-6">
+<!-- University Selection -->
+<div class="space-y-2">
+<label class="text-sm font-medium text-gray-300 block" style="">Select University</label>
+<div class="relative">
+<select class="w-full bg-[#1e293b] border border-[#2f1a24] text-white py-3 px-4 rounded-none appearance-none focus:ring-2 focus:ring-primary-container outline-none transition-all">
+<option disabled="" selected="" value="">Choose your institution</option>
+<option value="ug">University of Ghana (UG)</option>
+<option value="knust">Kwame Nkrumah University of Science and Technology (KNUST)</option>
+<option value="ucc">University of Cape Coast (UCC)</option>
+<option value="ashesi">Ashesi University</option>
+<option value="uds">University for Development Studies (UDS)</option>
+</select>
+<div class="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400">
+<span class="material-symbols-outlined" data-icon="expand_more" style="">expand_more</span>
+</div>
+</div>
+</div>
+<!-- Student Email -->
+<div class="space-y-2">
+<label class="text-sm font-medium text-gray-300 block" style="">Student Email Address</label>
+<input class="w-full bg-[#1e293b] border border-[#2f1a24] text-white py-3 px-4 rounded-none focus:ring-2 focus:ring-primary-container outline-none transition-all placeholder:text-gray-500" placeholder="yourname@st.ug.edu.gh" type="email">
+</div>
+<!-- Upload ID Front -->
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+<div class="space-y-2">
+<label class="text-sm font-medium text-gray-300 block" style="">Student ID (Front)</label>
+<div class="border-2 border-dashed border-[#2f1a24] hover:border-primary-container bg-[#1e293b] p-6 text-center cursor-pointer transition-colors group">
+<span class="material-symbols-outlined text-gray-500 group-hover:text-primary-container mb-2 block" data-icon="upload_file" style="">upload_file</span>
+<span class="text-[10px] text-gray-400 font-medium uppercase tracking-wider" style="">Upload Front</span>
+<input class="hidden" type="file">
+</div>
+</div>
+<div class="space-y-2">
+<label class="text-sm font-medium text-gray-300 block" style="">Student ID (Back)</label>
+<div class="border-2 border-dashed border-[#2f1a24] hover:border-primary-container bg-[#1e293b] p-6 text-center cursor-pointer transition-colors group">
+<span class="material-symbols-outlined text-gray-500 group-hover:text-primary-container mb-2 block" data-icon="upload_file" style="">upload_file</span>
+<span class="text-[10px] text-gray-400 font-medium uppercase tracking-wider" style="">Upload Back</span>
+<input class="hidden" type="file">
+</div>
+</div>
+</div>
+<!-- Security Notice -->
+<div class="flex gap-3 p-3 bg-primary-container/10 border border-primary-container/20 rounded-none">
+<span class="material-symbols-outlined text-primary-container text-sm" data-icon="shield" style="">shield</span>
+<p class="text-[11px] text-gray-400" style="">Your information is encrypted and only used for verification purposes.&nbsp;</p>
+</div>
+<!-- Submit Button -->
+<button class="w-full brand-gradient-btn text-white py-4 font-bold text-lg rounded-none shadow-lg hover:opacity-90 active:scale-95 transition-all uppercase tracking-widest" type="submit" style="">
+                        Submit for Verification
+                    </button>
+<!-- Bottom Links -->
+<div class="text-center pt-4">
+<a class="text-gray-400 hover:text-white transition-colors text-sm font-medium" href="#" style="">Skip for now</a>
+</div>
+</form>
+<div class="mt-12 flex items-center justify-center gap-6 opacity-30 grayscale">
+<img alt="Mobile Money Logo" class="h-6 object-contain" data-alt="Mobile Money payment partner logo" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCob2SXl0PGwz9Uqx9ifuYRPcrCG8SsxTeDY_S8FEg8ONpMScLZKpOAEZgMkowwYfFt0Yg2UtlD4F-tBctNxf4nNnDb8hjyQIuzL515hC-DV6kBFVjnka7tkbG-4kzHJedeJwcD9Ep87ucJJQEXMoBmncbmIaP2ZZ4KmclPe83srCga7tt_RZzhNjz3RdpErUGCDjZNlcEAWOounJO7aRESqW7zQAM6EEs5OAKKr0Iwa7AwmRSpdMf9QZd1-NJp7c162y3rBBy2MuKY" style="">
+<img alt="Visa Mastercard Logo" class="h-4 object-contain" data-alt="Visa and Mastercard logos" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBbgxZH-4Z3uhLJyRppKk2KY2DFzmofXch6gvPQFkrAYFvCryftYzuc5v1VHU3bqbCn5LVBZGdCwzSd4Z7VzyL7hunvWa2qOL8dnJa_JsV5CP0Uiyc-P4l-6kMwI-pcRjyw0NJHu1XotbDmh9eeqVhRUMlp91iBunzyJH2daEneq8o0gzcuCgvop8LRgMhuGcxgJ1KJHAfPp6n13BYkfwyUZ1WXliyzHKB0g99iQ9xI8j10FmADfxEH3injbPJES68SaABfA7Ra0cWy" style="">
+</div>
+</div>
+</section>
+</main>
+<!-- BottomNavBar Suppression: Focused Task (Verification) -->
+</body></html>
