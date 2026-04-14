@@ -3,6 +3,19 @@
 All notable changes to U-Shop are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [0.8.4] — 2026-04-14 — UX Enhancements & Auth Bug Fixes
+
+### Added
+- **Functional Newsletter Server Action** — Replaced the static Footer newsletter with a dynamic `subscribeToNewsletter` Server Action wrapped in Next.js transitions, natively validating and accepting simulated newsletter pings complete with an animated Loading and Success UI state dynamically rendered.
+- **Header Profile Dropdown** — Scaled up the simple header account link into a fully functional hover/click absolute dropdown rendering cleanly positioned profile settings, `My Orders`, and conditionally rendering `My Store` navigation links natively mapping `user.store` presence. Integrated absolute `useRef` handlers snapping the dropdown shut immediately clicking out of bounds.
+- **Dynamic Homepage Hero Slider** — Abstracted the huge monolithic static marketing banner gracefully out of the active Marketplace homepage replacing it directly with `HeroSlider.tsx` component driving an elegant timed CSS fade carousel displaying `Power Your Academic Excellence`, `Upgrade Your Tech Setup`, and `Student Discounts` safely matching marketing cadences seamlessly.
+
+### Fixed
+- **Duplicate Navigation Breadcrumbs** — Safely resolved the redundancy conflict showing double `<Breadcrumbs/>` instances exclusively destroying the internal component breadcrumbs layered inside `ClientCategoryList` and `ClientUniversityList` allowing top-level URL paths strictly controlling navigation mapping from `page.tsx`.
+- **"otp_expired" Infinite Refresh URL Error** — Executed a root layout Client-Level interception detecting arbitrary Supabase `#error_code=otp_expired` payloads (often triggered by Email Scanners consuming 1-time magic links prematurely) intercepting the URL natively swapping out `#error...` params directly into clean URL SearchParams mapping back into `forgot-password?error=expired` resulting directly in a clean UI warning mapping gracefully replacing opaque system variables.
+
+---
+
 ## [0.8.3] — 2026-04-14 — Global Security Remediation & History Sanitization
 
 ### Security
