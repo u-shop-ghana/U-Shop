@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Login - U-shop</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "campus-dark": "#191022",
+                        "campus-card": "#241830",
+                        "campus-purple": "#7c3aed",
+                        "campus-pink": "#db2777"
+                    },
+                    fontFamily: {
+                        "headline": ["Inter"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    },
+                    borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #191022;
+        }
+        .bg-campus-gradient {
+            background: linear-gradient(to right, #c084fc, #f472b6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col bg-campus-dark">
+<div class="flex flex-col lg:flex-row min-h-screen w-full">
+<!-- Left Side: Hero Section -->
+<div class="hidden lg:flex flex-1 bg-campus-card relative overflow-hidden items-center justify-center p-16">
+<!-- Background Image with Overlay -->
+<div class="absolute inset-0">
+<img alt="Students collaborating" class="w-full h-full object-cover opacity-40 mix-blend-overlay" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB-llH9qahVl1cL5QpV15iSOUpxhHrkLBHed_nTgR2B3TNE9N75P1em7L54H-OLN9_i_OnJ3OSpFAkVW_mc0PI7H1E_7ETgi2JNktF7Fq52vH8zFLngbFowghwbfQymwy4PjWTwvhiK_jpM2Dzgwnm8bc0WgwabLQ_qSSpu-hjsd9X9RoBq4IIq9btA0KiMgJxumPq5gFzXkyrCsKLEuNGp12qIXoYsVkPzoPOGAf2yKbQJ-gWuNFMY4sNSRWWlBUQoTdRV7-l4R3E"/>
+<div class="absolute inset-0 bg-gradient-to-t from-[#191022] via-[rgba(127,13,242,0.2)] to-transparent"></div>
+<div class="absolute inset-0 bg-[rgba(127,13,242,0.1)] mix-blend-multiply"></div>
+</div>
+<!-- Decorative Blurs -->
+<div class="absolute -left-32 -top-52 w-[600px] h-[600px] bg-[rgba(209,37,244,0.2)] rounded-full blur-[60px] opacity-50"></div>
+<div class="absolute -right-32 -bottom-52 w-[500px] h-[500px] bg-[rgba(147,51,234,0.2)] rounded-full blur-[50px] opacity-50"></div>
+<!-- Content -->
+<div class="relative z-10 flex flex-col gap-8 max-w-xl">
+<!-- Badge -->
+<div class="inline-flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-sm border border-white/10 rounded-full w-fit">
+<div class="w-2 h-2 bg-green-400 rounded-full"></div>
+<span class="text-sm text-white/90 font-medium">#1 Marketplace for Students</span>
+</div>
+<!-- Heading -->
+<div class="space-y-2">
+<h1 class="text-6xl font-extrabold text-white tracking-tight">Buy, Sell, and Upgrade</h1>
+<h1 class="text-6xl font-extrabold bg-campus-gradient">Campus Tech.</h1>
+</div>
+<!-- Description -->
+<p class="text-xl text-white/80 leading-relaxed max-w-md">
+                Join thousands of students across Ghana getting the best deals on laptops, phones, and accessories. Verified student-to-student trading.
+            </p>
+<!-- Social Proof -->
+<div class="flex items-center gap-4 pt-4">
+<div class="flex -space-x-3">
+<img alt="Student profile" class="w-10 h-10 rounded-full border-2 border-purple-600 object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCceQseEfxp1RQjikryv8SkmTmLM3rZ70GS2tmWX5c_SK_gXrfrjzRZjWQWM2d1pInS0gVuQaVrNCbD-W4Jp111861VzTQ1D0kW1reLxgg93sh0FO22VyqZw5iacKbXNg47dyyfeMPKGePGmsialIdMPwdBVKdlU6FF8t24rSoACtpOR954i2DxRF8VhgKKCT50jBTXhtkKuSgPaBrY_e4-3x9wHjwC269R4n38UFo-j2HmsmyeGjkRiGziX-S7lA2rRKoK44L4U2U"/>
+<img alt="Student profile" class="w-10 h-10 rounded-full border-2 border-purple-600 object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD1xd5JFFIpmmWLg-BU1x2QByAotOI8kEp_dj5dG17YQCr8HaxmhJIP672PMuzjjD4xaQPMa9BNgztKxppdAw3E_2Rqz4R2zWl0VOC0r_9qLVG4g1XkAYF-TRStKvKbm-qX1nscgV4hIXRfiFM5jv3O7_Y5LcPq4e9q3TP4AEVGK4nBWh8_H51LB-5C0cInftAM-5eQcaI87xtYVzt-GWtV6YrmaHomvLpRgxLga6avWRowzZirq7lanO4VccNWrFTcIybXUJGkd94"/>
+<img alt="Student profile" class="w-10 h-10 rounded-full border-2 border-purple-600 object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBPjtavwVP6ADHzSSID_lFHPWqNPrXaZZDorYppg7BE9K0XzTEs6W12Mz3f1kLm6MA73R-lZcNi4XZ2ih2IFKi0_ggcT2mVPZP4vmOhk_ax91rLJ8z7r6j9mKxE1gjrNMwt3GmSLGyqUZUuH9QIqTMxYkc402VfPmGeR0YfexbzVSL3lnWafFp802i40swaLzWq_AF6QEt1KqGLmbiH4J-N2htH37WRgCiI1-LKnOIZLlCIo8D5XP2tvvKVIO1YUJBNKqbJauKiwnM"/>
+</div>
+<p class="text-sm text-white/70">
+<span class="font-bold text-white">2,000+</span> students joined this week
+                </p>
+</div>
+</div>
+</div>
+<!-- Right Side: Login Form -->
+<div class="flex-1 bg-campus-dark flex flex-col p-6 md:p-12 relative overflow-y-auto min-h-screen">
+<!-- Logo Header -->
+<div class="mb-12 flex justify-center lg:justify-start">
+<img alt="U-Shop" class="h-12 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/ADBb0uhfwHvATSD88VIEG5o9q7GNisL9s_lSyfXSkJ73xxVgQ4dannxFtatheg6sXsrMEn6ayfWG4kyyOFwHPbuSW4YzFfLkEBM2BvGVI6NMf5GilW3p-e5wvumYgBYJaMPRjNmmmxRBfideWH1PyOxLP5F8GHwdPJLZbH-nU2OIMuwv3PYRYReOGEe6TiRZsQuPjPIGomVnwmgIZzWFjWY2Wts4GjOIO0W8JtXvEM136CEPM8FwD3jl6OiBMytNHQSFhZ6uYdcvQF8vtTQ"/>
+</div>
+<div class="flex-grow flex flex-col justify-center items-center">
+<div class="w-full max-w-md space-y-8">
+<!-- Main Card -->
+<div class="bg-campus-card border border-white/5 rounded-2xl shadow-2xl p-8 md:p-10">
+<!-- Header -->
+<div class="text-center mb-8">
+<h2 class="text-2xl font-bold text-white mb-2">Welcome Back</h2>
+<p class="text-gray-400 text-sm">Enter your details to access your account.</p>
+</div>
+<!-- Tabs -->
+<div class="flex gap-1 p-1 bg-black/20 rounded-xl mb-8">
+<button class="flex-1 py-2.5 text-sm font-semibold text-white bg-purple-600 rounded-lg shadow-sm transition-all">
+                            Login
+                        </button>
+<a class="flex-1 py-2.5 text-sm font-semibold text-gray-400 hover:text-white rounded-lg transition-all text-center" href="#">
+                            Sign Up
+                        </a>
+</div>
+<!-- Form -->
+<form class="space-y-5">
+<!-- Email Input -->
+<div class="space-y-2">
+<label class="block text-sm font-medium text-gray-300">Email or Phone</label>
+<div class="relative">
+<div class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">
+<span class="material-symbols-outlined text-xl" data-icon="mail">mail</span>
+</div>
+<input class="w-full pl-12 pr-4 py-3.5 bg-black/20 border border-white/10 rounded-xl text-white placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent transition-all text-sm" placeholder="student@ug.edu.gh or +233..." type="text"/>
+</div>
+</div>
+<!-- Password Input -->
+<div class="space-y-2">
+<div class="flex items-center justify-between">
+<label class="block text-sm font-medium text-gray-300">Password</label>
+<a class="text-xs font-semibold text-purple-400 hover:text-purple-300 transition-colors" href="#">Forgot Password?</a>
+</div>
+<div class="relative">
+<div class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">
+<span class="material-symbols-outlined text-xl" data-icon="lock">lock</span>
+</div>
+<input class="w-full pl-12 pr-12 py-3.5 bg-black/20 border border-white/10 rounded-xl text-white placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent transition-all text-sm" placeholder="••••••••" type="password"/>
+<button class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-300 transition-colors" type="button">
+<span class="material-symbols-outlined text-xl" data-icon="visibility">visibility</span>
+</button>
+</div>
+</div>
+<!-- Remember Me -->
+<div class="flex items-center">
+<input class="h-4 w-4 bg-black/20 border-white/10 rounded text-purple-600 focus:ring-purple-600 focus:ring-offset-campus-card" id="remember" type="checkbox"/>
+<label class="ml-2 block text-sm text-gray-400 cursor-pointer" for="remember">Remember my device</label>
+</div>
+<!-- Submit Button -->
+<button class="w-full py-4 px-4 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-bold rounded-xl shadow-lg shadow-purple-600/20 flex items-center justify-center gap-2 transition-all active:scale-[0.98]" type="submit">
+<span>Log In</span>
+<span class="material-symbols-outlined text-lg" data-icon="arrow_forward">arrow_forward</span>
+</button>
+<!-- Divider -->
+<div class="relative py-4">
+<div class="absolute inset-0 flex items-center">
+<div class="w-full border-t border-white/10"></div>
+</div>
+<div class="relative flex justify-center">
+<span class="px-3 text-xs font-medium text-gray-500 bg-campus-card uppercase tracking-widest">Or continue with</span>
+</div>
+</div>
+<!-- Google Login -->
+<button class="w-full py-3.5 px-4 bg-white/5 hover:bg-white/10 border border-white/10 text-white font-semibold rounded-xl flex items-center justify-center gap-3 transition-all" type="button">
+<svg class="w-5 h-5" viewbox="0 0 24 24">
+<path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"></path>
+<path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"></path>
+<path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"></path>
+<path d="M12 5.38c1.62 0 3.06.56 4.21 1.66l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 6.47l3.66 2.84c.87-2.6 3.3-4.53 12-4.53z" fill="#EA4335"></path>
+</svg>
+<span>Google</span>
+</button>
+<!-- Terms -->
+<p class="text-[11px] text-center text-gray-500 leading-relaxed pt-2">
+                            By continuing, you agree to U-Shop's <a class="text-gray-400 underline hover:text-white transition-colors" href="#">Terms of Service</a> and <a class="text-gray-400 underline hover:text-white transition-colors" href="#">Privacy Policy</a>.
+                        </p>
+</form>
+</div>
+<!-- Footer Link -->
+<p class="text-center text-gray-400 text-sm">
+                    New to U-Shop? 
+                    <a class="font-bold text-purple-400 hover:text-purple-300 transition-colors ml-1" href="#">Create an Account</a>
+</p>
+</div>
+</div>
+<!-- Support Info Mobile -->
+<div class="mt-auto pt-8 flex justify-center lg:justify-start gap-6 text-xs text-gray-500 font-medium uppercase tracking-widest">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-base" data-icon="verified_user">verified_user</span>
+                Verified Platform
+            </div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-base" data-icon="support_agent">support_agent</span>
+                24/7 Support
+            </div>
+</div>
+</div>
+</div>
+</body></html>

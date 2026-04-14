@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Explore Categories | U-shop</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#520f85",
+                        "primary-hover": "#3b0a63",
+                        "accent": "#d41295",
+                        "accent-hover": "#b91080",
+                        "surface": "#f9f9ff",
+                        "on-surface": "#181c22",
+                        "outline": "#717785",
+                        "surface-container": "#ebedf7",
+                        "surface-container-high": "#e6e8f1",
+                    },
+                    fontFamily: {
+                        "headline": ["Inter", "sans-serif"],
+                        "body": ["Inter", "sans-serif"],
+                    },
+                    borderRadius: {
+                        "DEFAULT": "8px",
+                        "lg": "12px",
+                        "xl": "16px",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            display: inline-block;
+            line-height: 1;
+            text-transform: none;
+            letter-spacing: normal;
+            word-wrap: normal;
+            white-space: nowrap;
+            direction: ltr;
+        }
+        .category-card-overlay {
+            background: linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0.85) 100%);
+        }
+    </style>
+</head>
+<body class="bg-surface font-body text-on-surface flex flex-col min-h-screen">
+<main class="flex-grow">
+<!-- Hero Banner Section -->
+<section class="relative h-[480px] w-full flex items-center overflow-hidden">
+<div class="absolute inset-0 z-0">
+<img class="w-full h-full object-cover" data-alt="Modern high-tech desk setup with laptop and neon accents" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCMK_GWIzBVUfuOlkJ-6S9jfawqNrkGxh7dyGw0A2XN4_3hmSxBJep_xNb1gptYI1nHWtBcy8EUpqoYoQh1gjTzfZKPgRKDMy0L5uFn46ZN8EQC_RDfuuhdLID-qd_QiJE37wY48SgPdTUz6Xn8sNnz6bSXKnj01wK2BSMWXxjC9AWfWvLn9BC9AnyNdZcIQ3nGFObyLDrpRIGDM_NkweoZBsyOgDe7lCOv6cv0_rB2aIvtGFjkiKYfMqnWXDMwjDv9Rx_oJoXMuNhB"/>
+<div class="absolute inset-0 bg-black/65 backdrop-blur-[2px]"></div>
+</div>
+<div class="relative z-10 max-w-[1280px] mx-auto px-4 md:px-8 w-full flex flex-col">
+<div class="w-full">
+<a class="inline-flex items-center text-white/80 hover:text-white mb-6 transition-colors group" href="/">
+<span class="material-symbols-outlined mr-2 group-hover:-translate-x-1 transition-transform">arrow_back</span>
+                    Back to Home
+                </a>
+</div>
+<div class="text-center max-w-4xl mx-auto">
+<h1 class="text-4xl md:text-6xl font-extrabold text-white mb-4 tracking-tight drop-shadow-md">Explore Categories</h1>
+<p class="text-lg md:text-xl text-gray-100 mb-10 leading-relaxed drop-shadow-sm">
+                    Find the best tech essentials for your academic journey. From high-performance laptops to campus-ready accessories.
+                </p>
+<div class="max-w-3xl mx-auto">
+<div class="flex items-center bg-white p-1 rounded-none shadow-2xl">
+<div class="flex-1 flex items-center px-4">
+<span class="material-symbols-outlined text-gray-400 mr-3">search</span>
+<input class="w-full border-none focus:ring-0 text-on-surface py-3" placeholder="What tech are you looking for today?" type="text"/>
+</div>
+<button class="bg-[#520f85] hover:bg-[#3b0a63] text-white px-8 py-3 font-bold transition-colors">
+                            SEARCH
+                        </button>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Category Content -->
+<section class="max-w-[1280px] mx-auto px-4 md:px-8 py-12">
+<!-- Controls -->
+<div class="flex justify-end mb-10">
+<div class="relative inline-block">
+<button class="flex items-center gap-2 px-4 py-2 border border-gray-300 bg-white hover:bg-gray-50 font-medium rounded-lg transition-colors">
+                    Sort: Default
+                    <span class="material-symbols-outlined text-sm">expand_more</span>
+</button>
+</div>
+</div>
+<!-- Categories Grid -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+<!-- Laptops Card -->
+<div class="group relative h-96 overflow-hidden bg-slate-200 rounded-lg">
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" data-alt="Laptops" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDcraRFuDxoCFF5ytCvpMxEI_Mjqbmua9pPRjH_jHUczqh0bO-sOdFjFHLR-EhhgjNyeb2qdWqfVqkr7Jj_XVYh7V6o8QiJ7zDvrfqyD5Ax_Ya0rcO5QPjsz2w9JX3wZE0rPvPlz2lOufrwwZufwP0O5VcWNCYJC1YOWIxb_sPbQSLkKElWY1yAh4wvxckdlPSkNQqO-kxq2hEGAn-ckjR0uGbU754IQUZ164sv2m614uItQvBc5NLMnxVnQD4ZB8MaGwN6Dy0q5vfi"/>
+<div class="absolute top-4 left-4 bg-white/90 backdrop-blur px-3 py-1 text-xs font-bold text-primary uppercase tracking-wider rounded-full shadow-sm">
+                    142 Products
+                </div>
+<div class="absolute inset-0 category-card-overlay flex flex-col justify-end p-8">
+<h3 class="text-2xl font-bold text-white mb-2">Laptops</h3>
+<p class="text-gray-300 text-sm mb-4">MacBooks, Windows Ultrabooks &amp; Gaming rigs.</p>
+<a class="inline-flex items-center text-white font-bold group-hover:text-accent transition-colors" href="#">
+                        Browse Collection
+                        <span class="material-symbols-outlined ml-2 text-sm group-hover:translate-x-1 transition-transform">arrow_forward</span>
+</a>
+</div>
+</div>
+<!-- Phones Card -->
+<div class="group relative h-96 overflow-hidden bg-slate-200 rounded-lg">
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" data-alt="Phones" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB3ip-xTOlfiRhcTRZa2BLRdklKb7ijvYxdJLAGr1jkUK0ZwmN3H76NHOx6G_zquY3BG1-HtZUjkMxrJwha2msVV6WRcSBZeWPShGLBByXVsJiJZCdOEkuwvPg1SzeJ9OZHg7TpoAzwmMFu29EjvRlkX-KzeNePuPySq7O3V2htKhVYMjQ7oEHZHNt64YaEUHLuHPmldvTIhQT0q30IOT-JWh6tBZxWKMBMwQHYEwG8cmW-h0vLE46zunPmRfkBhi9Jz-VjamUpMirX"/>
+<div class="absolute top-4 left-4 bg-white/90 backdrop-blur px-3 py-1 text-xs font-bold text-primary uppercase tracking-wider rounded-full shadow-sm">
+                    285 Products
+                </div>
+<div class="absolute inset-0 category-card-overlay flex flex-col justify-end p-8">
+<h3 class="text-2xl font-bold text-white mb-2">Phones</h3>
+<p class="text-gray-300 text-sm mb-4">Latest iPhones, Samsung Galaxy &amp; Pixel devices.</p>
+<a class="inline-flex items-center text-white font-bold group-hover:text-accent transition-colors" href="#">
+                        Browse Collection
+                        <span class="material-symbols-outlined ml-2 text-sm group-hover:translate-x-1 transition-transform">arrow_forward</span>
+</a>
+</div>
+</div>
+<!-- Tablets Card -->
+<div class="group relative h-96 overflow-hidden bg-slate-200 rounded-lg">
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" data-alt="Tablets" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAW4s8WgHLl8ijb6mlq1cPEF_1ozxsPOn9E8fu8c9obabAmHWMJzU4dpPCrwP7jIPqqKBs4YJjdGZmMjSuuRHl4NLXixAg8AyxwWJyXLQ9ZoCl2B74ZykM-Cz_EvhcS0R68ixX8QHEXwdQFxPhtslic35KtFzDIT4PJcF1dBzOEzsy2FQxySb_T0CuJBPurQ6LHhQy5NztCFasYEqFQXvLpKqdbCajtd0pm30PKC-zlHtFzYpDk_ye0FA5fuuewUVHvTZfbldcWphlS"/>
+<div class="absolute top-4 left-4 bg-white/90 backdrop-blur px-3 py-1 text-xs font-bold text-primary uppercase tracking-wider rounded-full shadow-sm">
+                    96 Products
+                </div>
+<div class="absolute inset-0 category-card-overlay flex flex-col justify-end p-8">
+<h3 class="text-2xl font-bold text-white mb-2">Tablets</h3>
+<p class="text-gray-300 text-sm mb-4">iPads and Android tablets for note-taking.</p>
+<a class="inline-flex items-center text-white font-bold group-hover:text-accent transition-colors" href="#">
+                        Browse Collection
+                        <span class="material-symbols-outlined ml-2 text-sm group-hover:translate-x-1 transition-transform">arrow_forward</span>
+</a>
+</div>
+</div>
+<!-- Accessories Card -->
+<div class="group relative h-96 overflow-hidden bg-slate-200 rounded-lg">
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" data-alt="Accessories" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCS8HJaz5Wo3SvAA-OkVVOvJH5olazCzah6JGHI95EKwFRALe46zQVzE_evZd0iUG1oTcGrsbn8QHXnvd7Of2XijFeqldvDcno38XHC15fTMj0_A9nBsv7UbqixfpF9wEdvfPGJYo6zw4AgsmuKbADBh38t2nQoUP_4SLO1ol39fK7SYY9pE0DndKEAZtJ1PUWl4MgTUUMP5UyR6ETe8pCLs5qNver2FizOOnuHD-miAYdxY4rIUAV8oUqTJrswPnUtfYNIPgdsXWj2"/>
+<div class="absolute top-4 left-4 bg-white/90 backdrop-blur px-3 py-1 text-xs font-bold text-primary uppercase tracking-wider rounded-full shadow-sm">
+                    412 Products
+                </div>
+<div class="absolute inset-0 category-card-overlay flex flex-col justify-end p-8">
+<h3 class="text-2xl font-bold text-white mb-2">Accessories</h3>
+<p class="text-gray-300 text-sm mb-4">Chargers, headphones, and student essentials.</p>
+<a class="inline-flex items-center text-white font-bold group-hover:text-accent transition-colors" href="#">
+                        Browse Collection
+                        <span class="material-symbols-outlined ml-2 text-sm group-hover:translate-x-1 transition-transform">arrow_forward</span>
+</a>
+</div>
+</div>
+<!-- Gaming Card -->
+<div class="group relative h-96 overflow-hidden bg-slate-200 rounded-lg">
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" data-alt="Gaming" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAmHQD9xGYH4IhMYB4dkNiyEwCvhyIKfnWAbZEVUXmMLzFvIWPVH6NwI8uQNBlG8PlqhTImL28FPNTDo2s6HfawG9hLIpchhkq_vAX5ltlgtYkjsX1KivKgiJu9KMlWGuOCoPBg01OqrCqTKTNGQjP1IqR4l9yZYxGNvI6VS4dgZq38YkhvpqWON8xQuSFcTrHMH4ZaEL7qK7d0ixVLF8gw294L3FbCHaDFjpQuod40UMgBW0ADBren7f5DeaHUMFu4SygbDO9AZDlh"/>
+<div class="absolute top-4 left-4 bg-white/90 backdrop-blur px-3 py-1 text-xs font-bold text-primary uppercase tracking-wider rounded-full shadow-sm">
+                    78 Products
+                </div>
+<div class="absolute inset-0 category-card-overlay flex flex-col justify-end p-8">
+<h3 class="text-2xl font-bold text-white mb-2">Gaming</h3>
+<p class="text-gray-300 text-sm mb-4">Consoles, controllers, and immersive gear.</p>
+<a class="inline-flex items-center text-white font-bold group-hover:text-accent transition-colors" href="#">
+                        Browse Collection
+                        <span class="material-symbols-outlined ml-2 text-sm group-hover:translate-x-1 transition-transform">arrow_forward</span>
+</a>
+</div>
+</div>
+<!-- Storage Card -->
+<div class="group relative h-96 overflow-hidden bg-slate-200 rounded-lg">
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" data-alt="Storage" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDCW-ZNAhMy6iNoRxbWPMfhWPUeTenhqDHBJN7gHE4sLOEneVtRqf1vDYSCYGoFGSu6i62DZSfatFmAxX1G7PjMXX_0xpaEM1rexHtaJ7ZrcSGlixiTPVF8wIB2tIg1l5DCxXRLbC5_IUze4mO60X3nQJBhCtzOYPTXaL24YoBSUCJbJJrnggtnap3p-Jx2JoZM1q9aEUrhWVcclWPJvzIP3aMvV4yJVUHCHgLUeD7om4K7Y6rabvHbReSHxoVitPH05IW-L23_v0gv"/>
+<div class="absolute top-4 left-4 bg-white/90 backdrop-blur px-3 py-1 text-xs font-bold text-primary uppercase tracking-wider rounded-full shadow-sm">
+                    110 Products
+                </div>
+<div class="absolute inset-0 category-card-overlay flex flex-col justify-end p-8">
+<h3 class="text-2xl font-bold text-white mb-2">Storage</h3>
+<p class="text-gray-300 text-sm mb-4">External SSDs, Hard drives &amp; Flash drives.</p>
+<a class="inline-flex items-center text-white font-bold group-hover:text-accent transition-colors" href="#">
+                        Browse Collection
+                        <span class="material-symbols-outlined ml-2 text-sm group-hover:translate-x-1 transition-transform">arrow_forward</span>
+</a>
+</div>
+</div>
+</div>
+</section>
+</main>
+</body></html>
