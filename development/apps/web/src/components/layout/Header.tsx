@@ -1,9 +1,10 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useRef, useEffect } from "react";
 import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
 import { SearchBar } from "../cards/SearchBar";
+import { createClient } from "@/lib/supabase/client";
 
 // ─── Header Component ───────────────────────────────────────────
 // Three-row header matching design/ui-kit/organisms/header.png:
@@ -19,6 +20,7 @@ interface HeaderProps {
   wishlistCount?: number;
   isLoggedIn?: boolean;
   userName?: string;
+  hasStore?: boolean;
   onSearch?: (query: string) => void;
 }
 
@@ -27,11 +29,32 @@ export function Header({
   wishlistCount = 0,
   isLoggedIn = false,
   userName,
+  hasStore = false,
   onSearch,
 }: HeaderProps) {
   const router = useRouter();
   const pathname = usePathname();
+  const supabase = createClient();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  // Close dropdown on click outside
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setProfileDropdownOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const handleSignOut = async () => {
+    setProfileDropdownOpen(false);
+    await supabase.auth.signOut();
+    router.refresh(); // Refresh route to update useAuth state
+  };
 
   // Default search handler navigates to /search?q=... or bare /search
   function handleSearch(query: string) {
@@ -155,17 +178,57 @@ export function Header({
 
             {/* Auth buttons */}
             {isLoggedIn ? (
-              <Link
-                href="/dashboard"
-                className="flex items-center gap-2 text-sm font-medium text-gray-600 hover:text-[#6B1FA8] transition-colors"
-              >
-                <span className="material-symbols-outlined text-2xl">
-                  account_circle
-                </span>
-                <span className="hidden lg:inline">
-                  {userName || "Account"}
-                </span>
-              </Link>
+              <div className="relative" ref={dropdownRef}>
+                <button
+                  onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
+                  className="flex items-center gap-1.5 text-sm font-medium text-gray-600 hover:text-[#6B1FA8] transition-colors"
+                >
+                  <span className="material-symbols-outlined text-2xl">
+                    account_circle
+                  </span>
+                  <span className="hidden lg:inline">
+                    {userName || "Account"}
+                  </span>
+                  <span className="material-symbols-outlined text-sm hidden lg:inline pt-0.5">
+                    expand_more
+                  </span>
+                </button>
+
+                {profileDropdownOpen && (
+                  <div className="absolute right-0 mt-3 w-48 bg-white border border-gray-100 rounded-xl shadow-[0_10px_25px_-5px_rgba(0,0,0,0.1),_0_8px_10px_-6px_rgba(0,0,0,0.1)] py-2 z-50">
+                    <Link
+                      href="/dashboard"
+                      onClick={() => setProfileDropdownOpen(false)}
+                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#6B1FA8]"
+                    >
+                      Profile Dashboard
+                    </Link>
+                    <Link
+                      href="/dashboard/orders"
+                      onClick={() => setProfileDropdownOpen(false)}
+                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#6B1FA8]"
+                    >
+                      My Orders
+                    </Link>
+                    {hasStore && (
+                      <Link
+                        href="/dashboard/store"
+                        onClick={() => setProfileDropdownOpen(false)}
+                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#6B1FA8]"
+                      >
+                        My Store
+                      </Link>
+                    )}
+                    <hr className="my-2 border-gray-100" />
+                    <button
+                      onClick={handleSignOut}
+                      className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 font-medium"
+                    >
+                      Sign Out
+                    </button>
+                  </div>
+                )}
+              </div>
             ) : (
               <div className="hidden sm:flex items-center gap-2">
                 <Link
