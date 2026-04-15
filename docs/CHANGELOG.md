@@ -3,6 +3,20 @@
 All notable changes to U-Shop are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [0.8.5] — 2026-04-14 — Reseller Verification & Store Creation Upgrades
+
+### Added
+- **Reseller Database Expansion** — Formally augmented the `User` schema injecting `ghanaCardId`, `ghanaCardDob`, `ghanaCardFrontImagePath`, and `ghanaCardBackImagePath` enabling administrative KYC capabilities explicitly supporting Reseller tiers.
+- **Reseller Verification Route & Form** — Scaffolded `/reseller-verify` UI gathering secure structural inputs mapping strictly to the Ghana Card layout. Constructed an active backend controller intercept mapping these directly into the User state driving verification Status to `PENDING` ensuring admin reviews block malicious actors.
+- **Store Contact Integrations** — Deployed `contactEmail`, `contactPhone`, and geographic `location` configurations straight into the Supabase database and schema parsers allowing Store fronts robust local presence mappings.
+- **Dynamic University Mapping** — Rebuilt the Store creation form mapping dynamically fetched `universities` locally onto the state for Student Sellers to anchor onto campus logistics precisely.
+
+### Security
+- **Store Block Routing** — Updated `store.controller.ts` securely querying the native JWT-based Supabase session restricting database inserts blocking unverified entities directly via an explicit non-authoritative fallback redirect mapped against `app/dashboard/store/create/page.tsx` intercept logic.
+- **Verified Bucket Inputs** — Enforced validation structures guaranteeing 5MB max payload arrays correctly mapping into the Supabase `verification-docs` isolated administrative bucket blocking shell injection attempts locally via Mime restrictions (`image/png`, `image/webp`).
+
+---
+
 ## [0.8.4] — 2026-04-14 — UX Enhancements & Auth Bug Fixes
 
 ### Added

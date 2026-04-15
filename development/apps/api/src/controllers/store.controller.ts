@@ -33,6 +33,20 @@ export class StoreController {
         return;
       }
 
+      // Check verification status before permitting store creation
+      const user = await import('../lib/prisma').then((m) => m.prisma.user.findUnique({
+        where: { id: req.user!.id },
+        select: { verificationStatus: true },
+      }));
+
+      if (!user || user.verificationStatus !== 'VERIFIED') {
+        res.status(403).json({ 
+          success: false, 
+          error: { message: 'Forbidden: You must be verified before creating a store.' } 
+        });
+        return;
+      }
+
       const store = await StoreService.createStore(req.user.id, req.body);
       
       res.status(201).json({
