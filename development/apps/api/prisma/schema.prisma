@@ -127,9 +127,13 @@ model User {
   role               UserRole           @default(BUYER)
   verificationStatus VerificationStatus @default(UNVERIFIED)
   verificationType   VerificationType?
-  studentIdImagePath String?            // Supabase Storage path
-  ghanaCardImagePath String?            // Supabase Storage path
-  universityName     String?
+  studentIdImagePath      String?            // Supabase Storage path
+  ghanaCardName           String?
+  ghanaCardId             String?
+  ghanaCardDob            DateTime?
+  ghanaCardFrontImagePath String?            // Supabase Storage path
+  ghanaCardBackImagePath  String?            // Supabase Storage path
+  universityName          String?
   verifiedAt         DateTime?
   rejectionReason    String?
   isSuspended        Boolean            @default(false)
@@ -272,6 +276,11 @@ model Store {
   bannerUrl         String?
   sellerType        SellerType @default(STUDENT)
   isActive          Boolean   @default(true)
+  
+  // Contacts & Location
+  contactEmail      String?
+  contactPhone      String?
+  location          String?
 
   // Return & Warranty Policy (structured JSON)
   returnWindow      String    @default("NO_RETURNS")   // NO_RETURNS, 24H, 3D, 7D, 14D, 30D
