@@ -30,6 +30,10 @@ export const createStoreSchema = z.object({
   bio: z.string().max(280).optional(),
   logoUrl: z.string().url().optional(),
   bannerUrl: z.string().url().optional(),
+  sellerType: z.enum(['STUDENT', 'RESELLER']).default('STUDENT'),
+  contactEmail: z.string().email('Invalid contact email').optional().or(z.literal('')),
+  contactPhone: z.string().optional(),
+  location: z.string().optional(),
 });
 
 export const updateStoreSchema = z.object({
