@@ -1,14 +1,16 @@
 "use client";
 
-import { useState, useRef, type ChangeEvent, type FormEvent } from "react";
+import { useState, useRef, useEffect, type ChangeEvent, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import Link from "next/link";
 import { apiFetch } from "@/lib/api-client";
 import { uploadFileToSupabase } from "@/lib/supabase/storage";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Textarea } from "@/components/ui/Textarea";
+import { Select } from "@/components/ui/Select";
 
 export default function CreateStorePage() {
   const router = useRouter();
@@ -18,6 +20,10 @@ export default function CreateStorePage() {
     name: "",
     handle: "",
     bio: "",
+    sellerType: "STUDENT",
+    contactEmail: "",
+    contactPhone: "",
+    location: "",
   });
 
   const [logoFile, setLogoFile] = useState<File | null>(null);
@@ -29,6 +35,37 @@ export default function CreateStorePage() {
 
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+
+  interface University {
+    id: string;
+    name: string;
+  }
+  
+  interface UserProfile {
+    id: string;
+    email: string;
+    role: "BUYER" | "SELLER" | "BOTH" | "ADMIN";
+    verificationStatus: "UNVERIFIED" | "PENDING" | "VERIFIED" | "REJECTED";
+    verificationType: "STUDENT_ID" | "GHANA_CARD" | null;
+  }
+  
+  const [universities, setUniversities] = useState<University[]>([]);
+  const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
+  
+  useEffect(() => {
+    // Fetch configuration data on mount
+    apiFetch("/api/v1/universities").then(res => {
+      if (res.success && Array.isArray(res.data)) {
+        setUniversities(res.data);
+      }
+    });
+
+    apiFetch("/api/v1/users/me").then(res => {
+      if (res.success) {
+        setUserProfile(res.data);
+      }
+    });
+  }, []);
 
   // Debounced Handle Availability Check
   const handleHandleChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -98,6 +135,21 @@ export default function CreateStorePage() {
       return;
     }
 
+    // Role-specific blocks before API submission
+    if (formData.sellerType === "STUDENT") {
+      if (userProfile?.verificationStatus !== "VERIFIED") {
+        router.push("/verify");
+        return;
+      }
+    }
+
+    if (formData.sellerType === "RESELLER") {
+      if (userProfile?.verificationStatus !== "VERIFIED") {
+        router.push("/reseller-verify");
+        return;
+      }
+    }
+
     setLoading(true);
 
     try {
@@ -135,6 +187,10 @@ export default function CreateStorePage() {
         bio: formData.bio || undefined,
         logoUrl: uploadedLogoUrl || undefined,
         bannerUrl: uploadedBannerUrl || undefined,
+        sellerType: formData.sellerType,
+        contactEmail: formData.contactEmail || undefined,
+        contactPhone: formData.contactPhone || undefined,
+        location: formData.location || undefined,
       };
 
       const resp = await apiFetch("/api/v1/stores", {
@@ -147,7 +203,12 @@ export default function CreateStorePage() {
       }
 
       // Success! Push directly inside their configured store settings mapping
-      router.push(`/store/${formData.handle}`);
+      if (formData.sellerType === "STUDENT" && userProfile?.verificationStatus !== "VERIFIED") {
+        router.push(`/verify`); // Safety fallback, though caught above natively
+      } else {
+        router.push(`/store/${formData.handle}`);
+      }
+
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "An unexpected error occurred.");
     } finally {
@@ -156,30 +217,46 @@ export default function CreateStorePage() {
   };
 
   return (
-    <div className="max-w-2xl mx-auto p-6 lg:p-8">
-      <div className="mb-8 border-b pb-6">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">Create Your Store</h1>
-        <p className="text-gray-500">Configure your storefront to start selling across campus.</p>
+    <div className="max-w-3xl mx-auto p-6 lg:p-10">
+      
+      {/* Brand Header */}
+      <div className="flex flex-col items-center justify-center mb-8 border-b pb-8">
+        <Link href="/" className="inline-block mb-6">
+          <Image
+            src="/assets/logo.svg"
+            alt="U-Shop Logo"
+            width={160}
+            height={48}
+            className="h-10 w-auto md:h-12"
+            priority
+          />
+        </Link>
+        <h1 className="text-3xl font-extrabold text-gray-900 tracking-tight">Create Your Storefront</h1>
+        <p className="text-gray-500 mt-2 text-center max-w-lg">Configure your store to start selling across campus. Fill out the details below to define your brand identity.</p>
       </div>
 
       {error && (
-        <div className="mb-6 p-4 bg-red-50 border border-red-200 text-red-600 rounded-xl text-sm font-medium">
-          {error}
+        <div className="mb-8 p-4 bg-red-50 border border-red-200 text-red-600 rounded-xl text-sm font-medium flex items-start">
+          <span className="material-symbols-outlined mr-3 text-red-500 text-lg">error</span>
+          <span>{error}</span>
         </div>
       )}
 
-      <form onSubmit={onSubmit} className="space-y-8">
+      {/* Primary Wrapper */}
+      <form onSubmit={onSubmit} className="space-y-10">
         
         {/* Profile Branding Module */}
-        <section className="bg-white p-6 rounded-2xl border shadow-sm space-y-6">
-          <h2 className="text-xl font-bold text-gray-900">Branding</h2>
+        <section className="bg-white p-6 md:p-8 rounded-3xl border shadow-sm">
+          <h2 className="text-xl font-bold text-gray-900 mb-6 flex items-center">
+             <span className="material-symbols-outlined mr-2 text-[#6B1FA8]">palette</span> Branding
+          </h2>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div>
               <p className="block text-sm font-semibold text-gray-700 mb-1.5">Store Logo</p>
               <p className="text-xs text-gray-400 mb-4">Recommended: 400x400px (1:1)</p>
               <div className="flex items-center gap-4">
-                <div className="w-20 h-20 bg-gray-100 border-2 border-dashed border-gray-300 rounded-full flex items-center justify-center overflow-hidden flex-shrink-0">
+                <div className="w-20 h-20 bg-gray-50 border-2 border-dashed border-gray-300 rounded-full flex items-center justify-center overflow-hidden flex-shrink-0 transition-hover hover:border-[#6B1FA8]">
                   {logoFile ? (
                     <Image src={URL.createObjectURL(logoFile)} alt="Logo Preview" width={80} height={80} className="w-full h-full object-cover" />
                   ) : (
@@ -194,27 +271,29 @@ export default function CreateStorePage() {
               <p className="block text-sm font-semibold text-gray-700 mb-1.5">Store Banner</p>
               <p className="text-xs text-gray-400 mb-4">Recommended: 1200x400px (3:1)</p>
               <div className="flex items-center gap-4">
-                <div className="h-20 flex-1 bg-gray-100 border-2 border-dashed border-gray-300 rounded-xl flex items-center justify-center overflow-hidden group relative">
+                <div className="h-20 flex-1 bg-gray-50 border-2 border-dashed border-gray-300 rounded-2xl flex items-center justify-center overflow-hidden group relative transition-hover hover:border-[#6B1FA8]">
                     {bannerFile ? (
                       <Image src={URL.createObjectURL(bannerFile)} alt="Banner Preview" fill className="object-cover" />
                     ) : (
                       <span className="material-symbols-outlined text-gray-400">burst_mode</span>
                     )}
                 </div>
-                <Input type="file" accept="image/png, image/jpeg, image/webp" onChange={(e) => handleImageChange(e, "banner")} className="max-w-[120px]" />
+                <Input type="file" accept="image/png, image/jpeg, image/webp" onChange={(e) => handleImageChange(e, "banner")} className="w-[110px]" />
               </div>
             </div>
           </div>
         </section>
 
         {/* Basic Details Module */}
-        <section className="bg-white p-6 rounded-2xl border shadow-sm space-y-6">
-          <h2 className="text-xl font-bold text-gray-900">Details</h2>
+        <section className="bg-white p-6 md:p-8 rounded-3xl border shadow-sm space-y-6">
+          <h2 className="text-xl font-bold text-gray-900 mb-2 flex items-center">
+            <span className="material-symbols-outlined mr-2 text-[#6B1FA8]">info</span> Store Details
+          </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <Input 
               label="Store Name" 
-              placeholder="e.g. Jane's Tech Deals" 
+              placeholder="e.g. Campus Kicks" 
               value={formData.name}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
               required
@@ -224,15 +303,27 @@ export default function CreateStorePage() {
             <div>
               <Input 
                 label="Store Slug (URL)" 
-                placeholder="janes-tech" 
+                placeholder="your-store-name" 
                 value={formData.handle}
                 onChange={handleHandleChange}
                 required
                 maxLength={40}
-                leftIcon={<span className="text-gray-400">/store/</span>}
+                leftIcon={<span className="text-gray-400 pl-2 text-sm select-none">u-shop.app/store/</span>}
                 error={handleAvailable === false ? "This handle is unavailable." : undefined}
-                helperText={handleAvailable === true ? "This handle is available!" : checkingHandle ? "Checking..." : "Alphanumeric and dashes only."}
+                helperText={handleAvailable === true ? "This handle is available!" : checkingHandle ? "Checking..." : "Letters, numbers, and dashes only."}
               />
+            </div>
+            
+            <div className="md:col-span-2">
+              <Select
+                label="Seller Type"
+                value={formData.sellerType}
+                onChange={(e) => setFormData({ ...formData, sellerType: e.target.value, location: "" })}
+                required
+              >
+                <option value="STUDENT">Student Seller</option>
+                <option value="RESELLER">Reseller</option>
+              </Select>
             </div>
           </div>
 
@@ -245,9 +336,61 @@ export default function CreateStorePage() {
             helperText={`${formData.bio.length} / 280 characters`}
           />
         </section>
+        
+        {/* Contact & Location Module */}
+        <section className="bg-white p-6 md:p-8 rounded-3xl border shadow-sm space-y-6">
+          <h2 className="text-xl font-bold text-gray-900 mb-2 flex items-center">
+             <span className="material-symbols-outlined mr-2 text-[#6B1FA8]">contact_page</span> Context & Contact
+          </h2>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <Input 
+              label="Contact Email" 
+              type="email"
+              placeholder="store@example.com" 
+              value={formData.contactEmail}
+              onChange={(e) => setFormData({ ...formData, contactEmail: e.target.value })}
+              helperText="Buyers will reach out via this email."
+            />
 
-        <div className="pt-4 flex items-center justify-end">
-          <Button type="button" variant="ghost" onClick={() => router.back()} disabled={loading} className="mr-3">
+            <Input 
+              label="Contact Phone"
+              type="tel" 
+              placeholder="024XXXXXXX" 
+              value={formData.contactPhone}
+              onChange={(e) => setFormData({ ...formData, contactPhone: e.target.value })}
+              helperText="Optional phone for direct calls."
+            />
+            
+            <div className="md:col-span-2">
+              {formData.sellerType === "STUDENT" ? (
+                <Select
+                  label="Location (University)"
+                  value={formData.location}
+                  onChange={(e) => setFormData({ ...formData, location: e.target.value })}
+                  placeholder="Select your university map..."
+                  required
+                >
+                  {universities.map(uni => (
+                    <option key={uni.id} value={uni.name}>{uni.name}</option>
+                  ))}
+                </Select>
+              ) : (
+                <Input 
+                  label="Location (Address/City)" 
+                  placeholder="e.g. East Legon, Accra" 
+                  value={formData.location}
+                  onChange={(e) => setFormData({ ...formData, location: e.target.value })}
+                  required
+                />
+              )}
+            </div>
+            
+          </div>
+        </section>
+
+        <div className="pt-2 flex items-center justify-end gap-3 sticky bottom-4 bg-white/80 backdrop-blur-md p-4 rounded-2xl shadow border z-10">
+          <Button type="button" variant="ghost" onClick={() => router.back()} disabled={loading}>
             Cancel
           </Button>
           <Button type="submit" loading={loading} disabled={handleAvailable === false || !formData.name || !formData.handle}>
