@@ -90,13 +90,6 @@ export default async function PublicStorePage({ params }: { params: Promise<{ ha
               </div>
             </div>
           </div>
-
-          {/* Actions */}
-          <div className="w-full md:w-auto">
-            <Button variant="outline" fullWidth>
-              Message Seller
-            </Button>
-          </div>
         </div>
 
         {/* Layout Grid */}
