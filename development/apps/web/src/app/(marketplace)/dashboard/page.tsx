@@ -36,13 +36,13 @@ interface OrderItem {
 function getVerificationBadge(status: string) {
   switch (status) {
     case "VERIFIED":
-      return { label: "Verified", cls: "bg-emerald-50 text-emerald-600 border-emerald-100" };
+      return { label: "Verified", cls: "bg-emerald-50 text-emerald-600" };
     case "PENDING":
-      return { label: "Pending", cls: "bg-blue-50 text-blue-600 border-blue-100" };
+      return { label: "Pending", cls: "bg-blue-50 text-blue-600" };
     case "REJECTED":
-      return { label: "Rejected", cls: "bg-red-50 text-red-600 border-red-100" };
+      return { label: "Rejected", cls: "bg-red-50 text-red-600" };
     default:
-      return { label: "Unverified", cls: "bg-amber-50 text-amber-600 border-amber-100" };
+      return { label: "Unverified", cls: "bg-amber-50 text-amber-600" };
   }
 }
 
@@ -168,7 +168,7 @@ export default function DashboardPage() {
                   : user.role || "Buyer"}
             </span>
             <span
-              className={`inline-flex items-center text-[10px] font-bold px-2.5 py-1 rounded uppercase tracking-wider border ${verificationBadge.cls}`}
+              className={`inline-flex items-center text-[10px] font-bold px-2.5 py-1 rounded uppercase tracking-wider ${verificationBadge.cls}`}
             >
               {verificationBadge.label}
             </span>
@@ -257,7 +257,7 @@ export default function DashboardPage() {
           Show one banner based on priority: unverified → store promo.
           Uses the design's primary/5 background tint. ────────── */}
       {user.verificationStatus === "UNVERIFIED" && (
-        <div className="bg-[#520f85]/5 border border-[#520f85]/10 p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 rounded-lg">
+        <div className="bg-[#520f85]/5 p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 rounded-xl">
           <div className="flex items-center gap-4">
             <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center text-[#520f85] shadow-sm shrink-0">
               <span className="material-symbols-outlined text-xl">
@@ -285,7 +285,7 @@ export default function DashboardPage() {
 
       {/* Store management banner — shown if the user owns a store */}
       {user.store && (
-        <div className="bg-gradient-to-r from-[#520f85]/5 to-[#D4009B]/5 border border-[#520f85]/10 p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 rounded-lg">
+        <div className="bg-gradient-to-r from-[#520f85]/5 to-[#D4009B]/5 p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 rounded-xl">
           <div className="flex items-center gap-4">
             <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center text-[#520f85] shadow-sm shrink-0">
               <span className="material-symbols-outlined text-xl">
@@ -341,7 +341,7 @@ export default function DashboardPage() {
           <div className="overflow-x-auto">
             <table className="w-full text-left">
               <thead className="text-slate-400 text-[11px] uppercase font-bold tracking-[0.15em]">
-                <tr className="border-b border-slate-100">
+                <tr>
                   <th className="pb-5 font-bold">Item</th>
                   <th className="pb-5 font-bold">Order ID</th>
                   <th className="pb-5 font-bold">Status</th>
@@ -349,12 +349,12 @@ export default function DashboardPage() {
                   <th className="pb-5 text-right font-bold">Action</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100">
+              <tbody className="divide-y divide-transparent">
                 {recentOrders.map((order) => {
                   const badge = getOrderStatusBadge(order.status);
                   return (
-                    <tr key={order.id} className="group">
-                      <td className="py-6">
+                    <tr key={order.id} className="group hover:bg-slate-50/50 transition-colors">
+                      <td className="py-4">
                         <div className="flex items-center gap-4">
                           <div className="w-14 h-14 bg-slate-50 flex items-center justify-center p-2 rounded-lg group-hover:bg-slate-100 transition-colors">
                             {order.listing.images?.[0] ? (
@@ -383,20 +383,20 @@ export default function DashboardPage() {
                           </div>
                         </div>
                       </td>
-                      <td className="py-6 text-sm font-medium text-slate-600">
+                      <td className="py-4 text-sm font-medium text-slate-600">
                         #{order.orderId.slice(0, 8).toUpperCase()}
                       </td>
-                      <td className="py-6">
+                      <td className="py-4">
                         <span
                           className={`inline-flex items-center px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider ${badge.cls}`}
                         >
                           {badge.label}
                         </span>
                       </td>
-                      <td className="py-6 text-sm text-slate-500">
+                      <td className="py-4 text-sm text-slate-500">
                         {formatDate(order.createdAt)}
                       </td>
-                      <td className="py-6 text-right">
+                      <td className="py-4 text-right">
                         <Link
                           href={`/dashboard/orders/${order.orderId}`}
                           className="text-[11px] font-bold text-[#520f85] hover:text-[#D4009B] uppercase tracking-widest"
