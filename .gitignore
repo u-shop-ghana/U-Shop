@@ -59,3 +59,8 @@ development/backend/prisma/migrations/*.sql.bak
 
 # Sentry Config File
 .env.sentry-build-plugin
+
+# Security — never commit test credential or scrub files
+test_secret*
+test_ps_scrub*
+.vade-report

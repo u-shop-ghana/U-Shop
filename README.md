@@ -18,11 +18,11 @@
 
 ## 🚀 Getting Started
 
-See `docs/operations/onboarding-guide.md` for setup instructions.
+See [CONTRIBUTING.md](./CONTRIBUTING.md) for the complete developer onboarding guide, setup instructions, and environment variable requirements.
 
 ## 📋 Tech Stack
 
-- **Frontend:** Next.js 14 (App Router) + Tailwind CSS
+- **Frontend:** Next.js 16 (App Router) + Tailwind CSS
 - **Backend:** Express.js + Prisma ORM
 - **Database:** PostgreSQL (Supabase)
 - **Auth:** Supabase Auth
@@ -30,4 +30,4 @@ See `docs/operations/onboarding-guide.md` for setup instructions.
 - **Cache:** Upstash Redis
 - **Email:** Resend
 - **Monitoring:** Sentry + PostHog
-- **Deployment:** Vercel (Web) + Fly.io (API)
+- **Deployment:** Vercel (Web) + Railway (API)
