@@ -15,7 +15,8 @@
     "db:studio": "prisma studio",
     "db:seed": "tsx prisma/seed.ts",
     "db:generate": "prisma generate",
-    "test": "echo 'No tests yet'"
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "dependencies": {
     "@prisma/client": "^6.5.0",
@@ -40,10 +41,14 @@
     "@types/express": "^5.0.0",
     "@types/morgan": "^1.9.9",
     "@types/node": "^22.13.0",
+    "@types/supertest": "^7.2.0",
     "@typescript-eslint/eslint-plugin": "^8.16.1",
     "@typescript-eslint/parser": "^8.16.1",
     "eslint": "^9.0.0",
     "prisma": "^6.5.0",
-    "typescript": "^5.7.0"
+    "supertest": "^7.2.2",
+    "typescript": "^5.7.0",
+    "vitest": "^4.1.4",
+    "vitest-tsconfig-paths": "^3.4.1"
   }
 }

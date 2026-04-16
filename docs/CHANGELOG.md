@@ -3,6 +3,14 @@
 All notable changes to U-Shop are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [0.9.1] — 2026-04-16 — Phase 3.6 Test Infrastructure
+
+### Added
+- Configured `vitest` unit test environments for `@ushop/api`, `@ushop/web`, and `@ushop/shared`.
+- Configured local E2E test environments using Playwright targeting local dev configurations.
+- Integrated `supertest` for local Express API validation schemas.
+- Outlined Supabase CLI Database Strategy for local ephemeral integration test DBs.
+
 ## [0.9.0] — 2026-04-16 — Phase 3.5 Tech Debt Cleanup & Documentation
 
 ### Added
