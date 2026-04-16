@@ -1,14 +1,30 @@
 "use client";
 
 import { useAuth } from "@/hooks/use-auth";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 
 // ─── Dashboard Layout ───────────────────────────────────────────
-// Wraps all /dashboard/* pages with a sidebar navigation and header.
-// Uses the AuthProvider to display user info and handle sign-out.
+// Light-themed sidebar + mobile navigation matching the design mockup:
+// design/ui-kit/Screens/desktop/Profile dashboard.png
+// design/web-designs/Profile dashboard.html
+//
+// Structure:
+//   Desktop: Fixed sidebar (w-72) with logo, nav links, separator, settings, logout
+//   Mobile: Slide-out overlay sidebar + fixed bottom nav bar
+//
+// The sidebar renders nav items conditionally based on the user's
+// role: sellers see "My Store" and "Listings"; buyers see "Become a Seller".
+
+// ─── Navigation item shape ──────────────────────────────────────
+interface NavItem {
+  href: string;
+  icon: string;
+  label: string;
+}
+
 export default function DashboardLayout({
   children,
 }: {
@@ -16,203 +32,269 @@ export default function DashboardLayout({
 }) {
   const { user, loading, signOut } = useAuth();
   const router = useRouter();
+  const pathname = usePathname();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  // Show skeleton while auth state is being resolved
+  // Loading state — show an animated spinner while the auth context resolves
   if (loading) {
     return (
-      <div className="flex min-h-screen bg-ink-void">
+      <div className="flex min-h-screen bg-slate-50">
         <div className="flex-1 flex items-center justify-center">
           <div className="flex flex-col items-center gap-4">
-            <div className="w-10 h-10 border-2 border-ushop-purple border-t-transparent rounded-full animate-spin" />
-            <p className="text-ink-mid text-sm">Loading your dashboard...</p>
+            <div className="w-10 h-10 border-2 border-[#520f85] border-t-transparent rounded-full animate-spin" />
+            <p className="text-slate-400 text-sm">Loading your dashboard...</p>
           </div>
         </div>
       </div>
     );
   }
 
-  // The middleware should have caught this, but as a safety net:
-  // if no user is found after loading, redirect to login.
+  // Safety redirect — middleware should handle this, but this covers edge cases
+  // like stale cookies or session expiry during a long browser session.
   if (!user) {
     router.push("/login");
     return null;
   }
 
-  // Helper to get user initials for the avatar fallback
-  const initials = user.fullName
-    ? user.fullName
-        .split(" ")
-        .map((n) => n[0])
-        .join("")
-        .toUpperCase()
-        .slice(0, 2)
-    : user.email[0].toUpperCase();
+  // Helper: determine if a nav link is the active page
+  const isActive = (href: string) => {
+    if (href === "/dashboard") return pathname === "/dashboard";
+    return pathname.startsWith(href);
+  };
 
-  // Sidebar navigation items with icons and labels.
-  // Only show "Store" items if user is a seller.
-  const navItems = [
-    { href: "/dashboard", icon: "dashboard", label: "Overview" },
-    { href: "/dashboard/orders", icon: "receipt_long", label: "Orders" },
-    { href: "/dashboard/messages", icon: "chat", label: "Messages" },
-    { href: "/dashboard/wallet", icon: "account_balance_wallet", label: "Wallet" },
-    ...(user.role === "SELLER" || user.role === "BOTH" || user.role === "ADMIN"
+  // Build the primary navigation items
+  // Sellers see store management links; buyers see the "Become a Seller" CTA.
+  const primaryNav: NavItem[] = [
+    { href: "/dashboard", icon: "person", label: "Overview" },
+    { href: "/dashboard/inbox", icon: "mail", label: "Inbox" },
+    { href: "/dashboard/orders", icon: "inventory_2", label: "My Orders" },
+    { href: "/dashboard/reviews", icon: "rate_review", label: "Pending Reviews" },
+    { href: "/dashboard/vouchers", icon: "confirmation_number", label: "Vouchers" },
+    { href: "/dashboard/saved", icon: "favorite", label: "Saved Items" },
+    { href: "/dashboard/followed", icon: "storefront", label: "Followed Sellers" },
+  ];
+
+  // Seller-specific nav items — shown below a separator
+  const sellerNav: NavItem[] =
+    user.role === "SELLER" || user.role === "BOTH" || user.role === "ADMIN"
       ? [
-          { href: "/dashboard/store", icon: "storefront", label: "My Store" },
+          { href: "/dashboard/store/settings", icon: "store", label: "My Store" },
           { href: "/dashboard/store/listings", icon: "inventory_2", label: "Listings" },
-          { href: "/dashboard/store/transactions", icon: "payments", label: "Transactions" },
         ]
       : [
           { href: "/dashboard/store/create", icon: "add_business", label: "Become a Seller" },
-        ]),
+        ];
+
+  // Settings section nav items
+  const settingsNav: NavItem[] = [
+    { href: "/dashboard/settings", icon: "settings", label: "Profile Settings" },
+    { href: "/dashboard/addresses", icon: "import_contacts", label: "Address Book" },
+  ];
+
+  // Admin link — only visible to admin users
+  if (user.role === "ADMIN") {
+    settingsNav.push({ href: "/admin", icon: "admin_panel_settings", label: "Admin Panel" });
+  }
+
+  // Helper to render a single nav link with active styling
+  function renderNavLink(item: NavItem) {
+    const active = isActive(item.href);
+    return (
+      <Link
+        key={item.href}
+        href={item.href}
+        onClick={() => setSidebarOpen(false)}
+        className={`flex items-center gap-4 px-8 py-3.5 text-sm border-l-[3px] transition-all ${
+          active
+            ? "bg-violet-50 text-[#520f85] font-semibold border-[#520f85]"
+            : "text-slate-500 border-transparent hover:bg-slate-50 hover:text-[#520f85]"
+        }`}
+      >
+        <span className="material-symbols-outlined text-[22px]">
+          {item.icon}
+        </span>
+        {item.label}
+      </Link>
+    );
+  }
+
+  // Mobile bottom nav — simplified 4-icon bar
+  const mobileNav: NavItem[] = [
+    { href: "/dashboard", icon: "dashboard", label: "Home" },
+    { href: "/dashboard/orders", icon: "inventory_2", label: "Orders" },
+    { href: "/dashboard/saved", icon: "favorite", label: "Saved" },
     { href: "/dashboard/settings", icon: "settings", label: "Settings" },
   ];
 
-  // Insert admin link for admin users
-  if (user.role === "ADMIN") {
-    navItems.push({ href: "/admin", icon: "admin_panel_settings", label: "Admin Panel" });
-  }
-
   return (
-    <div className="flex min-h-screen bg-ink-void">
-      {/* ── Mobile sidebar overlay ───────────────────────────── */}
+    <div className="flex min-h-screen bg-slate-50">
+      {/* ── Mobile sidebar overlay backdrop ─────────────────────── */}
       {sidebarOpen && (
         <div
-          className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm lg:hidden"
+          className="fixed inset-0 z-40 bg-black/40 backdrop-blur-sm md:hidden"
           onClick={() => setSidebarOpen(false)}
         />
       )}
 
-      {/* ── Sidebar ──────────────────────────────────────────── */}
+      {/* ── Sidebar ────────────────────────────────────────────── */}
+      {/* Desktop: always visible, fixed position with scroll.
+          Mobile: slide-in drawer with overlay. */}
       <aside
-        className={`fixed lg:sticky top-0 left-0 z-50 h-screen w-72 bg-ink-deep border-r border-white/5 flex flex-col transition-transform duration-300 ease-in-out ${
-          sidebarOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
+        className={`fixed md:sticky top-0 md:top-[132px] left-0 z-50 md:z-30 h-screen md:h-[calc(100vh-132px)] w-72 bg-white shadow-[1px_0_20px_rgba(0,0,0,0.03)] flex flex-col py-8 transition-transform duration-300 ease-in-out overflow-y-auto ${
+          sidebarOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
         }`}
       >
-        {/* Logo */}
-        <div className="flex items-center gap-2 px-6 py-5 border-b border-white/5">
-          <Link href="/" className="flex items-center gap-2">
+        {/* Logo + mobile close button */}
+        <div className="px-8 mb-10 flex items-center justify-between">
+          <Link href="/">
             <Image
               src="/assets/logos/web/logo-300w.png"
               alt="U-Shop"
               width={120}
-              height={36}
-              className="object-contain"
+              height={40}
+              className="h-10 w-auto object-contain"
+              priority
             />
           </Link>
-          {/* Close button for mobile */}
           <button
             onClick={() => setSidebarOpen(false)}
-            className="lg:hidden ml-auto text-white/60 hover:text-white"
+            className="md:hidden text-slate-400 hover:text-slate-700"
           >
             <span className="material-symbols-outlined">close</span>
           </button>
         </div>
 
-        {/* Navigation Links */}
-        <nav className="flex-1 overflow-y-auto px-3 py-4 space-y-1">
-          {navItems.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className="flex items-center gap-3 px-4 py-3 rounded-xl text-white/70 hover:text-white hover:bg-white/5 transition-all duration-200 group"
-            >
-              <span className="material-symbols-outlined text-xl group-hover:text-ushop-purple transition-colors">
-                {item.icon}
-              </span>
-              <span className="text-sm font-medium">{item.label}</span>
-            </Link>
-          ))}
+        {/* Primary Navigation */}
+        <nav className="flex-1 space-y-1">
+          {primaryNav.map(renderNavLink)}
+
+          {/* Seller Section Separator + Links */}
+          <div className="h-6" />
+          {sellerNav.map(renderNavLink)}
+
+          {/* Settings Separator + Links */}
+          <div className="h-6" />
+          {settingsNav.map(renderNavLink)}
         </nav>
 
-        {/* User Profile Section */}
-        <div className="border-t border-white/5 p-4">
-          <div className="flex items-center gap-3 px-2">
-            {/* Avatar */}
-            {user.avatarUrl ? (
-              <Image
-                src={user.avatarUrl}
-                alt={user.fullName ?? "User avatar"}
-                width={40}
-                height={40}
-                className="rounded-full object-cover"
-              />
-            ) : (
-              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-ushop-purple to-ushop-magenta flex items-center justify-center text-white text-sm font-semibold">
-                {initials}
-              </div>
-            )}
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-white truncate">
-                {user.fullName ?? "User"}
-              </p>
-              <p className="text-xs text-white/50 truncate">{user.email}</p>
-            </div>
-            <button
-              onClick={signOut}
-              className="text-white/40 hover:text-red-400 transition-colors"
-              title="Sign Out"
-            >
-              <span className="material-symbols-outlined text-xl">logout</span>
-            </button>
-          </div>
+        {/* Logout Button — pinned to the bottom */}
+        <div className="px-8 pt-6 mt-auto">
+          <button
+            onClick={async () => {
+              await signOut();
+              router.push("/");
+            }}
+            className="w-full text-left text-sm font-semibold text-slate-400 hover:text-[#D4009B] flex items-center gap-2 transition-colors cursor-pointer"
+          >
+            <span className="material-symbols-outlined text-[22px]">
+              logout
+            </span>
+            Logout
+          </button>
         </div>
       </aside>
 
-      {/* ── Main Content ─────────────────────────────────────── */}
-      <div className="flex-1 flex flex-col min-h-screen">
-        {/* Top Header */}
-        <header className="sticky top-0 z-30 bg-ink-void/80 backdrop-blur-md border-b border-white/5 px-6 py-4 flex items-center justify-between">
-          {/* Mobile menu button */}
+      {/* ── Main Content Area ─────────────────────────────────── */}
+      <div className="flex-1 flex flex-col min-h-screen min-w-0">
+        {/* Mobile top header with hamburger and user status */}
+        <header className="bg-white/90 backdrop-blur-md shadow-sm px-6 py-4 flex items-center justify-between md:hidden relative z-20">
           <button
             onClick={() => setSidebarOpen(true)}
-            className="lg:hidden text-white/70 hover:text-white"
+            className="text-slate-700"
           >
             <span className="material-symbols-outlined text-2xl">menu</span>
           </button>
 
-          {/* Page title area — child pages can override via context */}
-          <div className="hidden lg:block" />
+          <Link href="/">
+            <Image
+              src="/assets/logos/web/logo-300w.png"
+              alt="U-Shop"
+              width={100}
+              height={32}
+              className="h-8 w-auto object-contain"
+            />
+          </Link>
 
-          {/* Right side: verification status + notifications */}
-          <div className="flex items-center gap-4">
-            {/* Verification badge */}
+          {/* Verification badge (mobile) */}
+          <div className="flex items-center gap-2">
             {user.verificationStatus === "VERIFIED" && (
-              <div className="flex items-center gap-1.5 px-3 py-1.5 bg-green-500/10 border border-green-500/20 rounded-full text-green-400 text-xs font-medium">
-                <span className="material-symbols-outlined text-sm" style={{ fontVariationSettings: "'FILL' 1" }}>
-                  verified
-                </span>
-                Verified Student
-              </div>
-            )}
-            {user.verificationStatus === "PENDING" && (
-              <div className="flex items-center gap-1.5 px-3 py-1.5 bg-yellow-500/10 border border-yellow-500/20 rounded-full text-yellow-400 text-xs font-medium">
-                <span className="material-symbols-outlined text-sm">pending</span>
-                Verification Pending
-              </div>
-            )}
-            {user.verificationStatus === "UNVERIFIED" && (
-              <Link
-                href="/dashboard/verification"
-                className="flex items-center gap-1.5 px-3 py-1.5 bg-ushop-purple/10 border border-ushop-purple/20 rounded-full text-ushop-purple text-xs font-medium hover:bg-ushop-purple/20 transition-colors"
+              <span
+                className="material-symbols-outlined text-emerald-500 text-xl"
+                style={{ fontVariationSettings: "'FILL' 1" }}
               >
-                <span className="material-symbols-outlined text-sm">shield</span>
-                Verify Now
-              </Link>
+                verified
+              </span>
             )}
-
-            {/* Notifications bell (placeholder for Phase 9) */}
-            <button className="relative text-white/60 hover:text-white transition-colors">
-              <span className="material-symbols-outlined text-xl">notifications</span>
+            <button className="text-slate-400">
+              <span className="material-symbols-outlined text-xl">
+                notifications
+              </span>
             </button>
           </div>
         </header>
 
-        {/* Page Content */}
-        <main className="flex-1 p-6 lg:p-8">
-          {children}
+        {/* Desktop top bar — minimal with verification status + notifications */}
+        <header className="hidden md:flex bg-slate-50/80 backdrop-blur-md px-8 lg:px-14 py-4 items-center justify-end gap-4 relative z-20 border-b border-transparent">
+          {user.verificationStatus === "VERIFIED" && (
+            <div className="flex items-center gap-1.5 px-3 py-1.5 bg-emerald-50 border border-emerald-100 rounded-full text-emerald-600 text-xs font-bold">
+              <span
+                className="material-symbols-outlined text-sm"
+                style={{ fontVariationSettings: "'FILL' 1" }}
+              >
+                verified
+              </span>
+              Verified
+            </div>
+          )}
+          {user.verificationStatus === "PENDING" && (
+            <div className="flex items-center gap-1.5 px-3 py-1.5 bg-amber-50 border border-amber-100 rounded-full text-amber-600 text-xs font-bold">
+              <span className="material-symbols-outlined text-sm">
+                pending
+              </span>
+              Verification Pending
+            </div>
+          )}
+          {user.verificationStatus === "UNVERIFIED" && (
+            <Link
+              href="/verify"
+              className="flex items-center gap-1.5 px-3 py-1.5 bg-violet-50 border border-violet-200 rounded-full text-[#520f85] text-xs font-bold hover:bg-violet-100 transition-colors"
+            >
+              <span className="material-symbols-outlined text-sm">shield</span>
+              Verify Now
+            </Link>
+          )}
+          <button className="relative text-slate-400 hover:text-slate-700 transition-colors">
+            <span className="material-symbols-outlined text-xl">
+              notifications
+            </span>
+          </button>
+        </header>
+
+        {/* Page content */}
+        <main className="flex-1 p-6 lg:p-14 pb-24 md:pb-14">
+          <div className="max-w-6xl mx-auto">{children}</div>
         </main>
       </div>
+
+      {/* ── Mobile Bottom Navigation ──────────────────────────── */}
+      <nav className="md:hidden fixed bottom-0 left-0 w-full bg-white flex justify-around items-center py-4 z-50 shadow-[0_-4px_20px_rgba(0,0,0,0.04)] pb-8">
+        {mobileNav.map((link) => (
+          <Link
+            key={link.href}
+            href={link.href}
+            className={`flex flex-col items-center gap-1 ${
+              isActive(link.href) ? "text-[#520f85]" : "text-slate-400"
+            }`}
+          >
+            <span className="material-symbols-outlined text-2xl">
+              {link.icon}
+            </span>
+            <span className="text-[10px] font-bold uppercase tracking-wider">
+              {link.label}
+            </span>
+          </Link>
+        ))}
+      </nav>
     </div>
   );
 }
