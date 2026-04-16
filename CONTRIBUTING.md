@@ -70,7 +70,28 @@ pnpm run dev
 - Frontend: [http://localhost:3000](http://localhost:3000)
 - Backend: [http://localhost:4000](http://localhost:4000)
 
-## 4. Building for Production
+## 4. Local Database & Testing (Phase 3.6)
+
+To fully validate logic against the database without polluting production or staging environments, U-Shop uses the **Supabase Local CLI**.
+
+1. **Install Supabase CLI:** follow the [official documentation](https://supabase.com/docs/guides/cli/getting-started).
+2. **Start the local database:**
+   ```bash
+   supabase start
+   ```
+   This spins up Docker containers mimicking the complete Supabase stack (Postgres, Auth, Storage).
+3. **Run Unit and Integration Tests:**
+   ```bash
+   pnpm test
+   ```
+4. **Run End-to-End Tests (Playwright):**
+   ```bash
+   cd testing/e2e-tests/playwright
+   # Ensure dev server is running first
+   pnpm test:ui
+   ```
+
+## 5. Building for Production
 
 To test the production build locally:
 
@@ -78,7 +99,7 @@ To test the production build locally:
 pnpm run build
 ```
 
-## 5. Development Standards
+## 6. Development Standards
 
 Please read and adhere to our strict coding guidelines before submitting a PR:
 - Always use **Next.js App Router** (no `pages/` directory).
