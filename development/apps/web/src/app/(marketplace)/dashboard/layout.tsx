@@ -140,7 +140,7 @@ export default function DashboardLayout({
       {/* Desktop: always visible, fixed position with scroll.
           Mobile: slide-in drawer with overlay. */}
       <aside
-        className={`fixed md:sticky top-0 left-0 z-50 h-screen w-72 bg-white shadow-[1px_0_20px_rgba(0,0,0,0.03)] flex flex-col py-8 transition-transform duration-300 ease-in-out overflow-y-auto ${
+        className={`fixed md:sticky top-0 md:top-[132px] left-0 z-50 md:z-30 h-screen md:h-[calc(100vh-132px)] w-72 bg-white shadow-[1px_0_20px_rgba(0,0,0,0.03)] flex flex-col py-8 transition-transform duration-300 ease-in-out overflow-y-auto ${
           sidebarOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
         }`}
       >
@@ -197,7 +197,7 @@ export default function DashboardLayout({
       {/* ── Main Content Area ─────────────────────────────────── */}
       <div className="flex-1 flex flex-col min-h-screen min-w-0">
         {/* Mobile top header with hamburger and user status */}
-        <header className="sticky top-0 z-30 bg-white/90 backdrop-blur-md shadow-sm px-6 py-4 flex items-center justify-between md:hidden">
+        <header className="bg-white/90 backdrop-blur-md shadow-sm px-6 py-4 flex items-center justify-between md:hidden relative z-20">
           <button
             onClick={() => setSidebarOpen(true)}
             className="text-slate-700"
@@ -234,7 +234,7 @@ export default function DashboardLayout({
         </header>
 
         {/* Desktop top bar — minimal with verification status + notifications */}
-        <header className="hidden md:flex sticky top-0 z-30 bg-slate-50/80 backdrop-blur-md px-8 lg:px-14 py-4 items-center justify-end gap-4">
+        <header className="hidden md:flex bg-slate-50/80 backdrop-blur-md px-8 lg:px-14 py-4 items-center justify-end gap-4 relative z-20 border-b border-transparent">
           {user.verificationStatus === "VERIFIED" && (
             <div className="flex items-center gap-1.5 px-3 py-1.5 bg-emerald-50 border border-emerald-100 rounded-full text-emerald-600 text-xs font-bold">
               <span
