@@ -1,6 +1,5 @@
 import { notFound } from "next/navigation";
 import Image from "next/image";
-import { Button } from "@/components/ui/Button";
 // Note: If you don't have Badge component, we can use simple divs instead.
 
 // This runs entirely on the server
