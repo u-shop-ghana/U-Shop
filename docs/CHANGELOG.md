@@ -3,6 +3,30 @@
 All notable changes to U-Shop are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [0.8.7] — 2026-04-16 — User Profile Dashboard & Google OAuth Fix
+
+### Changed
+- **Profile Dashboard Redesign** — Completely redesigned the Account Overview page (`/dashboard`) and its layout from a dark theme to a clean, light-themed design matching the UI kit mockup (`Profile dashboard.png`). Features: 4-card overview hub (Account Info, Primary Address, Wallet Balance, Newsletter), contextual alert banners, recent orders table with status badges, recommendations placeholder, and a white sidebar with purple active-state indicators.
+- **Dashboard Layout Redesign** — Rewrote `(marketplace)/dashboard/layout.tsx` with a light-themed sidebar navigation, mobile slide-out drawer, and fixed bottom nav bar. Preserved all functional logic including role-based nav items (seller store links, admin panel), verification badges, and mobile responsiveness.
+
+### Fixed
+- **Google OAuth Consent Screen** — The consent screen shows the Supabase project ID instead of "U-Shop" (requires Google Cloud Console configuration — see instructions below).
+
+---
+
+## [0.8.6] — 2026-04-16 — Branded Email Templates & Password Reset Fix
+
+### Added
+- **Complete Supabase Email Template Suite** — Designed and created 9 branded HTML email templates stored in `docs/email-templates/` for all Supabase Auth email types: Confirm Signup, Magic Link, Reset Password, Invite User, Change Email Address, Reauthentication, Password Changed, Email Address Changed, and Phone Number Changed. All templates feature U-Shop branding (purple CTA buttons, logo, campus marketplace footer) and are optimized for spam filter compliance.
+
+### Fixed
+- **Password Reset Redirect Failure** — Users clicking the password reset link in their email were landing on the homepage instead of `/reset-password`. Root cause: Supabase recovery uses hash-based token delivery (`#access_token=...&type=recovery`), but the marketplace layout only handled the error hash (`otp_expired`). Added client-side detection of `type=recovery` in the URL hash fragment with automatic redirect to `/reset-password`.
+
+### Security
+- **Email Deliverability Hardening** — Added DMARC DNS record guidance and domain warming strategy to prevent Resend-delivered emails from landing in spam/junk folders for the new `ushopgh.com` domain.
+
+---
+
 ## [0.8.5] — 2026-04-14 — Reseller Verification & Store Creation Upgrades
 
 ### Added
