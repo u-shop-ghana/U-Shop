@@ -140,7 +140,7 @@ export default function DashboardLayout({
       {/* Desktop: always visible, fixed position with scroll.
           Mobile: slide-in drawer with overlay. */}
       <aside
-        className={`fixed md:sticky top-0 left-0 z-50 h-screen w-72 bg-white border-r border-slate-100 flex flex-col py-8 shadow-sm transition-transform duration-300 ease-in-out overflow-y-auto ${
+        className={`fixed md:sticky top-0 left-0 z-50 h-screen w-72 bg-white shadow-[1px_0_20px_rgba(0,0,0,0.03)] flex flex-col py-8 transition-transform duration-300 ease-in-out overflow-y-auto ${
           sidebarOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
         }`}
       >
@@ -169,11 +169,11 @@ export default function DashboardLayout({
           {primaryNav.map(renderNavLink)}
 
           {/* Seller Section Separator + Links */}
-          <div className="mx-8 my-6 border-t border-slate-100" />
+          <div className="h-6" />
           {sellerNav.map(renderNavLink)}
 
           {/* Settings Separator + Links */}
-          <div className="mx-8 my-6 border-t border-slate-100" />
+          <div className="h-6" />
           {settingsNav.map(renderNavLink)}
         </nav>
 
@@ -195,9 +195,9 @@ export default function DashboardLayout({
       </aside>
 
       {/* ── Main Content Area ─────────────────────────────────── */}
-      <div className="flex-1 flex flex-col min-h-screen">
+      <div className="flex-1 flex flex-col min-h-screen min-w-0">
         {/* Mobile top header with hamburger and user status */}
-        <header className="sticky top-0 z-30 bg-white/80 backdrop-blur-md border-b border-slate-100 px-6 py-4 flex items-center justify-between md:hidden">
+        <header className="sticky top-0 z-30 bg-white/90 backdrop-blur-md shadow-sm px-6 py-4 flex items-center justify-between md:hidden">
           <button
             onClick={() => setSidebarOpen(true)}
             className="text-slate-700"
@@ -234,7 +234,7 @@ export default function DashboardLayout({
         </header>
 
         {/* Desktop top bar — minimal with verification status + notifications */}
-        <header className="hidden md:flex sticky top-0 z-30 bg-white/80 backdrop-blur-md border-b border-slate-100 px-8 lg:px-14 py-4 items-center justify-end gap-4">
+        <header className="hidden md:flex sticky top-0 z-30 bg-slate-50/80 backdrop-blur-md px-8 lg:px-14 py-4 items-center justify-end gap-4">
           {user.verificationStatus === "VERIFIED" && (
             <div className="flex items-center gap-1.5 px-3 py-1.5 bg-emerald-50 border border-emerald-100 rounded-full text-emerald-600 text-xs font-bold">
               <span
@@ -277,7 +277,7 @@ export default function DashboardLayout({
       </div>
 
       {/* ── Mobile Bottom Navigation ──────────────────────────── */}
-      <nav className="md:hidden fixed bottom-0 left-0 w-full bg-white border-t border-slate-100 flex justify-around items-center py-4 z-50 shadow-[0_-2px_15px_rgba(0,0,0,0.05)]">
+      <nav className="md:hidden fixed bottom-0 left-0 w-full bg-white flex justify-around items-center py-4 z-50 shadow-[0_-4px_20px_rgba(0,0,0,0.04)] pb-8">
         {mobileNav.map((link) => (
           <Link
             key={link.href}
