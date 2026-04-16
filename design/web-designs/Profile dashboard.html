@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "primary": "#520f85",
+                        "secondary": "#d41295",
+                        "background": "#f8fafc",
+                        "surface": "#ffffff",
+                        "on-background": "#0f172a",
+                        "outline": "#64748b",
+                        "outline-variant": "#f1f5f9",
+                        "primary-container": "#f5f3ff",
+                        "on-primary-container": "#520f85"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "6px",
+                        "lg": "12px",
+                        "xl": "16px",
+                        "full": "9999px"
+                    },
+                    "fontFamily": {
+                        "headline": ["Inter", "sans-serif"],
+                        "body": ["Inter", "sans-serif"],
+                        "label": ["Inter", "sans-serif"]
+                    },
+                    "boxShadow": {
+                        "soft": "0 2px 15px -3px rgba(0, 0, 0, 0.07), 0 4px 6px -2px rgba(0, 0, 0, 0.05)"
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; -webkit-font-smoothing: antialiased; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .sidebar-active {
+            background-color: #f5f3ff;
+            color: #520f85;
+            font-weight: 600;
+            border-left: 3px solid #520f85;
+        }
+        .sidebar-link {
+            border-left: 3px solid transparent;
+            transition: all 0.2s ease;
+        }
+        .sidebar-link:hover {
+            background-color: #f8fafc;
+            color: #520f85;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background">
+<div class="flex min-h-screen">
+<!-- Sidebar -->
+<aside class="w-72 bg-white border-r border-slate-100 shrink-0 hidden md:flex flex-col py-8 shadow-sm">
+<div class="px-8 mb-10">
+<div class="flex items-center gap-0 font-extrabold text-2xl tracking-tighter uppercase font-headline">
+<span class="bg-[#ff0000] text-white px-2 py-1 leading-none mr-1">U</span>
+<span class="text-primary lowercase">shop</span>
+</div>
+</div>
+<nav class="flex-1 space-y-1">
+<a class="sidebar-link sidebar-active px-8 py-3.5 flex items-center gap-4 text-sm" href="#">
+<span class="material-symbols-outlined text-[22px]">person</span> Overview
+            </a>
+<a class="sidebar-link px-8 py-3.5 flex items-center gap-4 text-sm text-slate-500" href="#">
+<span class="material-symbols-outlined text-[22px]">mail</span> Inbox
+            </a>
+<a class="sidebar-link px-8 py-3.5 flex items-center gap-4 text-sm text-slate-500" href="#">
+<span class="material-symbols-outlined text-[22px]">inventory_2</span> My Orders
+            </a>
+<a class="sidebar-link px-8 py-3.5 flex items-center gap-4 text-sm text-slate-500" href="#">
+<span class="material-symbols-outlined text-[22px]">rate_review</span> Pending Reviews
+            </a>
+<a class="sidebar-link px-8 py-3.5 flex items-center gap-4 text-sm text-slate-500" href="#">
+<span class="material-symbols-outlined text-[22px]">confirmation_number</span> Vouchers
+            </a>
+<a class="sidebar-link px-8 py-3.5 flex items-center gap-4 text-sm text-slate-500" href="#">
+<span class="material-symbols-outlined text-[22px]">favorite</span> Saved Items
+            </a>
+<a class="sidebar-link px-8 py-3.5 flex items-center gap-4 text-sm text-slate-500" href="#">
+<span class="material-symbols-outlined text-[22px]">storefront</span> Followed Sellers
+            </a>
+<div class="mx-8 my-6 border-t border-slate-50"></div>
+<a class="sidebar-link px-8 py-3.5 flex items-center gap-4 text-sm text-slate-500" href="#">
+<span class="material-symbols-outlined text-[22px]">settings</span> Profile Settings
+            </a>
+<a class="sidebar-link px-8 py-3.5 flex items-center gap-4 text-sm text-slate-500" href="#">
+<span class="material-symbols-outlined text-[22px]">import_contacts</span> Address Book
+            </a>
+</nav>
+<div class="px-8 pt-6 mt-auto">
+<button class="w-full text-left text-sm font-semibold text-slate-400 hover:text-secondary flex items-center gap-2 transition-colors">
+<span class="material-symbols-outlined text-[22px]">logout</span> Logout
+            </button>
+</div>
+</aside>
+<!-- Main Content -->
+<main class="flex-1 p-8 lg:p-14 overflow-x-hidden">
+<div class="max-w-6xl mx-auto space-y-12">
+<!-- Header -->
+<header>
+<h1 class="text-3xl font-extrabold text-on-background tracking-tight">Account Overview</h1>
+<p class="text-slate-500 text-sm mt-2 font-medium">Welcome back, KRAN Tech. Manage your shopping preferences and history.</p>
+</header>
+<!-- 4-Card Overview Hub -->
+<section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+<!-- Account Info -->
+<div class="bg-white p-7 rounded-xl shadow-soft">
+<div class="flex justify-between items-start mb-5">
+<h3 class="text-[11px] font-bold uppercase tracking-[0.1em] text-slate-400">Account Info</h3>
+<a class="text-primary text-[11px] font-bold hover:underline" href="#">EDIT</a>
+</div>
+<div class="space-y-1">
+<p class="text-[15px] font-bold text-on-background">KRAN Tech Solutions</p>
+<p class="text-xs text-slate-500 truncate">krantechsolutions@gmail.com</p>
+</div>
+<div class="flex flex-wrap gap-2 mt-4">
+<span class="inline-flex items-center text-[10px] bg-slate-100 text-slate-600 font-bold px-2.5 py-1 rounded uppercase tracking-wider">Buyer</span>
+<span class="inline-flex items-center text-[10px] bg-amber-50 text-amber-600 font-bold px-2.5 py-1 rounded uppercase tracking-wider border border-amber-100">Unverified</span>
+</div>
+<p class="text-[10px] text-slate-400 mt-5 font-medium">Member since 14 Apr 2026</p>
+</div>
+<!-- Primary Address -->
+<div class="bg-white p-7 rounded-xl shadow-soft">
+<div class="flex justify-between items-start mb-5">
+<h3 class="text-[11px] font-bold uppercase tracking-[0.1em] text-slate-400">Primary Address</h3>
+<a class="text-primary text-[11px] font-bold hover:underline" href="#">MANAGE</a>
+</div>
+<div class="space-y-1">
+<p class="text-[15px] font-bold text-on-background">Volta Hall, Room B12</p>
+<p class="text-xs text-slate-500">University of Ghana, Legon</p>
+</div>
+<p class="text-[11px] text-slate-400 mt-5 font-bold">+233 24 000 0000</p>
+</div>
+<!-- Wallet Balance -->
+<div class="bg-white p-7 rounded-xl shadow-soft">
+<div class="flex justify-between items-start mb-5">
+<h3 class="text-[11px] font-bold uppercase tracking-[0.1em] text-slate-400">Wallet Balance</h3>
+<span class="material-symbols-outlined text-primary text-xl">account_balance_wallet</span>
+</div>
+<div class="space-y-1">
+<p class="text-2xl font-extrabold text-on-background">GH₵ 0.00</p>
+<p class="text-[11px] text-emerald-600 font-bold flex items-center gap-1 uppercase tracking-wide">
+<span class="material-symbols-outlined text-xs">trending_up</span> 0 Points
+                        </p>
+</div>
+</div>
+<!-- Newsletter Status -->
+<div class="bg-white p-7 rounded-xl shadow-soft">
+<div class="flex justify-between items-start mb-5">
+<h3 class="text-[11px] font-bold uppercase tracking-[0.1em] text-slate-400">Newsletter</h3>
+<span class="material-symbols-outlined text-primary text-xl">mail</span>
+</div>
+<div class="space-y-1">
+<p class="text-[15px] font-bold text-on-background">Subscribed</p>
+<p class="text-[11px] text-slate-500 leading-relaxed mt-1">Weekly student deals and tech updates delivered directly to you.</p>
+</div>
+</div>
+</section>
+<!-- Alert -->
+<div class="bg-primary/5 border border-primary/10 p-5 flex items-center justify-between rounded-lg">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-full bg-white flex items-center justify-center text-primary shadow-sm">
+<span class="material-symbols-outlined text-xl">assignment_return</span>
+</div>
+<div>
+<p class="text-sm font-bold text-on-background">Return Processed</p>
+<p class="text-xs text-slate-500 mt-0.5">Refund for Order #US-8821 is being credited to your Wallet.</p>
+</div>
+</div>
+<button class="text-[11px] font-bold text-primary hover:text-secondary uppercase tracking-widest px-4 py-2 bg-white rounded-md shadow-sm transition-all">View Status</button>
+</div>
+<!-- Recent Orders -->
+<section class="space-y-6">
+<div class="flex items-center justify-between">
+<h2 class="font-extrabold text-xl">Recent Orders</h2>
+<a class="text-primary text-sm font-bold hover:underline" href="#">See All Orders</a>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left">
+<thead class="text-slate-400 text-[11px] uppercase font-bold tracking-[0.15em]">
+<tr class="border-b border-slate-100">
+<th class="pb-5 font-bold">Item</th>
+<th class="pb-5 font-bold">Order ID</th>
+<th class="pb-5 font-bold">Status</th>
+<th class="pb-5 font-bold">Date</th>
+<th class="pb-5 text-right font-bold">Action</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-slate-100">
+<tr class="group">
+<td class="py-6">
+<div class="flex items-center gap-4">
+<div class="w-14 h-14 bg-slate-50 flex items-center justify-center p-2 rounded-lg group-hover:bg-slate-100 transition-colors">
+<img alt="MacBook" class="w-full h-full object-contain mix-blend-multiply" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBOuiy8G2MGdwZ5DnkyEOBRiW6TiduOePulmxrVccNcolQDV3SHBco1NbZINXLEsWI1sW03OEqPXwUq9cCOGlx4FaGVPUFHYjvSUK5sgK0pxEcZ5ToGJFdkDwGwIkrWyEgOimInjL-XpQlMvktq9BK_gZ-JjBZzwb6WQm2xcaQ5y1PhOfL4Z9jZ3LZGDLzaLyhqVn22ryDegiGnPG2msCgeBduXMCYCn8zORheSZ9pGGai4EGFXF20L_PJxpxu_n7rjQT2c5zJztv9A"/>
+</div>
+<div>
+<p class="text-[14px] font-bold text-on-background">MacBook Air M2</p>
+<p class="text-[11px] text-slate-400">Midnight Blue</p>
+</div>
+</div>
+</td>
+<td class="py-6 text-sm font-medium text-slate-600">#US-99281</td>
+<td class="py-6">
+<span class="inline-flex items-center px-3 py-1 rounded-full bg-blue-50 text-blue-600 text-[10px] font-bold uppercase tracking-wider">On the way</span>
+</td>
+<td class="py-6 text-sm text-slate-500">Oct 24, 2023</td>
+<td class="py-6 text-right">
+<button class="text-[11px] font-bold text-primary hover:text-secondary uppercase tracking-widest">Track</button>
+</td>
+</tr>
+<tr class="group">
+<td class="py-6">
+<div class="flex items-center gap-4">
+<div class="w-14 h-14 bg-slate-50 flex items-center justify-center p-2 rounded-lg group-hover:bg-slate-100 transition-colors">
+<img alt="Apple Watch" class="w-full h-full object-contain mix-blend-multiply" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC-JV-vYNTzJzpkxD7r44hSKGQJ8pQh5E5yDzr1W0FWtGDCournAEV58gPk6u_wTt19wrCwaeE1quw9WLE6JNlzPs3yW6OWD5qgty8anLDH9IFxwRRV7bLDQpV851TEfzXXy4O1sgCu0J4XHu4YgDX6Vah8AabhlaBclHzuLMLkPUIMooO3E96c-bIMKhOvqium38ShmZxXWOLF5tFAe3iJ93SW5liHEXfo9SBEOhfZy8LSQVP5At86D9J34qIi6nlam1LmQi3WZQ-v"/>
+</div>
+<div>
+<p class="text-[14px] font-bold text-on-background">Apple Watch SE</p>
+<p class="text-[11px] text-slate-400">Starlight</p>
+</div>
+</div>
+</td>
+<td class="py-6 text-sm font-medium text-slate-600">#US-99304</td>
+<td class="py-6">
+<span class="inline-flex items-center px-3 py-1 rounded-full bg-emerald-50 text-emerald-600 text-[10px] font-bold uppercase tracking-wider">Delivered</span>
+</td>
+<td class="py-6 text-sm text-slate-500">Oct 26, 2023</td>
+<td class="py-6 text-right">
+<button class="text-[11px] font-bold text-primary hover:text-secondary uppercase tracking-widest">Details</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<!-- Recommendations -->
+<section class="space-y-6">
+<div class="flex items-center justify-between">
+<h2 class="text-xl font-extrabold">Recommended For You</h2>
+<span class="text-[11px] font-bold text-slate-400 uppercase tracking-widest">Personalized Selection</span>
+</div>
+<div class="grid grid-cols-2 lg:grid-cols-4 gap-6">
+<!-- Product Card 1 -->
+<div class="bg-white rounded-xl overflow-hidden group hover:shadow-soft transition-all duration-300">
+<div class="relative aspect-square bg-slate-50 p-6 flex items-center justify-center overflow-hidden">
+<img alt="Bose" class="w-full h-full object-contain mix-blend-multiply group-hover:scale-110 transition-transform duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAJGvHBB2zXCZcWUgO5nzOlHe-7_W3YFlF4Zq45qb8nXoFTFXP6NneLdzRteM30JWSrroCivYQkuYSDSUOSBSNnOa7HO1S3DykAn5ihe0PgopJlIQoD0FNhm1fkuFloJi5KNqo57oWvDm1FB1CtkE1EQEWbpt8VvA3-Ht-OeOB78jbg5RefwUxRNmdoIYEfj-j-caripbTtmRBliFmckSpaQ0Qk4aMnjEqYnRuAAUzq76izwY8wHsr7GtoRAsbk6UWqJV9ovWEFBeKw"/>
+<span class="absolute top-3 left-3 bg-secondary text-white text-[9px] font-extrabold px-2 py-0.5 rounded uppercase tracking-wider">Student Deal</span>
+</div>
+<div class="p-5 space-y-2">
+<h4 class="text-sm font-semibold text-on-background line-clamp-1">Bose QC Ultra Headphones</h4>
+<div class="flex items-baseline gap-2">
+<span class="text-base font-extrabold text-primary">GH₵ 4,200</span>
+<span class="text-[11px] text-slate-400 line-through">GH₵ 4,800</span>
+</div>
+</div>
+</div>
+<!-- Product Card 2 -->
+<div class="bg-white rounded-xl overflow-hidden group hover:shadow-soft transition-all duration-300">
+<div class="relative aspect-square bg-slate-50 p-6 flex items-center justify-center overflow-hidden">
+<img alt="Monitor" class="w-full h-full object-contain mix-blend-multiply group-hover:scale-110 transition-transform duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA6QFS-ThESUUawQBbWXSwBOaa4LadRf9WmH_qKA0B8h8ZyEdOg1XM6sFCvtlzVTHTFQVoRQpy_vIlsHRLItalRxTb0pYQU-TtF4MfuvqQk_8WtzMnF4SJ2G4AIGy6zYPjwrcmiiTlU2OprR2_9kMePferzDbvIwWUtULh89WDVfxsA-P1p8PNjNBedqTt4LYJt-2aFAiMnL4UD1AsGrBfENxwN-i70uJmbPB6pJ-Ld_oretIBw-Vwe5Cy_Kh3l4brq1NeUW2lD_oRd"/>
+</div>
+<div class="p-5 space-y-2">
+<h4 class="text-sm font-semibold text-on-background line-clamp-1">Dell UltraSharp 27" 4K</h4>
+<span class="text-base font-extrabold text-primary">GH₵ 2,850</span>
+</div>
+</div>
+<!-- Product Card 3 -->
+<div class="bg-white rounded-xl overflow-hidden group hover:shadow-soft transition-all duration-300">
+<div class="relative aspect-square bg-slate-50 p-6 flex items-center justify-center overflow-hidden">
+<img alt="iPhone" class="w-full h-full object-contain mix-blend-multiply group-hover:scale-110 transition-transform duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB9kHvyotlS_scTgfNaaqNdpp8EXk20gMEoLoJ5kcaW25t_CMtkfS7FskvenYQ2RnqR61xOq2IOlJH4zSonhjo0xWK_kUIFGF56qNmehJLZ8ijJFJqQnKwkmASukWQteSFXA6rhJQkzfTdjuDC6_qLstXrZIgX46_bpK83pebXCzCEUXcWhNWcWeJuWnZBEbK2hLCnxdJolbcLawtrb5q-a-Uoci1ruhvovF4XhxVXhDKhH3TAr2JrGk35alPPjfX0NU7tT2vpgUeKf"/>
+</div>
+<div class="p-5 space-y-2">
+<h4 class="text-sm font-semibold text-on-background line-clamp-1">iPhone 15 Pro Max 256GB</h4>
+<span class="text-base font-extrabold text-primary">GH₵ 16,900</span>
+</div>
+</div>
+<!-- Product Card 4 -->
+<div class="bg-white rounded-xl overflow-hidden group hover:shadow-soft transition-all duration-300">
+<div class="relative aspect-square bg-slate-50 p-6 flex items-center justify-center overflow-hidden">
+<img alt="iPad" class="w-full h-full object-contain mix-blend-multiply group-hover:scale-110 transition-transform duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC1WqBSgsko1okdhD4VzhwEz4Q5hhFtCh87PTTwWVy4OjayUDo49AuAoTSNkLunlCPCWCEvQZe0j_DsNf5mRIoqzbGFjycSshhfwo27_wgG_vaSkWNmg9kP4LLOztNljaSm60Qyeugf_rSqd4wCSa12IcndhYrji4w4wWjNwmtfZW4P3pn-IJF1Tc-4Abhl8z12d164JuTQy3rJa7TEs4V7xTnURSIzqRRrE1d1ykAsDwezUv9-sFDKPDHkA6LktkzQorq861eBgWfA"/>
+<span class="absolute top-3 left-3 bg-secondary text-white text-[9px] font-extrabold px-2 py-0.5 rounded uppercase tracking-wider">Student Deal</span>
+</div>
+<div class="p-5 space-y-2">
+<h4 class="text-sm font-semibold text-on-background line-clamp-1">iPad Air 5th Gen Wi-Fi</h4>
+<span class="text-base font-extrabold text-primary">GH₵ 7,400</span>
+</div>
+</div>
+</div>
+</section>
+</div>
+</main>
+</div>
+<!-- Mobile Navigation -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full bg-white border-t border-slate-100 flex justify-around items-center py-4 z-50 shadow-2xl">
+<a class="flex flex-col items-center gap-1 text-primary" href="#">
+<span class="material-symbols-outlined text-2xl font-variation-fill-1">dashboard</span>
+<span class="text-[10px] font-bold uppercase tracking-wider">Home</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-slate-400" href="#">
+<span class="material-symbols-outlined text-2xl">search</span>
+<span class="text-[10px] font-bold uppercase tracking-wider">Shop</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-slate-400" href="#">
+<span class="material-symbols-outlined text-2xl">favorite</span>
+<span class="text-[10px] font-bold uppercase tracking-wider">Saved</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-slate-400" href="#">
+<span class="material-symbols-outlined text-2xl">person</span>
+<span class="text-[10px] font-bold uppercase tracking-wider">Account</span>
+</a>
+</nav>
+</body></html>
