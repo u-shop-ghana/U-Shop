@@ -25,14 +25,36 @@ export default function MarketplaceLayout({
   const { user, loading } = useAuth();
   const router = useRouter();
 
-  // Watch for Supabase PKCE Expired Error Hash in URL
-  // If user clicked an old reset link, Supabase redirects them to Site URL (root) with error hash.
+  // ─── Supabase Hash-Based Auth Redirect Handler ─────────────────
+  // Supabase password recovery uses hash-based token delivery: the
+  // reset link redirects to the Site URL (root) with a fragment like
+  // #access_token=XXX&type=recovery. Without this handler, the user
+  // lands on the homepage instead of /reset-password.
+  //
+  // We also handle the error case (otp_expired) from stale links.
+  // The hash fragment is NOT visible to the server (middleware can't
+  // read it), so this MUST be handled client-side.
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      const hash = window.location.hash;
-      if (hash.includes("error_code=otp_expired") || hash.includes("error_description=Email+link+is+invalid")) {
-        router.replace("/forgot-password?error=expired");
-      }
+    if (typeof window === "undefined") return;
+
+    const hash = window.location.hash;
+    if (!hash) return;
+
+    // Case 1: Expired or invalid recovery link — send to forgot-password
+    if (hash.includes("error_code=otp_expired") || hash.includes("error_description=Email+link+is+invalid")) {
+      router.replace("/forgot-password?error=expired");
+      return;
+    }
+
+    // Case 2: Valid recovery token — Supabase already set the session
+    // via the hash. Redirect to /reset-password so the user can update
+    // their password. The createClient() in reset-password/page.tsx will
+    // automatically pick up the session from cookies.
+    if (hash.includes("type=recovery") && hash.includes("access_token=")) {
+      // Clear the hash from the URL to prevent re-processing on navigation
+      window.history.replaceState(null, "", window.location.pathname);
+      router.replace("/reset-password");
+      return;
     }
   }, [router]);
 

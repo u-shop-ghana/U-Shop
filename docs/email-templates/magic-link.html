@@ -1,0 +1,46 @@
+<div style="font-family: 'Helvetica Neue', Arial, sans-serif; max-width: 520px; margin: 0 auto; padding: 40px 24px; background-color: #ffffff; color: #1a1a1a;">
+  
+  <!-- Logo -->
+  <img src="https://u-shop-eosin.vercel.app/assets/logos/web/logo-300w.png" alt="U-Shop" width="120" style="margin-bottom: 32px;" />
+  
+  <!-- Heading -->
+  <h2 style="font-size: 22px; font-weight: 700; margin: 0 0 12px 0; color: #1a1a1a;">Your Login Link</h2>
+  
+  <!-- Body -->
+  <p style="font-size: 15px; line-height: 1.6; color: #444; margin: 0 0 8px 0;">
+    Hi there! You requested a magic link to sign in to your U-Shop account.
+  </p>
+  <p style="font-size: 15px; line-height: 1.6; color: #444; margin: 0 0 24px 0;">
+    Click the button below to securely log in — no password needed.
+  </p>
+  
+  <!-- CTA Button -->
+  <a href="{{ .ConfirmationURL }}" 
+     style="display: inline-block; padding: 14px 32px; background-color: #6B1FA8; color: #ffffff; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 15px;">
+    Sign In to U-Shop
+  </a>
+  
+  <!-- Security Notice -->
+  <div style="margin: 24px 0; padding: 16px; background-color: #f8f4ff; border-radius: 8px; border-left: 3px solid #6B1FA8;">
+    <p style="font-size: 13px; color: #555; margin: 0; line-height: 1.5;">
+      🔒 This link expires in 24 hours and can only be used once. If you didn't request this, your account is still secure — no action is needed.
+    </p>
+  </div>
+  
+  <!-- Fallback Link -->
+  <p style="font-size: 13px; color: #888; line-height: 1.5; margin: 0 0 0 0;">
+    If the button doesn't work, copy and paste this link into your browser:
+  </p>
+  <p style="font-size: 12px; color: #6B1FA8; word-break: break-all; margin: 4px 0 0 0;">
+    {{ .ConfirmationURL }}
+  </p>
+  
+  <!-- Divider -->
+  <hr style="border: none; border-top: 1px solid #eee; margin: 32px 0;" />
+  
+  <!-- Footer -->
+  <p style="font-size: 12px; color: #aaa; margin: 0;">
+    U-Shop — Ghana's trusted campus tech marketplace<br/>
+    <a href="https://u-shop-eosin.vercel.app" style="color: #6B1FA8; text-decoration: none;">ushopgh.com</a>
+  </p>
+</div>
