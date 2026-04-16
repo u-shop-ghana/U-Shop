@@ -3,6 +3,20 @@
 All notable changes to U-Shop are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [0.9.0] — 2026-04-16 — Phase 3.5 Tech Debt Cleanup & Documentation
+
+### Added
+- Created `CONTRIBUTING.md` onboarding guide for developer environment setup.
+- Added visual "Coming soon" feedback UI to `AddToCartButtonCard` and `WishlistButton` to prevent silent `console.log` failures.
+
+### Changed
+- Updated `README.md` tech stack to reflect Next.js 16 (App Router) and the Express.js API deployed on Railway.
+
+### Removed
+- Permanently deleted `test_secret.txt` and `test_ps_scrub.txt` credential exposure risks from the working tree.
+- Removed the auto-generated `.vade-report` and updated `.gitignore` to prevent committing sensitive/auto-generated files.
+- Removed the dead "Message Seller" button from the public store page since the feature isn't implemented yet.
+
 ## [0.8.7] — 2026-04-16 — User Profile Dashboard & Google OAuth Fix
 
 ### Changed

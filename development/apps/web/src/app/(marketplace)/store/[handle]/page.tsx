@@ -1,6 +1,5 @@
 import { notFound } from "next/navigation";
 import Image from "next/image";
-import { Button } from "@/components/ui/Button";
 // Note: If you don't have Badge component, we can use simple divs instead.
 
 // This runs entirely on the server
@@ -89,13 +88,6 @@ export default async function PublicStorePage({ params }: { params: Promise<{ ha
                 {store.totalSales} sales
               </div>
             </div>
-          </div>
-
-          {/* Actions */}
-          <div className="w-full md:w-auto">
-            <Button variant="outline" fullWidth>
-              Message Seller
-            </Button>
           </div>
         </div>
 
