@@ -1,6 +1,7 @@
 import { prisma } from '../lib/prisma';
 import type { Prisma } from '@prisma/client';
 import type { CreateStoreInput, UpdateStoreInput } from '@ushop/shared';
+import { CacheService } from './cache.service';
 
 // The fields that require admin approval to update
 const POLICY_FIELDS = [
@@ -114,10 +115,16 @@ export class StoreService {
         };
       }
 
-      return await tx.store.update({
+      const updatedStore = await tx.store.update({
         where: { id: storeId },
         data: directUpdates,
       });
+
+      // Clear search listings mapped to this store dynamically, and specific store cache
+      await CacheService.invalidateNamespace('search');
+      await CacheService.invalidate('store', storeId);
+      
+      return updatedStore;
     });
   }
 

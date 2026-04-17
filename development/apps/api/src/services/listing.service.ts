@@ -43,92 +43,76 @@ export class ListingService {
     } = params;
 
     const queryParams: unknown[] = [];
-    let paramCount = 0;
-
-    let sqlConditions = `WHERE l."status" = 'ACTIVE' AND l."stock" > 0`;
+    const conditions: string[] = [`l."status" = 'ACTIVE'`, `l."stock" > 0`];
+    let qParamIndex: number | null = null;
+    let uniParamIndex: number | null = null;
 
     // 1. Text Search Filtering
     if (q && q.trim() !== '') {
       const formattedQuery = q.trim().split(' ').map(term => `${term.replace(/[^a-zA-Z0-9]/g, '')}:*`).join(' & ');
-      paramCount++;
-      // We use COALESCE to ensure that even if searchVector is NULL (legacy data), we don't break the query.
-      // However, we want to match only if the vector exists or if we fall back to title ILIKE.
-      sqlConditions += ` AND (l."searchVector" @@ to_tsquery($${paramCount}) OR l."title" ILIKE $${paramCount + 1})`;
       queryParams.push(formattedQuery);
+      qParamIndex = queryParams.length;
       queryParams.push(`%${q.trim()}%`);
-      paramCount++;
+      const likeIndex = queryParams.length;
+      conditions.push(`(l."searchVector" @@ to_tsquery($${qParamIndex}) OR l."title" ILIKE $${likeIndex})`);
     }
 
     // 2. Exact Filters
     if (category) {
-      paramCount++;
-      sqlConditions += ` AND l."categoryId" = $${paramCount}`;
       queryParams.push(category);
+      conditions.push(`l."categoryId" = $${queryParams.length}`);
     }
 
     if (categorySlug) {
-      paramCount++;
-      sqlConditions += ` AND l."categoryId" IN (SELECT id FROM "Category" WHERE slug = $${paramCount})`;
       queryParams.push(categorySlug);
+      conditions.push(`l."categoryId" IN (SELECT id FROM "Category" WHERE slug = $${queryParams.length})`);
     }
 
     if (condition) {
-      paramCount++;
-      sqlConditions += ` AND l."condition" = $${paramCount}::"ListingCondition"`;
       queryParams.push(condition);
+      conditions.push(`l."condition" = $${queryParams.length}::"ListingCondition"`);
     }
 
     if (storeId) {
-      paramCount++;
-      sqlConditions += ` AND l."storeId" = $${paramCount}`;
       queryParams.push(storeId);
+      conditions.push(`l."storeId" = $${queryParams.length}`);
     }
 
     if (minPrice) {
-      paramCount++;
-      sqlConditions += ` AND l."price" >= $${paramCount}`;
       queryParams.push(minPrice);
+      conditions.push(`l."price" >= $${queryParams.length}`);
     }
 
     if (maxPrice) {
-      paramCount++;
-      sqlConditions += ` AND l."price" <= $${paramCount}`;
       queryParams.push(maxPrice);
+      conditions.push(`l."price" <= $${queryParams.length}`);
     }
 
     if (sellerType) {
-      paramCount++;
-      sqlConditions += ` AND s."sellerType" = $${paramCount}::"SellerType"`;
       queryParams.push(sellerType === 'student' ? 'STUDENT' : 'RESELLER');
+      conditions.push(`s."sellerType" = $${queryParams.length}::"SellerType"`);
     }
 
     // Cursor pagination (using ID simply)
     if (cursor) {
-      paramCount++;
-      sqlConditions += ` AND l."id" < $${paramCount}`; // Assuming ID descending or we use createdAt
       queryParams.push(cursor);
+      conditions.push(`l."id" < $${queryParams.length}`); // Assuming ID descending or we use createdAt
     }
+
+    if (buyerUniversity) {
+      queryParams.push(buyerUniversity);
+      uniParamIndex = queryParams.length;
+    }
+
+    const sqlConditions = `WHERE ` + conditions.join(' AND ');
 
     // 3. Custom Algorithmic Sorting
     // Verified Stores + Local Availability + Price Competitiveness
-    
-    // Add logic params for equation
-    // qParamIndex is not needed — the ts_rank ternary references $1 directly when q is present.
-
-    let uniParamIndex = '0';
-    if (buyerUniversity) {
-      paramCount++;
-      queryParams.push(buyerUniversity);
-      uniParamIndex = `$${paramCount}`;
-    } else {
-      // Dummy param to prevent syntax error, never matched because index 0 doesn't exist
-    }
-
     const rankingEquation = `
       (
-        ${q ? `(ts_rank(l."searchVector", to_tsquery($1)) * 50)` : '0'} +
+        ${qParamIndex !== null ? `(ts_rank(l."searchVector", to_tsquery($${qParamIndex})) * 50)` : '0'} +
         (CASE WHEN u."verificationStatus" = 'VERIFIED' THEN 20 ELSE 0 END) +
-        (CASE WHEN ${buyerUniversity ? `u."universityName" = ${uniParamIndex}` : 'false'} THEN 15 ELSE 0 END) +
+        (CASE WHEN ${uniParamIndex !== null ? `u."universityName" = $${uniParamIndex}` : 'false'} THEN 15 ELSE 0 END) +
         (10000.0 / (l.price + 1))
       )
     `;
@@ -138,6 +122,9 @@ export class ListingService {
     if (sort === 'price_asc') orderBy = `ORDER BY l."price" ASC`;
     if (sort === 'price_desc') orderBy = `ORDER BY l."price" DESC`;
     if (sort === 'newest') orderBy = `ORDER BY l."createdAt" DESC`;
+
+    queryParams.push(limit);
+    const limitIndex = queryParams.length;
 
     const rawSql = `
       SELECT 
@@ -150,10 +137,8 @@ export class ListingService {
       JOIN "User" u ON s."userId" = u.id
       ${sqlConditions}
       ${orderBy}
-      LIMIT $${++paramCount}
+      LIMIT $${limitIndex}
     `;
-
-    queryParams.push(limit);
     
     interface RawListingResult {
       id: string;
@@ -194,9 +179,9 @@ export class ListingService {
       }
     }));
 
-    // 2. Store in cache for 5 minutes (300 seconds) for populated results, 
+    // 2. Store in cache for 60 seconds (active inventory requirements), 
     // or 30 seconds for empty results to prevent repeated DB hammering.
-    const ttl = results.length > 0 ? 300 : 30;
+    const ttl = results.length > 0 ? 60 : 30;
     await CacheService.set('search', cacheId, results, ttl);
 
     return results;
@@ -268,6 +253,9 @@ export class ListingService {
       
       await tx.$executeRawUnsafe(updateVectorQuery, data.title, data.description, listing.id);
 
+      // Flush search caches proactively
+      await CacheService.invalidateNamespace('search');
+
       return listing;
     });
   }
@@ -300,6 +288,9 @@ export class ListingService {
         `, id);
       }
 
+      // Flush search caches proactively
+      await CacheService.invalidateNamespace('search');
+
       return updated;
     });
   }
@@ -315,6 +306,10 @@ export class ListingService {
     }
 
     await prisma.listing.delete({ where: { id } });
+
+    // Flush search caches proactively
+    await CacheService.invalidateNamespace('search');
+
     return true;
   }
 }

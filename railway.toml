@@ -4,7 +4,7 @@ dockerfilePath = "Dockerfile"
 watchPatterns = ["apps/api/**", "packages/shared/**"]
 
 [deploy]
-startCommand = "pnpm run start"
+startCommand = "node dist/src/index.js"
 healthcheckPath = "/health"
 healthcheckTimeout = 300
 restartPolicyType = "ON_FAILURE"

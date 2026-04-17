@@ -5,8 +5,8 @@
   "private": true,
   "scripts": {
     "dev": "tsx watch src/index.ts",
-    "build": "tsc --noEmit",
-    "start": "tsx src/index.ts",
+    "build": "tsc",
+    "start": "node dist/src/index.js",
     "lint": "eslint src/",
     "typecheck": "tsc --noEmit",
     "clean": "rm -rf dist",
