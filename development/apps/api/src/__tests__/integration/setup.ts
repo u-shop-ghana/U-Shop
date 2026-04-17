@@ -1,4 +1,4 @@
-import { vi, beforeAll, afterAll } from 'vitest';
+import { vi } from 'vitest';
 
 // ─── Integration Test Setup ─────────────────────────────────────
 // This file prepares the environment for Supertest integration tests.
@@ -51,6 +51,13 @@ vi.mock('../lib/logger', () => ({
     error: vi.fn(),
     debug: vi.fn(),
     child: vi.fn().mockReturnThis(),
+  },
+}));
+
+// Mock DOMPurify to prevent JSDOM ESM top-level await crashes in Vitest
+vi.mock('isomorphic-dompurify', () => ({
+  default: {
+    sanitize: vi.fn((input) => input),
   },
 }));
 

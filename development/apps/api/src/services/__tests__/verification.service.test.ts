@@ -1,5 +1,9 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { VerificationService } from '../verification.service';
+
+vi.mock('../../lib/prisma', () => ({
+  prisma: {},
+}));
 
 // ─── VerificationService.isStudentEmail Tests ───────────────────
 // Tests the pure logic for detecting student university email domains.

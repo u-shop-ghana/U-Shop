@@ -14,7 +14,7 @@ function createRateLimiter(
   keyPrefix: string
 ) {
   // Convert windowMs to seconds with the 's' suffix
-  const windowSecs = `${Math.ceil(windowMs / 1000)} s` as any;
+  const windowSecs = `${Math.ceil(windowMs / 1000)} s` as `${number} s`;
   
   if (!redis) {
     return (req: Request, res: Response, next: NextFunction) => next();
