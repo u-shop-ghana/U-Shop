@@ -1,7 +1,17 @@
 import { notFound } from "next/navigation";
 import Image from "next/image";
-import { ListingCard, ListingCardProps } from "@/components/ui/ListingCard";
+import { ListingCard } from "@/components/ui/ListingCard";
 // Note: If you don't have Badge component, we can use simple divs instead.
+
+interface StoreListingItem {
+  id: string;
+  title: string;
+  slug: string;
+  price: number | string;
+  condition: string;
+  images?: string[];
+  stock: number;
+}
 
 // This runs entirely on the server
 async function getStore(handle: string) {
@@ -145,12 +155,12 @@ export default async function PublicStorePage({ params }: { params: Promise<{ ha
                 </div>
                 <h3 className="text-lg font-bold text-gray-900">No listings yet</h3>
                 <p className="text-gray-500 text-sm mt-1 max-w-sm">
-                  This store hasn't added any products yet, but check back soon!
+                  This store hasn&apos;t added any products yet, but check back soon!
                 </p>
               </div>
             ) : (
               <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-                {listings.map((item: any) => (
+                {listings.map((item: StoreListingItem) => (
                   <ListingCard
                     key={item.id}
                     id={item.id}
