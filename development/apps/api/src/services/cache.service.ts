@@ -60,4 +60,21 @@ export class CacheService {
       logger.error(error, `Error invalidating cache [${key}]:`);
     }
   }
+
+  /**
+   * Scans and removes all cache keys mapped to a specific namespace systematically.
+   */
+  static async invalidateNamespace(namespace: string): Promise<void> {
+    if (!redis) return;
+
+    try {
+      const keys = await redis.keys(`ushop:${namespace}:*`);
+      if (keys.length > 0) {
+        await redis.del(...keys);
+        logger.debug({ namespace, count: keys.length }, 'Cache Namespace INVALIDATED');
+      }
+    } catch (error) {
+      logger.error(error, `Error invalidating cache namespace [${namespace}]:`);
+    }
+  }
 }

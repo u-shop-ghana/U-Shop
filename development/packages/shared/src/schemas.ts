@@ -67,11 +67,13 @@ export const updateListingSchema = createListingSchema.partial();
 export const searchListingsSchema = z.object({
   q: z.string().optional(),
   category: z.string().optional(),
+  categorySlug: z.string().optional(),
   condition: z.enum(['NEW', 'LIKE_NEW', 'EXCELLENT', 'GOOD', 'FAIR', 'FOR_PARTS']).optional(),
   storeId: z.string().cuid().optional(),
   minPrice: z.coerce.number().positive().optional(),
   maxPrice: z.coerce.number().positive().optional(),
   sellerType: z.enum(['student', 'reseller']).optional(),
+  buyerUniversity: z.string().optional(),
   sort: z.enum(['newest', 'price_asc', 'price_desc', 'rating']).default('newest'),
   cursor: z.string().optional(),
   limit: z.coerce.number().int().min(1).max(50).default(20),
