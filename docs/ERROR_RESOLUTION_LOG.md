@@ -90,25 +90,31 @@ This document tracks all significant development errors, architecture blockers, 
 - **Root Cause:** During platform transition routines spanning Vercel (Web Frontend) and Railway (Express Backend API), build instances crashed organically due to relying on local `.env` values instead of secure platform environment dashboards.
 - **How it was fixed:** Migrated entirely off static local environments placing secrets natively into Railway Production Variables and Vercel Encryptions eliminating deployment drops.
 
-### 14. Playwright E2E Runner Environment Failures
+### 14. Playwright E2E Runner Environment Failures (CI/CD)
 - **Name/Type:** CI/CD Integration Crash / Testing Framework Break
 - **Error Output:** `browserType.launch: Executable doesn't exist at chrome-headless-shell` & `connect ECONNREFUSED 127.0.0.1:3000`
 - **Root Cause:** In the CI/CD pipeline, Playwright lacks its internal pre-compiled Headless browser engines resulting in instant failure. Furthermore, the E2E verification matrix skips executing the Web Server runner (`npm run dev`/`start`) before triggering the test payload, thereby failing on connection resets (`127.0.0.1:3000`).
-- **How it was fixed:** Enforce execution commands for caching environments natively: `pnpm exec playwright install`. Furthermore, implement CI wait checks leveraging `webServer` configs in `playwright.config.ts` guaranteeing the target server is listening natively before testing logic occurs.
+- **How it was fixed:** Enforce execution commands for caching environments natively: `pnpm exec playwright install --with-deps chromium` resolving underlying OS integrations (like `libxss1`). Furthermore, implemented CI wait checks leveraging `webServer` configs in `playwright.config.ts` guaranteeing the target server is listening natively before testing logic occurs.
 
-### 15. NextJS Strict Frontend Linting
+### 15. NextJS Local Compilation Collision (EBUSY OOM)
+- **Name/Type:** Local Dev Crash / `net::ERR_CONNECTION_REFUSED`
+- **Error Output:** Consecutive trace drops `page.goto: net::ERR_CONNECTION_REFUSED at http://127.0.0.1:3000/` midway through local E2E suite.
+- **Root Cause:** Concurrent background terminal operations (`pnpm build`) writing intensively to `/apps/web/.next` output cache instantly poisoned existing `pnpm dev` instances evaluating identical Next.js Turbopack pipelines. The NextJS dev server autonomously crashed during Playwright E2E verification, abruptly dropping port `:3000`.
+- **How it was fixed:** Sequenced operational payloads natively. E2E validations are executed only after Turborepo completes static generations, ensuring file cache directories aren't simultaneously locked.
+
+### 16. NextJS Strict Frontend Linting
 - **Name/Type:** Lint Error / CI Builder Fail
 - **Error Output:** `Warning: 'ListingCardProps' is defined but never used` & `` `''` can be escaped with `&apos;` `` & `Unexpected any. Specify a different type`
 - **Root Cause:** A newly constructed Public Store interface (`store/[handle]/page.tsx`) featured unescaped apostrophes inside string literals, skipped robust DB typing definitions leveraging `any` arrays mapping properties, and imported unused module bindings, violating the central `eslint` definitions and blocking pipeline execution states.
 - **How it was fixed:** Validated native abstraction templates appending a specific `StoreListingItem` interface matching Prisma outputs natively, removed explicit arbitrary variables, and shifted characters into compliant UTF escapes (`hasn&apos;t`).
 
-### 16. React Unescaped Entity Linting
+### 17. React Unescaped Entity Linting
 - **Name/Type:** Lint Error / `react/no-unescaped-entities`
 - **Error Output:** `` `''` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`. ``
 - **Root Cause:** Standard string literals (`you'll`) were embedded directly inside TSX paragraphs breaking strict unescaped entities checks in `orders/page.tsx` and `student-deals/page.tsx`.
 - **How it was fixed:** Refactored `'` into the strict-compliant sequence `&apos;`.
 
-### 17. Typescript Target Type Inference (Typecheck)
+### 18. Typescript Target Type Inference (Typecheck)
 - **Name/Type:** Typecheck Error / `Unexpected any`
 - **Error Output:** `Unexpected any. Specify a different type.`
 - **Root Cause:** The `student-deals/page.tsx` iterating payload logic bypassed types mapping via `item: any`. 
@@ -118,19 +124,19 @@ This document tracks all significant development errors, architecture blockers, 
 
 ## March 26, 2026
 
-### 18. Broken UI Vector Layouts
+### 19. Broken UI Vector Layouts
 - **Name/Type:** Missing Asset / 404
 - **Error Output:** The `Header`, `Store Creation`, and `Reseller Verification` environments failed to render the visual logo.
 - **Root Cause:** UI scaffolding relied on `/assets/logo.svg` which was deprecated and absent from the design system's public static folder.
 - **How it was fixed:** Switched all references natively to Next Image wrappers linking directly into `/assets/logos/web/logo-300w.png`.
 
-### 19. Unresolved Tailwind Constants (Undefined Design Tokens)
+### 20. Unresolved Tailwind Constants (Undefined Design Tokens)
 - **Name/Type:** UX Contrast Verification / CSS Bug
 - **Error Output:** Certain elements across the marketplace lacked active formatting referencing hex values (`#520f85`) disconnected from the global stylesheet overriding.
 - **Root Cause:** Hardcoded hex values natively scattered across the `.tsx` components completely breaking global `--color-ushop-purple` logic mappings forcing poor accessibility.
 - **How it was fixed:** Automated a recursive AST regex pipeline stripping `#520f85` and assigning explicit utility class implementations mapping directly to Tailwind constraints inside `globals.css`.
 
-### 20. Shared Library Component Build Conflicts (Build)
+### 21. Shared Library Component Build Conflicts (Build)
 - **Name/Type:** Build Conflict / Dependency Error
 - **Error Output:** `build_error_shared_package`
 - **Root Cause:** Workspace dependency injection trees between `@ushop/shared` lacking accurate pre-build output directories triggering race conditions when compiling `@ushop/api` and `web` contexts.

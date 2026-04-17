@@ -35,6 +35,8 @@ jobs:
         with:
           version: 9
       - run: pnpm install
+      - name: Install Playwright Browsers
+        run: pnpm exec playwright install --with-deps chromium
       - run: pnpm test
 
   type-check:
