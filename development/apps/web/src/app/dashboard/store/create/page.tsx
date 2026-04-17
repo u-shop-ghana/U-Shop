@@ -223,7 +223,7 @@ export default function CreateStorePage() {
       <div className="flex flex-col items-center justify-center mb-8 border-b pb-8">
         <Link href="/" className="inline-block mb-6">
           <Image
-            src="/assets/logo.svg"
+            src="/assets/logos/web/logo-300w.png"
             alt="U-Shop Logo"
             width={160}
             height={48}
@@ -248,7 +248,7 @@ export default function CreateStorePage() {
         {/* Profile Branding Module */}
         <section className="bg-white p-6 md:p-8 rounded-3xl border shadow-sm">
           <h2 className="text-xl font-bold text-gray-900 mb-6 flex items-center">
-             <span className="material-symbols-outlined mr-2 text-[#6B1FA8]">palette</span> Branding
+             <span className="material-symbols-outlined mr-2 text-ushop-purple">palette</span> Branding
           </h2>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -256,7 +256,7 @@ export default function CreateStorePage() {
               <p className="block text-sm font-semibold text-gray-700 mb-1.5">Store Logo</p>
               <p className="text-xs text-gray-400 mb-4">Recommended: 400x400px (1:1)</p>
               <div className="flex items-center gap-4">
-                <div className="w-20 h-20 bg-gray-50 border-2 border-dashed border-gray-300 rounded-full flex items-center justify-center overflow-hidden flex-shrink-0 transition-hover hover:border-[#6B1FA8]">
+                <div className="w-20 h-20 bg-gray-50 border-2 border-dashed border-gray-300 rounded-full flex items-center justify-center overflow-hidden flex-shrink-0 transition-hover hover:border-ushop-purple">
                   {logoFile ? (
                     <Image src={URL.createObjectURL(logoFile)} alt="Logo Preview" width={80} height={80} className="w-full h-full object-cover" />
                   ) : (
@@ -271,7 +271,7 @@ export default function CreateStorePage() {
               <p className="block text-sm font-semibold text-gray-700 mb-1.5">Store Banner</p>
               <p className="text-xs text-gray-400 mb-4">Recommended: 1200x400px (3:1)</p>
               <div className="flex items-center gap-4">
-                <div className="h-20 flex-1 bg-gray-50 border-2 border-dashed border-gray-300 rounded-2xl flex items-center justify-center overflow-hidden group relative transition-hover hover:border-[#6B1FA8]">
+                <div className="h-20 flex-1 bg-gray-50 border-2 border-dashed border-gray-300 rounded-2xl flex items-center justify-center overflow-hidden group relative transition-hover hover:border-ushop-purple">
                     {bannerFile ? (
                       <Image src={URL.createObjectURL(bannerFile)} alt="Banner Preview" fill className="object-cover" />
                     ) : (
@@ -287,7 +287,7 @@ export default function CreateStorePage() {
         {/* Basic Details Module */}
         <section className="bg-white p-6 md:p-8 rounded-3xl border shadow-sm space-y-6">
           <h2 className="text-xl font-bold text-gray-900 mb-2 flex items-center">
-            <span className="material-symbols-outlined mr-2 text-[#6B1FA8]">info</span> Store Details
+            <span className="material-symbols-outlined mr-2 text-ushop-purple">info</span> Store Details
           </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -340,7 +340,7 @@ export default function CreateStorePage() {
         {/* Contact & Location Module */}
         <section className="bg-white p-6 md:p-8 rounded-3xl border shadow-sm space-y-6">
           <h2 className="text-xl font-bold text-gray-900 mb-2 flex items-center">
-             <span className="material-symbols-outlined mr-2 text-[#6B1FA8]">contact_page</span> Context & Contact
+             <span className="material-symbols-outlined mr-2 text-ushop-purple">contact_page</span> Context & Contact
           </h2>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

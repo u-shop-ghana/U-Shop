@@ -116,7 +116,7 @@ export default function SettingsForm({ initialStore }: { initialStore: Record<st
           <div>
             <label className="block text-sm font-semibold text-gray-700 mb-1.5">Return Condition</label>
             <select
-              className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#6B1FA8]"
+              className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-ushop-purple"
               value={formData.returnCondition}
               onChange={(e) => setFormData({ ...formData, returnCondition: e.target.value })}
             >

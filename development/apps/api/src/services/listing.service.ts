@@ -2,6 +2,7 @@ import { prisma } from '../lib/prisma';
 import { Prisma } from '@prisma/client';
 import type { CreateListingInput, SearchListingsInput, UpdateListingInput } from '@ushop/shared';
 import { CacheService } from './cache.service';
+import crypto from 'crypto';
 
 export class ListingService {
   /**
@@ -10,8 +11,16 @@ export class ListingService {
    */
   static async searchListings(params: SearchListingsInput & { buyerUniversity?: string; categorySlug?: string }) {
     // 1. Try to fetch from cache first
-    // We stringify the params to create a unique ID for this specific search query
-    const cacheId = JSON.stringify(params);
+    // We normalize, sort, and stringify the params then hash to create a unique ID for this specific search query
+    const normalizedParams = Object.keys(params)
+      .filter((k) => params[k as keyof typeof params] !== undefined && params[k as keyof typeof params] !== null)
+      .sort()
+      .reduce((obj, key) => {
+        obj[key] = params[key as keyof typeof params];
+        return obj;
+      }, {} as Record<string, unknown>);
+      
+    const cacheId = crypto.createHash('sha256').update(JSON.stringify(normalizedParams)).digest('hex').slice(0, 16);
     const cachedResults = await CacheService.get<unknown[]>('search', cacheId);
     
     if (cachedResults) {
@@ -141,9 +150,11 @@ export class ListingService {
       JOIN "User" u ON s."userId" = u.id
       ${sqlConditions}
       ${orderBy}
-      LIMIT ${limit}
+      LIMIT $${++paramCount}
     `;
 
+    queryParams.push(limit);
+    
     interface RawListingResult {
       id: string;
       storeId: string;
@@ -183,11 +194,10 @@ export class ListingService {
       }
     }));
 
-    // 2. Store in cache for 5 minutes (300 seconds)
-    // We only cache if we have results (optional, but prevents caching empty states unnecessarily)
-    if (results.length > 0) {
-      await CacheService.set('search', cacheId, results, 300);
-    }
+    // 2. Store in cache for 5 minutes (300 seconds) for populated results, 
+    // or 30 seconds for empty results to prevent repeated DB hammering.
+    const ttl = results.length > 0 ? 300 : 30;
+    await CacheService.set('search', cacheId, results, ttl);
 
     return results;
   }

@@ -148,7 +148,7 @@ export default function DashboardPage() {
             </h3>
             <Link
               href="/dashboard/settings"
-              className="text-[#520f85] text-[11px] font-bold hover:underline"
+              className="text-ushop-purple-dark text-[11px] font-bold hover:underline"
             >
               EDIT
             </Link>
@@ -186,7 +186,7 @@ export default function DashboardPage() {
             </h3>
             <Link
               href="/dashboard/addresses"
-              className="text-[#520f85] text-[11px] font-bold hover:underline"
+              className="text-ushop-purple-dark text-[11px] font-bold hover:underline"
             >
               MANAGE
             </Link>
@@ -205,7 +205,7 @@ export default function DashboardPage() {
               </p>
               <Link
                 href="/dashboard/addresses"
-                className="text-xs text-[#520f85] font-semibold hover:underline"
+                className="text-xs text-ushop-purple-dark font-semibold hover:underline"
               >
                 + Add Address
               </Link>
@@ -219,7 +219,7 @@ export default function DashboardPage() {
             <h3 className="text-[11px] font-bold uppercase tracking-[0.1em] text-slate-400">
               Wallet Balance
             </h3>
-            <span className="material-symbols-outlined text-[#520f85] text-xl">
+            <span className="material-symbols-outlined text-ushop-purple-dark text-xl">
               account_balance_wallet
             </span>
           </div>
@@ -240,7 +240,7 @@ export default function DashboardPage() {
             <h3 className="text-[11px] font-bold uppercase tracking-[0.1em] text-slate-400">
               Newsletter
             </h3>
-            <span className="material-symbols-outlined text-[#520f85] text-xl">
+            <span className="material-symbols-outlined text-ushop-purple-dark text-xl">
               mail
             </span>
           </div>
@@ -257,9 +257,9 @@ export default function DashboardPage() {
           Show one banner based on priority: unverified → store promo.
           Uses the design's primary/5 background tint. ────────── */}
       {user.verificationStatus === "UNVERIFIED" && (
-        <div className="bg-[#520f85]/5 p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 rounded-xl">
+        <div className="bg-ushop-purple-dark/5 p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 rounded-xl">
           <div className="flex items-center gap-4">
-            <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center text-[#520f85] shadow-sm shrink-0">
+            <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center text-ushop-purple-dark shadow-sm shrink-0">
               <span className="material-symbols-outlined text-xl">
                 verified_user
               </span>
@@ -276,7 +276,7 @@ export default function DashboardPage() {
           </div>
           <Link
             href="/verify"
-            className="text-[11px] font-bold text-[#520f85] hover:text-[#D4009B] uppercase tracking-widest px-4 py-2 bg-white rounded-md shadow-sm transition-all whitespace-nowrap"
+            className="text-[11px] font-bold text-ushop-purple-dark hover:text-[#D4009B] uppercase tracking-widest px-4 py-2 bg-white rounded-md shadow-sm transition-all whitespace-nowrap"
           >
             Verify Now
           </Link>
@@ -287,7 +287,7 @@ export default function DashboardPage() {
       {user.store && (
         <div className="bg-gradient-to-r from-[#520f85]/5 to-[#D4009B]/5 p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 rounded-xl">
           <div className="flex items-center gap-4">
-            <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center text-[#520f85] shadow-sm shrink-0">
+            <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center text-ushop-purple-dark shadow-sm shrink-0">
               <span className="material-symbols-outlined text-xl">
                 storefront
               </span>
@@ -304,7 +304,7 @@ export default function DashboardPage() {
           </div>
           <Link
             href="/dashboard/store/settings"
-            className="text-[11px] font-bold text-[#520f85] hover:text-[#D4009B] uppercase tracking-widest px-4 py-2 bg-white rounded-md shadow-sm transition-all whitespace-nowrap"
+            className="text-[11px] font-bold text-ushop-purple-dark hover:text-[#D4009B] uppercase tracking-widest px-4 py-2 bg-white rounded-md shadow-sm transition-all whitespace-nowrap"
           >
             Manage Store
           </Link>
@@ -322,7 +322,7 @@ export default function DashboardPage() {
           </h2>
           <Link
             href="/dashboard/orders"
-            className="text-[#520f85] text-sm font-bold hover:underline"
+            className="text-ushop-purple-dark text-sm font-bold hover:underline"
           >
             See All Orders
           </Link>
@@ -399,7 +399,7 @@ export default function DashboardPage() {
                       <td className="py-4 text-right">
                         <Link
                           href={`/dashboard/orders/${order.orderId}`}
-                          className="text-[11px] font-bold text-[#520f85] hover:text-[#D4009B] uppercase tracking-widest"
+                          className="text-[11px] font-bold text-ushop-purple-dark hover:text-[#D4009B] uppercase tracking-widest"
                         >
                           {order.status.toUpperCase() === "DELIVERED"
                             ? "Details"
@@ -426,7 +426,7 @@ export default function DashboardPage() {
             </p>
             <Link
               href="/search"
-              className="inline-flex items-center gap-2 px-6 py-3 bg-[#520f85] text-white text-sm font-bold rounded-lg hover:bg-[#6B1FA8] transition-colors"
+              className="inline-flex items-center gap-2 px-6 py-3 bg-ushop-purple-dark text-white text-sm font-bold rounded-lg hover:bg-ushop-purple transition-colors"
             >
               <span className="material-symbols-outlined text-[18px]">
                 search
@@ -463,7 +463,7 @@ export default function DashboardPage() {
           </p>
           <Link
             href="/search"
-            className="inline-flex items-center gap-2 text-[#520f85] text-sm font-bold hover:underline"
+            className="inline-flex items-center gap-2 text-ushop-purple-dark text-sm font-bold hover:underline"
           >
             Browse All Products
             <span className="material-symbols-outlined text-[18px]">

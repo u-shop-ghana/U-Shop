@@ -79,11 +79,11 @@ export async function GET(request: NextRequest) {
       // This flag is set during signup in user_metadata.
       // If the user opted to verify as a student, send them to /verify.
       // Otherwise, send them to the home page.
-      const wantsVerification =
-        data.user.user_metadata?.wants_student_verification === true;
+      const wantsVerification = data.user.user_metadata?.wants_student_verification === true;
       const nextParam = searchParams.get("next");
+      const isRelativePath = (s: string) => /^\/[^/]/.test(s);
 
-      if (nextParam) {
+      if (nextParam && isRelativePath(nextParam)) {
         redirectPath = nextParam;
       } else if (wantsVerification) {
         redirectPath = "/verify?type=student";

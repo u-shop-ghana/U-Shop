@@ -93,24 +93,10 @@ router.post(
       });
 
       if (existingEmailUser) {
-        const avatarUrl = supabaseUser.user_metadata?.avatar_url || null;
-        const reLinkedUser = await prisma.user.update({
-          where: { id: existingEmailUser.id },
-          data: { 
-            supabaseId: supabaseUser.id, 
-            fullName: fullName,
-            ...(avatarUrl ? { avatarUrl } : {})
-          },
-          select: {
-            id: true,
-            email: true,
-            role: true,
-            verificationStatus: true,
-          }
+        res.status(409).json({
+          success: false,
+          error: { message: 'An account with this email already exists. Please log in.' },
         });
-        
-        logger.info({ userId: reLinkedUser.id, email }, 'Existing user re-linked to new Supabase Auth ID');
-        res.status(200).json({ success: true, data: reLinkedUser });
         return;
       }
 
@@ -217,8 +203,9 @@ router.post(
   authenticate,
   async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      const { imagePath, universityName } = req.body as {
+      const { imagePath, backImagePath, universityName } = req.body as {
         imagePath: string;
+        backImagePath?: string;
         universityName?: string;
       };
 
@@ -231,9 +218,27 @@ router.post(
         return;
       }
 
+      // Security Guard: Ensure user is only submitting an image from their own storage prefix folder
+      if (!imagePath.startsWith(`${req.user!.id}/`)) {
+        res.status(403).json({
+          success: false,
+          error: { message: 'Forbidden. imagePath must belong to your user ID prefix.' }
+        });
+        return;
+      }
+
+      if (backImagePath && !backImagePath.startsWith(`${req.user!.id}/`)) {
+        res.status(403).json({
+          success: false,
+          error: { message: 'Forbidden. backImagePath must belong to your user ID prefix.' }
+        });
+        return;
+      }
+
       await VerificationService.submitIdForReview(
         req.user!.id,
         imagePath,
+        backImagePath,
         universityName
       );
 

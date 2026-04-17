@@ -10,7 +10,9 @@
     "typecheck": "turbo typecheck",
     "clean": "turbo clean",
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\"",
-    "test": "turbo test"
+    "test": "turbo test",
+    "test:perf:artillery": "npx artillery run testing/performance-tests/artillery/load-test.yml",
+    "test:security:limit": "node testing/security-tests/penetration-tests/rate-limit-test.js"
   },
   "packageManager": "pnpm@9.15.0",
   "engines": {

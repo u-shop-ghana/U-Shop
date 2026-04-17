@@ -128,6 +128,7 @@ model User {
   verificationStatus VerificationStatus @default(UNVERIFIED)
   verificationType   VerificationType?
   studentIdImagePath      String?            // Supabase Storage path
+  studentIdBackImagePath  String?            // Supabase Storage path
   ghanaCardName           String?
   ghanaCardId             String?
   ghanaCardDob            DateTime?

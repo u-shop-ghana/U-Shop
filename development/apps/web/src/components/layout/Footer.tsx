@@ -60,7 +60,7 @@ export function Footer() {
                 href="https://facebook.com"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-9 h-9 rounded-full bg-gray-800 flex items-center justify-center hover:bg-[#6B1FA8] transition-colors"
+                className="w-9 h-9 rounded-full bg-gray-800 flex items-center justify-center hover:bg-ushop-purple transition-colors"
                 aria-label="Facebook"
               >
                 <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
@@ -71,7 +71,7 @@ export function Footer() {
                 href="https://x.com"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-9 h-9 rounded-full bg-gray-800 flex items-center justify-center hover:bg-[#6B1FA8] transition-colors"
+                className="w-9 h-9 rounded-full bg-gray-800 flex items-center justify-center hover:bg-ushop-purple transition-colors"
                 aria-label="X (Twitter)"
               >
                 <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
@@ -82,7 +82,7 @@ export function Footer() {
                 href="https://instagram.com"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-9 h-9 rounded-full bg-gray-800 flex items-center justify-center hover:bg-[#6B1FA8] transition-colors"
+                className="w-9 h-9 rounded-full bg-gray-800 flex items-center justify-center hover:bg-ushop-purple transition-colors"
                 aria-label="Instagram"
               >
                 <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
@@ -93,7 +93,7 @@ export function Footer() {
                 href="https://linkedin.com"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-9 h-9 rounded-full bg-gray-800 flex items-center justify-center hover:bg-[#6B1FA8] transition-colors"
+                className="w-9 h-9 rounded-full bg-gray-800 flex items-center justify-center hover:bg-ushop-purple transition-colors"
                 aria-label="LinkedIn"
               >
                 <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
@@ -203,7 +203,7 @@ export function Footer() {
         <div className="max-w-7xl mx-auto px-4 py-6">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-[#6B1FA8]/20 flex items-center justify-center">
+              <div className="w-10 h-10 rounded-full bg-ushop-purple/20 flex items-center justify-center">
                 <span className="material-symbols-outlined text-[#D4009B]">
                   mail
                 </span>
@@ -238,7 +238,7 @@ export function Footer() {
                       placeholder="Email Address"
                       disabled={status === "loading"}
                       className="px-4 py-2.5 bg-gray-800 border border-gray-700 text-white text-sm rounded-l-xl
-                        placeholder:text-gray-500 focus:outline-none focus:ring-1 focus:ring-[#6B1FA8]
+                        placeholder:text-gray-500 focus:outline-none focus:ring-1 focus:ring-ushop-purple
                         w-full disabled:opacity-50"
                     />
                     <button

@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import Image from "next/image";
+import { ListingCard, ListingCardProps } from "@/components/ui/ListingCard";
 // Note: If you don't have Badge component, we can use simple divs instead.
 
 // This runs entirely on the server
@@ -18,6 +19,20 @@ async function getStore(handle: string) {
   }
 }
 
+async function getStoreListings(storeId: string) {
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
+  try {
+    const res = await fetch(`${apiUrl}/api/v1/listings?storeId=${storeId}&limit=12`, {
+      next: { revalidate: 60 },
+    });
+    if (!res.ok) return [];
+    const json = await res.json();
+    return json.success ? json.data : [];
+  } catch {
+    return [];
+  }
+}
+
 export default async function PublicStorePage({ params }: { params: Promise<{ handle: string }> }) {
   const { handle } = await params;
   const store = await getStore(handle);
@@ -25,6 +40,8 @@ export default async function PublicStorePage({ params }: { params: Promise<{ ha
   if (!store) {
     notFound();
   }
+
+  const listings = await getStoreListings(store.id);
 
   // Determine Verification level UI tags
   const isVerifiedStore = store.user?.verificationStatus === "VERIFIED";
@@ -120,11 +137,38 @@ export default async function PublicStorePage({ params }: { params: Promise<{ ha
 
           {/* Listings Payload Grid */}
           <div className="w-full md:w-2/3 order-1 md:order-2">
-            <div className="bg-white rounded-2xl shadow-sm border p-6 text-center py-20">
-              <span className="material-symbols-outlined text-4xl text-gray-300 mb-3 block">inventory</span>
-              <h3 className="font-bold text-gray-900">Listings Integration Pending</h3>
-              <p className="text-gray-500 text-sm mt-1">Products will populate here soon.</p>
-            </div>
+            <h2 className="text-xl font-bold text-gray-900 mb-6">Store Listings</h2>
+            {listings.length === 0 ? (
+              <div className="bg-white rounded-2xl shadow-sm border p-6 text-center py-20 flex flex-col items-center justify-center">
+                <div className="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center mb-4">
+                  <span className="material-symbols-outlined text-4xl text-gray-400">inventory_2</span>
+                </div>
+                <h3 className="text-lg font-bold text-gray-900">No listings yet</h3>
+                <p className="text-gray-500 text-sm mt-1 max-w-sm">
+                  This store hasn't added any products yet, but check back soon!
+                </p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+                {listings.map((item: any) => (
+                  <ListingCard
+                    key={item.id}
+                    id={item.id}
+                    title={item.title}
+                    slug={item.slug}
+                    price={Number(item.price)}
+                    condition={item.condition}
+                    thumbnailUrl={item.images?.[0] || "/assets/images/placeholder.webp"}
+                    stock={item.stock}
+                    store={{
+                      handle: store.handle,
+                      name: store.name,
+                      isVerified: store.user?.verificationStatus === "VERIFIED"
+                    }}
+                  />
+                ))}
+              </div>
+            )}
           </div>
         </div>
       </div>

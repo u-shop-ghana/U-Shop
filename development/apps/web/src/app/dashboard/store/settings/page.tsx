@@ -1,25 +1,13 @@
 import { apiFetch } from "@/lib/api-server";
-import { cookies } from "next/headers";
 import SettingsForm from "./SettingsForm";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
 
 // Server action style / SSR fetch for current store
 async function fetchMyStore() {
-  // Using explicit API fetch passing the cookie over dynamically to our Express API
-  const cookieStore = await cookies();
-  const sessionToken = cookieStore.get("sb-access-token")?.value || cookieStore.get("sb-session")?.value; // Depending on Supabase SSR config
-  
-  if (!sessionToken) return null;
-
   try {
     // Instead of a dedicated /my-store route, we parse from user payload
-    const userRes = await apiFetch("/api/v1/users/me", {
-      headers: {
-         // Note: Express API validate token hook
-         Authorization: `Bearer ${sessionToken}`
-      }
-    });
+    const userRes = await apiFetch("/api/v1/users/me");
 
     if (!userRes.success || !userRes.data?.store) return null;
     return userRes.data.store;

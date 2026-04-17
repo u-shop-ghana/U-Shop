@@ -1,5 +1,4 @@
 import { apiFetch } from "@/lib/api-server";
-import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
@@ -7,15 +6,8 @@ import { formatCurrency } from "@/lib/utils";
 
 // Re-use logic fetching active bounds
 async function fetchStoreAndListings() {
-  const cookieStore = await cookies();
-  const sessionToken = cookieStore.get("sb-access-token")?.value || cookieStore.get("sb-session")?.value;
-  
-  if (!sessionToken) return { store: null, listings: [] };
-
   try {
-    const userRes = await apiFetch("/api/v1/users/me", {
-      headers: { Authorization: `Bearer ${sessionToken}` }
-    });
+    const userRes = await apiFetch("/api/v1/users/me");
 
     if (!userRes.success || !userRes.data?.store) return { store: null, listings: [] };
     const storeId = userRes.data.store.id;

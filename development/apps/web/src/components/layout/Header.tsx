@@ -3,6 +3,7 @@
 import { useState, useCallback, useRef, useEffect } from "react";
 import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
+import Image from "next/image";
 import { SearchBar } from "../cards/SearchBar";
 import { createClient } from "@/lib/supabase/client";
 
@@ -122,15 +123,15 @@ export function Header({
       <div className="max-w-7xl mx-auto px-4 py-3">
         <div className="flex items-center gap-4 md:gap-6">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-0 shrink-0">
-            <div className="bg-red-600 w-8 h-8 md:w-9 md:h-9 flex items-center justify-center rounded-lg">
-              <span className="text-white font-extrabold text-base md:text-lg">
-                U
-              </span>
-            </div>
-            <span className="text-[#0f172a] font-extrabold text-lg md:text-xl ml-1">
-              shop
-            </span>
+          <Link href="/" className="flex items-center shrink-0">
+            <Image
+              src="/assets/logos/web/logo-300w.png"
+              alt="U-Shop Logo"
+              width={140}
+              height={40}
+              className="object-contain"
+              priority
+            />
           </Link>
 
           {/* Search bar — hidden on mobile, shown on md+ */}
@@ -143,7 +144,7 @@ export function Header({
             {/* Wishlist — hidden on mobile (shown in hamburger) */}
             <Link
               href="/wishlist"
-              className="relative hidden sm:flex items-center gap-1 text-gray-600 hover:text-[#6B1FA8] transition-colors"
+              className="relative hidden sm:flex items-center gap-1 text-gray-600 hover:text-ushop-purple transition-colors"
             >
               <span className="material-symbols-outlined text-2xl">
                 favorite
@@ -161,7 +162,7 @@ export function Header({
             {/* Cart */}
             <Link
               href="/cart"
-              className="relative flex items-center gap-1 text-gray-600 hover:text-[#6B1FA8] transition-colors"
+              className="relative flex items-center gap-1 text-gray-600 hover:text-ushop-purple transition-colors"
             >
               <span className="material-symbols-outlined text-2xl">
                 shopping_cart
@@ -181,7 +182,7 @@ export function Header({
               <div className="relative" ref={dropdownRef}>
                 <button
                   onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
-                  className="flex items-center gap-1.5 text-sm font-medium text-gray-600 hover:text-[#6B1FA8] transition-colors"
+                  className="flex items-center gap-1.5 text-sm font-medium text-gray-600 hover:text-ushop-purple transition-colors"
                 >
                   <span className="material-symbols-outlined text-2xl">
                     account_circle
@@ -199,14 +200,14 @@ export function Header({
                     <Link
                       href="/dashboard"
                       onClick={() => setProfileDropdownOpen(false)}
-                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#6B1FA8]"
+                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-ushop-purple"
                     >
                       Profile Dashboard
                     </Link>
                     <Link
                       href="/dashboard/orders"
                       onClick={() => setProfileDropdownOpen(false)}
-                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#6B1FA8]"
+                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-ushop-purple"
                     >
                       My Orders
                     </Link>
@@ -214,7 +215,7 @@ export function Header({
                       <Link
                         href="/dashboard/store"
                         onClick={() => setProfileDropdownOpen(false)}
-                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#6B1FA8]"
+                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-ushop-purple"
                       >
                         My Store
                       </Link>
@@ -233,7 +234,7 @@ export function Header({
               <div className="hidden sm:flex items-center gap-2">
                 <Link
                   href="/login"
-                  className="text-sm font-bold text-gray-700 hover:text-[#6B1FA8] transition-colors"
+                  className="text-sm font-bold text-gray-700 hover:text-ushop-purple transition-colors"
                 >
                   Login
                 </Link>
@@ -289,8 +290,8 @@ export function Header({
                   onClick={closeMobileMenu}
                   className={`text-sm font-medium transition-colors py-2 md:py-1 w-full md:w-auto ${
                     isActive(link.href)
-                      ? "text-[#6B1FA8] font-bold"
-                      : "text-gray-700 hover:text-[#6B1FA8]"
+                      ? "text-ushop-purple font-bold"
+                      : "text-gray-700 hover:text-ushop-purple"
                   }`}
                 >
                   {link.label}
@@ -302,7 +303,7 @@ export function Header({
                 <Link
                   href="/wishlist"
                   onClick={closeMobileMenu}
-                  className="flex items-center gap-2 text-sm font-medium text-gray-700 hover:text-[#6B1FA8] py-2 transition-colors"
+                  className="flex items-center gap-2 text-sm font-medium text-gray-700 hover:text-ushop-purple py-2 transition-colors"
                 >
                   <span className="material-symbols-outlined text-lg">
                     favorite
@@ -318,7 +319,7 @@ export function Header({
                   <Link
                     href="/dashboard"
                     onClick={closeMobileMenu}
-                    className="flex items-center gap-2 text-sm font-bold text-gray-700 hover:text-[#6B1FA8] py-2 transition-colors"
+                    className="flex items-center gap-2 text-sm font-bold text-gray-700 hover:text-ushop-purple py-2 transition-colors"
                   >
                     <span className="material-symbols-outlined text-lg">
                       account_circle
@@ -330,14 +331,14 @@ export function Header({
                     <Link
                       href="/login"
                       onClick={closeMobileMenu}
-                      className="text-sm font-bold text-gray-700 hover:text-[#6B1FA8] py-2 transition-colors"
+                      className="text-sm font-bold text-gray-700 hover:text-ushop-purple py-2 transition-colors"
                     >
                       Login
                     </Link>
                     <Link
                       href="/register"
                       onClick={closeMobileMenu}
-                      className="text-sm font-bold text-[#D4009B] hover:text-[#6B1FA8] py-2 transition-colors"
+                      className="text-sm font-bold text-[#D4009B] hover:text-ushop-purple py-2 transition-colors"
                     >
                       Sign Up
                     </Link>
@@ -350,7 +351,7 @@ export function Header({
             <Link
               href="/student-deals"
               onClick={closeMobileMenu}
-              className="flex items-center gap-1 text-sm font-bold text-[#D4009B] hover:text-[#6B1FA8] transition-colors py-2 md:py-1 mt-2 md:mt-0"
+              className="flex items-center gap-1 text-sm font-bold text-[#D4009B] hover:text-ushop-purple transition-colors py-2 md:py-1 mt-2 md:mt-0"
             >
               <span className="material-symbols-outlined text-base">
                 school

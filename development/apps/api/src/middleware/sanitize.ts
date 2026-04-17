@@ -35,3 +35,31 @@ export function sanitizeRichText(input: string): string {
     FORBID_ATTR: ['onerror', 'onload', 'onclick', 'style'],
   });
 }
+
+import type { Request, Response, NextFunction } from 'express';
+
+// ─── autoSanitizeBody ───────────────────────────────────────────
+// Centralized Express Middleware to sanitize common text fields.
+export function autoSanitizeBody(req: Request, res: Response, next: NextFunction): void {
+  if (!req.body || typeof req.body !== 'object') {
+    return next();
+  }
+
+  // Plain Text Fields
+  const plainTextFields = ['name', 'handle', 'bio', 'title', 'ghanaCardName', 'fullName'];
+  for (const field of plainTextFields) {
+    if (typeof req.body[field] === 'string') {
+      req.body[field] = sanitizePlainText(req.body[field]);
+    }
+  }
+
+  // Rich Text Fields
+  const richTextFields = ['description', 'policyNotes'];
+  for (const field of richTextFields) {
+    if (typeof req.body[field] === 'string') {
+      req.body[field] = sanitizeRichText(req.body[field]);
+    }
+  }
+
+  next();
+}

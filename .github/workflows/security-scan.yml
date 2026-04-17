@@ -1,0 +1,50 @@
+name: Security Vulnerability Scan
+
+on:
+  schedule:
+    # Run a full automated security scan once a week on Sundays at midnight
+    - cron: '0 0 * * 0'
+  workflow_dispatch:
+    # Allow manual triggering of the scan from the UI
+
+jobs:
+  zap_scan:
+    name: OWASP ZAP Baseline Scan
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Postgres Database
+        run: |
+          # Ideally, you'd spin up an ephemeral containerized version of your stack here
+          # Since the app needs to be running for ZAP to scan it, we assume
+          # there is a staging URL, or we spin up Next.js/Express locally here.
+          echo "Setting up ephemeral test environment..."
+          
+      # In a real environment, you'd build and start the dev server here in the background
+      # e.g., pnpm install, pnpm run dev &
+      # For this workflow, assuming we are testing against a deployed staging branch:
+      
+      - name: OWASP ZAP Baseline Scan
+        uses: zaproxy/action-baseline@v0.12.0
+        with:
+          # Target URL to scan (can be localhost if server was started in CI, or your staging URL)
+          target: 'https://staging.ushop-gh.com'
+          
+          # Report configuration
+          cmd_options: '-a'
+          
+          # Fails action if high-level vulnerabilities are found
+          fail_action: true
+          
+          # Allows overriding failing rules or ignoring false positives via a config file
+          # rules_file_name: '.zap/rules.tsv' 
+          
+      - name: Upload ZAP Report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: zap-scan-report
+          path: report_html.html

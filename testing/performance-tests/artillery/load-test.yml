@@ -1,0 +1,41 @@
+config:
+  # Base URL of the API to test
+  target: "http://127.0.0.1:4000/api/v1"
+  phases:
+    - duration: 60
+      arrivalRate: 5
+      rampTo: 50
+      name: "Ramp up load"
+    - duration: 120
+      arrivalRate: 50
+      name: "Sustained peak load"
+  environments:
+    production:
+      target: "https://api.ushop-gh.com/api/v1"
+  plugins:
+    expect: {} 
+    # expect plugin allows us to write assertions on responses
+
+scenarios:
+  - name: "Health Check and Basic Discovery"
+    flow:
+      - get:
+          url: "/health"
+          expect:
+            - statusCode: 200
+            - hasProperty: "status"
+
+      # Pause for a bit before discovering items
+      - think: 2
+
+      - get:
+          url: "/stores"
+          expect:
+            - statusCode: 200
+
+      - think: 3
+    
+      - get:
+          url: "/listings?page=1&limit=20"
+          expect:
+            - statusCode: 200
