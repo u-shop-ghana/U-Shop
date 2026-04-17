@@ -52,7 +52,8 @@ vi.mock('../../middleware/authenticate', async (importOriginal) => {
   };
 });
 
-let app: Express.Application;
+import type { Application } from 'express';
+let app: Application;
 
 beforeAll(async () => {
   const module = await import('../../app');
