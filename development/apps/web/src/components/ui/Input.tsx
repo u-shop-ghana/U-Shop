@@ -65,7 +65,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
             className={`
               w-full rounded-xl border bg-white text-gray-900 transition-all
               placeholder:text-gray-400
-              focus:outline-none focus:ring-2 focus:ring-[#6B1FA8] focus:border-[#6B1FA8]
+              focus:outline-none focus:ring-2 focus:ring-ushop-purple focus:border-ushop-purple
               disabled:bg-gray-50 disabled:text-gray-400 disabled:cursor-not-allowed
               ${error ? "border-red-400 focus:ring-red-400 focus:border-red-400" : "border-gray-200 hover:border-gray-300"}
               ${leftIcon ? "pl-10" : "pl-4"}

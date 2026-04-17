@@ -7,6 +7,7 @@ export class StoreController {
    */
   static async getAllStores(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
+      res.set('Cache-Control', 'public, max-age=60, s-maxage=300, stale-while-revalidate=600');
       const page = parseInt(req.query.page as string) || 1;
       const limit = parseInt(req.query.limit as string) || 20;
       const search = req.query.q as string | undefined;
@@ -28,6 +29,7 @@ export class StoreController {
    */
   static async createStore(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
+      res.set('Cache-Control', 'no-store, no-cache, must-revalidate');
       if (!req.user?.id) {
         res.status(401).json({ success: false, error: { message: 'Unauthorized' } });
         return;
@@ -65,6 +67,7 @@ export class StoreController {
    */
   static async updateStore(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
+      res.set('Cache-Control', 'no-store, no-cache, must-revalidate');
       const storeId = req.params.id as string;
       
       if (!req.user?.id) {
@@ -95,6 +98,7 @@ export class StoreController {
    */
   static async getStore(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
+      res.set('Cache-Control', 'public, max-age=60, s-maxage=300, stale-while-revalidate=600');
       const handle = req.params.handle as string;
       const store = await StoreService.getStoreByHandle(handle);
 
@@ -117,6 +121,7 @@ export class StoreController {
    */
   static async checkHandle(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
+      res.set('Cache-Control', 'public, max-age=60, s-maxage=300, stale-while-revalidate=600');
       const handle = req.params.handle as string;
       
       // Extremely quick bounce checking

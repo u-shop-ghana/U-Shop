@@ -73,7 +73,7 @@ export function SearchBar({
             onFocus={() => query.length > 0 && setShowSuggestions(true)}
             className="w-full pl-12 pr-4 py-3 bg-white border border-gray-200 rounded-l-xl
               text-gray-900 text-sm placeholder:text-gray-500
-              focus:outline-none focus:ring-2 focus:ring-[#6B1FA8] focus:border-[#6B1FA8]
+              focus:outline-none focus:ring-2 focus:ring-ushop-purple focus:border-ushop-purple
               transition-all"
             placeholder={placeholder}
           />
@@ -82,7 +82,7 @@ export function SearchBar({
         {/* Search button matching the header design */}
         <button
           type="submit"
-          className="px-6 bg-[#6B1FA8] text-white rounded-r-xl hover:bg-[#420c6b]
+          className="px-6 bg-ushop-purple text-white rounded-r-xl hover:bg-[#420c6b]
             transition-colors flex items-center justify-center"
           aria-label="Submit search"
         >

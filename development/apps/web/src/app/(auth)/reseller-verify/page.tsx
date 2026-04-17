@@ -121,7 +121,7 @@ export default function ResellerVerifyPage() {
         <p className="text-gray-500 text-center max-w-md mb-8">
           Your Reseller verification documents have been securely uploaded. Our team will review them shortly.
         </p>
-        <Link href="/dashboard" className="text-[#6B1FA8] font-semibold hover:underline">
+        <Link href="/dashboard" className="text-ushop-purple font-semibold hover:underline">
           Return to Dashboard
         </Link>
       </div>
@@ -133,7 +133,7 @@ export default function ResellerVerifyPage() {
       <div className="flex flex-col items-center justify-center mb-10 pb-8 border-b">
         <Link href="/" className="inline-block mb-6">
           <Image
-            src="/assets/logo.svg"
+            src="/assets/logos/web/logo-300w.png"
             alt="U-Shop Logo"
             width={160}
             height={48}
@@ -159,7 +159,7 @@ export default function ResellerVerifyPage() {
         {/* Personal Details */}
         <section className="bg-white p-6 md:p-8 rounded-3xl border shadow-sm space-y-6">
           <h2 className="text-xl font-bold text-gray-900 mb-2 flex items-center">
-            <span className="material-symbols-outlined mr-2 text-[#6B1FA8]">badge</span> Identity Details
+            <span className="material-symbols-outlined mr-2 text-ushop-purple">badge</span> Identity Details
           </h2>
 
           <Input 
@@ -192,14 +192,14 @@ export default function ResellerVerifyPage() {
         {/* Document Images */}
         <section className="bg-white p-6 md:p-8 rounded-3xl border shadow-sm space-y-6">
           <h2 className="text-xl font-bold text-gray-900 mb-2 flex items-center">
-            <span className="material-symbols-outlined mr-2 text-[#6B1FA8]">document_scanner</span> Secure Document Upload
+            <span className="material-symbols-outlined mr-2 text-ushop-purple">document_scanner</span> Secure Document Upload
           </h2>
           <p className="text-sm text-gray-500">Capture clear, unblurred photos of the front and back side of your physical card.</p>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
               <p className="block text-sm font-semibold text-gray-700 mb-2">Front Side</p>
-              <div className="h-40 flex-1 bg-gray-50 border-2 border-dashed border-gray-300 rounded-2xl flex flex-col items-center justify-center overflow-hidden group relative hover:border-[#6B1FA8] transition-colors">
+              <div className="h-40 flex-1 bg-gray-50 border-2 border-dashed border-gray-300 rounded-2xl flex flex-col items-center justify-center overflow-hidden group relative hover:border-ushop-purple transition-colors">
                   {frontImage ? (
                     <Image src={URL.createObjectURL(frontImage)} alt="Front ID Preview" fill className="object-cover" />
                   ) : (
@@ -214,7 +214,7 @@ export default function ResellerVerifyPage() {
 
             <div>
               <p className="block text-sm font-semibold text-gray-700 mb-2">Back Side</p>
-              <div className="h-40 flex-1 bg-gray-50 border-2 border-dashed border-gray-300 rounded-2xl flex flex-col items-center justify-center overflow-hidden group relative hover:border-[#6B1FA8] transition-colors">
+              <div className="h-40 flex-1 bg-gray-50 border-2 border-dashed border-gray-300 rounded-2xl flex flex-col items-center justify-center overflow-hidden group relative hover:border-ushop-purple transition-colors">
                   {backImage ? (
                     <Image src={URL.createObjectURL(backImage)} alt="Back ID Preview" fill className="object-cover" />
                   ) : (

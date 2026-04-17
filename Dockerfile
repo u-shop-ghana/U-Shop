@@ -9,9 +9,9 @@ WORKDIR /app
 # Copy the entire monorepo so pnpm can resolve workspace:* dependencies
 COPY . .
 
-# Install all workspace dependencies (no lockfile — skip frozen check)
+# Install all workspace dependencies 
 WORKDIR /app/development
-RUN pnpm install --no-frozen-lockfile
+RUN pnpm install --frozen-lockfile
 
 # Generate Prisma client and compile TypeScript
 WORKDIR /app/development/apps/api

@@ -98,6 +98,7 @@ export class VerificationService {
   static async submitIdForReview(
     userId: string,
     imageStoragePath: string,
+    backImagePath?: string,
     universityName?: string
   ): Promise<void> {
     // Only allow submission if user is currently UNVERIFIED or REJECTED.
@@ -125,6 +126,7 @@ export class VerificationService {
       data: {
         verificationStatus: 'PENDING',
         studentIdImagePath: imageStoragePath,
+        studentIdBackImagePath: backImagePath ?? null,
         universityName: universityName ?? undefined,
         // Clear any previous rejection reason
         rejectionReason: null,
@@ -168,6 +170,7 @@ export class VerificationService {
         rejectionReason: reason,
         // Clear the image path — they'll need to re-upload
         studentIdImagePath: null,
+        studentIdBackImagePath: null,
       },
     });
 

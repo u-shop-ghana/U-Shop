@@ -7,7 +7,6 @@ node_modules/
 # Environment
 .env
 .env.local
-.env.example
 
 # Prisma
 prisma/migrations/*.sql.bak

@@ -25,14 +25,14 @@ export function Toggle({
 }: ToggleProps) {
   return (
     <div
-      className={`flex items-center justify-between p-4 bg-[#6B1FA8]/10 border border-[#6B1FA8]/30 rounded-xl ${
+      className={`flex items-center justify-between p-4 bg-ushop-purple/10 border border-ushop-purple/30 rounded-xl ${
         disabled ? "opacity-50 cursor-not-allowed" : ""
       } ${className}`}
     >
       {/* Label section with optional icon */}
       <div className="flex gap-3 items-center">
         {icon && (
-          <span className="material-symbols-outlined text-[#6B1FA8]">
+          <span className="material-symbols-outlined text-ushop-purple">
             {icon}
           </span>
         )}
@@ -63,7 +63,7 @@ export function Toggle({
             after:content-[''] after:absolute after:top-[2px] after:left-[2px]
             after:bg-white after:border-gray-300 after:border after:rounded-full
             after:h-5 after:w-5 after:transition-all
-            peer-checked:bg-[#6B1FA8]`}
+            peer-checked:bg-ushop-purple`}
         />
       </label>
     </div>

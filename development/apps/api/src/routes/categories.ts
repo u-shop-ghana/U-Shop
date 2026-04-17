@@ -18,6 +18,7 @@ interface CategoryWithCount {
 // Retrieve a list of product categories mapping marketplace taxonomy natively.
 router.get('/', async (_req: Request, res: Response): Promise<void> => {
   try {
+    res.set('Cache-Control', 'public, max-age=60, s-maxage=300, stale-while-revalidate=600');
     // 1. Check cache first
     const cachedCategories = await CacheService.get<CategoryWithCount[]>('taxonomy', 'categories');
     if (cachedCategories) {

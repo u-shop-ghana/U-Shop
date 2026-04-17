@@ -27,11 +27,11 @@ const baseStyles =
 // Variant-specific styles matching the UI kit color tokens
 const variantStyles = {
   primary:
-    "bg-[#6B1FA8] text-white hover:bg-[#420c6b] focus:ring-[#6B1FA8] shadow-lg shadow-[#6B1FA8]/20",
+    "bg-ushop-purple text-white hover:bg-[#420c6b] focus:ring-ushop-purple shadow-lg shadow-ushop-purple/20",
   secondary:
     "bg-[#D4009B] text-white hover:bg-[#b50f7e] focus:ring-[#D4009B] shadow-lg shadow-[#D4009B]/20",
   outline:
-    "bg-transparent border-2 border-[#6B1FA8] text-[#6B1FA8] hover:bg-[#6B1FA8]/10 focus:ring-[#6B1FA8]",
+    "bg-transparent border-2 border-ushop-purple text-ushop-purple hover:bg-ushop-purple/10 focus:ring-ushop-purple",
   ghost:
     "bg-transparent text-gray-700 hover:bg-gray-100 focus:ring-gray-400",
   danger:

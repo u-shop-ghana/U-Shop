@@ -23,7 +23,7 @@ const app: FirebaseApp = getApps().length === 0 ? initializeApp(firebaseConfig) 
 let messaging: Messaging | undefined;
 let analytics: Analytics | undefined;
 
-if (typeof window !== "undefined") {
+if (typeof window !== "undefined" && firebaseConfig.apiKey) {
   // FCM is supported in most modern browsers.
   messaging = getMessaging(app);
   

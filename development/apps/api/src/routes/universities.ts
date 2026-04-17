@@ -26,6 +26,7 @@ router.get(
   '/',
   async (_req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
+      res.set('Cache-Control', 'public, max-age=60, s-maxage=300, stale-while-revalidate=600');
       // 1. Try to fetch from cache first
       const cachedUniversities = await CacheService.get<UniversityBase[]>('universities', 'all');
       if (cachedUniversities) {

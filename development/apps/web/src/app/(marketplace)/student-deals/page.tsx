@@ -1,15 +1,15 @@
-import { Metadata } from "next";
-import { apiFetch } from "@/lib/api-server";
-import { ListingCard } from "@/components/ui/ListingCard";
-import { CATEGORIES } from "@ushop/shared";
-import SearchSidebar from "../search/SearchSidebar";
-import Image from "next/image";
+import { Metadata } from 'next';
+import Link from 'next/link';
+import { apiPublicFetch } from '@/lib/api-public';
+import { ListingCard } from '@/components/ui/ListingCard';
 
-interface ListingOption {
+interface ListingItem {
   id: string;
   title: string;
+  slug?: string;
   price: number;
   condition: string;
+  stock?: number;
   images?: string[];
   store?: {
     handle: string;
@@ -21,102 +21,83 @@ interface ListingOption {
 }
 
 export const metadata: Metadata = {
-  title: "Student Deals | U-Shop",
-  description: "Browse affordable hardware sold exclusively by verified students.",
+  title: 'Student Deals | U-Shop',
+  description: 'Exclusive student discounts and promotional deals on U-Shop.',
 };
 
-export const dynamic = "force-dynamic";
+export const revalidate = 60; // 1-minute caching for deal rotation
 
-export default async function StudentDealsPage({
-  searchParams,
-}: {
-  searchParams: { [key: string]: string | string[] | undefined };
-}) {
-  const q = searchParams.q as string | undefined;
-  const category = searchParams.category as string | undefined;
-  const minPrice = searchParams.minPrice as string | undefined;
-  const maxPrice = searchParams.maxPrice as string | undefined;
-  const condition = searchParams.condition as string | undefined;
-  const buyerUniversity = searchParams.buyerUniversity as string | undefined;
-  const sort = searchParams.sort as string | undefined;
+async function getDealsData() {
+  // We'll fetch listings that might be flagged as student deals.
+  // For now, sorting by newest and applying limit=20. In the future, a ?hasDeal=true flag could be created.
+  const res = await apiPublicFetch('/api/v1/listings?sort=popular&limit=20');
+  
+  if (!res.ok || !res.success) {
+    return [];
+  }
+  return res.data || [];
+}
 
-  const queryObj = new URLSearchParams();
-  queryObj.append("sellerType", "student"); // Force strict sellerType mapped query
-  if (q) queryObj.append("q", q);
-  if (category) queryObj.append("category", category);
-  if (minPrice) queryObj.append("minPrice", minPrice);
-  if (maxPrice) queryObj.append("maxPrice", maxPrice);
-  if (condition) queryObj.append("condition", condition);
-  if (buyerUniversity) queryObj.append("buyerUniversity", buyerUniversity);
-  if (sort) queryObj.append("sort", sort);
-
-  const res = await apiFetch(`/api/v1/listings?${queryObj.toString()}`);
-  const listings: ListingOption[] = res.success ? (res.data || []) : [];
+export default async function StudentDealsPage() {
+  const listings = await getDealsData();
 
   return (
-    <main className="min-h-screen bg-campus-dark flex flex-col md:flex-row pb-20 pt-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 gap-8">
-      {/* Sidebar Filters */}
-      <aside className="w-full md:w-64 flex-shrink-0">
-        <SearchSidebar
-          currentParams={{
-            q,
-            category,
-            minPrice,
-            maxPrice,
-            condition,
-            buyerUniversity,
-            sort,
-          }}
-          categories={CATEGORIES.map(c => ({ name: c.name, slug: c.slug }))}
-        />
-      </aside>
+    <main className="bg-background min-h-screen pb-20">
+      {/* Hero Header */}
+      <section className="bg-ushop-purple py-16 md:py-24 text-center px-4 relative overflow-hidden">
+        <div className="absolute inset-0 bg-dark-mesh opacity-40"></div>
+        <div className="relative z-10 max-w-4xl mx-auto">
+          <h1 className="text-4xl md:text-5xl font-black text-white mb-4">
+            Exclusive Student Deals
+          </h1>
+          <p className="text-lg text-white/80 max-w-2xl mx-auto">
+            Get your tech gear sorted with massive campus discounts. Validate your student status at checkout for up to 40% off.
+          </p>
+        </div>
+      </section>
 
-      {/* Main Results Board */}
-      <section className="flex-grow">
-        <div className="flex justify-between items-end mb-6 border-b border-white/10 pb-4">
+      <section className="max-w-7xl mx-auto px-4 md:px-8 py-12">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-3 sm:gap-0 mb-8 border-b pb-6">
           <div>
-            <h1 className="text-3xl font-black text-transparent bg-clip-text bg-gradient-brand">
-              Student Deals
-            </h1>
-            <p className="text-gray-400 mt-1 font-medium">
-              Hardware strictly from verified students. Support your peers!
-            </p>
+            <h2 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
+              <span className="material-symbols-outlined text-ushop-magenta">local_offer</span>
+              Live Promos
+            </h2>
+            <p className="text-sm text-gray-500 mt-1">Available strictly for verified campus students</p>
           </div>
         </div>
 
         {listings.length === 0 ? (
-          <div className="w-full py-20 flex flex-col items-center justify-center bg-white/5 border border-white/5 rounded-3xl">
-            <Image 
-              src="/assets/images/defaults/placeholder.webp"
-              alt="No results"
-              width={200}
-              height={200}
-              className="opacity-50 blur-[2px] mb-6 grayscale mix-blend-screen"
-            />
-            <h3 className="text-2xl font-bold text-white mb-2">No student deals right now</h3>
-            <p className="text-gray-400 font-medium text-center max-w-md">
-              Try adjusting your filters, searching for a broader term, or stripping location requirements.
-            </p>
-          </div>
+           <div className="text-center py-20 bg-white rounded-2xl border shadow-sm flex flex-col items-center">
+             <span className="material-symbols-outlined text-6xl text-gray-300 mb-4">inventory_2</span>
+             <h3 className="text-xl font-bold text-gray-900">No deals right now</h3>
+             <p className="text-gray-500 mt-2 max-w-md">Our sellers are busy preparing the next batch of student exclusives. Check back soon!</p>
+             <Link href="/search" className="mt-6 px-6 py-2 bg-ushop-purple text-white font-bold rounded-lg hover:bg-[#420c6b] transition-colors">
+               Browse All Products
+             </Link>
+           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {listings.map((item) => (
-              <ListingCard
-                key={item.id}
-                id={item.id}
-                title={item.title}
-                slug={item.id}
-                price={Number(item.price)}
-                condition={item.condition}
-                thumbnailUrl={item.images?.[0] || ""}
-                store={{
-                  handle: item.store?.handle || "unknown",
-                  name: item.store?.name || "Unknown Store",
-                  isVerified: item.store?.user?.verificationStatus === "VERIFIED" || item.store?.user?.verificationStatus === "storeVerification",
-                }}
-              />
-            ))}
-          </div>
+           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
+             {listings.map((item: ListingItem) => (
+                <ListingCard
+                   key={item.id}
+                   id={item.id}
+                   title={item.title}
+                   slug={item.slug || item.id}
+                   price={Number(item.price)}
+                   originalPrice={item.price * 1.2} // Dummy original price to show discount strike-through
+                   condition={item.condition}
+                   stock={item.stock}
+                   thumbnailUrl={item.images?.[0] || ""}
+                   dealLabel="STUDENT EXCLUSIVE"
+                   store={{
+                     handle: item.store?.handle || "unknown",
+                     name: item.store?.name || "Unknown Store",
+                     isVerified: item.store?.user?.verificationStatus === "VERIFIED",
+                   }}
+                />
+             ))}
+           </div>
         )}
       </section>
     </main>

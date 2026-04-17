@@ -41,7 +41,7 @@ export default function DashboardLayout({
       <div className="flex min-h-screen bg-slate-50">
         <div className="flex-1 flex items-center justify-center">
           <div className="flex flex-col items-center gap-4">
-            <div className="w-10 h-10 border-2 border-[#520f85] border-t-transparent rounded-full animate-spin" />
+            <div className="w-10 h-10 border-2 border-ushop-purple-dark border-t-transparent rounded-full animate-spin" />
             <p className="text-slate-400 text-sm">Loading your dashboard...</p>
           </div>
         </div>
@@ -66,12 +66,8 @@ export default function DashboardLayout({
   // Sellers see store management links; buyers see the "Become a Seller" CTA.
   const primaryNav: NavItem[] = [
     { href: "/dashboard", icon: "person", label: "Overview" },
-    { href: "/dashboard/inbox", icon: "mail", label: "Inbox" },
     { href: "/dashboard/orders", icon: "inventory_2", label: "My Orders" },
-    { href: "/dashboard/reviews", icon: "rate_review", label: "Pending Reviews" },
-    { href: "/dashboard/vouchers", icon: "confirmation_number", label: "Vouchers" },
     { href: "/dashboard/saved", icon: "favorite", label: "Saved Items" },
-    { href: "/dashboard/followed", icon: "storefront", label: "Followed Sellers" },
   ];
 
   // Seller-specific nav items — shown below a separator
@@ -106,8 +102,8 @@ export default function DashboardLayout({
         onClick={() => setSidebarOpen(false)}
         className={`flex items-center gap-4 px-8 py-3.5 text-sm border-l-[3px] transition-all ${
           active
-            ? "bg-violet-50 text-[#520f85] font-semibold border-[#520f85]"
-            : "text-slate-500 border-transparent hover:bg-slate-50 hover:text-[#520f85]"
+            ? "bg-violet-50 text-ushop-purple-dark font-semibold border-ushop-purple-dark"
+            : "text-slate-500 border-transparent hover:bg-slate-50 hover:text-ushop-purple-dark"
         }`}
       >
         <span className="material-symbols-outlined text-[22px]">
@@ -257,7 +253,7 @@ export default function DashboardLayout({
           {user.verificationStatus === "UNVERIFIED" && (
             <Link
               href="/verify"
-              className="flex items-center gap-1.5 px-3 py-1.5 bg-violet-50 border border-violet-200 rounded-full text-[#520f85] text-xs font-bold hover:bg-violet-100 transition-colors"
+              className="flex items-center gap-1.5 px-3 py-1.5 bg-violet-50 border border-violet-200 rounded-full text-ushop-purple-dark text-xs font-bold hover:bg-violet-100 transition-colors"
             >
               <span className="material-symbols-outlined text-sm">shield</span>
               Verify Now
@@ -283,7 +279,7 @@ export default function DashboardLayout({
             key={link.href}
             href={link.href}
             className={`flex flex-col items-center gap-1 ${
-              isActive(link.href) ? "text-[#520f85]" : "text-slate-400"
+              isActive(link.href) ? "text-ushop-purple-dark" : "text-slate-400"
             }`}
           >
             <span className="material-symbols-outlined text-2xl">

@@ -159,9 +159,10 @@ function VerifyPageContent() {
         return;
       }
       
+      let backUrl = "";
       if (idBack) {
         try {
-          await uploadFileToSupabase(idBack, "verification-docs", session.user.id);
+          backUrl = await uploadFileToSupabase(idBack, "verification-docs", session.user.id);
         } catch {
           setError("Failed to upload the back ID image. Please try again.");
           return;
@@ -172,6 +173,7 @@ function VerifyPageContent() {
         method: "POST",
         body: JSON.stringify({
           imagePath: frontUrl,
+          ...(backUrl ? { backImagePath: backUrl } : {}),
           universityName: university,
         }),
       }) as { success: boolean; error?: { message: string } };

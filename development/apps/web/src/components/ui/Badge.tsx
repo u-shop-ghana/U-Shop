@@ -26,7 +26,7 @@ interface BadgeProps {
 // Warning=#f59e0b, Error=#ef4444, Info=#3b82f6
 const variantStyles = {
   primary:
-    "bg-[#6B1FA8]/15 text-[#6B1FA8] border-[#6B1FA8]/30",
+    "bg-ushop-purple/15 text-ushop-purple border-ushop-purple/30",
   secondary:
     "bg-[#D4009B]/15 text-[#D4009B] border-[#D4009B]/30",
   success:
