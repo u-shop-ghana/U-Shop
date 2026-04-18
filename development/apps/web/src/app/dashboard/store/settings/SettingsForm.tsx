@@ -6,6 +6,14 @@ import { apiFetch } from "@/lib/api-client";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Textarea } from "@/components/ui/Textarea";
+import { 
+  RETURN_WINDOWS, 
+  RETURN_CONDITIONS, 
+  RETURN_SHIPPING_COSTS, 
+  WARRANTY_PERIODS, 
+  WARRANTY_COVERAGES, 
+  REFUND_METHODS 
+} from "@ushop/shared";
 
 export default function SettingsForm({ initialStore }: { initialStore: Record<string, unknown> }) {
   const router = useRouter();
@@ -13,8 +21,12 @@ export default function SettingsForm({ initialStore }: { initialStore: Record<st
   const [formData, setFormData] = useState({
     name: (initialStore.name as string) || "",
     bio: (initialStore.bio as string) || "",
-    returnWindow: initialStore.returnWindow?.toString() || "3",
-    returnCondition: (initialStore.returnCondition as string) || "UNOPENED_ONLY",
+    returnWindow: (initialStore.returnWindow as string) || "NO_RETURNS",
+    returnCondition: (initialStore.returnCondition as string) || "SAME_CONDITION",
+    returnShippingCost: (initialStore.returnShippingCost as string) || "BUYER_PAYS",
+    warrantyPeriod: (initialStore.warrantyPeriod as string) || "NONE",
+    warrantyCoverage: (initialStore.warrantyCoverage as string) || "DOA",
+    refundMethod: (initialStore.refundMethod as string) || "WALLET_CREDIT",
     policyNotes: (initialStore.policyNotes as string) || "",
   });
 
@@ -32,8 +44,12 @@ export default function SettingsForm({ initialStore }: { initialStore: Record<st
       const payload = {
         name: formData.name,
         bio: formData.bio || undefined,
-        returnWindow: parseInt(formData.returnWindow, 10) || 0,
+        returnWindow: formData.returnWindow,
         returnCondition: formData.returnCondition,
+        returnShippingCost: formData.returnShippingCost,
+        warrantyPeriod: formData.warrantyPeriod,
+        warrantyCoverage: formData.warrantyCoverage,
+        refundMethod: formData.refundMethod,
         policyNotes: formData.policyNotes || undefined,
       };
 
@@ -104,14 +120,18 @@ export default function SettingsForm({ initialStore }: { initialStore: Record<st
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <Input 
-            label="Return Window (Days)" 
-            type="number"
-            min="0"
-            max="30"
-            value={formData.returnWindow}
-            onChange={(e) => setFormData({ ...formData, returnWindow: e.target.value })}
-          />
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 mb-1.5">Return Window</label>
+            <select
+              className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-ushop-purple"
+              value={formData.returnWindow}
+              onChange={(e) => setFormData({ ...formData, returnWindow: e.target.value })}
+            >
+              {RETURN_WINDOWS.map((opt) => (
+                <option key={opt.value} value={opt.value}>{opt.label}</option>
+              ))}
+            </select>
+          </div>
 
           <div>
             <label className="block text-sm font-semibold text-gray-700 mb-1.5">Return Condition</label>
@@ -120,9 +140,61 @@ export default function SettingsForm({ initialStore }: { initialStore: Record<st
               value={formData.returnCondition}
               onChange={(e) => setFormData({ ...formData, returnCondition: e.target.value })}
             >
-              <option value="UNOPENED_ONLY">Unopened Only (Sealed)</option>
-              <option value="ANY_CONDITION">Any Condition</option>
-              <option value="NO_RETURNS">No Returns Accepted</option>
+              {RETURN_CONDITIONS.map((opt) => (
+                <option key={opt.value} value={opt.value}>{opt.label}</option>
+              ))}
+            </select>
+          </div>
+
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 mb-1.5">Return Shipping Cost</label>
+            <select
+              className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-ushop-purple"
+              value={formData.returnShippingCost}
+              onChange={(e) => setFormData({ ...formData, returnShippingCost: e.target.value })}
+            >
+              {RETURN_SHIPPING_COSTS.map((opt) => (
+                <option key={opt.value} value={opt.value}>{opt.label}</option>
+              ))}
+            </select>
+          </div>
+
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 mb-1.5">Warranty Period</label>
+            <select
+              className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-ushop-purple"
+              value={formData.warrantyPeriod}
+              onChange={(e) => setFormData({ ...formData, warrantyPeriod: e.target.value })}
+            >
+              {WARRANTY_PERIODS.map((opt) => (
+                <option key={opt.value} value={opt.value}>{opt.label}</option>
+              ))}
+            </select>
+          </div>
+
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 mb-1.5">Warranty Coverage</label>
+            <select
+              className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-ushop-purple"
+              value={formData.warrantyCoverage}
+              onChange={(e) => setFormData({ ...formData, warrantyCoverage: e.target.value })}
+            >
+              {WARRANTY_COVERAGES.map((opt) => (
+                <option key={opt.value} value={opt.value}>{opt.label}</option>
+              ))}
+            </select>
+          </div>
+
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 mb-1.5">Refund Method</label>
+            <select
+              className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-ushop-purple"
+              value={formData.refundMethod}
+              onChange={(e) => setFormData({ ...formData, refundMethod: e.target.value })}
+            >
+              {REFUND_METHODS.map((opt) => (
+                <option key={opt.value} value={opt.value}>{opt.label}</option>
+              ))}
             </select>
           </div>
         </div>
