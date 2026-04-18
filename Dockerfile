@@ -13,14 +13,17 @@ COPY . .
 # pnpm-lock.yaml and pnpm-workspace.yaml live
 RUN pnpm install --frozen-lockfile
 
-# Generate Prisma client and compile TypeScript
+# Generate Prisma client, prune devDependencies, then compile TypeScript
 WORKDIR /app/development/apps/api
 RUN pnpm db:generate
-RUN pnpm build
 
-# Prune devDependencies before copying node_modules to runtime image
+# Prune devDependencies before building so build artifacts are not affected
 WORKDIR /app
 RUN pnpm prune --prod
+
+# Compile TypeScript after pruning so the dist folder is always produced last
+WORKDIR /app/development/apps/api
+RUN pnpm build
 
 # ─── Production Stage ────────────────────────────────────────────
 FROM node:20-alpine AS runner
