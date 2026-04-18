@@ -23,15 +23,27 @@ export async function apiFetch(endpoint: string, options: ApiOptions = {}) {
     });
   }
 
-  const response = await fetch(`${apiUrl}${endpoint}`, {
-    ...options,
-    headers: finalHeaders,
-  });
+  try {
+    const response = await fetch(`${apiUrl}${endpoint}`, {
+      ...options,
+      headers: finalHeaders,
+    });
 
-  if (options.returnRaw) {
-    return response;
+    if (options.returnRaw) {
+      return response;
+    }
+
+    const json = await response.json();
+    return json;
+  } catch (error) {
+    console.error(`[apiFetch] Network error calling ${endpoint}:`, error);
+    // Return a standardized mock response so dependent components don't crash
+    // due to missing res.success checks or unhandled promise rejections
+    return {
+      success: false,
+      error: {
+        message: "Unable to connect to the server. Please try again later.",
+      },
+    };
   }
-
-  const json = await response.json();
-  return json;
 }

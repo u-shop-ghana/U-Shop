@@ -6,6 +6,7 @@ import { useRouter, usePathname } from "next/navigation";
 import Image from "next/image";
 import { SearchBar } from "../cards/SearchBar";
 import { createClient } from "@/lib/supabase/client";
+import { useCart } from "@/lib/cart/cart-provider";
 
 // ─── Header Component ───────────────────────────────────────────
 // Three-row header matching design/ui-kit/organisms/header.png:
@@ -26,16 +27,16 @@ interface HeaderProps {
 }
 
 export function Header({
-  cartCount = 0,
   wishlistCount = 0,
   isLoggedIn = false,
   userName,
   hasStore = false,
   onSearch,
-}: HeaderProps) {
+}: Omit<HeaderProps, 'cartCount'>) {
   const router = useRouter();
   const pathname = usePathname();
   const supabase = createClient();
+  const { itemCount: cartCount } = useCart();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
