@@ -143,4 +143,26 @@ This document tracks all significant development errors, architecture blockers, 
 - **How it was fixed:** Handled `turbo` cache configurations to sequentially pipe `@ushop/shared:build` ensuring dependencies compiled prior to web/api deployment requests.
 
 ---
+
+## April 18, 2026
+
+### 22. CI/CD Prisma Client Implicit Any Types
+- **Name/Type:** Typecheck Error / TS7006
+- **Error Output:** `Parameter 'tx' implicitly has an 'any' type.`
+- **Root Cause:** The GitHub Actions CI workflow executed `pnpm typecheck`, `pnpm build`, and `pnpm test` immediately after `pnpm install` across isolated pipeline jobs. Because Prisma Client isn't auto-generated on install within sub-workspaces, interactive Prisma transactions fell back to `any` types natively, violating strict ESLint and TS settings globally.
+- **How it was fixed:** Injected `pnpm --filter @ushop/api run db:generate` directly into `.github/workflows/ci.yml` across all three jobs (`build`, `test`, `type-check`), securing proper typings prior to any static evaluation or test matrix execution.
+
+### 23. Next.js SSR fetch() Exception
+- **Name/Type:** TypeError / `ECONNREFUSED`
+- **Error Output:** `TypeError: fetch failed` crashing Turbopack renders during `/categories/[slug]`.
+- **Root Cause:** The `apiFetch` abstraction utility directly awaited native `fetch` over the Express API. When the API node dropped locally, the unhandled `TypeError` completely severed page generation natively.
+- **How it was fixed:** Wrapped the `fetch` invocation in a robust `try...catch` block. Soft-failing returns a standard `{ success: false }` map preventing downstream client hydration or Server Render cascades effectively.
+
+### 24. Next.js SSG URL Malformed Crash
+- **Name/Type:** Vercel Build Crash / Next.js Export Exception
+- **Error Output:** `Error: Invalid supabaseUrl: Provided URL is malformed.`
+- **Root Cause:** During `.env.production` secret purges, `NEXT_PUBLIC_SUPABASE_URL` was sanitized to `<YOUR_SUPABASE_REF>`. Next.js static generation automatically parsed this URL string during context evaluation and forcefully aborted the entire compiler due to missing HTTP protocols.
+- **How it was fixed:** Replaced the `<YOUR_SUPABASE_REF>` string explicitly with `https://your-supabase-ref.supabase.co` ensuring `URL()` constructor parsers succeed gracefully.
+
+---
 _Log compiled automatically to identify internal architecture loops and provide future-proof reference metrics._

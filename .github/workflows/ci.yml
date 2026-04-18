@@ -17,6 +17,7 @@ jobs:
         with:
           version: 9
       - run: pnpm install
+      - run: pnpm --filter @ushop/api run db:generate
       - run: pnpm build
         env:
           # Prevent build fails on forks missing secrets
@@ -54,6 +55,7 @@ jobs:
         with:
           version: 9
       - run: pnpm install
+      - run: pnpm --filter @ushop/api run db:generate
       - name: Install Playwright Browsers
         run: pnpm --filter ushop-e2e exec playwright install --with-deps chromium
       - run: pnpm test
