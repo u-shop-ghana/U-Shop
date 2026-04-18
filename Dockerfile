@@ -18,6 +18,10 @@ WORKDIR /app/development/apps/api
 RUN pnpm db:generate
 RUN pnpm build
 
+# Prune devDependencies before copying node_modules to runtime image
+WORKDIR /app
+RUN pnpm prune --prod
+
 # ─── Production Stage ────────────────────────────────────────────
 FROM node:20-alpine AS runner
 
@@ -25,14 +29,16 @@ RUN corepack enable && corepack prepare pnpm@9.15.0 --activate
 
 WORKDIR /app
 
-# Copy workspace root manifests and the virtual store produced by pnpm install
+# Copy workspace root manifests required for production dependency install
 COPY --from=builder /app/package.json /app/
 COPY --from=builder /app/pnpm-workspace.yaml /app/
 COPY --from=builder /app/pnpm-lock.yaml /app/
-COPY --from=builder /app/node_modules /app/node_modules
 
 # Copy shared package sources (imported directly via workspace:* at runtime)
 COPY --from=builder /app/development/packages /app/development/packages
+
+# Install only production dependencies in the runtime image
+RUN pnpm install --frozen-lockfile --prod
 
 # Copy the API package manifest, any package-level node_modules, built
 # artifacts, and Prisma schema/migrations
