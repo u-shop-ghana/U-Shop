@@ -1,4 +1,5 @@
 import { Router, type Request, type Response } from 'express';
+import path from 'path';
 import { prisma } from '../lib/prisma';
 import { authenticate } from '../middleware/authenticate';
 import { logger } from '../lib/logger';
@@ -92,11 +93,19 @@ router.post('/reseller-verify', authenticate, async (req: Request, res: Response
     // Path ownership: ensure submitted image paths belong to the requesting user.
     // This prevents one user from referencing another user's uploaded documents.
     const userId = req.user!.id;
-    if (!ghanaCardFrontImagePath.startsWith(userId + '/')) {
+    const normalizedUserBase = path.posix.join(userId, '/');
+
+    const normalizedFrontPath = path.posix.normalize(String(ghanaCardFrontImagePath).replace(/\\/g, '/'));
+    const normalizedBackPath = path.posix.normalize(String(ghanaCardBackImagePath).replace(/\\/g, '/'));
+
+    const hasTraversalOrAbsolute = (p: string): boolean =>
+      path.posix.isAbsolute(p) || p.split('/').includes('..');
+
+    if (hasTraversalOrAbsolute(normalizedFrontPath) || !normalizedFrontPath.startsWith(normalizedUserBase)) {
       res.status(403).json({ success: false, error: { message: 'Front image path does not belong to this user' } });
       return;
     }
-    if (!ghanaCardBackImagePath.startsWith(userId + '/')) {
+    if (hasTraversalOrAbsolute(normalizedBackPath) || !normalizedBackPath.startsWith(normalizedUserBase)) {
       res.status(403).json({ success: false, error: { message: 'Back image path does not belong to this user' } });
       return;
     }
