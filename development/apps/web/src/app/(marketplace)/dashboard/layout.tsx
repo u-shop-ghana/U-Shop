@@ -267,30 +267,10 @@ export default function DashboardLayout({
         </header>
 
         {/* Page content */}
-        <main className="flex-1 p-6 lg:p-14 pb-24 md:pb-14">
+        <main className="flex-1 p-6 lg:p-14 pb-14 md:pb-14">
           <div className="max-w-6xl mx-auto">{children}</div>
         </main>
       </div>
-
-      {/* ── Mobile Bottom Navigation ──────────────────────────── */}
-      <nav className="md:hidden fixed bottom-0 left-0 w-full bg-white flex justify-around items-center py-4 z-50 shadow-[0_-4px_20px_rgba(0,0,0,0.04)] pb-8">
-        {mobileNav.map((link) => (
-          <Link
-            key={link.href}
-            href={link.href}
-            className={`flex flex-col items-center gap-1 ${
-              isActive(link.href) ? "text-ushop-purple-dark" : "text-slate-400"
-            }`}
-          >
-            <span className="material-symbols-outlined text-2xl">
-              {link.icon}
-            </span>
-            <span className="text-[10px] font-bold uppercase tracking-wider">
-              {link.label}
-            </span>
-          </Link>
-        ))}
-      </nav>
     </div>
   );
 }

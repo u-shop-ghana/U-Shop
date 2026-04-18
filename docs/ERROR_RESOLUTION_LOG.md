@@ -164,5 +164,17 @@ This document tracks all significant development errors, architecture blockers, 
 - **Root Cause:** During `.env.production` secret purges, `NEXT_PUBLIC_SUPABASE_URL` was sanitized to `<YOUR_SUPABASE_REF>`. Next.js static generation automatically parsed this URL string during context evaluation and forcefully aborted the entire compiler due to missing HTTP protocols.
 - **How it was fixed:** Replaced the `<YOUR_SUPABASE_REF>` string explicitly with `https://your-supabase-ref.supabase.co` ensuring `URL()` constructor parsers succeed gracefully.
 
+### 25. Edge Browser Strict Tracking Exception
+- **Name/Type:** TypeError / `Cannot read properties of null (reading 'getItem')`
+- **Error Output:** Sentry reported `TypeError: Cannot read properties of null` trapped inside `@sentry/browser` wrapper (`helpers.ts`) originating from a native user-land execution stream (Vercel Production).
+- **Root Cause:** In strict tracking-prevention environments (specifically Microsoft Edge `147.0.0` or Incognito), Chromium forcibly nulls `window.localStorage` instead of isolating it. When third-party client loaders (like Firebase Analytics/Storage or Supabase's implicit session checks) executed underlying `.getItem('key')` fetches un-safely, it threw an unhandled reference exception which Sentry natively caught and bubbled up.
+- **How it was fixed:** Identified via Sentry telemetry traces. In future PRs, this requires injecting a global safe UI-fallback wrapper overriding `window.localStorage` directly in `layout.tsx` before context initialization.
+
+### 26. Vercel Feedback Toolkit Event Leak
+- **Name/Type:** TypeError / `Cannot read properties of null (reading 'removeEventListener')`
+- **Error Output:** `s in app:///_next-live/feedback/instrument.8a67f941951b2912d102.js [Line 2]`
+- **Root Cause:** The injected Vercel Feedback Toolbar widget statically assumes absolute DOM nodes are preserved across its un-mount lifecycle hooks. Due to Edge browser optimizations or tracking protections intercepting the dynamically injected iframe or comment anchors, the target node resolves to `null`, causing the `node.removeEventListener` cleanup call safely buried inside the Vercel internal script to throw an unhandled TypeError.
+- **How it was fixed:** Noted as an external infrastructure bug via Vercel's proprietary client injections. Can be safely ignored or permanently resolved by disabling the Vercel Toolbar inside the Vercel project deployment dashboard.
+
 ---
 _Log compiled automatically to identify internal architecture loops and provide future-proof reference metrics._
