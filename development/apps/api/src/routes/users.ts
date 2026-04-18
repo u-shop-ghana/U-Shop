@@ -41,7 +41,7 @@ router.get('/me', authenticate, async (req: Request, res: Response): Promise<voi
     });
 
     if (!userWithStore) {
-      res.status(404).json({ success: false, error: { message: 'User payload mapping failed.' } });
+      res.status(404).json({ success: false, error: { message: 'User not found.' } });
       return;
     }
 
