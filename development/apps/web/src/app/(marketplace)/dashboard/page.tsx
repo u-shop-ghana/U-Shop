@@ -118,9 +118,8 @@ export default function DashboardPage() {
   const verificationBadge = getVerificationBadge(user.verificationStatus);
   const memberSince = formatDate(user.createdAt);
 
-  // Define the soft shadow used across all overview cards
-  const cardShadow =
-    "shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_4px_6px_-2px_rgba(0,0,0,0.05)]";
+  // Define a flat, professional style instead of AI-like shadows
+  const cardStyle = "";
 
   return (
     <div className="space-y-10">
@@ -141,7 +140,7 @@ export default function DashboardPage() {
           2 on tablet, stacked on mobile. ──────────────────────── */}
       <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {/* Account Info Card */}
-        <div className={`bg-white p-7 rounded-xl ${cardShadow}`}>
+        <div className={`bg-white p-7 rounded-xl ${cardStyle}`}>
           <div className="flex justify-between items-start mb-5">
             <h3 className="text-[11px] font-bold uppercase tracking-[0.1em] text-slate-400">
               Account Info
@@ -179,7 +178,7 @@ export default function DashboardPage() {
         </div>
 
         {/* Primary Address Card */}
-        <div className={`bg-white p-7 rounded-xl ${cardShadow}`}>
+        <div className={`bg-white p-7 rounded-xl ${cardStyle}`}>
           <div className="flex justify-between items-start mb-5">
             <h3 className="text-[11px] font-bold uppercase tracking-[0.1em] text-slate-400">
               Primary Address
@@ -214,7 +213,7 @@ export default function DashboardPage() {
         </div>
 
         {/* Wallet Balance Card */}
-        <div className={`bg-white p-7 rounded-xl ${cardShadow}`}>
+        <div className={`bg-white p-7 rounded-xl ${cardStyle}`}>
           <div className="flex justify-between items-start mb-5">
             <h3 className="text-[11px] font-bold uppercase tracking-[0.1em] text-slate-400">
               Wallet Balance
@@ -235,7 +234,7 @@ export default function DashboardPage() {
         </div>
 
         {/* Newsletter Status Card */}
-        <div className={`bg-white p-7 rounded-xl ${cardShadow}`}>
+        <div className={`bg-white p-7 rounded-xl ${cardStyle}`}>
           <div className="flex justify-between items-start mb-5">
             <h3 className="text-[11px] font-bold uppercase tracking-[0.1em] text-slate-400">
               Newsletter
@@ -259,7 +258,7 @@ export default function DashboardPage() {
       {user.verificationStatus === "UNVERIFIED" && (
         <div className="bg-ushop-purple-dark/5 p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 rounded-xl">
           <div className="flex items-center gap-4">
-            <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center text-ushop-purple-dark shadow-sm shrink-0">
+            <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center text-ushop-purple-dark shrink-0">
               <span className="material-symbols-outlined text-xl">
                 verified_user
               </span>
@@ -276,7 +275,7 @@ export default function DashboardPage() {
           </div>
           <Link
             href="/verify"
-            className="text-[11px] font-bold text-ushop-purple-dark hover:text-[#D4009B] uppercase tracking-widest px-4 py-2 bg-white rounded-md shadow-sm transition-all whitespace-nowrap"
+            className="text-[11px] font-bold text-ushop-purple-dark hover:text-[#D4009B] uppercase tracking-widest px-4 py-2 bg-white rounded-md transition-all whitespace-nowrap"
           >
             Verify Now
           </Link>
@@ -285,9 +284,9 @@ export default function DashboardPage() {
 
       {/* Store management banner — shown if the user owns a store */}
       {user.store && (
-        <div className="bg-gradient-to-r from-[#520f85]/5 to-[#D4009B]/5 p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 rounded-xl">
+        <div className="bg-[#520f85]/5 p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 rounded-xl">
           <div className="flex items-center gap-4">
-            <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center text-ushop-purple-dark shadow-sm shrink-0">
+            <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center text-ushop-purple-dark shrink-0">
               <span className="material-symbols-outlined text-xl">
                 storefront
               </span>
@@ -304,7 +303,7 @@ export default function DashboardPage() {
           </div>
           <Link
             href="/dashboard/store/settings"
-            className="text-[11px] font-bold text-ushop-purple-dark hover:text-[#D4009B] uppercase tracking-widest px-4 py-2 bg-white rounded-md shadow-sm transition-all whitespace-nowrap"
+            className="text-[11px] font-bold text-ushop-purple-dark hover:text-[#D4009B] uppercase tracking-widest px-4 py-2 bg-white rounded-md transition-all whitespace-nowrap"
           >
             Manage Store
           </Link>
@@ -414,7 +413,7 @@ export default function DashboardPage() {
           </div>
         ) : (
           // Empty state — matches the design's clean, minimal aesthetic
-          <div className="bg-white rounded-xl p-12 text-center shadow-sm">
+          <div className="bg-white rounded-xl p-12 text-center">
             <span className="material-symbols-outlined text-5xl text-slate-200 mb-4 block">
               shopping_bag
             </span>
@@ -450,7 +449,7 @@ export default function DashboardPage() {
             Personalized Selection
           </span>
         </div>
-        <div className="bg-white rounded-xl p-12 text-center shadow-sm">
+        <div className="bg-white rounded-xl p-12 text-center">
           <span className="material-symbols-outlined text-5xl text-slate-200 mb-4 block">
             auto_awesome
           </span>

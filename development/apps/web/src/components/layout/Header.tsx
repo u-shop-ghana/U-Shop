@@ -130,7 +130,7 @@ export function Header({
               alt="U-Shop Logo"
               width={140}
               height={40}
-              className="object-contain"
+              className="w-auto h-8 md:h-10 object-contain"
               priority
             />
           </Link>
