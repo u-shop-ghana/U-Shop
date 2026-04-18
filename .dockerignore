@@ -2,7 +2,7 @@
 .git
 .gitignore
 
-# Build artefacts
+# Build artefacts (rebuilt inside the image)
 development/apps/api/dist
 development/apps/web/.next
 development/apps/web/out
@@ -10,7 +10,7 @@ development/apps/web/out
 # Dependency directories (will be installed fresh inside the image)
 **/node_modules
 
-# Environment files
+# Environment files (secrets come from Railway/Vercel env vars at runtime)
 **/.env
 **/.env.*
 !**/.env.example
@@ -29,5 +29,25 @@ Thumbs.db
 **/coverage
 **/.nyc_output
 
-# Assets not needed at runtime
+# Comment 6: Exclude non-runtime directories from Docker context
+# These add significant bloat and are never needed at runtime.
+docs/
+design/
+business/
+deployment/
+testing/
 assets/
+
+# Scratch / diagnostic scripts — never belong in production images
+development/apps/api/scratch/
+development/apps/api/check-unis.ts
+
+# Figma, markdown, and HTML docs
+*.md
+*.html
+*.fig
+*.pdf
+
+# IDE / editor config
+.vscode/
+.idea/

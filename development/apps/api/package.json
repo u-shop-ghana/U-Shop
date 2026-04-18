@@ -30,6 +30,7 @@
     "firebase-admin": "^13.8.0",
     "helmet": "^8.0.0",
     "isomorphic-dompurify": "^3.7.1",
+    "lru-cache": "^11.3.5",
     "morgan": "^1.10.0",
     "pino": "^9.6.0",
     "pino-pretty": "^13.0.0",

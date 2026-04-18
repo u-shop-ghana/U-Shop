@@ -28,6 +28,22 @@ export function FirebaseProvider({ children }: { children: React.ReactNode }) {
         setPermission(status);
 
         if (status === "granted" && messaging) {
+          // Comment 7: Send Firebase config to the service worker via postMessage
+          // so it can initialize without hardcoding the messagingSenderId.
+          const registration = await navigator.serviceWorker.ready;
+          registration.active?.postMessage({
+            type: 'FIREBASE_CONFIG',
+            config: {
+              apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
+              authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
+              projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+              storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
+              messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
+              appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
+              measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID,
+            },
+          });
+
           // Retrieve the registration token for this device/browser
           const token = await getToken(messaging, {
             vapidKey: process.env.NEXT_PUBLIC_FIREBASE_VAPID_KEY, // Optional but recommended
@@ -36,7 +52,6 @@ export function FirebaseProvider({ children }: { children: React.ReactNode }) {
           if (token) {
             setFcmToken(token);
             // TODO: Call your Express API to save this token against the current Supabase user
-            // console.log("FCM Token acquired:", token);
           }
         }
       } catch (err) {
