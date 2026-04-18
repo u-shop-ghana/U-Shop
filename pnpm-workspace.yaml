@@ -1,3 +1,4 @@
 packages:
   - "development/apps/*"
   - "development/packages/*"
+  - "testing/e2e-tests/*"
