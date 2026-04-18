@@ -18,6 +18,10 @@ WORKDIR /app/development/apps/api
 RUN pnpm db:generate
 RUN pnpm build
 
+# Prune devDependencies before copying node_modules to runtime image
+WORKDIR /app
+RUN pnpm prune --prod
+
 # ─── Production Stage ────────────────────────────────────────────
 FROM node:20-alpine AS runner
 
