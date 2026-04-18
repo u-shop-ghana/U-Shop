@@ -53,6 +53,9 @@ importers:
       isomorphic-dompurify:
         specifier: ^3.7.1
         version: 3.7.1(@noble/hashes@1.8.0)
+      lru-cache:
+        specifier: ^11.3.5
+        version: 11.3.5
       morgan:
         specifier: ^1.10.0
         version: 1.10.1
@@ -3889,6 +3892,10 @@ packages:
 
   lru-cache@11.3.0:
     resolution: {integrity: sha512-sr8xPKE25m6vJVcrdn6NxtC0fVfuPowbscLypegRgOm0yXSqr5JNHCAY3hnusdJ7HRBW04j6Ip4khvHU778DuQ==}
+    engines: {node: 20 || >=22}
+
+  lru-cache@11.3.5:
+    resolution: {integrity: sha512-NxVFwLAnrd9i7KUBxC4DrUhmgjzOs+1Qm50D3oF1/oL+r1NpZ4gA7xvG0/zJ8evR7zIKn4vLf7qTNduWFtCrRw==}
     engines: {node: 20 || >=22}
 
   lru-cache@5.1.1:
@@ -9058,7 +9065,7 @@ snapshots:
       decimal.js: 10.6.0
       html-encoding-sniffer: 6.0.0(@noble/hashes@1.8.0)
       is-potential-custom-element-name: 1.0.1
-      lru-cache: 11.3.0
+      lru-cache: 11.3.5
       parse5: 8.0.0
       saxes: 6.0.0
       symbol-tree: 3.2.4
@@ -9262,6 +9269,8 @@ snapshots:
       js-tokens: 4.0.0
 
   lru-cache@11.3.0: {}
+
+  lru-cache@11.3.5: {}
 
   lru-cache@5.1.1:
     dependencies:
