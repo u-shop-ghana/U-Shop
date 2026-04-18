@@ -66,4 +66,5 @@ jobs:
         with:
           version: 9
       - run: pnpm install
+      - run: pnpm --filter @ushop/api run db:generate
       - run: pnpm typecheck
