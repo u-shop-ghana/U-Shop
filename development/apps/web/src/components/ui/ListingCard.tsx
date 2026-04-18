@@ -202,7 +202,7 @@ export function ListingCard({
           </div>
 
           {/* ADD TO CART button — matches Figma: full width, purple with cart icon */}
-          <AddToCartButtonCard isOutOfStock={isOutOfStock} />
+          <AddToCartButtonCard listingId={id} isOutOfStock={isOutOfStock} />
         </div>
       </div>
     </div>

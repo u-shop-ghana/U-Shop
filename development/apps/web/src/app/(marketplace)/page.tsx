@@ -4,6 +4,7 @@ import Image from 'next/image';
 import { apiPublicFetch } from '@/lib/api-public';
 import { ListingCard } from '@/components/ui/ListingCard';
 import { HeroSlider } from '@/components/ui/HeroSlider';
+import { StoreCard } from '@/components/ui/StoreCard';
 import { CATEGORIES } from '@ushop/shared';
 
 interface UniversityOption {
@@ -208,39 +209,9 @@ export default async function HomePage() {
             ) : (
                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
                   {data.stores.map((store: StoreOption) => (
-                     <div key={store.id} className="bg-white p-4 sm:p-6 rounded-2xl border border-slate-200 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group flex flex-col justify-between">
-                        <div>
-                           <div className="flex flex-col items-start gap-4 mb-4">
-                              <div className="w-14 h-14 sm:w-16 sm:h-16 relative rounded-2xl overflow-hidden shadow-sm group-hover:shadow-md transition-shadow bg-slate-50 flex items-center justify-center shrink-0">
-                                 {store.logoUrl ? (
-                                    <Image fill src={store.logoUrl} alt={store.name} className="object-cover" />
-                                 ) : (
-                                    <span className="font-bold text-ushop-purple text-xl">{store.name.substring(0, 2).toUpperCase()}</span>
-                              )}
-                           </div>
-                           <div>
-                              <h3 className="font-bold text-gray-900 group-hover:text-ushop-purple transition-colors">{store.name}</h3>
-                              {store.user?.verificationStatus === "VERIFIED" && (
-                                 <div className="flex items-center gap-1 text-ushop-pink">
-                                    <span className="material-symbols-outlined text-sm" style={{fontVariationSettings: '"FILL" 1'}}>verified</span>
-                                    <span className="text-xs font-bold">Verified</span>
-                                 </div>
-                              )}
-                           </div>
-                        </div>
-                        <div className="flex flex-wrap gap-2 mb-4">
-                           {store.user?.universityName && (
-                              <span className="bg-purple-50 text-ushop-purple text-[10px] font-bold px-2 py-1 rounded uppercase">{store.user.universityName}</span>
-                           )}
-                           <span className="bg-slate-50 text-slate-500 text-[10px] font-bold px-2 py-1 rounded">@{store.handle}</span>
-                        </div>
-                     </div>
-                     <Link href={`/store/${store.handle}`} className="block w-full py-2 text-center border-2 border-ushop-purple text-ushop-purple font-bold rounded-lg hover:bg-ushop-purple hover:text-white transition-all text-sm mt-4">
-                        Visit Store
-                     </Link>
-                   </div>
-                ))}
-            </div>
+                      <StoreCard key={store.id} store={store} />
+                  ))}
+               </div>
             )}
          </div>
       </section>

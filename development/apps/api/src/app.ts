@@ -139,8 +139,51 @@ app.post('/api/v1/webhooks/paystack', express.raw({ type: 'application/json' }),
       },
     });
 
-    // TODO: Dispatch to specific handlers based on event.event type (e.g. charge.success)
-    logger.info({ eventType: event.event }, 'Paystack webhook received and queued');
+    // Dispatch to specific handlers based on event.event type
+    if (event.event === 'charge.success') {
+      const orderId = event.data?.metadata?.orderId;
+      if (orderId) {
+        logger.info({ orderId }, 'Processing charge.success for order');
+        await prisma.$transaction(async (tx) => {
+          const order = await tx.order.findUnique({ where: { id: orderId } });
+          if (!order) throw new Error('Order not found');
+
+          // Update order status
+          await tx.order.update({
+            where: { id: orderId },
+            data: {
+              status: 'PAYMENT_RECEIVED',
+              paystackRef: event.data.reference,
+              paidAt: new Date(),
+            },
+          });
+
+          // Create Escrow
+          const releaseDates = new Date();
+          releaseDates.setDate(releaseDates.getDate() + 7); // 7 day hold
+
+          await tx.escrow.create({
+            data: {
+              orderId,
+              amount: order.sellerAmount,
+              status: 'HOLDING',
+              releaseAt: releaseDates,
+            },
+          });
+        });
+      }
+    }
+
+    // Mark event as processed
+    await prisma.webhookEvent.update({
+      where: { externalId: event.data?.id?.toString() ?? event.event },
+      data: {
+        processed: true,
+        processedAt: new Date(),
+      },
+    });
+
+    logger.info({ eventType: event.event }, 'Paystack webhook successfully processed');
 
     res.status(200).json({ success: true });
   } catch (error) {
@@ -182,6 +225,11 @@ import { userRoutes } from './routes/users';
 import listingsRouter from './routes/listings';
 import categoriesRouter from './routes/categories';
 import newsletterRouter from './routes/newsletter';
+import reviewsRouter from './routes/reviews';
+import cartRouter from './routes/cart';
+import ordersRouter from './routes/orders';
+import adminRouter from './routes/admin';
+import escrowRouter from './routes/escrow';
 
 // Routes to be added as we build each feature:
 app.use('/api/v1/users', userRoutes);
@@ -189,10 +237,12 @@ app.use('/api/v1/stores', storesRouter);
 app.use('/api/v1/listings', listingsRouter);
 app.use('/api/v1/categories', categoriesRouter);
 app.use('/api/v1/newsletter', newsletterRouter);
-// app.use('/api/v1/orders', ordersRouter);
+app.use('/api/v1/reviews', reviewsRouter);
+app.use('/api/v1/cart', cartRouter);
+app.use('/api/v1/orders', ordersRouter);
+app.use('/api/v1/admin', adminRouter);
+app.use('/api/v1/escrow', escrowRouter);
 // app.use('/api/v1/messages', messagesRouter);
-// app.use('/api/v1/reviews', reviewsRouter);
-// app.use('/api/v1/admin', adminRouter);
 
 // ─── Error Handling ──────────────────────────────────────────────
 app.use(notFound);

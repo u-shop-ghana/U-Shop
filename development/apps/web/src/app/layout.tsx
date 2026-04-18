@@ -4,6 +4,7 @@ import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { AuthProvider } from "@/lib/auth/auth-provider";
 import { FirebaseProvider } from "@/components/providers/FirebaseProvider";
+import { CartProvider } from "@/lib/cart/cart-provider";
 import "./globals.css";
 
 // ─── Font Loading ───────────────────────────────────────────────
@@ -84,7 +85,9 @@ export default function RootLayout({
       <body className="min-h-screen flex flex-col antialiased">
         <FirebaseProvider>
           <AuthProvider>
-            {children}
+            <CartProvider>
+              {children}
+            </CartProvider>
           </AuthProvider>
         </FirebaseProvider>
         <Analytics />
