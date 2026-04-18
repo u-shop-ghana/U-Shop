@@ -36,7 +36,6 @@ export default async function MarketplaceLayout({
         isLoggedIn={isLoggedIn}
         userName={userName}
         hasStore={hasStore}
-        cartCount={0}
         wishlistCount={0}
       />
       {/* flex-grow ensures footer stays at bottom when content is short */}

@@ -3,6 +3,19 @@
 All notable changes to U-Shop are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [0.9.5] — 2026-04-18 — CI/CD Stability & Frontend Robustness
+
+### Added
+- **Global Error Handling on SSR** — Wrapped the default backend invocation `apiFetch()` utility (inside `api.ts`) with a standard Try/Catch networking handler catching native `ECONNREFUSED` events, cleanly defaulting to `{ success: false }` outputs to avoid lethal Next.js Turbopack compiler crashes natively.
+
+### Changed
+- **CI Dependency Pipeline Prioritization** — Injected `pnpm --filter @ushop/api run db:generate` implicitly into the GitHub Actions matrix immediately prior to invoking `tsc --noEmit`. This perfectly stabilizes `@prisma/client` types on the executor preventing standard unassigned `any` variables breaking pipeline compilations securely. 
+- **ESLint Global Overrides** — Added `fetch: "readonly"` configurations to `development/apps/api/eslint.config.js` properly securing Node 18+ integrations removing undocumented parameter warnings cleanly.
+
+### Fixed
+- **SSG Vercel Compile URL Failure** — Addressed explicit native NextJS string constructor breaks mapping `.env.production` URLs by strictly validating real http structural references resolving Vercel production crash anomalies seamlessly.
+- **Cart Context Serialization Bug** — Corrected local payload serialization limits correctly resolving Object mappings `body: JSON.stringify()` internally safely flawlessly.
+
 ## [0.9.4] — 2026-04-18 — Security Remediation & Architecture Hardening
 
 ### Added
