@@ -41,12 +41,12 @@ export const updateStoreSchema = z.object({
   bio: z.string().max(280).optional(),
   logoUrl: z.string().url().optional(),
   bannerUrl: z.string().url().optional(),
-  returnWindow: z.string().optional(),
-  returnCondition: z.string().optional(),
-  returnShippingCost: z.string().optional(),
-  warrantyPeriod: z.string().optional(),
-  warrantyCoverage: z.string().optional(),
-  refundMethod: z.string().optional(),
+  returnWindow: z.enum(['NO_RETURNS', '24H', '3D', '7D', '14D', '30D']).optional(),
+  returnCondition: z.enum(['UNOPENED', 'SAME_CONDITION', 'ANY']).optional(),
+  returnShippingCost: z.enum(['BUYER_PAYS', 'SELLER_PAYS', 'SHARED']).optional(),
+  warrantyPeriod: z.enum(['NONE', '7D', '30D', '90D', 'MANUFACTURER']).optional(),
+  warrantyCoverage: z.enum(['DOA', 'HARDWARE', 'ALL_FAULTS']).optional(),
+  refundMethod: z.enum(['WALLET_CREDIT', 'ORIGINAL_PAYMENT']).optional(),
   policyNotes: z.string().max(500).optional(),
 });
 
