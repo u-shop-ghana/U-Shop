@@ -117,10 +117,18 @@ app.post('/api/v1/webhooks/paystack', express.raw({ type: 'application/json' }),
     // Parse the verified payload
     const event = JSON.parse(rawBody.toString('utf-8'));
 
+    // Build a stable idempotency key.
+    // Prefer provider event/data id when available; otherwise fall back to a deterministic
+    // hash of the raw payload (stable across retries of the same delivery).
+    const externalId =
+      event.data?.id != null
+        ? event.data.id.toString()
+        : `payload:${crypto.createHash('sha256').update(rawBody).digest('hex')}`;
+
     // Idempotency check: skip already-processed webhook events.
     // The WebhookEvent table uses externalId as a unique key.
     const existing = await prisma.webhookEvent.findUnique({
-      where: { externalId: event.data?.id?.toString() ?? event.event },
+      where: { externalId },
     });
 
     if (existing) {
@@ -132,7 +140,7 @@ app.post('/api/v1/webhooks/paystack', express.raw({ type: 'application/json' }),
     // Record the event for idempotency before processing
     await prisma.webhookEvent.create({
       data: {
-        externalId: event.data?.id?.toString() ?? event.event,
+        externalId,
         eventType: event.event,
         payload: event,
         processed: false,
