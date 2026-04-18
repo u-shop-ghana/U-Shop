@@ -38,7 +38,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Fixed
 - **Prisma Schema Drift Integration** — Formally captured the initial `01_add_search_indexes.sql` logic strictly utilizing native Prisma Migrations pipeline (`migration.sql`), correctly mapping the high-performance PostgreSQL GIN Search optimizations directly onto developer infrastructure securely explicitly accurately.
-- **Resilient CI/CD Sentry Failures** — Conditioned Sentry Environment pipeline operations securely executing generic tokens avoiding failing open source forks implicitly securely robustly properly smoothly carefully reliably cleanly beautifully natively correctly accurately solidly precisely safely automatically easily.
+- **Resilient CI/CD Sentry Failures** — Made Sentry CI/CD pipeline steps conditional/optional so builds do not fail in open source forks or environments where Sentry tokens are not configured.
 
 ## [0.9.2] — 2026-04-17 — Production Security & Performance Hardening
 
