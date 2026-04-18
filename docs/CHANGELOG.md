@@ -3,6 +3,27 @@
 All notable changes to U-Shop are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [0.9.4] — 2026-04-18 — Security Remediation & Architecture Hardening
+
+### Added
+- **Paystack Webhook HMAC Verification** — Registered a raw-body webhook handler at `/api/v1/webhooks/paystack` before `express.json()`, implementing `crypto.createHmac('sha512')` signature verification with `crypto.timingSafeEqual` timing-attack protection and `WebhookEvent`-based idempotency checks.
+- **In-Memory Rate Limit Fallback** — Added `lru-cache`-backed per-instance fallback rate limiting for auth and checkout endpoints when Redis is unreachable, eliminating the binary choice between full protection and zero protection.
+- **Server-Side Reseller Validation** — Added Ghana Card ID format validation (`GHA-XXXXXXXXX-X`), date-of-birth range checks (not future, not >120 years ago), and path ownership verification (`startsWith(userId)`) to the `/reseller-verify` endpoint.
+
+### Changed
+- **Rate Limiter Fail Strategy** — Auth and checkout rate limiters now fail **closed** (503 + `Retry-After: 60`) when Redis is unreachable, instead of silently passing all requests through. General and upload limiters remain fail-open for availability, now explicitly documented.
+- **`/me` Endpoint Data Exposure** — Replaced `include: { store: true }` with an explicit `select` block that omits `pendingPolicyUpdates` and other admin-only metadata from the client response.
+- **Morgan Log Format** — Switched from `combined` format to a custom format using `:url-path` token that strips query strings, preventing sensitive search terms from appearing in logs. Health check requests (`/health`) are now skipped.
+- **Firebase Service Worker** — Removed hardcoded `messagingSenderId` from `firebase-messaging-sw.js`. The SW now receives the full Firebase config dynamically via `postMessage` from the `FirebaseProvider` at registration time. Pinned to Firebase v12 compat SDK.
+- **Docker Image Slimming** — Expanded `.dockerignore` to exclude `docs/`, `design/`, `business/`, `deployment/`, `testing/`, `scratch/`, `*.md`, `*.fig`, and other non-runtime assets from the Docker build context.
+
+### Removed
+- **Scratch Scripts** — Deleted `development/apps/api/scratch/` directory (5 diagnostic files) and `check-unis.ts` from the codebase. Added `scratch/` to `.gitignore` and `.dockerignore` to prevent re-introduction.
+
+### Security
+- **Credential Purge** — Replaced all live production credentials (Paystack live keys, Supabase service role key, database password, Redis token, Resend API key, Sentry auth token) in `development/apps/api/.env`, `development/apps/web/.env.local`, and `.env.production` with placeholder values. Real secrets must live exclusively in Railway/Vercel environment variable dashboards.
+- **Git History Audit** — Confirmed `.env.production` was committed in 2 historical commits (`eb03db7`, `e24797b`). History successfully purged.
+
 ## [0.9.3] — 2026-04-17 — Core API Hardening & SQL Query Refactoring
 
 ### Added

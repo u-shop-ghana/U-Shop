@@ -3,10 +3,14 @@ import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
 import dotenv from 'dotenv';
+import crypto from 'crypto';
+import { Buffer } from 'node:buffer';
 import { errorHandler } from './middleware/error-handler';
 import { notFound } from './middleware/not-found';
 import { rateLimiter } from './middleware/rate-limiter';
 import { autoSanitizeBody } from './middleware/sanitize';
+import { logger } from './lib/logger';
+import { prisma } from './lib/prisma';
 import authRouter from './routes/auth';
 import universitiesRouter from './routes/universities';
 
@@ -68,11 +72,84 @@ app.use(cors({
 }));
 
 // ─── Logging ─────────────────────────────────────────────────────
-app.use(morgan('combined'));
+// Comment 9: Custom Morgan format that strips query strings from URLs to avoid
+// leaking sensitive search terms in logs. Also skips /health to reduce noise.
+morgan.token('url-path', (req) => (req as express.Request).path);
+app.use(morgan(':method :url-path :status :res[content-length] - :response-time ms', {
+  skip: (req) => (req as express.Request).path === '/health',
+}));
+
+// ─── Paystack Webhook (raw body) ─────────────────────────────────
+// Comment 2: This route MUST be registered BEFORE express.json() so we get
+// the raw buffer for HMAC-SHA512 signature verification. express.json() would
+// consume the stream and make the raw bytes unavailable.
+app.post('/api/v1/webhooks/paystack', express.raw({ type: 'application/json' }), async (req, res) => {
+  try {
+    const signature = req.headers['x-paystack-signature'] as string | undefined;
+    const webhookSecret = process.env.PAYSTACK_WEBHOOK_SECRET;
+
+    // Reject immediately if the webhook secret is not configured
+    if (!webhookSecret || webhookSecret === '<YOUR_PAYSTACK_WEBHOOK_SECRET>') {
+      logger.error('PAYSTACK_WEBHOOK_SECRET is not configured — rejecting webhook');
+      res.status(500).json({ success: false, error: { message: 'Webhook secret not configured' } });
+      return;
+    }
+
+    if (!signature) {
+      res.status(401).json({ success: false, error: { message: 'Missing signature header' } });
+      return;
+    }
+
+    // Compute HMAC-SHA512 hash of the raw body using the webhook secret
+    const rawBody = req.body as Buffer;
+    const hash = crypto.createHmac('sha512', webhookSecret).update(rawBody).digest('hex');
+
+    // Use timing-safe comparison to prevent timing attacks
+    const hashBuffer = Buffer.from(hash, 'hex');
+    const sigBuffer = Buffer.from(signature, 'hex');
+
+    if (hashBuffer.length !== sigBuffer.length || !crypto.timingSafeEqual(hashBuffer, sigBuffer)) {
+      logger.warn('Paystack webhook signature verification failed');
+      res.status(401).json({ success: false, error: { message: 'Invalid signature' } });
+      return;
+    }
+
+    // Parse the verified payload
+    const event = JSON.parse(rawBody.toString('utf-8'));
+
+    // Idempotency check: skip already-processed webhook events.
+    // The WebhookEvent table uses externalId as a unique key.
+    const existing = await prisma.webhookEvent.findUnique({
+      where: { externalId: event.data?.id?.toString() ?? event.event },
+    });
+
+    if (existing) {
+      logger.info({ eventId: existing.externalId }, 'Duplicate webhook event — skipping');
+      res.status(200).json({ success: true });
+      return;
+    }
+
+    // Record the event for idempotency before processing
+    await prisma.webhookEvent.create({
+      data: {
+        externalId: event.data?.id?.toString() ?? event.event,
+        eventType: event.event,
+        payload: event,
+        processed: false,
+      },
+    });
+
+    // TODO: Dispatch to specific handlers based on event.event type (e.g. charge.success)
+    logger.info({ eventType: event.event }, 'Paystack webhook received and queued');
+
+    res.status(200).json({ success: true });
+  } catch (error) {
+    logger.error({ error }, 'Paystack webhook processing error');
+    res.status(500).json({ success: false, error: { message: 'Webhook processing failed' } });
+  }
+});
 
 // ─── Body Parsing ────────────────────────────────────────────────
-// NOTE: Webhook routes MUST be registered BEFORE express.json()
-// to preserve the raw body for signature verification.
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 
