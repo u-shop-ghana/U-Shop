@@ -1,26 +1,132 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+/* ─── U-Shop Design System — Tailwind v4 Tokens ─────────────────
+   Source of truth: docs/brand/color-palette.md + typography.md
+   All values are defined as CSS custom properties and registered
+   with @theme so Tailwind v4 generates utility classes for them. */
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  /* ── Brand Core ──────────────────────────────────────────────── */
+  --color-ushop-red: #E8000B;
+  --color-ushop-purple: #6B1FA8;
+  --color-ushop-purple-dark: #520f85;
+  --color-ushop-magenta: #D4009B;
+  --color-ushop-pink: #D4009B;
+
+  /* ── Dark Backgrounds (Ink System) ───────────────────────────── */
+  --color-ink-void: #0A0A0A;
+  --color-ink-deep: #0D0E11;
+  --color-ink-dark: #13151A;
+  --color-ink-mid: #1A1D25;
+  --color-ink-surface: #1E2130;
+
+  /* ── Campus (Figma design tokens) ────────────────────────────── */
+  --color-campus-dark: #191022;
+  --color-campus-card: #241830;
+  --color-campus-purple: #7c3aed;
+  --color-campus-pink: #db2777;
+  --color-campus-form-bg: #0f172a;
+  --color-campus-input: #1e293b;
+
+  /* ── Text Colors ─────────────────────────────────────────────── */
+  --color-ink-text: #E8E8F0;
+  --color-ink-soft: #B0B3C4;
+  --color-ink-muted: #7A7D8E;
+  --color-ink-disabled: #4A4D5E;
+
+  /* ── Semantic UI Colors ──────────────────────────────────────── */
+  --color-status-success: #22C55E;
+  --color-status-warning: #F59E0B;
+  --color-status-error: #F43F5E;
+  --color-status-info: #3B82F6;
+
+  /* ── Partners ────────────────────────────────────────────────── */
+  --color-paystack: #00C3F7;
+  --color-momo: #FFCC00;
+
+  /* ── Lines / Borders ─────────────────────────────────────────── */
+  --color-line-subtle: rgba(255, 255, 255, 0.07);
+  --color-line-strong: rgba(255, 255, 255, 0.13);
+
+  /* ── Fonts ───────────────────────────────────────────────────── */
+  --font-sans: var(--font-jakarta), 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-plex-mono), 'IBM Plex Mono', ui-monospace, monospace;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* ─── Base Styles ──────────────────────────────────────────────── */
+:root {
+  /* CSS properties for non-Tailwind usage */
+  --gradient-brand: linear-gradient(90deg, #6B1FA8, #D4009B);
+  --gradient-brand-diagonal: linear-gradient(135deg, #6B1FA8, #D4009B);
+  --gradient-campus: linear-gradient(to right, #c084fc, #f472b6);
+
+  /* Typography scale custom properties */
+  --text-display: 3.75rem;
+  --text-h1: 3rem;
+  --text-h2: 2.25rem;
+  --text-h3: 1.875rem;
+  --text-h4: 1.5rem;
+  --text-h5: 1.25rem;
+  --text-h6: 1.125rem;
+
+  /* Line heights */
+  --leading-display: 1.1;
+  --leading-heading: 1.25;
+  --leading-body: 1.75;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--color-campus-dark);
+  color: var(--color-ink-text);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  line-height: var(--leading-heading);
+}
+
+/* ─── Utility Classes ──────────────────────────────────────────── */
+
+/* Brand gradient text — used for hero headlines */
+.text-gradient-brand {
+  background: var(--gradient-campus);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Brand gradient button background */
+.bg-gradient-brand {
+  background: linear-gradient(135deg, #6B1FA8 0%, #D4009B 100%);
+}
+
+/* Purple to pink gradient button (Login page style) */
+.bg-gradient-cta {
+  background: linear-gradient(to right, #7c3aed, #db2777);
+}
+.bg-gradient-cta:hover {
+  background: linear-gradient(to right, #6d28d9, #be185d);
+}
+
+/* Dark mesh background (subtle radial gradients) */
+.bg-dark-mesh {
+  background-color: #0f172a;
+  background-image:
+    radial-gradient(at 0% 0%, rgba(82, 15, 133, 0.15) 0, transparent 50%),
+    radial-gradient(at 100% 100%, rgba(212, 18, 149, 0.1) 0, transparent 50%);
+}
+
+/* Focus ring consistent with design system */
+.focus-ring-brand {
+  outline: none;
+}
+.focus-ring-brand:focus {
+  box-shadow: 0 0 0 2px var(--color-ushop-purple);
+}
+
+/* Material Symbols Outlined font settings */
+.material-symbols-outlined {
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
 }
