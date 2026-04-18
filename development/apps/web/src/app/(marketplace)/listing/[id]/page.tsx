@@ -140,28 +140,30 @@ export default async function ListingDetailPage({
 }) {
   const resolvedParams = await params;
 
-  // Fetch listing detail and reviews in parallel for performance
-  const [listingRes, reviewsRes] = await Promise.all([
-    apiPublicFetch(`/api/v1/listings/${resolvedParams.id}`),
-    apiPublicFetch(`/api/v1/stores/reviews?listingId=${resolvedParams.id}`).catch(
-      () => ({ success: false, data: [] })
-    ),
-  ]);
+  // Fetch listing detail first to get the store handle and category
+  const listingRes = await apiPublicFetch(`/api/v1/listings/${resolvedParams.id}`);
 
   if (!listingRes.success || !listingRes.data) {
     notFound();
   }
 
   const listing: ListingDetail = listingRes.data;
+
+  // Now fetch reviews for this store and similar listings in parallel
+  const [reviewsRes, similarRes] = await Promise.all([
+    apiPublicFetch(`/api/v1/reviews?storeHandle=${listing.store.handle}`).catch(
+      () => ({ success: false, data: [] })
+    ),
+    apiPublicFetch(`/api/v1/listings?categorySlug=${listing.category.slug}&limit=4`).catch(
+      () => ({ success: false, data: [] })
+    )
+  ]);
+
   const reviews: ReviewData[] = reviewsRes.success ? reviewsRes.data || [] : [];
   const store = listing.store;
   const isVerified = store.user?.verificationStatus === "VERIFIED";
   const isInStock = listing.stock > 0;
 
-  // Fetch similar listings from same category (excluding this one)
-  const similarRes = await apiPublicFetch(
-    `/api/v1/listings?categorySlug=${listing.category.slug}&limit=4`
-  ).catch(() => ({ success: false, data: [] }));
   const similarListings: SimilarListing[] = (
     similarRes.success ? similarRes.data || [] : []
   ).filter((l: SimilarListing) => l.id !== listing.id).slice(0, 4);

@@ -114,3 +114,26 @@ export const WARRANTY_PERIODS = [
   { value: '90D', label: '90 Days' },
   { value: 'MANUFACTURER', label: 'Manufacturer Warranty Only' },
 ] as const;
+
+export const RETURN_CONDITIONS = [
+  { value: 'UNOPENED', label: 'Unopened Only (Sealed)' },
+  { value: 'SAME_CONDITION', label: 'Same Condition as Received' },
+  { value: 'ANY', label: 'Any Condition' },
+] as const;
+
+export const RETURN_SHIPPING_COSTS = [
+  { value: 'BUYER_PAYS', label: 'Buyer Pays Return Shipping' },
+  { value: 'SELLER_PAYS', label: 'Seller Pays Return Shipping' },
+  { value: 'SHARED', label: 'Shared Cost' },
+] as const;
+
+export const WARRANTY_COVERAGES = [
+  { value: 'DOA', label: 'Dead On Arrival Only' },
+  { value: 'HARDWARE', label: 'Hardware Defects Only' },
+  { value: 'ALL_FAULTS', label: 'All Faults Covered' },
+] as const;
+
+export const REFUND_METHODS = [
+  { value: 'WALLET_CREDIT', label: 'U-Shop Wallet Credit' },
+  { value: 'ORIGINAL_PAYMENT', label: 'Original Payment Method' },
+] as const;
