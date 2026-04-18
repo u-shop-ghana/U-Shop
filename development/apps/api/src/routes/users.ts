@@ -41,7 +41,7 @@ router.get('/me', authenticate, async (req: Request, res: Response): Promise<voi
     });
 
     if (!userWithStore) {
-      res.status(404).json({ success: false, error: { message: 'User payload mapping failed.' } });
+      res.status(404).json({ success: false, error: { message: 'User not found.' } });
       return;
     }
 
@@ -95,8 +95,11 @@ router.post('/reseller-verify', authenticate, async (req: Request, res: Response
     const userId = req.user!.id;
     const normalizedUserBase = path.posix.join(userId, '/');
 
-    const normalizedFrontPath = path.posix.normalize(String(ghanaCardFrontImagePath).replace(/\\/g, '/'));
-    const normalizedBackPath = path.posix.normalize(String(ghanaCardBackImagePath).replace(/\\/g, '/'));
+    const normalizePath = (input: unknown): string =>
+      path.posix.normalize(String(input).replace(/\\/g, '/'));
+
+    const normalizedFrontPath = normalizePath(ghanaCardFrontImagePath);
+    const normalizedBackPath = normalizePath(ghanaCardBackImagePath);
 
     const hasTraversalOrAbsolute = (p: string): boolean =>
       path.posix.isAbsolute(p) || p.split('/').includes('..');
